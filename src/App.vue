@@ -2,14 +2,18 @@
 import { RouterLink, RouterView } from 'vue-router'
 
 import SideBar from './components/SideBar.vue'
+import TopBar from './components/TopBar.vue'
+
 </script>
 
 <template>
 
 <div class="app">
     <SideBar/>
+    <TopBar/>
+
     <RouterView/>
-    
+
   </div>
 </template>
 
@@ -27,7 +31,7 @@ button{
 .app{
   display:flex;
   position:absolute;
-  height: fit-content;
+  height: 100%;
   width: 100%;
   background-color: #f4f5fa;
 

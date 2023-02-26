@@ -2,10 +2,34 @@
 import { RouterLink, RouterView } from 'vue-router'
 import { ref } from 'vue';
 
-import Sidebar from 'primevue/sidebar';
-import Button from 'primevue/button';
 
-const visibleRight = ref(true);
+const contents =[]
+const items=[
+    {
+        icon: 'pi pi-th-large',
+        label: 'Home',
+        to: '/',
+
+    },
+    {
+        separator: true
+    },
+    {
+        label: 'test',
+        icon: 'pi pi-plus',
+        to: '/about',
+    }, {
+        separator: true
+    },
+    {
+        label: 'Named ',
+        icon: 'pi pi-plus',
+    },
+    {
+        label: 'test ',
+        icon: 'pi pi-plus',
+    },
+]
 
 </script>
 
@@ -13,21 +37,45 @@ const visibleRight = ref(true);
 
 <div>
     
-<Dialog>k</Dialog>
 
 
 
-<Sidebar :visible="true" :showCloseIcon	="false" :modal="false" position="right">
-	Content
+<Sidebar class="  bg-blue-800 border-round  text-white font-bold flex align-items-center justify-content-center fadein animation-duration-1000"
+ :visible="true" 
+ :showCloseIcon	="false" 
+ :modal="false" 
+ position="right"
+ >
+ 	ليبيا للإتصالات والتقنية
+
+    <hr class="solid">
+
+    
+    <Menu style="text-align: center;" class="border-none w-full text-white "
+     :model="items" ref="menu" :exact="true"  >
+ 
+
+    </Menu>
+
 </Sidebar>
 
 </div>
+
+
+
 </template>
 
 <style scoped>
+ 
 
-div{
-    background-color: red;
+.p-menuitem-link, .p-menuitem		 {
+  position: absolute;
+  right: 0;
+  color:red
 }
-
+.p-menuitem-icon	{
+    position: absolute;
+    right: 0;
+    color:red
+}
 </style>
