@@ -17,7 +17,7 @@ const visibleRight = ref(true);
 
 
 
-<Sidebar :visible="true" :showCloseIcon	="false" :modal="false" position="right">
+<Sidebar class="z-1" style="z-index: 2; position: absolute  ; background-color: brown;" :visible="true" :showCloseIcon	="false" :modal="false" position="right">
 	Content
 </Sidebar>
 
@@ -28,6 +28,8 @@ const visibleRight = ref(true);
 
 div{
     background-color: red;
+    position: absolute;
+    z-index: 1;
 }
 
 </style>
