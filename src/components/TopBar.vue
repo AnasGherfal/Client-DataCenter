@@ -173,7 +173,7 @@ const items = ref([
     text-align: end;
     background-color:rgb(220, 221, 225) ;
    
-    width: 74%;
+    width: 73%;
     height: 60px;
 
     position:absolute ;

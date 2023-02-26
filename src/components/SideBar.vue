@@ -40,7 +40,7 @@ const items=[
 
 
 
-<Sidebar class="  bg-blue-800 border-round  text-white font-bold flex align-items-center justify-content-center fadein animation-duration-1000"
+<Sidebar class=" mt-3 mr-1 bg-blue-800 border-round  text-white font-bold flex align-items-center justify-content-center fadein animation-duration-1000"
  :visible="true" 
  :showCloseIcon	="false" 
  :modal="false" 
