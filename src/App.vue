@@ -7,9 +7,7 @@ import TopBar from './components/TopBar.vue'
 </script>
 
 <template>
-      <SideBar/>
- 
-  <TopBar></TopBar>
+
 
 
 <div class="app">
@@ -34,29 +32,13 @@ button{
 }
 .app{
   display:flex;
-  position:absolute;
+  position:fixed;
+
   height: 100%;
   width: 100%;
-  background-color: #f4f5fa;
+  background-color: #dbdded;
 
 }
 
-.holy-grail__main {
-    flex-grow: 1;
 
-    display: flex;
-    flex-direction: row;
-}
-
-.holy-grail__left {
-    width: 25%;
-}
-
-.holy-grail__middle {
-    flex-grow: 1;
-}
-
-.holy-grail__right {
-    width: 20%;
-}
 </style>

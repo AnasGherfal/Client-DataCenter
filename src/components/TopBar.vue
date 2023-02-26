@@ -129,7 +129,7 @@ const items = ref([
 
 <template #start>
         <Menubar  class="nav" :model="items">
-            <template #start>
+            <template #end>
                <a to="/Char"><img alt="logo"  src="./output-onlinepngtools.png" height="40" class="mr-1"></a> 
             </template>
             <TextBar></TextBar>
@@ -171,9 +171,9 @@ const items = ref([
 <style scoped>
 .nav{
     text-align: end;
-    background-color:rgb(220, 221, 225) ;
+    background-color:rgb(247, 249, 255) ;
    
-    width: 73%;
+    width: 99%;
     height: 60px;
 
     position:absolute ;

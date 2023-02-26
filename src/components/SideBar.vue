@@ -40,22 +40,17 @@ const items=[
 
 
 
-<Sidebar class=" mt-3 mr-1 bg-blue-800 border-round  text-white font-bold flex align-items-center justify-content-center fadein animation-duration-1000"
+<Sidebar class=" mt-5 h-30rem  mr-2  border-round  text-black font-bold flex align-items-center justify-content-center fadein animation-duration-1000"
  :visible="true" 
  :showCloseIcon	="false" 
  :modal="false" 
  position="right"
  >
- 	ليبيا للإتصالات والتقنية
 
     <hr class="solid">
 
     
-    <Menu style="text-align: center;" class="border-none w-full text-white "
-     :model="items" ref="menu" :exact="true"  >
- 
-
-    </Menu>
+    
 
 </Sidebar>
 
