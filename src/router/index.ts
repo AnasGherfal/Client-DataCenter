@@ -1,16 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 
-import CharBar from '../components/CharBar.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    {
-      path: '/Char',
-      name: 'Char',
-      component: CharBar
-    },
+
     {
       path: '/',
       name: 'home',
