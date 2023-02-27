@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import TextBar from './Nav/TextBar.vue';
+import IconGroup from './Nav/IconGroup.vue';
+
 import { ref } from 'vue';
 const items = ref([
 				{
@@ -127,44 +129,31 @@ const items = ref([
 			]);
 </script>
 
-<template #start>
-        <Menubar  class="nav" :model="items">
+<template>			 
+<div class="inline-flex ">
+				<IconGroup />
+             </div>
+
+			
+			<div style="width:900px; height: 50px;">
+				 	<!-- <TextBar/>		 -->
+             </div>
+			 <div>
+				<h2 style="margin-bottom: 5px; width:200px; height:40px;">ليبيا للاتصالات والتقنية</h2>
+			 </div>
+
+         <div>
+			<img alt="logo"  src="https://lttgate.network.ltt.ly/img/66094012_10156891242319998_8911186738307661824_o.19a8d21d.png" height="40" class="mr-1" style="margin-right:10px ;">
+		 </div>   
+		 
+		
+		<!-- <Menubar  class="nav" :model="items">
             <template #end>
                <a to="/Char"><img alt="logo"  src="./output-onlinepngtools.png" height="40" class="mr-1"></a> 
             </template>
             <TextBar></TextBar>
-        </Menubar>
-    <!-- <div class="card">
-        <div>
-        <Menubar class="nav" :model="items">
-            <template #end>
-               <a to="/Char"><img alt="logo"  src="./output-onlinepngtools.png" height="40" class="mr-1"></a> 
-            </template>
-            <TextBar></TextBar>
-        </Menubar>
+        </Menubar> -->
 
-    </div> 
-            <div class="absolute overflow-auto surface-overlay mt-6 p-4 line-height-3" style="height: 150px">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                    Vitae sapien pellentesque habitant morbi tristique senectus et netus. Vitae proin sagittis nisl rhoncus mattis.
-                    Maecenas pharetra convallis posuere morbi leo urna molestie. At in tellus integer feugiat scelerisque.
-                    Adipiscing elit duis tristique sollicitudin nibh sit amet commodo. Luctus accumsan tortor posuere ac ut.
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                    Vitae sapien pellentesque habitant morbi tristique senectus et netus. Vitae proin sagittis nisl rhoncus mattis.
-                    Maecenas pharetra convallis posuere morbi leo urna molestie. At in tellus integer feugiat scelerisque.
-                    Adipiscing elit duis tristique sollicitudin nibh sit amet commodo. Luctus accumsan tortor posuere ac ut.
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                    Vitae sapien pellentesque habitant morbi tristique senectus et netus. Vitae proin sagittis nisl rhoncus mattis.
-                    Maecenas pharetra convallis posuere morbi leo urna molestie. At in tellus integer feugiat scelerisque.
-                    Adipiscing elit duis tristique sollicitudin nibh sit amet commodo. Luctus accumsan tortor posuere ac ut.
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                    Vitae sapien pellentesque habitant morbi tristique senectus et netus. Vitae proin sagittis nisl rhoncus mattis.
-                    Maecenas pharetra convallis posuere morbi leo urna molestie. At in tellus integer feugiat scelerisque.
-                    Adipiscing elit duis tristique sollicitudin nibh sit amet commodo. Luctus accumsan tortor posuere ac ut.
-            </div>
-        </div>
-
-  -->
 
 </template>
 

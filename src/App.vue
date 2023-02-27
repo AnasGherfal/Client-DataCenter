@@ -1,22 +1,29 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-
+import { ref } from 'vue';
 import SideBar from './components/SideBar.vue'
 import TopBar from './components/TopBar.vue'
+import MegaMenu from 'primevue/megamenu';
 
 </script>
 
 <template>
-
-
-
-<div class="app">
-    <SideBar/>
+    <!-- <SideBar/> -->
+    <div class="nav 
+    z-5 
+    relative 
+    flex 
+    align-items-center 
+    justify-content-right 
+    p-3 
+    bg-blue-800 
+    font-bold 
+    text-blue-50  
+    shadow-3
+    " 
+    style="width: 100%; height:75px;">
     <TopBar/>
-
-    <RouterView/>
-
-  </div>
+    </div>
 </template>
 
 <style >
@@ -30,15 +37,15 @@ button{
   outline: 0;
 
 }
-.app{
-  display:flex;
-  position:fixed;
 
-  height: 100%;
-  width: 100%;
-  background-color: #dbdded;
-
+body{
+  padding:0;
+  margin: 0;
+  background-color: #b6c9d9;
+  font-family: Arial, Helvetica, sans-serif;
+  
 }
+
 
 
 </style>

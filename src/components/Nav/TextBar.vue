@@ -1,10 +1,8 @@
 <template>
-
-<span class="p-input-icon-left">
-    <i class="pi pi-search" />
-    <InputText type="text" v-model="value3" placeholder="Search" />
-</span>
-
+       <span class="p-input-icon-left">
+            <i class="pi pi-search" />
+            <InputText type="text" v-model="value3" placeholder="Search" />
+        </span>
 </template>
 
 <script setup lang="ts">
