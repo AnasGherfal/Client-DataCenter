@@ -3,6 +3,5 @@
 </script>
 
 <template>
-  <main>
-  </main>
+home
 </template>

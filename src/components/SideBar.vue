@@ -6,29 +6,25 @@ import { ref } from 'vue';
 const contents =[]
 const items=[
     {
-        icon: 'pi pi-th-large',
-        label: 'Home',
+        icon: ' pi pi-th-large',
+        label: 'لوحة القيادة',
         to: '/',
+        style: '',
+        class: '    '
 
     },
     {
         separator: true
     },
     {
-        label: 'test',
-        icon: 'pi pi-plus',
+        icon: ' pi pi-th-large',
+        label: 'لوحة القيادة',
         to: '/about',
-    }, {
-        separator: true
+        style: '',
+        class: '    '
+
     },
-    {
-        label: 'Named ',
-        icon: 'pi pi-plus',
-    },
-    {
-        label: 'test ',
-        icon: 'pi pi-plus',
-    },
+
 ]
 
 </script>
@@ -40,7 +36,7 @@ const items=[
 
 
 
-<Sidebar class=" mt-5 h-30rem  mr-2  border-round  text-black font-bold flex align-items-center justify-content-center fadein animation-duration-1000"
+<Sidebar class=" mt-5 h-30rem  mr-1  border-round  text-black font-bold flex align-items-center justify-content-center fadein animation-duration-1000"
  :visible="true" 
  :showCloseIcon	="false" 
  :modal="false" 
@@ -49,6 +45,11 @@ const items=[
 
     <hr class="solid">
 
+
+    <Menu :model="items" 
+    class=" menu  border-none w-full text-right  ">
+     
+    </Menu>
     
     
 
@@ -60,17 +61,32 @@ const items=[
 
 </template>
 
-<style scoped>
- 
+<style lang="scss">
 
-.p-menuitem-link, .p-menuitem		 {
-  position: absolute;
-  right: 0;
-  color:red
+
+    .p-menu-start{
+        align-items: center;
+    }
+    .p-menuitem-text{
+        
+
+
+    }
+    .p-menuitem-icon{
+    }
+
+    .p-menuitem{
+     .router-link-active{
+        background-color: rgb(55, 75, 179);
+        border-radius: 30px;
+        
+    }
 }
-.p-menuitem-icon	{
-    position: absolute;
-    right: 0;
-    color:red
-}
+
+    
+
+    // p-menuitem-link router-link-active router-link-active-exact
 </style>
+
+
+
