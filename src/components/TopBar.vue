@@ -129,21 +129,35 @@ const items = ref([
 			]);
 </script>
 
-<template>			 
-<div class="inline-flex ">
+<template>	
+    <div class="
+	fixed
+    z-5 
+	mr-3
+    flex 
+    align-items-center 
+    justify-content-right 
+    p-3 
+    bg-white
+    font-bold 
+    text-blue-50  
+    shadow-2
+    " 
+    style="width: 100%; height:75px;">
+  	 
 				<IconGroup />
-             </div>
 
 			
 			<div style="width:900px; height: 50px;">
 				 	<!-- <TextBar/>		 -->
              </div>
+
 			 <div>
-				<h2 style="margin-bottom: 5px; width:200px; height:40px;">ليبيا للاتصالات والتقنية</h2>
+				<h2 style="color:#1c86dd; margin-right: 5px;margin-bottom: 5px ; width:300px; height:40px;">ليبيا للاتصالات والتقنية</h2>
 			 </div>
 
          <div>
-			<img alt="logo"  src="https://lttgate.network.ltt.ly/img/66094012_10156891242319998_8911186738307661824_o.19a8d21d.png" height="40" class="mr-1" style="margin-right:10px ;">
+			<img alt="logo"  src="../components/output-onlinepngtools.png" height="40"  style="margin-right:0px ;">
 		 </div>   
 		 
 		
@@ -154,7 +168,7 @@ const items = ref([
             <TextBar></TextBar>
         </Menubar> -->
 
-
+    </div>	
 </template>
 
 <style scoped>

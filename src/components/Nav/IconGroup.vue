@@ -3,7 +3,9 @@ import Button from 'primevue/button';
 </script>
      
      <template>
-         <Button icon="pi pi-align-justify" class="m-1 p-button-secondary p-button-rounded bg-white p-button-text" />
-        <Button icon="pi pi-user" class="m-1  p-button-rounded bg-white  p-button-secondary p-button-text" />
+    <div class="inline-flex " style="height:35px; margin-top: -18px;">
+        <Button icon="pi pi-user" class="m-1 p-button-rounded p-button-info" />
+        <Button icon="pi pi-list" class="m-1 p-button-rounded p-button-info" />
+    </div>
      </template>  
      

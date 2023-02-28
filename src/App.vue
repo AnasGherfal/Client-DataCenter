@@ -3,27 +3,30 @@ import { RouterLink, RouterView } from 'vue-router'
 import { ref } from 'vue';
 import SideBar from './components/SideBar.vue'
 import TopBar from './components/TopBar.vue'
-import MegaMenu from 'primevue/megamenu';
+import FirsPage from './components/FirstPage.vue'
 
 </script>
 
 <template>
-    <!-- <SideBar/> -->
-    <div class="nav 
-    z-5 
-    relative 
-    flex 
-    align-items-center 
-    justify-content-right 
-    p-3 
-    bg-blue-800 
-    font-bold 
-    text-blue-50  
-    shadow-3
-    " 
-    style="width: 100%; height:75px;">
-    <TopBar/>
+    <div>
+      <!-- Header -->
+      <TopBar/>
     </div>
+ 
+    <div style="width: 100%; margin-top: 75px;" class="absolute">
+
+    <div style="width:25%;height: 100%; margin-left: 75%; position: absolute;">
+        <SideBar/>
+    </div>
+
+    <div style="width: 75%; padding: 20px;">
+      <!-- main -->
+      <FirsPage/>
+    </div>
+
+    </div>
+
+
 </template>
 
 <style >
@@ -41,9 +44,8 @@ button{
 body{
   padding:0;
   margin: 0;
-  background-color: #b6c9d9;
-  font-family: Arial, Helvetica, sans-serif;
-  
+  background-color: #dfdfdf;
+  font-family:'29LT Zawi Black',Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;  
 }
 
 
