@@ -42,7 +42,7 @@ body{
   padding:0;
   margin: 0;
   background-color: #dfdfdf;
-  font-family:'29LT Zawi bold',Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;  
+  font-family:' bold',Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;  
 }
 
 
