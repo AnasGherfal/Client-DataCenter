@@ -4,7 +4,7 @@ import { ref } from 'vue';
 import SideBar from './components/SideBar.vue'
 import TopBar from './components/TopBar.vue'
 import InfoPage from './components/InfoPage.vue'
-
+import AddService from './components/ServiceL/AddService.vue'
 </script>
 
 <template>
@@ -21,7 +21,7 @@ import InfoPage from './components/InfoPage.vue'
 
     <div style="width: 73%; margin-right: 26%; padding: 25px;">
       <!-- main -->
-      <InfoPage/>
+       <AddService/>
     </div>
     </div>
 

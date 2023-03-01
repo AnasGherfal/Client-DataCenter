@@ -9,13 +9,15 @@ import Menu from 'primevue/menu';
         const items = ref([
             {
                 label: 'لوحة المعلومات',
+                
                 items: [{
                     label: 'بطاقات الاحصائيات',
                     icon: 'pi pi-refresh',
                 },
                 {
                     label: 'مخطط الشهر',
-                    icon: 'pi pi-times',
+                    icon: 'pi pi-chart-bar',
+                    to:'/ChartInfo'
 
                 }
             ]},
@@ -23,16 +25,16 @@ import Menu from 'primevue/menu';
                 label: 'العملاء',
                 items: [{
                     label: 'سجل العملاء',
-                    icon: 'pi pi-refresh',
+                    icon: 'pi pi-users',
                 },
                 {
                     label: 'اضافة عميل',
-                    icon: 'pi pi-times',
+                    icon: 'pi pi-user-plus',
 
                 },
                 {
                     label: 'اضافة مندوب',
-                    icon: 'pi pi-times',
+                    icon: 'pi pi-user-plus',
                 }
             ]},  {
                 label: 'الخدمات',
@@ -62,24 +64,27 @@ import Menu from 'primevue/menu';
 
 
 <style lang="scss">
-.p-menuitem-active{
-   background-color:red;
-   
-}
-.p-menuitem-text-active {
-    cursor: pointer;
-    font-weight: bold;
-  }
+
+
 .p-menuitem-content{
     margin: 10px;
 }
 .p-menuitem-text{
     margin-right: 5px;
-    font-family:'29LT Zawi bold',Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;  
+    font-family:'29LT Zawi bold',Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    
 }
 
 .p-submenu-header{
     font-family:'29LT Zawi Black',Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;  
+}
+.p-menuitem {
+    .router-link-active
+    {
+    font-family:'29LT Zawi bold' !important;
+    background-color: rgba(12, 12, 183, 0.199);
+    border-radius: 200px;
+}
 }
 
 </style>

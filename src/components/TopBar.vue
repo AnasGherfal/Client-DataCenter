@@ -150,11 +150,11 @@ const items = ref([
 		
 
          <div>
-			<img alt="logo"  src="../components/output-onlinepngtools.png" height="40"  style="margin-right:0px ;">
+			<img alt="logo"  src="../assets/logos/LTT-logo.png" height="40"  style="margin-right:0px ;">
 		 </div>   
 
 			 <div>
-				<h2 style="color:#1c86dd; margin-right: 5px;margin-bottom: 5px ; width:300px; height:40px;">ليبيا للاتصالات والتقنية</h2>
+				<h2 style="color:#1643a0; margin-right: 5px;margin-bottom: 5px ; width:300px; height:40px;">ليبيا للاتصالات والتقنية</h2>
 			 </div>
 
 		 	<div style="width:900px; height: 50px;">
