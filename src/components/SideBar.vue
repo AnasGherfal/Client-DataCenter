@@ -9,7 +9,6 @@ import Menu from 'primevue/menu';
         const items = ref([
             {
                 label: 'لوحة المعلومات',
-                
                 items: [{
                     label: 'بطاقات الاحصائيات',
                     icon: 'pi pi-refresh',
@@ -41,22 +40,16 @@ import Menu from 'primevue/menu';
                 items: [
                 {
                     label: 'سجل الخدمات',
-                    icon: 'pi pi-times',
+                    icon: 'pi pi-server',
                 },
                 {
                     label: 'اضافة خدمة جديدة',
-                    icon: 'pi pi-refresh',
+                    icon: 'pi pi-plus-circle',
                 },
             ]},
-            {
-                label: 'Navigate',
-                items: [{
-                    label: 'Vue Website',
-                    icon: 'pi pi-external-link',
-                    to: '/home'
-                },
+            
                 
-            ]}
+        
         ]);
 
 
@@ -65,17 +58,23 @@ import Menu from 'primevue/menu';
 
 <style lang="scss">
 
-
+.p-menuitem-icon{
+    color: #1643a0 !important;
+;
+}
 .p-menuitem-content{
     margin: 10px;
 }
 .p-menuitem-text{
+    color: #1643a0 !important;
+
     margin-right: 5px;
     font-family:'29LT Zawi bold',Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
     
 }
 
 .p-submenu-header{
+    color: #1643a0 !important;
     font-family:'29LT Zawi Black',Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;  
 }
 .p-menuitem {
@@ -84,7 +83,7 @@ import Menu from 'primevue/menu';
     font-family:'29LT Zawi bold' !important;
     background-color: rgba(12, 12, 183, 0.199);
     border-radius: 200px;
-}
+    }
 }
 
 </style>

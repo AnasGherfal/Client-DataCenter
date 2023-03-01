@@ -21,7 +21,7 @@ import AddService from './components/ServiceL/AddService.vue'
 
     <div style="width: 73%; margin-right: 26%; padding: 25px;">
       <!-- main -->
-       <AddService/>
+       <InfoPage/>
     </div>
     </div>
 
