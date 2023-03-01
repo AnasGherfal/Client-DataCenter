@@ -12,8 +12,10 @@ import Sidebar from 'primevue/sidebar';
 import Button from 'primevue/button';
 import Menu from 'primevue/menu';
 import Menubar from 'primevue/menubar';
+import ToastService from 'primevue/toastservice';
+import { RouterView } from 'vue-router';
 
-
+// console.log(RouterView)
 const app = createApp(App)
 
 app.use(createPinia())
@@ -23,6 +25,6 @@ app.component('Sidebar', Sidebar);
 app.component('Button', Button);
 app.component('Menu', Menu);
 app.component('Menubar', Menubar);
-
+app.use(ToastService);
 
 app.mount('#app')

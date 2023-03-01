@@ -3,7 +3,7 @@ import { RouterLink, RouterView } from 'vue-router'
 import { ref } from 'vue';
 import SideBar from './components/SideBar.vue'
 import TopBar from './components/TopBar.vue'
-import FirsPage from './components/FirstPage.vue'
+import InfoPage from './components/InfoPage.vue'
 
 </script>
 
@@ -15,15 +15,14 @@ import FirsPage from './components/FirstPage.vue'
  
     <div style="width: 100%; margin-top: 75px;" class="absolute">
 
-    <div style="width:25%;height: 100%; margin-left: 75%; position: absolute;">
+    <div style="width:28%;height: 100%; margin-right: 1%; position: absolute;">
         <SideBar/>
     </div>
 
-    <div style="width: 75%; padding: 20px;">
+    <div style="width: 73%; margin-right: 26%; padding: 25px;">
       <!-- main -->
-      <FirsPage/>
+      <InfoPage/>
     </div>
-
     </div>
 
 
@@ -38,14 +37,13 @@ button{
   padding: 0;
   border:0;
   outline: 0;
-
 }
 
 body{
   padding:0;
   margin: 0;
   background-color: #dfdfdf;
-  font-family:'29LT Zawi Black',Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;  
+  font-family:'29LT Zawi bold',Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;  
 }
 
 

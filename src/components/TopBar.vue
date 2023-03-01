@@ -133,7 +133,7 @@ const items = ref([
     <div class="
 	fixed
     z-5 
-	mr-3
+	ml-3
     flex 
     align-items-center 
     justify-content-right 
@@ -145,22 +145,24 @@ const items = ref([
     " 
     style="width: 100%; height:75px;">
   	 
-				<IconGroup />
 
 			
-			<div style="width:900px; height: 50px;">
-				 	<!-- <TextBar/>		 -->
-             </div>
+		
+
+         <div>
+			<img alt="logo"  src="../components/output-onlinepngtools.png" height="40"  style="margin-right:0px ;">
+		 </div>   
 
 			 <div>
 				<h2 style="color:#1c86dd; margin-right: 5px;margin-bottom: 5px ; width:300px; height:40px;">ليبيا للاتصالات والتقنية</h2>
 			 </div>
 
-         <div>
-			<img alt="logo"  src="../components/output-onlinepngtools.png" height="40"  style="margin-right:0px ;">
-		 </div>   
-		 
-		
+		 	<div style="width:900px; height: 50px;">
+				 	<!-- <TextBar/>		 -->
+             </div>
+
+			 <IconGroup />
+
 		<!-- <Menubar  class="nav" :model="items">
             <template #end>
                <a to="/Char"><img alt="logo"  src="./output-onlinepngtools.png" height="40" class="mr-1"></a> 
