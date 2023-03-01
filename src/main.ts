@@ -19,6 +19,10 @@ import FileUpload from 'primevue/fileupload';
 import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
 import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+
+import Dropdown from 'primevue/dropdown';
+
 
 
 
@@ -28,6 +32,8 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 app.use(PrimeVue)
+app.use(ToastService);
+
 app.component('Sidebar', Sidebar);
 app.component('Button', Button);
 app.component('Menu', Menu);
@@ -37,10 +43,12 @@ app.component('InputMask', InputMask);
 app.component('Card', Card);
 app.component('FileUpload', FileUpload);
 app.component('Toast', Toast);
-app.use(ToastService);
+app.component('Dropdown', Dropdown);
+
 
 //------------- Data Table -------------------------
 app.component('DataTable', DataTable);
+app.component('Column', Column);
 
 
 app.mount('#app')

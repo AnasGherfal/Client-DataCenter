@@ -5,7 +5,7 @@ import CustomerTable from '@/components/Customer/Table.vue';
 
 <template>
       <CustomerForm />
-      <CustomerTable />
+      <CustomerTable/>
 
       
   </template>
