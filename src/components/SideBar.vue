@@ -12,6 +12,7 @@ import Menu from 'primevue/menu';
                 items: [{
                     label: 'بطاقات الاحصائيات',
                     icon: 'pi pi-refresh',
+                    to: '/'
                 },
                 {
                     label: 'مخطط الشهر',
@@ -22,18 +23,18 @@ import Menu from 'primevue/menu';
             ]},
             {
                 label: 'العملاء',
-                items: [{
-                    label: 'سجل العملاء',
-                    icon: 'pi pi-users',
-                },
+                items: [
                 {
                     label: 'اضافة عميل',
-                    icon: 'pi pi-user-plus',
+                    icon: 'fa-solid fa-user-plus',
+                    to: '/users'
 
                 },
-                {
-                    label: 'اضافة مندوب',
-                    icon: 'pi pi-user-plus',
+                    {
+                    
+                    label: 'سجل العملاء',
+                    icon: 'fa-solid fa-users',
+                    to:'/UsersRecord'
                 }
             ]},  {
                 label: 'الخدمات',
@@ -50,6 +51,7 @@ import Menu from 'primevue/menu';
             
                 
         
+
         ]);
 
 
@@ -69,6 +71,7 @@ import Menu from 'primevue/menu';
     color: #1643a0 !important;
 
     margin-right: 5px;
+    color: black !important;
     font-family:'29LT Zawi bold',Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
     
 }
@@ -80,10 +83,20 @@ import Menu from 'primevue/menu';
 .p-menuitem {
     .router-link-active
     {
-    font-family:'29LT Zawi bold' !important;
-    background-color: rgba(12, 12, 183, 0.199);
     border-radius: 200px;
     }
 }
+    .router-link-active{
+        .p-menuitem-icon{
+            color: navy !important;
+        }
+        .p-menuitem-text{
+            color: navy !important;
+        }
+        
 
+
+    }
+
+// class="p-menuitem-link router-link-active router-link-active-exact"
 </style>

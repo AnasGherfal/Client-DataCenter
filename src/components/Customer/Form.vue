@@ -55,7 +55,7 @@ const resetForm = () => {
 
 <template >
     <div>
-        <Card style="width: 90%; margin-top: 2rem; margin-right: 40%; border-radius: 10px;">
+        <Card style=" margin-right: 5%; " >
             <template #title>
                 إضافة عميل
             </template>
@@ -124,7 +124,7 @@ const resetForm = () => {
 
 
                 </div>
-                <Button @click="submitForm" icon="pi pi-check" label="إضافة" type="submit"  style="background-color: green;" />
+                <Button @click="submitForm" icon="pi pi-check" label="إضافة" type="submit" />
                 <Button @click="resetForm" icon="pi pi-refresh" label="مسح" class="p-button-secondary" style="margin-right: .5em; background-color: red; " />
                 <Toast position="bottom-right" />
 
