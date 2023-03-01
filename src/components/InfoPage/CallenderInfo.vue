@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <div>
         <FullCalendar :events="events" :options="options" />
     </div>
@@ -11,7 +11,6 @@ import '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import EventService from './service/EventService';
 
 export default {
     setup() {
@@ -47,4 +46,4 @@ export default {
         flex-wrap: wrap;
     }
 }
-</style>
+</style> -->

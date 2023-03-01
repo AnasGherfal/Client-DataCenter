@@ -7,9 +7,9 @@ const router = createRouter({
   routes: [
 
     {
-      path: '/ChartInfo',
+      path: '/',
       name: 'home',
-      component: ChartInfo
+      component: HomeView
     },
     {
       path: '/about',
@@ -22,6 +22,12 @@ const router = createRouter({
       name: 'users',
 
       component: () => import('../views/UsersView.vue')
+    },
+    {
+      path: '/UsersRecord',
+      name: 'UsersRecord',
+
+      component: () => import('../views/Users/UsersRecordView.vue')
     }
   ]
 })

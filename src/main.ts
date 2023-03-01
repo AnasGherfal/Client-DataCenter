@@ -4,13 +4,19 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import PrimeVue from 'primevue/config';
+
+import './assets/style/style.scss'
+
 import 'primevue/resources/themes/saga-blue/theme.css'
 import 'primevue/resources/primevue.min.css'
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.css' 
 import Sidebar from 'primevue/sidebar';
 import Button from 'primevue/button';
+
+//global style
 import Menu from 'primevue/menu';
+
 import Menubar from 'primevue/menubar';
 import ToastService from 'primevue/toastservice';
 import InputText from 'primevue/inputtext';
