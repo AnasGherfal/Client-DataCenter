@@ -2,8 +2,8 @@
         <div class="bg-white shadow-2 p-3 border-round mt-3">
 
 <Divider align="left">
-    <div class="inline-flex align-items-center">
-        <i class="pi pi-megaphone ml-2"></i>
+    <div style="color: #1643a0 ;" class="inline-flex align-items-center">
+        <i class="pi  pi-megaphone ml-2"></i>
         <b>لوائح النظام</b>
     </div>
 </Divider>
@@ -15,3 +15,10 @@
      <script setup lang="ts">
     import Divider from 'primevue/divider';
     </script>   
+
+    <style scoped>
+      p{
+        color: #1643a0 ;
+      }
+
+    </style>
