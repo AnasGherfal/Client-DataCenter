@@ -59,11 +59,10 @@ import Menu from 'primevue/menu';
 
 
 <style lang="scss">
-
-.p-menuitem-icon{
-    color: #1643a0 !important;
-;
+.p-menuitem:hover{
+    background-color: none !important;
 }
+
 .p-menuitem-content{
     margin: 10px;
 }
@@ -72,29 +71,34 @@ import Menu from 'primevue/menu';
 
     margin-right: 5px;
     color: black !important;
-    font-family:'29LT Zawi bold',Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-    
+    font-family: 'Tajawal';
 }
 
 .p-submenu-header{
     color: #1643a0 !important;
-    font-family:'29LT Zawi Black',Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;  
+    font-family:'tajawal';
+    font-weight: 800 !important;  
 }
 .p-menuitem {
     .router-link-active
     {
-    border-radius: 200px;
+    border-radius: 20px;
+    border-color: #175deb46;
+    border-style:solid ;
+    border-width:1px;
     }
+}
+.p-menuitem-link:hover{
+    border-radius: 20px;
+
 }
     .router-link-active{
         .p-menuitem-icon{
             color: navy !important;
         }
         .p-menuitem-text{
-            color: navy !important;
+            font-weight:600;
         }
-        
-
 
     }
 
