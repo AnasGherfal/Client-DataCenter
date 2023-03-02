@@ -19,8 +19,8 @@ const filters = ref({
             <template #content>
             <DataTable  ref="dt" :value="users" dataKey="id" 
                 :paginator="true" :rows="10" :filters="filters"
-                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]"
-                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" responsiveLayout="scroll">
+                paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]"
+                currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} سجل العملاء" responsiveLayout="scroll">
                 <template #header>
                     <div class="table-header flex flex-column md:flex-row justiify-content-between">
 						<span class="p-input-icon-left p-float-label ">
@@ -48,5 +48,15 @@ const filters = ref({
 </template>
 
 <style>
+
+.p-paginator-next	{
+transform: rotate(180deg) !important;
+
+
+}
+
+.p-paginator-prev	{
+    transform: rotate(180deg) !important;
+}
 
 </style>

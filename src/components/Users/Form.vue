@@ -3,9 +3,13 @@ import { computed, reactive, ref } from 'vue';
 import { email, minLength, required, helpers } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
+import {useUsersStore} from '@/stores/users'
 
+const store = useUsersStore();
+
+const pp = ref<string>('');
 const state = reactive({
-    name: "",
+    name: "" as string,
     email: "",
     phoneNumber1: '',
     phoneNumber2: '',
@@ -29,8 +33,14 @@ const toast = useToast();
 
 const v$ = useVuelidate(rules, state);
 
+
+
 const submitForm = async () => {
     const result = await v$.value.$validate();
+
+    // store.userInfo.unshift({
+    // Username: state.name.
+    // });
 
     if(result){
         toast.add({severity:'success', summary: 'Success Message', detail:'تمت إضافة العميل', life: 3000});
@@ -71,7 +81,7 @@ const resetForm = () => {
                         </span>
 
                     </div>
-                    <div class="field col-12 md:col-4">
+                   <div class="field col-12 md:col-4">
                         <span class="p-float-label ">
                             <InputText id="email" type="text" v-model="state.email"  />
                             <label for="email">البريد الإلكتروني</label>
@@ -82,7 +92,7 @@ const resetForm = () => {
                     <div class="field col-12 md:col-4">
                         <span class="p-float-label ">
                             <InputText id="address" type="text" v-model="state.address" />
-                            <label for="address" >عنوان العميل</label>
+                            <label for="address" >العنوان</label>
                             <error  v-for="error in v$.address.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
 
                         </span>
@@ -90,9 +100,8 @@ const resetForm = () => {
                     <div class="field col-12 md:col-4">
                         <span class="p-float-label ">
                             <InputMask id ="phoneNum1" v-model="state.phoneNumber1" mask="999-999-9999" />
-                            <label for="phoneNum1">رقم هاتف العميل</label>
+                            <label for="phoneNum1">رقم هاتف </label>
                             <error  v-for="error in v$.phoneNumber1.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
-
                         </span>
                     </div>
                     <div class="field col-12 md:col-4">
@@ -124,8 +133,8 @@ const resetForm = () => {
 
 
                 </div>
-                <Button @click="submitForm" icon="pi pi-check" label="إضافة" type="submit" />
-                <Button @click="resetForm" icon="pi pi-refresh" label="مسح" class="p-button-secondary" style="margin-right: .5em;  background-color: #FF0000;" />
+                <Button @click="submitForm" icon="pi pi-check" label="إضافة" type="submit" style="background-color: navy;"/>
+                <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-secondary" style="margin-right: .5rem;  background-color: red;" />
                 <Toast position="bottom-right" />
 
             </form>
@@ -139,7 +148,6 @@ const resetForm = () => {
 
 
 
-
 error{
     font-size: 12px; 
     font-weight: bold;
@@ -150,8 +158,8 @@ error{
 }
 .p-float-label > label{
 right: 0.5rem;
-color: #6c757d;
-transition-duration: 0.2s
+color: black;
+transition-duration: 0.3s
 }
 /* .menuitem-content:hover {
 

@@ -11,13 +11,13 @@ import Menu from 'primevue/menu';
                 label: 'لوحة المعلومات',
                 items: [{
                     label: 'الصفحة الرئيسية',
-                    icon: 'pi pi-refresh',
+                    icon: 'fa-solid fa-house',
                     to: '/'
                 },
                 {
                     label: 'مخطط الشهر',
                     icon: 'pi pi-chart-bar',
-                    to:'/ChartInfo'
+                    to:''
 
                 }
             ]},
@@ -36,7 +36,24 @@ import Menu from 'primevue/menu';
                     icon: 'fa-solid fa-users',
                     to:'/UsersRecord'
                 }
-            ]},  {
+            ]},  
+            {
+                label: 'الزيارات',
+                items: [
+                {
+                    label: 'انشاء زيارة ',
+                    icon: 'fa-solid fa-circle-plus',
+                    to: '/CreateVisit'
+
+                },
+                    {
+                    
+                    label: 'سجل الزيارات',
+                    icon: 'fa-solid fa-book',
+                    to:'/VisitsRecords'
+                }
+            ]},  
+            {
                 label: 'الخدمات',
                 items: [
                 {

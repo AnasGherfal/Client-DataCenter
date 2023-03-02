@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import CustomerTable from '@/components/Users/UsersRecord.vue';
+import VisitsRecord from '@/components/Visits/VisitsRecord.vue';
 </script>
 
 <template>
-      <CustomerTable/>
-
+<VisitsRecord/>
       
   </template>
   

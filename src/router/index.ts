@@ -21,14 +21,26 @@ const router = createRouter({
       path: '/users',
       name: 'users',
 
-      component: () => import('../views/UsersView.vue')
+      component: () => import('../views/Users/UsersView.vue')
     },
     {
       path: '/UsersRecord',
       name: 'UsersRecord',
 
       component: () => import('../views/Users/UsersRecordView.vue')
-    }
+    },
+    {
+      path: '/CreateVisit',
+      name: 'NewVisit',
+
+      component: () => import('../views/Visits/VisitView.vue')
+    },
+    {
+      path: '/VisitsRecords',
+      name: 'VisitsRecords',
+
+      component: () => import('../views/Visits/RecordView.vue')
+    },
   ]
 })
 
