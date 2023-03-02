@@ -135,32 +135,9 @@ const resetForm = () => {
         </Card>
     </div>
 </template>
-
 <style>
-.p-card-title{
-    text-align: right;
-
-}
-
-.p-inputtext	{
-    text-align: right;
-    border-radius: 10px;
-}
 
 
-.p-inputtext-filled	{
-    text-align: right;
-    align-items: end;
-    align-content: end;
 
-}
-error{
-    font-size: 12px; 
-    font-weight: bold;
-}
-
-.p-dropdown	{
-    border-radius: 10px;
-}
 
 </style>
