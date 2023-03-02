@@ -24,6 +24,10 @@ import TopBar from './components/TopBar.vue'
     </div>
     </div>
 
+    <!-- Loading  -->
+    <!-- <div id="loading">
+  <img id="loading-image" src="./assets/logos/LTT-logo.png" height="40" alt="Loading..." />
+</div> -->
 
 </template>
 
@@ -68,5 +72,21 @@ body{
 }
 
 
+/* #loading {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0.7;
+  background-color: #fff;
+  z-index: 99;
+}
 
+#loading-image {
+  z-index: 100;
+} */
 </style>
