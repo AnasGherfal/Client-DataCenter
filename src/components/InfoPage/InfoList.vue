@@ -20,5 +20,5 @@
       p{
         color: #1643a0 ;
       }
-
+     b{font-family: tajawal;}
     </style>

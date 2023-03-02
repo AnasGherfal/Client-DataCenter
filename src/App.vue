@@ -13,7 +13,7 @@ import TopBar from './components/TopBar.vue'
  
     <div style="width: 100%; margin-top: 75px;" class="absolute">
 
-    <div style="width:28%;height: 100%; margin-right: 1%; position: absolute;">
+    <div style="width:28%; height: 100%; margin-right: 1%; position: absolute;">
         <SideBar/>
     </div>
 
@@ -22,6 +22,7 @@ import TopBar from './components/TopBar.vue'
       <RouterView/>
 
     </div>
+    
     </div>
 
 
@@ -29,14 +30,6 @@ import TopBar from './components/TopBar.vue'
 
 <style >
 
-button{
-  cursor: pointer;
-  background-color: transparent;
-  border: 0;
-  padding: 0;
-  border:0;
-  outline: 0;
-}
 
 body{
   padding:0;

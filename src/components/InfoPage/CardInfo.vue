@@ -7,7 +7,7 @@ import DialogCard from './CardInfo/DialogCard.vue';
             <div class="bg-green-50 shadow-2 p-3 border-round">
                 <div class="flex justify-content-between mb-3">
                     <div>
-                        <span class="block text-green-700 font-medium mb-3">خدمات حالياً مفعلة</span>
+                        <span class="block text-green-700 font-medium mb-3 font-semibold">خدمات حالياً مفعلة</span>
                         <div class="text-green-700 font-medium text-xl">47 خدمة</div>
                     </div>
                     <div class="flex align-items-center justify-content-center bg-green-500 border-round" style="width:2.5rem;height:2.5rem">
@@ -22,7 +22,7 @@ import DialogCard from './CardInfo/DialogCard.vue';
             <div class="bg-orange-50 shadow-2 p-3 border-round">
                 <div class="flex  justify-content-between mb-3 ">
                     <div>
-                        <span class="block text-orange-600 font-medium mb-3">اقتراب انتهاء الصلاحية</span>
+                        <span class="block text-orange-600 font-medium mb-3 font-semibold">اقتراب انتهاء الصلاحية</span>
                         <div class="text-orange-600 font-medium text-xl">5 خدمات</div>
                     </div>
                     <div class="flex align-items-center justify-content-center bg-orange-500 border-round" style="width:2.5rem;height:2.5rem">
@@ -36,7 +36,7 @@ import DialogCard from './CardInfo/DialogCard.vue';
             <div class="bg-red-50 shadow-2 p-3 border-round">
                 <div class="flex justify-content-between mb-3">
                     <div>
-                        <span class="block text-red-600 font-medium mb-3">خدمات غير مفعلة</span>
+                        <span class="block text-red-600 font-medium mb-3 font-semibold">خدمات غير مفعلة</span>
                         <div class="text-red-600 font-medium text-xl">47 خدمة</div>
                     </div>
                        <DialogCard/>

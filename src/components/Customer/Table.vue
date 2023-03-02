@@ -12,7 +12,7 @@ const filters = ref({
 <template>
     <div>
        
-        <Card style="  margin-right: 5%; border-radius: 10px;">
+        <Card>
             <template #title>
                 سجل العملاء
             </template>

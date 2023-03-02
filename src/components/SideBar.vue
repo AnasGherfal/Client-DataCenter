@@ -1,5 +1,5 @@
 <template>
-        <Menu class="overflow-auto fixed  mt-4" style="border-radius:15px;width: 25%; height:475px;"  :model="items" />
+        <Menu class="overflow-auto fixed  mt-4" style="border-radius:15px;width: 25%; height: calc(100vh - 7.6rem);"  :model="items" />
 </template>
 
 <script lang="ts" setup>
@@ -10,7 +10,7 @@ import Menu from 'primevue/menu';
             {
                 label: 'لوحة المعلومات',
                 items: [{
-                    label: 'بطاقات الاحصائيات',
+                    label: 'الصفحة الرئيسية',
                     icon: 'pi pi-refresh',
                     to: '/'
                 },
@@ -85,7 +85,7 @@ import Menu from 'primevue/menu';
     border-radius: 20px;
     border-color: #175deb46;
     border-style:solid ;
-    border-width:1px;
+    border-width:3px;
     }
 }
 .p-menuitem-link:hover{
@@ -102,5 +102,9 @@ import Menu from 'primevue/menu';
 
     }
 
+    .p-menu .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content:hover {
+  background-color: rgba(84, 118, 199, 0.386);
+  border-radius: 20px;
+}
 // class="p-menuitem-link router-link-active router-link-active-exact"
 </style>
