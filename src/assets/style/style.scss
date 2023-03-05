@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap');
 
+body {
+
+    font-family: 'Tajawal', sans-serif;
+}
 
 .p-card{
      border-radius: 10px !important;
@@ -8,17 +12,15 @@
           font-family: 'Tajawal', sans-serif !important;
 
 }
-body {
 
-    font-family: 'Tajawal', sans-serif;
-}
 
 .p-float-label label{
     right: 0.5rem;
 }
 
 .p-inputtext	{
-    border-radius: 10px;
+    border-radius: 10px !important;
+    
 }
 error{
     font-size: 12px; 
@@ -26,5 +28,12 @@ error{
 }
 
 .p-dropdown	{
-    border-radius: 10px;
+    
+}
+
+.p-button	{
+    border-radius: 10px !important;
+}
+.p-button-icon{
+    padding-left: 5px ;
 }

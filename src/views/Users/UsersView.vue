@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import CustomerTable from '@/components/Users/UsersRecord.vue';
+import CustomerForm from '@/components/Users/Form.vue';
 </script>
 
 <template>
-      <CustomerTable/>
+      <CustomerForm />
 
       
   </template>

@@ -29,6 +29,8 @@ import Column from 'primevue/column';
 import Divider from 'primevue/divider';
 
 import Dropdown from 'primevue/dropdown';
+import Tooltip from 'primevue/tooltip';
+import AutoComplete from 'primevue/autocomplete';
 
 
 
@@ -45,13 +47,16 @@ app.component('Sidebar', Sidebar);
 app.component('Button', Button);
 app.component('Menu', Menu);
 app.component('Menubar', Menubar);
-app.use(ToastService);
 app.component('InputText', InputText);
 app.component('InputMask', InputMask);
 app.component('Card', Card);
 app.component('FileUpload', FileUpload);
 app.component('Toast', Toast);
 app.component('Dropdown', Dropdown);
+app.component('AutoComplete', AutoComplete);
+
+app.directive('tooltip', Tooltip);
+
 
 
 //------------- Data Table -------------------------
