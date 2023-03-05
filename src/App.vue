@@ -15,7 +15,7 @@ import TopBar from './components/TopBar.vue'
 
     <div style="width:28%; height: 100%; margin-right: 1%; position: absolute;">
         <SideBar/>
-    </div>
+    </div> 
 
     <div style="width: 73%; margin-right: 26%; padding: 25px;">
       <!-- main -->
@@ -38,7 +38,7 @@ import TopBar from './components/TopBar.vue'
 body{
   padding:0;
   margin: 0;
-  background-color: #dfdfdf;
+  background-color: #f0efef;
   font-family:' bold',Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;  
 }
 

@@ -54,6 +54,7 @@ import { useToast } from 'primevue/usetoast';
     background-color: red;
     height: 35px;
     width: 35px;
+    border-radius: 0.5rem;
 }
 .p-button:hover{
     background-color: red !important;
@@ -66,5 +67,17 @@ import { useToast } from 'primevue/usetoast';
 .p-overlaypanel{
     background-color: red;
 }
-
+.p-button {
+  color: #ffffff;
+  background: rgb(243, 33, 33);
+  border: 1px solid #F32121;
+    border-top-color: rgb(243, 33, 33);
+    border-right-color: rgb(243, 33, 33);
+    border-bottom-color: rgb(243, 33, 33);
+    border-left-color: rgb(243, 33, 33);
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  border-radius: 3px;
+}
 </style>

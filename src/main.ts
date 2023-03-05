@@ -31,6 +31,7 @@ import FileUpload from 'primevue/fileupload';
 import Toast from 'primevue/toast';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+import Divider from 'primevue/divider';
 
 import Dropdown from 'primevue/dropdown';
 import Tooltip from 'primevue/tooltip';
