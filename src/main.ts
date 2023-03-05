@@ -4,6 +4,11 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import PrimeVue from 'primevue/config';
+ 
+//--- axios ---//
+import * as Vue from 'vue' 
+import axios from 'axios'
+import VueAxios from 'vue-axios'
 
 import './assets/style/style.scss'
 
@@ -40,6 +45,9 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 app.use(PrimeVue)
+app.use(VueAxios, axios)
+app.provide('axios', app.config.globalProperties.axios)  // provide 'axios'
+
 app.use(ToastService);
 
 app.component('Sidebar', Sidebar);

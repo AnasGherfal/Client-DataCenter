@@ -1,20 +1,24 @@
-import { ref, computed } from 'vue'
+import { ref, computed, reactive, onMounted } from 'vue'
 import { defineStore } from 'pinia'
+import axios from "axios"
 
-export const useUsersStore = defineStore('counter', () => {
+export const useUsersStore = defineStore('user', () => {
 
-  const userInfo = ref(
-    [
-    {
-    Username:'',
+  const users = ref([]);
+
+  onMounted(async () =>{
+    await axios.get("http://localhost:3000/users")
+   .then(function(response) {
+       users.value = response.data;
+   console.log(users)
+})
+.catch(function(error){
+   console.log(error)
+ })
+
+})
 
 
+return{ users}
 
-
-  }
-])
-
-
-
-  return {userInfo}
 })

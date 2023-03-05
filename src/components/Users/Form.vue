@@ -4,9 +4,9 @@ import { email, minLength, required, helpers } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import {useUsersStore} from '@/stores/users'
+import axios from 'axios';
 
 const store = useUsersStore();
-
 const pp = ref<string>('');
 const state = reactive({
     name: "" as string,
@@ -19,6 +19,8 @@ const state = reactive({
     numberOfHours:'',
 
 })
+
+
 
 const rules = computed(() =>{
     return {
@@ -38,9 +40,17 @@ const v$ = useVuelidate(rules, state);
 const submitForm = async () => {
     const result = await v$.value.$validate();
 
-    // store.userInfo.unshift({
-    // Username: state.name.
-    // });
+    if(result){
+    axios.post("http://localhost:3000/users",state)
+   .then(function(response) {
+   console.log(store.users)
+})
+.catch(function(error){
+   console.log(error)
+ })
+}else{
+    console.log("empty")
+}
 
     if(result){
         toast.add({severity:'success', summary: 'Success Message', detail:'تمت إضافة العميل', life: 3000});
@@ -69,6 +79,7 @@ const resetForm = () => {
             <template #title>
                 إضافة عميل
             </template>
+            
             <template #content>
                 <form @submit.prevent="submitForm">
 
@@ -133,7 +144,8 @@ const resetForm = () => {
 
 
                 </div>
-                <Button @click="submitForm" icon="pi pi-check" label="إضافة" type="submit" style="background-color: navy;"/>
+                
+                <Button @click="submitForm" icon="pi pi-check" label="إضافة" style="background-color: navy;"/>
                 <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-secondary" style="margin-right: .5rem;  background-color: red;" />
                 <Toast position="bottom-right" />
 
@@ -142,6 +154,7 @@ const resetForm = () => {
             
 
         </Card>
+        
     </div>
 </template>
 <style>

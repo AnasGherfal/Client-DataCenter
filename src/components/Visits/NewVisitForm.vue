@@ -74,7 +74,7 @@ const resetForm = () => {
                     <div class="field col-12 md:col-4 ">
                         <span class="p-float-label" >
                             <InputText id="name" type="text" v-model="state.name"  />
-                            <label  for="name">اسم الخول </label>
+                            <label  for="name">اسم المخول </label>
                             <error  v-for="error in v$.name.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
                         </span>
 
