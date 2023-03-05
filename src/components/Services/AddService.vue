@@ -3,7 +3,8 @@ import { computed, reactive, ref } from 'vue';
 import { email, minLength, required, helpers } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
-
+import AutoComplete from 'primevue/autocomplete';
+import Divider from 'primevue/divider';
 const state = reactive({
     name: "",
     email: "",
@@ -19,8 +20,7 @@ const state = reactive({
 const rules = computed(() =>{
     return {
     name:{  required: helpers.withMessage('الاسم مطلوب',required)},
-    email: {required: helpers.withMessage('الايميل مطلوب',required), 
-    email: helpers.withMessage(' ليس عنوان بريد إلكتروني صالح', email)},
+    email: {required: helpers.withMessage('الايميل مطلوب',required), email: helpers.withMessage(' ليس عنوان بريد إلكتروني صالح', email)},
     address: {required: helpers.withMessage('العنوان مطلوب',required)},
     phoneNumber1: {required: helpers.withMessage('رقم الهاتف مطلوب',required)},
     }
@@ -56,18 +56,24 @@ const resetForm = () => {
 
 <template >
     <div>
-        <Card style="width: 90%; margin-top: 2rem; margin-right: 5%; border-radius: 10px;">
-            <template #title>
-               اضافة خدمة
+        <Card >
+            <template  #title>
+          
+                إضافة خدمة  
+             
+        
+                <Divider layout="horizontal" />
+
             </template>
+
+
             <template #content>
                 <form @submit.prevent="submitForm">
 
                 <div class="grid p-fluid ">
                     <div class="field col-12 md:col-4 ">
                         <span class="p-float-label" >
-                            <InputText id="name" type="text" v-model="state.name"  />
-                            <label  for="name">اسم </label>
+                            <AutoComplete v-model="selectedCountry1" :suggestions="filteredCountries" @complete="searchCountry($event)" optionLabel="name" />                            <label  for="name">اسم </label>
                             <error  v-for="error in v$.name.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
                         </span>
 
@@ -110,11 +116,11 @@ const resetForm = () => {
                     </div>
 
                     <div class="field col-12 md:col-4" style="height: 1%;">
-                    <FileUpload style="width: 250px; height: 40px; border-radius: 10px; background-color: white; color:black; border-color: gray"
+                    <FileUpload style="font-family: tajawal; width: 250px; height: 40px; border-radius: 10px; background-color: white; color:black; border-color: gray"
                     mode="basic"
                      name="file[]" 
                      url="./upload" 
-                     chooseLabel=" ارفق ملف " 
+                     chooseLabel=" ارفق ملف" 
                      cancelLabel="إلغاء"
                      :showUploadButton="false"
                      :showCancelButton="false"
@@ -125,8 +131,8 @@ const resetForm = () => {
 
 
                 </div>
-                <Button @click="submitForm" icon="pi pi-check" label="إضافة" type="submit"  style="background-color: green;" />
-                <Button @click="resetForm" icon="pi pi-refresh" label="مسح" class="p-button-secondary" style="margin-right: .5em; background-color: red; " />
+                <Button @click="submitForm" class="p-button-rounded p-button-success" icon="pi pi-check" label="إضافة" type="submit" />
+                <Button @click="resetForm" icon="pi pi-refresh" label="مسح" class="p-button-secondary p-button-rounded p-button-danger " style="margin-right: .5em;" />
                 <Toast position="bottom-right" />
 
             </form>
@@ -136,25 +142,11 @@ const resetForm = () => {
         </Card>
     </div>
 </template>
-
 <style>
-.p-card-title{
-    text-align: right;
-
-}
-
-.p-inputtext	{
-    text-align: right;
-    border-radius: 10px;
-}
 
 
-.p-inputtext-filled	{
-    text-align: right;
-    align-items: end;
-    align-content: end;
 
-}
+
 error{
     font-size: 12px; 
     font-weight: bold;
@@ -163,5 +155,12 @@ error{
 .p-dropdown	{
     border-radius: 10px;
 }
+.p-float-label > label{
+right: 0.5rem;
+color: #6c757d;
+transition-duration: 0.2s
+}
+/* .menuitem-content:hover {
 
+} */
 </style>

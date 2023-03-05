@@ -36,7 +36,8 @@ import Menu from 'primevue/menu';
                     icon: 'fa-solid fa-users',
                     to:'/UsersRecord'
                 }
-            ]},  {
+            ]},
+              {
                 label: 'الخدمات',
                 items: [
                 {
@@ -46,6 +47,23 @@ import Menu from 'primevue/menu';
                 {
                     label: 'اضافة خدمة جديدة',
                     icon: 'pi pi-plus-circle',
+                },
+            ]},{
+                label: 'الباقات',
+                items: [
+                {
+                    label: 'سجل الاشتراكات',
+                    icon: 'pi pi-server',
+                },
+                {
+                    label: 'اضافة اشتراك',
+                    icon: 'pi pi-plus-circle',
+                    to:'/AddService'
+                },
+                {
+                    label: 'الباقات',
+                    icon: 'pi pi-plus-circle',
+                    to: '/Addpackages'
                 },
             ]},
             
@@ -106,5 +124,11 @@ import Menu from 'primevue/menu';
   background-color: rgba(84, 118, 199, 0.386);
   border-radius: 20px;
 }
+
+.p-menu .p-menuitem:not(.p-highlight):not(.p-disabled).p-focus > .p-menuitem-content {
+    background-color: rgba(84, 118, 199, 0.386);
+  border-radius: 20px;
+}
+
 // class="p-menuitem-link router-link-active router-link-active-exact"
 </style>

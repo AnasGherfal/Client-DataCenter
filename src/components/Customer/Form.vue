@@ -124,8 +124,8 @@ const resetForm = () => {
 
 
                 </div>
-                <Button @click="submitForm" icon="pi pi-check" label="إضافة" type="submit" />
-                <Button @click="resetForm" icon="pi pi-refresh" label="مسح" class="p-button-secondary" style="margin-right: .5em;  background-color: #FF0000;" />
+                <Button @click="submitForm" class="p-button-rounded p-button-success" icon="pi pi-check" label="إضافة" type="submit" />
+                <Button @click="resetForm" icon="pi pi-refresh" label="مسح" class="p-button-secondary p-button-rounded p-button-danger " style="margin-right: .5em;" />
                 <Toast position="bottom-right" />
 
             </form>
@@ -152,6 +152,16 @@ error{
 right: 0.5rem;
 color: #6c757d;
 transition-duration: 0.2s
+}
+
+.ButtonS{
+    background-color: ;
+}
+
+.p-button:enabled:hover {
+  background: #0d89ec;
+  color: #ffffff;
+  border-color: #0d89ec;
 }
 /* .menuitem-content:hover {
 

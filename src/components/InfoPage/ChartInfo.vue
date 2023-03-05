@@ -1,5 +1,5 @@
 <template>
-        <div class="bg-white shadow-2 p-3 border-round mt-3">
+        <div class="bg-white shadow-2 p-3 border-round-2xl mt-3">
 
         <h3>مخطط الاحصائيات السنوي</h3>
         <Chart type="line" :data="basicData" :options="basicOptions" />

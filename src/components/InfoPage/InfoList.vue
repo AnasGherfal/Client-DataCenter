@@ -1,5 +1,5 @@
 <template>
-        <div class="bg-white shadow-2 p-3 border-round mt-3">
+        <div class="bg-white shadow-2 p-3 border-round-2xl mt-2">
 
 <Divider align="left">
     <div style="color: #1643a0 ;" class="inline-flex align-items-center">

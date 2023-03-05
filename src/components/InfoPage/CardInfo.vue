@@ -4,8 +4,9 @@ import DialogCard from './CardInfo/DialogCard.vue';
 <template>
     <div class="grid"> 
         <div class="col-12 md:col-6 lg:col-4">
-            <div class="bg-green-50 shadow-2 p-3 border-round">
+            <div class="bg-green-50 shadow-2 p-3 border-round-2xl">
                 <div class="flex justify-content-between mb-3">
+                    
                     <div>
                         <span class="block text-green-700 font-medium mb-3 font-semibold">خدمات حالياً مفعلة</span>
                         <div class="text-green-700 font-medium text-xl">47 خدمة</div>
@@ -18,8 +19,9 @@ import DialogCard from './CardInfo/DialogCard.vue';
                 <span class="text-500">......</span>
             </div>
         </div>
+
         <div class="col-12 md:col-6 lg:col-4">
-            <div class="bg-orange-50 shadow-2 p-3 border-round">
+            <div class="bg-orange-50 shadow-2 p-3 border-round-2xl" >
                 <div class="flex  justify-content-between mb-3 ">
                     <div>
                         <span class="block text-orange-600 font-medium mb-3 font-semibold">اقتراب انتهاء الصلاحية</span>
@@ -33,7 +35,7 @@ import DialogCard from './CardInfo/DialogCard.vue';
             </div>
         </div>
         <div class="col-12 md:col-6 lg:col-4">
-            <div class="bg-red-50 shadow-2 p-3 border-round">
+            <div class="bg-red-50 shadow-2 p-3 border-round-2xl">
                 <div class="flex justify-content-between mb-3">
                     <div>
                         <span class="block text-red-600 font-medium mb-3 font-semibold">خدمات غير مفعلة</span>

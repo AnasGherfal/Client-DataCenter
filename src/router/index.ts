@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import ChartInfo from '@/components/InfoPage/ChartInfo.vue'
-
+import AddService from '@/components/Services/AddService.vue'
+import Addpackages from '@/components/Services/Addpackages.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -28,6 +29,18 @@ const router = createRouter({
       name: 'UsersRecord',
 
       component: () => import('../views/Users/UsersRecordView.vue')
+    },
+    {
+      path: '/AddService',
+      name: 'AddService',
+
+      component: () => import('../components/Services/AddService.vue')
+    },
+    {
+      path: '/Addpackages',
+      name: 'Addpackages',
+
+      component: () => import('../components/Services/Addpackages.vue')
     }
   ]
 })
