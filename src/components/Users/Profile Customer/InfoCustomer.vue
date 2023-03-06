@@ -71,87 +71,73 @@ const resetForm = () => {
 
         }
 
-
+function focusname(){
+    if(state.name){
+     return true
+    }
+}
 </script>
 
 
 <template >
     <div>
-        <Card>
+        <Card >
             <template #title>
-                إضافة عميل
+                <i class="fa-solid fa-user"></i>
+                               البيانات الشخصية
                 <Divider/>
 
             </template>
             <template #content>
+                <div  style="height: 1%;">
+                     <img src="./assest/user-sign-icon-person-symbol-human-avatar-vector-12693195.png" style="height: 200px;width: 200px;"/>
+                     </div>
+                     <div>
                 <form @submit.prevent="submitForm">
 
-                <div class="grid p-fluid ">
-                    <div class="field col-12 md:col-4 ">
+                <div class="grid p-fluid" >
+                    <div class="field col-12 md:col-6 ">
                         <span class="p-float-label" >
-                            <InputText id="name" type="text" v-model="state.name"  />
-                            <label  for="name">اسم </label>
+                            <InputText id="name" type="text"  value="اشرف" disabled="true" />
+                            <label style="color: black;top: -.75rem; font-size: 12px;" for="name">اسم </label>
                             <error  v-for="error in v$.name.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
                         </span>
 
                     </div>
-                   <div class="field col-12 md:col-4">
+                   <div class="field col-12 md:col-6">
                         <span class="p-float-label ">
-                            <InputText id="email" type="text" v-model="state.email"  />
-                            <label for="email">البريد الإلكتروني</label>
+                            <InputText id="email" type="text" value="ashraf.howel@gmail.com" v-model="state.email" disabled="true" />
+                            <label style="color: black;top: -.75rem; font-size: 12px;" for="email">البريد الإلكتروني</label>
                             <error  v-for="error in v$.email.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
 
                         </span>
                     </div>
-                    <div class="field col-12 md:col-4">
+                    <div class="field col-12 md:col-6">
                         <span class="p-float-label ">
-                            <InputText id="address" type="text" v-model="state.address" />
-                            <label for="address" >العنوان</label>
+                            <InputText id="address" value="هون" type="text" v-model="state.address" disabled="true" />
+                            <label style="color: black;top: -.75rem; font-size: 12px;" for="address" >العنوان</label>
                             <error  v-for="error in v$.address.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
 
                         </span>
                     </div>
-                    <div class="field col-12 md:col-4">
+                    <div class="field col-12 md:col-6">
                         <span class="p-float-label ">
-                            <InputMask id ="phoneNum1" v-model="state.phoneNumber1" mask="999-999-9999" />
-                            <label for="phoneNum1">رقم هاتف </label>
+                            <InputMask id ="phoneNum1" value="092-687-7622" v-model="state.phoneNumber1" disabled="true" />
+                            <label style="color: black;top: -.75rem; font-size: 12px;" for="phoneNum1">رقم هاتف </label>
                             <error  v-for="error in v$.phoneNumber1.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
                         </span>
                     </div>
-                    <div class="field col-12 md:col-4">
+                    <div class="field col-12 md:col-6">
                         <span class="p-float-label ">
-                            <InputMask id="phoneNum2" v-model="state.phoneNumber2" mask=" 999-999-9999" />
-                            <label for="phoneNum2">رقم هاتف 2</label>
+                            <InputMask id="phoneNum2" v-model="state.phoneNumber2" mask=" 999-999-9999" disabled="true" />
+                            <label style="color: black;top: -.75rem; font-size: 12px;" for="phoneNum2">رقم هاتف 2</label>
                         </span>
                     </div>
-                    <div class="field col-12 md:col-4">
-                        <span class="p-float-label ">
-                            <Dropdown id="subscription" v-model="state.subscriptionType" placeholder="اختر الباقه" emptyMessage="لايوجد باقات"/>
-                            <label for="subscription">الباقة</label>
-                        </span>
-                    </div>
-
-                    <div class="field col-12 md:col-4" style="height: 1%;">
-                    <FileUpload style="font-family: tajawal; width: 250px; height: 40px; border-radius: 10px; background-color: white; color:black; border-color: gray"
-                    mode="basic"
-                     name="file[]" 
-                     url="./upload" 
-                     chooseLabel=" ارفق ملف" 
-                     cancelLabel="إلغاء"
-                     :showUploadButton="false"
-                     :showCancelButton="false"
-                     :maxFileSize="1000000"
-                     invalidFileSizeMessage="Exceeded the maximum file size"
-                     />
-                     </div>
-
 
                 </div>
-                <Button @click="submitForm" class="p-button-rounded p-button-success" icon="pi pi-check" label="إضافة" type="submit" />
-                <Button @click="resetForm" icon="pi pi-refresh" label="مسح" class="p-button-secondary p-button-rounded p-button-danger " style="margin-right: .5em;" />
-                <Toast position="bottom-right" />
 
             </form>
+        </div>
             </template>
             
 
@@ -159,10 +145,9 @@ const resetForm = () => {
         
     </div>
 </template>
+
+
 <style>
-
-
-
 error{
     font-size: 12px; 
     font-weight: bold;
@@ -178,12 +163,13 @@ transition-duration: 0.3s
 }
 
 
-
 .p-button:enabled:hover {
   background: #0d89ec;
   color: #ffffff;
   border-color: #0d89ec;
 }
+
+
 /* .menuitem-content:hover {
 
 } */
