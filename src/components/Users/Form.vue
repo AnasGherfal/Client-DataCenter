@@ -144,8 +144,8 @@ const resetForm = () => {
 
 
                 </div>
-                <Button @click="submitForm" class="p-button-rounded p-button-success" icon="pi pi-check" label="إضافة" type="submit" />
-                <Button @click="resetForm" icon="pi pi-refresh" label="مسح" class="p-button-secondary p-button-rounded p-button-danger " style="margin-right: .5em;" />
+                <Button @click="submitForm" class="p-button-rounded " icon="pi pi-check" label="إضافة" type="submit" />
+                <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-secondary p-button-rounded p-button-danger " style="margin-right: .5em;" />
                 <Toast position="bottom-right" />
 
             </form>
@@ -160,27 +160,15 @@ const resetForm = () => {
 
 
 
-error{
-    font-size: 12px; 
-    font-weight: bold;
-}
 
-.p-dropdown	{
-    border-radius: 10px;
-}
+
+
 .p-float-label > label{
 right: 0.5rem;
 color: black;
 transition-duration: 0.3s
 }
 
-
-
-.p-button:enabled:hover {
-  background: #0d89ec;
-  color: #ffffff;
-  border-color: #0d89ec;
-}
 /* .menuitem-content:hover {
 
 } */

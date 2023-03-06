@@ -13,7 +13,7 @@ body {
 
 }
 
-
+//---- Input---///
 .p-float-label label{
     right: 0.5rem;
 }
@@ -22,18 +22,31 @@ body {
     border-radius: 10px !important;
     
 }
+.p-multiSelect-label{
+    border-radius: 10px !important;
+
+}
 error{
-    font-size: 12px; 
-    font-weight: bold;
+    font-size: 12px !important; 
+    font-weight: bold !important;
 }
 
 .p-dropdown	{
-    
+    border-radius: 10px !important;
+
 }
+
+//--Buttons--//
 
 .p-button	{
     border-radius: 10px !important;
 }
 .p-button-icon{
     padding-left: 5px ;
+}
+
+
+//---Data Table---//
+.p-paginator .p-dropdown .p-dropdown-label {
+    padding-right: 0.5rem !important;
 }

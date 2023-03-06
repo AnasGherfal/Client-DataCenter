@@ -36,6 +36,10 @@ import Divider from 'primevue/divider';
 import Dropdown from 'primevue/dropdown';
 import Tooltip from 'primevue/tooltip';
 import AutoComplete from 'primevue/autocomplete';
+import Calendar from 'primevue/calendar';
+
+import MultiSelect from 'primevue/multiselect';
+
 
 
 
@@ -62,6 +66,8 @@ app.component('FileUpload', FileUpload);
 app.component('Toast', Toast);
 app.component('Dropdown', Dropdown);
 app.component('AutoComplete', AutoComplete);
+app.component('Calendar', Calendar);
+app.component('MultiSelect', MultiSelect);
 
 app.directive('tooltip', Tooltip);
 
