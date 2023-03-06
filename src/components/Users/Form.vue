@@ -174,9 +174,7 @@ color: black;
 transition-duration: 0.3s
 }
 
-.ButtonS{
-    background-color: ;
-}
+
 
 .p-button:enabled:hover {
   background: #0d89ec;
