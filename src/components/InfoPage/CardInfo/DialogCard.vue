@@ -1,34 +1,13 @@
-<template>
-    <div>
-        <Toast />
-
-        <Button type="button" icon="pi pi-ban"  @click="toggle" aria-haspopup="true" aria-controls="overlay_panel" />
-
-        <OverlayPanel ref="op" appendTo="body" :showCloseIcon="true" id="overlay_panel" style="width: 450px" :breakpoints="{'960px':'75vw'}">
-            <DataTable :value="products" v-model:selection="selectedProduct" selectionMode="single" :paginator="true" :rows="5" @rowSelect="onProductSelect" responsiveLayout="scroll" >
-                <Column field="name" header="Name" sortable style="width: 50%"></Column>
-                <Column header="Image" style="width: 20%">
-                    <template #body="slotProps">
-                        <img src="https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png" :alt="slotProps.data.image" class="product-image" />
-                    </template>
-                </Column>
-                <Column field="price" header="Price" sortable style="width: 30%">
-                    <template #body="slotProps">
-                        {{formatCurrency()}}
-                    </template>
-                </Column>
-            </DataTable>
-        </OverlayPanel>
-    </div>
-</template>
-
 <script setup lang="ts">
 import OverlayPanel from 'primevue/overlaypanel';
 import { ref, onMounted } from 'vue';
 import { useToast } from 'primevue/usetoast';
 
+import {useUsersStore} from '@/stores/users'
+import axios from 'axios';
 
-    
+const store = useUsersStore();
+ 
 
         const toast = useToast();
         const op = ref();
@@ -48,6 +27,24 @@ import { useToast } from 'primevue/usetoast';
 
 
 </script>
+
+<template>
+    <div>
+        <Toast />
+
+        <Button type="button" icon="pi pi-ban"  @click="toggle" aria-haspopup="true" aria-controls="overlay_panel" />
+
+        <OverlayPanel ref="op" appendTo="body" :showCloseIcon="true" id="overlay_panel" style="width: 450px" :breakpoints="{'960px':'75vw'}">
+            <DataTable :value="store.users" v-model:selection="selectedProduct" selectionMode="single" :paginator="true" :rows="5" @rowSelect="onProductSelect" responsiveLayout="scroll" >
+                <Column field="name" header="Name" sortable style="width: 50%"></Column>
+                <Column field="email" header="email" sortable style="width: 30%"> </Column>
+                <Column field="status" header="status" sortable style="width: 50%"></Column>
+            </DataTable>
+        </OverlayPanel>
+    </div>
+</template>
+
+
 
 <style lang="scss" scoped>
 .p-button{

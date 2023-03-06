@@ -5,7 +5,7 @@ import axios from "axios"
 export const useUsersStore = defineStore('user', () => {
 
   const users = ref([]);
-
+  const userActiv= ref([]);
   onMounted(async () =>{
     await axios.get("http://localhost:3000/users")
    .then(function(response) {

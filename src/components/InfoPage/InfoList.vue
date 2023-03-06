@@ -1,4 +1,8 @@
-<template>
+     <script setup lang="ts">
+    import Divider from 'primevue/divider';
+    </script> 
+    
+    <template>
         <div class="bg-white shadow-2 p-3 border-round-2xl mt-2">
 
 <Divider align="left">
@@ -12,9 +16,7 @@
 </div>
         </template>
 
-     <script setup lang="ts">
-    import Divider from 'primevue/divider';
-    </script>   
+  
 
     <style scoped>
       p{

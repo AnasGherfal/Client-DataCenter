@@ -4,9 +4,9 @@ import Button from 'primevue/button';
      
      <template >
     <div class="inline-flex " style=" height:30px; margin-top: -18px; margin-right:14px;">
-        <Button style="height: 40px; width: 40px;" icon="pi pi-moon" class="m-1 p-button-rounded p-button-outlined" />
-        <Button style="height: 40px; width: 40px;" icon="pi pi-list" class="m-1 p-button-rounded p-button-info p-button-outlined" />
-        <Button style="height: 40px; width: 40px;" icon="pi pi-user" class="m-1 p-button-rounded p-button-info p-button-outlined" />
+        <Button style="height: 40px; width: 40px;" icon="fa-solid fa-moon" class="m-1 p-button-secondary p-button-text" />
+        <Button style="height: 40px; width: 40px;" icon="fa-solid fa-user" class="m-1 p-button-secondary p-button-text " />
+        <Button style="height: 40px; width: 40px;" icon="fa-solid fa-list " class="m-1 p-button-secondary p-button-text" />
     </div>
      </template>  
      
