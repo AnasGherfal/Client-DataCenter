@@ -12,10 +12,13 @@ import VueAxios from 'vue-axios'
 
 import './assets/style/style.scss'
 
-import 'primevue/resources/themes/saga-blue/theme.css'
+//style
+import './assets/style/theme.css'
+
 import 'primevue/resources/primevue.min.css'
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.css' 
+
 import Sidebar from 'primevue/sidebar';
 import Button from 'primevue/button';
 
@@ -68,6 +71,7 @@ app.component('Dropdown', Dropdown);
 app.component('AutoComplete', AutoComplete);
 app.component('Calendar', Calendar);
 app.component('MultiSelect', MultiSelect);
+app.component('Divider', Divider);
 
 app.directive('tooltip', Tooltip);
 

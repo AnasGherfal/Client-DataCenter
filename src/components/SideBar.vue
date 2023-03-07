@@ -1,7 +1,3 @@
-<template>
-        <Menu class="overflow-auto fixed  mt-4" style="border-radius:15px;width: 25%; height: calc(100vh - 7.6rem);"  :model="items" />
-</template>
-
 <script lang="ts" setup>
 import { ref } from 'vue';
 import Menu from 'primevue/menu';
@@ -93,6 +89,11 @@ import Menu from 'primevue/menu';
 
 </script>
 
+<template>
+    <Menu class="overflow-auto fixed  mt-4" style="border-radius:15px;width: 25%; height: calc(100vh - 7.6rem);"  :model="items" />
+</template>
+
+
 
 <style lang="scss">
 .p-menuitem:hover{
@@ -146,6 +147,19 @@ import Menu from 'primevue/menu';
 .p-menu .p-menuitem:not(.p-highlight):not(.p-disabled).p-focus > .p-menuitem-content {
     background-color: rgba(84, 118, 199, 0.386);
   border-radius: 20px;
+}
+
+@media screen and (max-width: 600px) {
+.p-menuitem-text	{
+    display:none;
+}
+    
+}
+
+@media screen and (max-width: 300px) {
+    .p-menu{
+    display: none;
+}
 }
 
 // class="p-menuitem-link router-link-active router-link-active-exact"

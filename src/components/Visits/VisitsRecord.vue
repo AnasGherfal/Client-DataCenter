@@ -49,14 +49,6 @@ const filters = ref({
 
 <style>
 
-.p-paginator-next	{
-transform: rotate(180deg) !important;
 
-
-}
-
-.p-paginator-prev	{
-    transform: rotate(180deg) !important;
-}
 
 </style>

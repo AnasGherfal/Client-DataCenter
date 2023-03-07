@@ -3,9 +3,13 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import { email, minLength, required, helpers } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
+import { useUsersStore } from '@/stores/users';
+
+
+const store = useUsersStore();
 
 const state = reactive({
-    userName: "",
+    CustomerName: "",
     authorizedName: "",
     companionName: "",
     visitReason: "",
@@ -14,14 +18,12 @@ const state = reactive({
     expectedEndTime: "",
     visitDuration: "ساعه",
     price: "100دينار",
-
-
 })
 
 const minDate = ref(new Date());
 const visitReason = ref([
-{name: 'صيانه'},
-            {name: 'انهاء عمل'},
+    { name: 'صيانه' },
+    { name: 'انهاء عمل' },
 ])
 
 let today = new Date();
@@ -38,7 +40,7 @@ const searchUsers = () => {
 
 const rules = computed(() => {
     return {
-        userName: { required: helpers.withMessage('اسم العميل مطلوب', required) },
+        CustomerName: { required: helpers.withMessage('اسم العميل مطلوب', required) },
         authorizedName: { required: helpers.withMessage('رقم المخول مطلوب', required) },
     }
 })
@@ -57,15 +59,15 @@ const submitForm = async () => {
 }
 
 const resetForm = () => {
-    state.userName = '';
+    state.CustomerName = '';
     state.authorizedName = '';
     state.companionName = '';
     state.visitReason = "";
     state.visitDate = "";
     state.expectedStartTime = '';
     state.expectedEndTime = "",
-    state.visitDuration = "",
-    state.price = ""
+        state.visitDuration = "",
+        state.price = ""
 }
 
 
@@ -84,12 +86,15 @@ const resetForm = () => {
                 <form @submit.prevent="submitForm">
 
                     <div class="grid p-fluid ">
+
                         <div class="field col-12 md:col-4 ">
                             <span class="p-float-label">
-                                <AutoComplete id='userName' v-model="state.userName" :suggestions="filterdUsers"
-                                    @complete="searchUsers()" :dropdown="true" optionLabel="name" forceSelection />
-                                <label for="userName">اسم العميل</label>
-                                <error v-for="error in v$.userName.$errors" :key="error.$uid" class="p-error">{{
+                                <MultiSelect v-model="state.CustomerName" :options="store.users" optionLabel="name" :filter="true"
+                                 placeholder=" اختر عميل" 
+                                 :selectionLimit="1" />
+                                <label for="CustomerName">العملاء</label>
+
+                                <error v-for="error in v$.CustomerName.$errors" :key="error.$uid" class="p-error">{{
                                     error.$message }}</error>
 
                             </span>
@@ -98,10 +103,13 @@ const resetForm = () => {
 
                         <div class="field col-12 md:col-4 ">
                             <span class="p-float-label">
-                                <Dropdown id="authorizedName" type="text" v-model="state.authorizedName" />
-                                <label for="authorizedName">اسم المخول </label>
+                                <MultiSelect v-model="state.authorizedName" :options="store.users" optionLabel="email" placeholder="اختر" 
+                                emptySelectionMessage="ll" :selectionLimit="2" />
+                                <label for="authorizedName">المخولين</label>
+
                                 <error v-for="error in v$.authorizedName.$errors" :key="error.$uid" class="p-error">{{
                                     error.$message }}</error>
+
                             </span>
 
                         </div>
@@ -112,38 +120,41 @@ const resetForm = () => {
                                 <label for="companionName"> اسم المرافق </label>
 
                             </span>
-                        </div>                   
+                        </div>
 
 
                         <div class="field col-12 md:col-4">
                             <span class="p-float-label ">
 
-                                <Calendar inputId="visitDate" v-model="state.visitDate" dateFormat="yy/mm/dd" selectionMode="single" :minDate="minDate"
-                                     :showButtonBar="true" :manualInput="false" :disabledDates="invalidDates" />
-                                    <label for="visitDate">تاريخ الزيارة</label>
-                            </span>
-                        </div>
-
-                        <div  class="field col-12 md:col-4">
-                            <span class="p-float-label ">
-
-                <Calendar inputId="expectedStartTime" v-model="state.expectedStartTime" :showTime="true" hourFormat="24" :timeOnly="true" :stepMinute="5"/>
-                <label for="expectedStartTime">وقت بداية الزيارة</label>
-
+                                <Calendar inputId="visitDate" v-model="state.visitDate" dateFormat="yy/mm/dd"
+                                    selectionMode="single" :minDate="minDate" :showButtonBar="true" :manualInput="false"
+                                    :disabledDates="invalidDates" />
+                                <label for="visitDate">تاريخ الزيارة</label>
                             </span>
                         </div>
 
                         <div class="field col-12 md:col-4">
                             <span class="p-float-label ">
-                <Calendar inputId="time24" v-model="state.expectedEndTime" :showTime="true" hourFormat="24" :timeOnly="true"  />
-                <label for="time24">وقت انتهاء الزيارة</label>
+
+                                <Calendar inputId="expectedStartTime" v-model="state.expectedStartTime" :showTime="true"
+                                    hourFormat="24" :timeOnly="true" :stepMinute="5" />
+                                <label for="expectedStartTime">وقت بداية الزيارة</label>
 
                             </span>
                         </div>
 
                         <div class="field col-12 md:col-4">
                             <span class="p-float-label ">
-                                <Dropdown id=""  v-model="state.visitReason" :options="visitReason" optionLabel="name"/>
+                                <Calendar inputId="time24" v-model="state.expectedEndTime" :showTime="true" hourFormat="24"
+                                    :timeOnly="true" />
+                                <label for="time24">وقت انتهاء الزيارة</label>
+
+                            </span>
+                        </div>
+
+                        <div class="field col-12 md:col-4">
+                            <span class="p-float-label ">
+                                <Dropdown id="" v-model="state.visitReason" :options="visitReason" optionLabel="name" />
                                 <label for="phoneNum1">سبب الزيارة </label>
 
                             </span>
@@ -152,23 +163,22 @@ const resetForm = () => {
                         <div class="field col-12 md:col-2">
                             <span class="p-float-label ">
                                 <InputText id="companionName" v-model="state.visitDuration" :readonly="true" />
-                                <label for="companionName"> مدة الزيارة  </label>
+                                <label for="companionName"> مدة الزيارة </label>
 
                             </span>
-                        </div>    
+                        </div>
                         <div class="field col-12 md:col-2">
                             <span class="p-float-label ">
                                 <InputText id="companionName" v-model="state.price" :readonly="true" />
-                                <label for="companionName"> السعر  </label>
+                                <label for="companionName"> السعر </label>
 
                             </span>
-                        </div>   
-
-
-
+                        </div>
+                        
 
                     </div>
 
+                    <h3>إضافة مرافق </h3>
 
                     <Button @click="submitForm" icon="pi pi-check" label="إضافة" type="submit" />
                     <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-secondary"
@@ -183,11 +193,17 @@ const resetForm = () => {
         </Card>
     </div>
 </template>
-<style>
+<style >
+.p-button-icon {
+    padding-left: 0;
+}
 
 .p-datepicker.p-datepicker-timeonly .p-timepicker {
     border-top: 0 none;
     direction: ltr;
+
+
 }
+
 
 </style>

@@ -1,8 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import ChartInfo from '@/components/InfoPage/ChartInfo.vue'
-import AddService from '@/components/Services/AddService.vue'
-import Addpackages from '@/components/Services/Addpackages.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -53,6 +51,12 @@ const router = createRouter({
       name: 'VisitsRecords',
 
       component: () => import('../views/Visits/RecordView.vue')
+    },
+    {
+      path: '/SettingsView',
+      name: 'SettingsView',
+
+      component: () => import('../views/Settings/SettingsView.vue')
     },
   ]
 })

@@ -16,7 +16,6 @@ import TabPanel from 'primevue/tabpanel';
                         <i class="ml-2 pi pi-user"></i>
                         <span>المخولين</span>
                     </template>
-                    <RouterView/>
                      <!-- المخولون الخاصون بالعميل -->
                 </TabPanel>
                 <TabPanel>

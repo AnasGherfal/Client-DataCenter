@@ -5,7 +5,6 @@ import {useUsersStore} from '@/stores/users'
 import axios from 'axios';
 
 const store = useUsersStore();
-let users = ref([{}]);
 
 
 const filters = ref({
@@ -59,12 +58,12 @@ const columns = ref([
                     <div class="table-header flex flex-column md:flex-row justiify-content-between">
 						<span class="p-input-icon-left p-float-label ">
                             <i class="fa-solid fa-magnifying-glass" />
-                            <InputText v-model="filters['global'].value" placeholder="مثال: اشرف" />
+                            <InputText v-model="filters['global'].value" placeholder="" />
                             <label for="phoneNum1"> البحث </label>
 
                         </span>
 
-                        <div style="text-align:left; padding: right: 5rem;;">
+                        <div style="text-align:left; margin-right: 0.5rem;;">
 
                     <MultiSelect :modelValue="selectedColumns" :options="columns" optionLabel="header" @update:modelValue="onToggle"
                         placeholder="حدد الأعمدة" style="width: 10em"/>
@@ -91,15 +90,7 @@ const columns = ref([
 
 <style>
 
-.p-paginator-next	{
-transform: rotate(180deg) !important;
 
-
-}
-
-.p-paginator-prev	{
-    transform: rotate(180deg) !important;
-}
 
 .p-datatable .p-datatable-tbody > tr > td {
     text-align: right;

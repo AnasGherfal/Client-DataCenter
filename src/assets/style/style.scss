@@ -38,9 +38,7 @@ error{
 
 //--Buttons--//
 
-.p-button	{
-    border-radius: 10px !important;
-}
+
 
 
 
@@ -48,3 +46,22 @@ error{
 .p-paginator .p-dropdown .p-dropdown-label {
     padding-right: 0.5rem !important;
 }
+.p-paginator-next	{
+    transform: rotate(180deg) !important;
+    
+    
+    }
+    
+    .p-paginator-prev	{
+        transform: rotate(180deg) !important;
+    }
+    .p-datatable .p-datatable-tbody > tr > td {
+        text-align: right;
+        border: 1px solid #e9ecef;
+        border-width: 0 0 1px 0;
+        padding: 1rem 1rem;
+    }
+
+    .p-multiselect-panel .p-multiselect-items .p-multiselect-item .p-checkbox {
+        margin-left: 0.5rem;
+    }

@@ -89,13 +89,15 @@ function focusname(){
 
             </template>
             <template #content>
+                <div >
+
                 <div  style="height: 1%;">
                      <img src="./assest/user-sign-icon-person-symbol-human-avatar-vector-12693195.png" style="height: 200px;width: 200px;"/>
                      </div>
                      <div>
                 <form @submit.prevent="submitForm">
 
-                <div class="grid p-fluid" >
+                <div class="grid p-fluid " >
                     <div class="field col-12 md:col-6 ">
                         <span class="p-float-label" >
                             <InputText id="name" type="text"  value="اشرف" disabled="true" />
@@ -137,6 +139,7 @@ function focusname(){
                 </div>
 
             </form>
+        </div>
         </div>
             </template>
             

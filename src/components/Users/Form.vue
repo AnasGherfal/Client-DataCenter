@@ -16,7 +16,7 @@ const state = reactive({
     phoneNumber1: '',
     phoneNumber2: '',
     address: '',
-    File: '',
+    file: '',
     subscriptionType: '',
     numberOfHours:'',
 
@@ -66,7 +66,7 @@ const resetForm = () => {
     state.phoneNumber1 = '';
     state.phoneNumber2 = '';
     state.address = '';
-    state.File = '';
+    state.file = '';
 
 
         }
@@ -124,15 +124,10 @@ const resetForm = () => {
                             <label for="phoneNum2">رقم هاتف 2</label>
                         </span>
                     </div>
-                    <div class="field col-12 md:col-4">
-                        <span class="p-float-label ">
-                            <Dropdown id="subscription" v-model="state.subscriptionType" placeholder="اختر الباقه" emptyMessage="لايوجد باقات"/>
-                            <label for="subscription">الباقة</label>
-                        </span>
-                    </div>
 
-                    <div class="field col-12 md:col-4" style="height: 1%;">
-                    <FileUpload style="font-family: tajawal; width: 250px; height: 40px; border-radius: 10px; background-color: white; color:black; border-color: gray"
+
+                    <div class="field col-12 md:col-4" >
+                    <FileUpload class="field col-12 md:col-4" v-model="state.file" style="width: 270px; height: 40px; background-color: white; color:black; border-color: lightgray"
                     mode="basic"
                      name="file[]" 
                      url="./upload" 
@@ -147,8 +142,8 @@ const resetForm = () => {
 
 
                 </div>
-                <Button @click="submitForm" class="p-button-rounded " icon="pi pi-check" label="إضافة" type="submit" />
-                <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-secondary p-button-rounded p-button-danger " style="margin-right: .5em;" />
+                <Button @click="submitForm"  icon="pi pi-check" label="إضافة" type="submit" />
+                <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-secondary" style="margin-right: .5em; background-color: red;" />
                 <Toast position="bottom-right" />
 
             </form>
@@ -159,10 +154,12 @@ const resetForm = () => {
         
     </div>
 </template>
-<style>
+<style scoped>
 
 
-
+.p-button-icon{
+    padding-left: 0.5rem;
+}
 
 
 

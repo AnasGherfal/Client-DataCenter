@@ -20,8 +20,8 @@ import ProFile from './components/Users/ProFile.vue'
 
     <div style="width: 73%; margin-right: 26%; padding: 25px;">
       <!-- main -->
-      <!-- <RouterView/> -->
-  <ProFile/>
+      <RouterView/>
+  <!-- <ProFile/> -->
     </div>
     
     </div>
@@ -39,7 +39,7 @@ import ProFile from './components/Users/ProFile.vue'
 body{
   padding:0;
   margin: 0;
-  background-color: #f0efef;
+  background-color: #f2f2f2;
   font-family:' bold',Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;  
 }
 
