@@ -37,10 +37,10 @@ const router = createRouter({
       component: () => import('../components/Services/AddService.vue')
     },
     {
-      path: '/Addpackages',
-      name: 'Addpackages',
+      path: '/Services',
+      name: 'Services',
 
-      component: () => import('../components/Services/Addpackages.vue')
+      component: () => import('../views/Services.vue')
     },
     {
       path: '/CreateVisit',

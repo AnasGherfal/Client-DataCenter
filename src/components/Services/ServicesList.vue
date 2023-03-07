@@ -1,27 +1,63 @@
 <template>
     <div class="grid"> 
         <div  v-for="servic in store.Services"
-          :key="servic.id" class="col-12 md:col-6 lg:col-4">
-            <div class="bg-green-50 shadow-2 p-3 border-round">
-                <div class="flex justify-content-between mb-3">
-                    <div>
-                        <span class="block text-green-700 font-medium mb-3 font-semibold">{{ servic.name }}</span>
-                        <div class="text-green-700 font-medium text-xl">{{ servic.pricePerYear }}</div>
+          :key="servic.id" class="col-12 md:col-6 lg:col-4" >
+          <Button style="height: 25px; width: 25px;" icon=" fa-solid fa-pen text-blue-800" class="absolute mt-2 mr-2 p-button-secondary p-button-text" />
+
+            <div style="height-min: 450px;" class="bg-white shadow-2 p-5 border-round-2xl">  
+    
+                    <div class="justify-content-between ">
+                         <div>
+                        <span class="block text-center text-blue-800 text-3xl  font-bold">{{ servic.name }}</span>
+                        <div class="text-center mb-3  text-blue-800">عدد الزيارات المتاحة في هده الباقة في الشهر : {{ servic.monthlyVistsShare }}</div>
+                        <div class="text-blue-800 text-center font-semibold text-4xl">{{ servic.pricePerYear }}<span class="text-xs mr-1 text-blue-800">د.ل</span></div>
                     </div>
-                    <div class="flex align-items-center justify-content-center bg-green-500 border-round" style="width:2.5rem;height:2.5rem">
-                        <i class="pi pi-bolt text-green-50 text-xl"></i>
-                    </div>
+                    <Divider/>
+                    
                 </div>
-                <span class="text-green-500 font-medium">{{ servic.Dns }}</span>
-                <span class="text-500">......</span>
+                <p class="font-bold text-blue-800">خواص هده الباقة :</p>
+
+                <div style="direction:ltr;" class="text-center font-bold text-l"> 
+                <i class="text-green-600 fa-solid fa-circle-check mr-2"></i>  
+                <span>(Acp Port): {{ servic.AcpPort }}</span>
+                <span class="text-green-500 font-medium"></span>
+                </div>
+
+                <div class="text-center font-semibold text-l">   
+                <span>DNS : {{ servic.Dns }}</span>
+                <i class="text-green-600 fa-solid fa-circle-check mr-2"></i>
+                <span class="text-green-500 font-medium"></span>
+                </div>
+
+                
+
+                <div style="direction:ltr;" class="text-center font-bold text-l">   
+                    <i class="text-green-600 fa-solid fa-circle-check mr-1"></i>
+                <span> (Amount Of Power) : {{servic.amountOfPower}} </span>
+                <span class="text-green-500 font-medium"></span>
+                </div>
+
+           
+
+
             </div>
+
         </div>
         </div>
         </template>
 
 <script setup lang="ts">
 import { useCounterStore } from '@/stores/packages'
+import Divider from 'primevue/divider';
 
 const store = useCounterStore()
 
 </script>
+
+<style scoped>
+span{
+    color: green;
+}
+
+
+</style>

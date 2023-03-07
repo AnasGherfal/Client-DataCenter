@@ -53,18 +53,6 @@ import Menu from 'primevue/menu';
                     icon: 'fa-solid fa-book',
                     to:'/VisitsRecords'
                 }
-            ]},  
-            {
-                label: 'الخدمات',
-                items: [
-                {
-                    label: 'سجل الخدمات',
-                    icon: 'pi pi-server',
-                },
-                {
-                    label: 'اضافة خدمة جديدة',
-                    icon: 'pi pi-plus-circle',
-                },
             ]}
             ,{
                 label: 'الباقات',
@@ -81,7 +69,7 @@ import Menu from 'primevue/menu';
                 {
                     label: 'الباقات',
                     icon: 'pi pi-plus-circle',
-                    to: '/Addpackages'
+                    to: '/Services'
                 },
             ]},
             

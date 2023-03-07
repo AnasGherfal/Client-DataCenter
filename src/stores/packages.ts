@@ -29,16 +29,6 @@ const Services =ref([
     pricePerYear:'3400'
   },
   {
-    id:'Full Rack',
-    name:' استضافة  الخزانة(Full Rack)',
-    amountOfPower:'32امبير- 230 فولت',
-    AddamountOfPower:'32امبير- 230 فولت',
-    AcpPort:'12 منف> اضافي  12 منف> اساسي',
-    Dns:'(rDNS&DNS)12',
-    monthlyVistsShare:'10',
-    pricePerYear:'22000'
-  },
-  {
     id:'Cabinet 2',
     name:'غرف مخصصة لعدد 2 Cabinet',
     amountOfPower:'28 امبير ,230 فولت رئيسية عدد 2',
@@ -48,6 +38,16 @@ const Services =ref([
     monthlyVistsShare:'15',
     pricePerYear:'46000'
   }, 
+  {
+    id:'Full Rack',
+    name:' استضافة  الخزانة(Full Rack)',
+    amountOfPower:'32امبير- 230 فولت',
+    AddamountOfPower:'32امبير- 230 فولت',
+    AcpPort:'12 منف> اضافي  12 منف> اساسي',
+    Dns:'(rDNS&DNS)12',
+    monthlyVistsShare:'10',
+    pricePerYear:'22000'
+  },
   {
     id:'Cabinet 4',
     name:'غرف مخصصة لعدد 4 Cabinet',

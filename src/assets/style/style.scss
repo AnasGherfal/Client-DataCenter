@@ -18,6 +18,16 @@ body {
     right: 0.5rem;
 }
 
+.p-float-label label {
+    position: absolute;
+    pointer-events: none;
+    top: 50%;
+    margin-top: -1rem;
+    transition-property: all;
+    transition-timing-function: ease;
+    line-height: 1;
+  }
+
 .p-inputtext	{
     border-radius: 10px !important;
     

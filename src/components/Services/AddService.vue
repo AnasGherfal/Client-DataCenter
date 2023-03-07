@@ -51,11 +51,11 @@ const resetForm = () => {
         }
 
 
-</script>
+        </script>
 
 
 <template >
-    <div>
+     <div>
         <Card >
             <template  #title>
           
@@ -78,6 +78,7 @@ const resetForm = () => {
                         </span>
 
                     </div>
+                    
                     <div class="field col-12 md:col-4">
                         <span class="p-float-label ">
                             <InputText id="email" type="text" v-model="state.email"  />
@@ -86,6 +87,7 @@ const resetForm = () => {
 
                         </span>
                     </div>
+
                     <div class="field col-12 md:col-4">
                         <span class="p-float-label ">
                             <InputText id="address" type="text" v-model="state.address" />
