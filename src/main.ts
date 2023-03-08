@@ -37,6 +37,7 @@ import AutoComplete from 'primevue/autocomplete';
 import Calendar from 'primevue/calendar';
 
 import MultiSelect from 'primevue/multiselect';
+import InputNumber from 'primevue/inputnumber';
 
 
 
@@ -65,6 +66,7 @@ app.component('AutoComplete', AutoComplete);
 app.component('Calendar', Calendar);
 app.component('MultiSelect', MultiSelect);
 app.component('Divider', Divider);
+app.component('InputNumber', InputNumber);
 
 app.directive('tooltip', Tooltip);
 

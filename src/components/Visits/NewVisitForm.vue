@@ -188,21 +188,7 @@ const resetForm = () => {
     padding-left: 0;
 }
 
-.p-datepicker .p-timepicker {
-    border-top: 1px solid #ebebeb;
-    padding: 0.5rem;
-    direction: ltr;
-    text-align: right;
-}
-.p-fluid .p-calendar .p-inputtext {
-    width: 1%;
-    direction: ltr;
-    text-align: end;
-}
 
-.p-datepicker table td{ padding: 1%; }
-.p-datepicker table td > span { width: 40px;
-height: 30px; }
 
 
 
