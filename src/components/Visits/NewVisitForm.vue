@@ -13,9 +13,8 @@ const state = reactive({
     authorizedName: "",
     companionName: "",
     visitReason: "",
-    visitDate: "",
-    expectedStartTime: "",
-    expectedEndTime: "",
+    expectedStartVisit:"" ,
+    expectedEndVisit:  "",
     visitDuration: "ساعه",
     price: "100دينار",
 })
@@ -26,9 +25,14 @@ const visitReason = ref([
     { name: 'انهاء عمل' },
 ])
 
+
 let today = new Date();
-let month = today.getMonth();
-let year = today.getFullYear();
+let hours = today.getHours();
+
+
+
+  
+ 
 
 const invalidDates = ref();
 
@@ -63,21 +67,16 @@ const resetForm = () => {
     state.authorizedName = '';
     state.companionName = '';
     state.visitReason = "";
-    state.visitDate = "";
-    state.expectedStartTime = '';
-    state.expectedEndTime = "",
+    state.expectedStartVisit = "";
+    state.expectedEndVisit =  "",
         state.visitDuration = "",
         state.price = ""
 }
 
-
-
-
 </script>
 
-
 <template >
-    <div>
+    <div>{{  }}
         <Card>
             <template #title>
                 إنشاء زيارة
@@ -126,29 +125,20 @@ const resetForm = () => {
                         <div class="field col-12 md:col-4">
                             <span class="p-float-label ">
 
-                                <Calendar inputId="visitDate" v-model="state.visitDate" dateFormat="yy/mm/dd"
-                                    selectionMode="single" :minDate="minDate" :showButtonBar="true" :manualInput="false"
-                                    :disabledDates="invalidDates" />
-                                <label for="visitDate">تاريخ الزيارة</label>
+                                <Calendar inputId="expectedStartVisit" v-model="state.expectedStartVisit" dateFormat="yy/mm/dd" :showTime="true"
+                                    selectionMode="single" :minDate="minDate" :showButtonBar="true" :manualInput="true" 
+                                    :stepMinute="5" hourFormat="12" :disabledDates="invalidDates" />
+                                <label for="expectedStartVisit">تاريخ بداية الزيارة المتوقع</label>
                             </span>
                         </div>
 
                         <div class="field col-12 md:col-4">
                             <span class="p-float-label ">
 
-                                <Calendar inputId="expectedStartTime" v-model="state.expectedStartTime" :showTime="true"
-                                    hourFormat="24" :timeOnly="true" :stepMinute="5" />
-                                <label for="expectedStartTime">وقت بداية الزيارة</label>
-
-                            </span>
-                        </div>
-
-                        <div class="field col-12 md:col-4">
-                            <span class="p-float-label ">
-                                <Calendar inputId="time24" v-model="state.expectedEndTime" :showTime="true" hourFormat="24"
-                                    :timeOnly="true" />
-                                <label for="time24">وقت انتهاء الزيارة</label>
-
+                                <Calendar inputId="expectedEndVisit" v-model="state.expectedEndVisit" dateFormat="yy/mm/dd" :showTime="true"
+                                    selectionMode="single" :minDate="minDate" :showButtonBar="true" :manualInput="true" 
+                                    :stepMinute="5" hourFormat="12" :disabledDates="invalidDates" />
+                                <label for="expectedEndVisit">تاريخ انتهاء الزيارة المتوقع</label>
                             </span>
                         </div>
 
@@ -198,12 +188,22 @@ const resetForm = () => {
     padding-left: 0;
 }
 
-.p-datepicker.p-datepicker-timeonly .p-timepicker {
-    border-top: 0 none;
+.p-datepicker .p-timepicker {
+    border-top: 1px solid #ebebeb;
+    padding: 0.5rem;
     direction: ltr;
-
-
+    text-align: right;
 }
+.p-fluid .p-calendar .p-inputtext {
+    width: 1%;
+    direction: ltr;
+    text-align: end;
+}
+
+.p-datepicker table td{ padding: 1%; }
+.p-datepicker table td > span { width: 40px;
+height: 30px; }
+
 
 
 </style>

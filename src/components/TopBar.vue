@@ -8,7 +8,7 @@ import { ref } from 'vue';
 </script>
 
 <template>
-    <div class="
+    <div class=" scalein   animation-duration-1000
             	fixed
                 z-5 
                 flex 
