@@ -1,10 +1,14 @@
 <template>
     <div class="grid"> 
         <div  v-for="servic in store.Services"
-          :key="servic.id" class="col-12 md:col-6 lg:col-4" >
-          <Button style="height: 25px; width: 25px;" icon=" fa-solid fa-pen text-blue-800" class="absolute mt-2 mr-2 p-button-secondary p-button-text" />
+        :key="servic.id" class="col-12 md:col-6 lg:col-4" >
+        <card>
+            <template #header>
+            <Button style="height: 25px; width: 25px;" icon=" fa-solid fa-pen text-blue-800" class="absolute mt-2 mr-2 p-button-secondary p-button-text" />
+        </template>
+            <template #content>
 
-            <div style="height-min: 450px;" class="bg-white shadow-2 p-5 border-round-2xl">  
+            <div style="height-min: 450px;" >  
     
                     <div class="justify-content-between ">
                          <div>
@@ -13,7 +17,7 @@
                         <div class="text-blue-800 text-center font-semibold text-4xl">{{ servic.pricePerYear }}<span class="text-xs mr-1 text-blue-800">د.ل</span></div>
                     </div>
                     <Divider/>
-                    
+                  
                 </div>
                 <p class="font-bold text-blue-800">خواص هده الباقة :</p>
 
@@ -42,7 +46,10 @@
 
             </div>
 
-        </div>
+        </template>
+    </card>
+    
+    </div>
         </div>
         </template>
 

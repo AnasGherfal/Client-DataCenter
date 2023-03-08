@@ -4,7 +4,7 @@ import { email, minLength, required, helpers } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import { useUsersStore } from '@/stores/users';
-
+import addCompanion from './addCompanion.vue';
 
 const store = useUsersStore();
 
@@ -148,7 +148,6 @@ const resetForm = () => {
                                 <Calendar inputId="time24" v-model="state.expectedEndTime" :showTime="true" hourFormat="24"
                                     :timeOnly="true" />
                                 <label for="time24">وقت انتهاء الزيارة</label>
-
                             </span>
                         </div>
 
@@ -159,8 +158,11 @@ const resetForm = () => {
 
                             </span>
                         </div>
+                        <div class="field col-12 md:col-4">
 
-                        <div class="field col-12 md:col-2">
+                        <addCompanion/>
+                             </div>
+                     <div class="field col-12 md:col-2">
                             <span class="p-float-label ">
                                 <InputText id="companionName" v-model="state.visitDuration" :readonly="true" />
                                 <label for="companionName"> مدة الزيارة </label>
@@ -174,20 +176,20 @@ const resetForm = () => {
 
                             </span>
                         </div>
-                        
-
                     </div>
-
-                    <h3>إضافة مرافق </h3>
-
-                    <Button @click="submitForm" icon="pi pi-check" label="إضافة" type="submit" />
-                    <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-secondary"
-                        style="margin-right: .5rem;  background-color: red;" />
-                    <Toast position="bottom-right" />
-
+                    
+                    <h3>
+                        المرافقين :
+                    </h3>
+                    
+                   <Button @click="submitForm" icon="pi pi-check" label="إضافة" type="submit" />
+                   <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-secondary"
+                   style="margin-right: .5rem;  background-color: red;" />
+                   <Toast position="bottom-right" />
+                   
                 </form>
+                
             </template>
-
 
 
         </Card>
@@ -201,8 +203,6 @@ const resetForm = () => {
 .p-datepicker.p-datepicker-timeonly .p-timepicker {
     border-top: 0 none;
     direction: ltr;
-
-
 }
 
 

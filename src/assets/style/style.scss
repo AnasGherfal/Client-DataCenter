@@ -27,7 +27,9 @@ body {
     transition-timing-function: ease;
     line-height: 1;
   }
-
+  .p-button .p-button-icon-left {
+    margin-left: .5rem;
+  }
 .p-inputtext	{
     border-radius: 10px !important;
     

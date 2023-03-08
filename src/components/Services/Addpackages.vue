@@ -138,15 +138,14 @@ const openModal = () => {
 
 </form>
 <template #footer>
-    <Button @click="submitForm" class="p-button-rounded p-button-success" icon="pi pi-check" label="إضافة" type="submit" />
-<Button @click="resetForm" icon="pi pi-refresh" label="مسح" class="p-button-secondary p-button-rounded p-button-danger " style="margin-right: .5em;" />
+    <Button @click="submitForm" class="p-button-primry" icon="pi pi-check" label="إضافة" type="submit" />
+<Button @click="resetForm" icon="pi pi-refresh" label="مسح" class="p-button-secondary" style="margin-right: .5em;background-color: red;" />
 <Toast position="bottom-right" />
-                <!-- <Button label="No" icon="pi pi-times" @click="closeModal" class="p-button-text"/>
-                <Button label="Yes" icon="pi pi-check" @click="closeModal" autofocus /> -->
+
             </template>
         </Dialog>
 
-    <Button @click="openModal" style="height: 40px; width: 40px;" icon="fa-solid fa-plus text-green-50" class="bg-blue-800 fixed mb-4 ml-4 bottom-0 left-0 p-button-secondary p-button-text" />
+    <Button @click="openModal" style="height: 40px; width: 40px;" icon="fa-solid fa-plus text-green-50" class="fixed mb-4 ml-4 bottom-0 left-0 p-button-primry " />
 </template>
 
 
