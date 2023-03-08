@@ -127,7 +127,7 @@ const resetForm = () => {
 
 
                     <div class="field col-12 md:col-4" >
-                    <FileUpload class="field col-12 md:col-4" v-model="state.file" style="width: 270px; height: 40px; background-color: white; color:black; border-color: lightgray"
+                    <FileUpload class="field col-12 md:col-4" v-model="state.file" style="width: 100%; height: 40px; background-color: white; color:black; border-color: lightgray"
                     mode="basic"
                      name="file[]" 
                      url="./upload" 

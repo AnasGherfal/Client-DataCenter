@@ -78,7 +78,7 @@ import Menu from 'primevue/menu';
 </script>
 
 <template>
-    <Menu class="overflow-auto fixed  mt-4" style="border-radius:15px;width: 25%; height: calc(100vh - 7.6rem);"  :model="items" />
+    <Menu class="overflow-auto fixed  mt-4 fadeinright animation-duration-500" style="border-radius:15px;width: 25%; height: calc(100vh - 7.6rem);"  :model="items" />
 </template>
 
 
