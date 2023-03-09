@@ -13,8 +13,8 @@ const state = reactive({
     authorizedName: "",
     companionName: "",
     visitReason: "",
-    expectedStartVisit:"" ,
-    expectedEndVisit: "",
+    expectedStartVisit:"" as string ,
+    expectedEndVisit: "" as string,
     visitDuration: "ساعه",
     price: "100دينار",
 })
@@ -30,9 +30,8 @@ let today = new Date();
 let hours = today.getHours();
 
 
+// const duration = Math.abs(state.expectedEndVisit - state.expectedStartVisit)
 
-  
- 
 
 const invalidDates = ref();
 
@@ -76,7 +75,7 @@ const resetForm = () => {
 </script>
 
 <template >
-    <div>{{  }}
+    <div>{{ state.expectedEndVisit }}
         <Card>
             <template #title>
                 إنشاء زيارة
@@ -115,12 +114,11 @@ const resetForm = () => {
 
                         <div class="field col-12 md:col-4">
                             <span class="p-float-label ">
-                                <InputText id="companionName" v-model="state.companionName" />
-                                <label for="companionName"> اسم المرافق </label>
+                                <Dropdown id="" v-model="state.visitReason" :options="visitReason" optionLabel="name" />
+                                <label for="phoneNum1">سبب الزيارة </label>
 
                             </span>
                         </div>
-
 
                         <div class="field col-12 md:col-4">
                             <span class="p-float-label ">
@@ -132,21 +130,10 @@ const resetForm = () => {
                             </span>
                         </div>
 
-                        <div class="field col-12 md:col-4">
-                            <span class="p-float-label ">
 
-                                <Calendar inputId="expectedStartTime" v-model="state.expectedStartTime" :showTime="true"
-                                    hourFormat="24" :timeOnly="true" :stepMinute="5" />
-                                <label for="expectedStartTime">وقت بداية الزيارة</label>
-
-                            </span>
-                        </div>
 
                         <div class="field col-12 md:col-4">
                             <span class="p-float-label ">
-                                <Calendar inputId="time24" v-model="state.expectedEndTime" :showTime="true" hourFormat="24"
-                                    :timeOnly="true" />
-                                <label for="time24">وقت انتهاء الزيارة</label>
                                 <Calendar inputId="expectedEndVisit" v-model="state.expectedEndVisit" dateFormat="yy/mm/dd" :showTime="true"
                                     selectionMode="single" :minDate="minDate" :showButtonBar="true" :manualInput="true" 
                                     :stepMinute="5" hourFormat="12" :disabledDates="invalidDates" />
@@ -154,13 +141,7 @@ const resetForm = () => {
                             </span>
                         </div>
 
-                        <div class="field col-12 md:col-4">
-                            <span class="p-float-label ">
-                                <Dropdown id="" v-model="state.visitReason" :options="visitReason" optionLabel="name" />
-                                <label for="phoneNum1">سبب الزيارة </label>
 
-                            </span>
-                        </div>
                         <div class="field col-12 md:col-4">
 
                         <addCompanion/>
@@ -182,10 +163,10 @@ const resetForm = () => {
                     </div>
                     
                     <h3>
-                        المرافقين :
+                        المُرافقين :
                     </h3>
                     
-                   <Button @click="submitForm" icon="pi pi-check" label="إضافة" type="submit" />
+                   <Button @click="submitForm" icon="fa-solid fa-plus" label="إنشاء" type="submit" />
                    <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-secondary"
                    style="margin-right: .5rem;  background-color: red;" />
                    <Toast position="bottom-right" />

@@ -59,7 +59,7 @@ const openModal = () => {
 </script>
 
 <template>
-    <Dialog  header="اضافة مرافق" contentStyle="height: 200px; padding: 20px;"  v-model:visible="displayModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '60vw'}" :modal="true">
+    <Dialog  header="اضافة مُرافق" contentStyle="height: 200px; padding: 20px;"  v-model:visible="displayModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '60vw'}" :modal="true">
     
     <form @submit.prevent="submitForm">
      <div class="grid p-fluid ">
@@ -103,7 +103,7 @@ const openModal = () => {
   
   </form>
   <template #footer>
-      <Button @click="submitForm" class="p-button-primry" icon="pi pi-check" label="إضافة" type="submit" />
+      <Button @click="submitForm" class="p-button-primry" icon="fa-solid fa-plus" label="إضافة" type="submit" />
   <Button @click="resetForm" icon="pi pi-refresh" label="مسح" class="p-button-secondary" style="margin-right: .5em;background-color: red;" />
   <Toast position="bottom-right" />
                   <!-- <Button label="No" icon="pi pi-times" @click="closeModal" class="p-button-text"/>
@@ -112,6 +112,6 @@ const openModal = () => {
           </Dialog>
   
       <Button @click="openModal"  class=" p-button-primary p-button" > 
-        اضافة مرافق
+        اضافة مُرافق
       </Button>
 </template>

@@ -12,6 +12,7 @@ import VueAxios from 'vue-axios'
 //style
 import './assets/style/style.scss'
 import './assets/style/theme.css'
+import './assets/style/iconsStyle.scss'
 
 
 import 'primevue/resources/primevue.min.css'
@@ -35,7 +36,7 @@ import Dropdown from 'primevue/dropdown';
 import Tooltip from 'primevue/tooltip';
 import AutoComplete from 'primevue/autocomplete';
 import Calendar from 'primevue/calendar';
-
+import Ripple from 'primevue/ripple';
 import MultiSelect from 'primevue/multiselect';
 import InputNumber from 'primevue/inputnumber';
 
@@ -45,7 +46,7 @@ const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
-app.use(PrimeVue)
+app.use(PrimeVue, { ripple: true });
 app.use(VueAxios, axios)
 
 app.provide('axios', app.config.globalProperties.axios)  // provide 'axios'
@@ -69,6 +70,7 @@ app.component('Divider', Divider);
 app.component('InputNumber', InputNumber);
 
 app.directive('tooltip', Tooltip);
+app.directive('ripple', Ripple);
 
 
 

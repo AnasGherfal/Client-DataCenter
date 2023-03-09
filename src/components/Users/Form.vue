@@ -142,7 +142,7 @@ const resetForm = () => {
 
 
                 </div>
-                <Button @click="submitForm"  icon="pi pi-check" label="إضافة" type="submit" />
+                <Button @click="submitForm" icon="fa-solid fa-plus" label="إضافة" type="submit" />
                 <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-secondary" style="margin-right: .5em; background-color: red;" />
                 <Toast position="bottom-right" />
 

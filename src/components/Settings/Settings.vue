@@ -1,4 +1,5 @@
-<script lang="ts" setup>import { reactive } from 'vue';
+<script lang="ts" setup>import { useToast } from 'primevue/usetoast';
+import { reactive } from 'vue';
 
 
 const state = reactive({
@@ -8,6 +9,15 @@ const state = reactive({
     priceAfterWorkTime:0,
     priceAfterMidnight:0,
 })
+const toast = useToast();
+
+const submitForm = async () => {
+
+    // if(result){
+        toast.add({severity:'success', summary: 'Success Message', detail:'تم تعديل الاعدادات', life: 3000});
+    // }
+
+        }
 
 
 </script>
@@ -15,18 +25,22 @@ const state = reactive({
 <template>
     <div>
     <Card>
+
         <template #title>
             اعدادات النظام
             
         </template>
 
         <template #content>
+            <form @submit.prevent="submitForm">
+
             <Divider/>
 
             <h3>ساعات الدوام</h3>
+
             <div class="grid p-fluid ">
 
-            <div class="field col-12 md:col-4">
+                        <div class="field col-12 md:col-4">
                             <span class="p-float-label ">
 
                                 <Calendar  inputId="startWorkTime" v-model="state.startWorkTime" dateFormat="yy/mm/dd" :showTime="true"
@@ -44,7 +58,9 @@ const state = reactive({
                                 <label for="endWorkTime">وقت  نهاية الدوام</label>
                             </span>
                         </div>
+                        
         </div>
+
         <Divider/>
        
             <h3>اسعار اوقات الزيارات</h3>
@@ -66,9 +82,14 @@ const state = reactive({
                 </div>
 
         </div>
+        <Divider/>
+
+        <Button @click="submitForm"  icon="fa-solid fa-floppy-disk fa-flip" style="--fa-animation-duration: 2s;
+         --fa-animation-delay:5s; --fa-animation-iteration-count:5" label="تخزين"  />
+                        <Toast position="bottom-right" />
+        </form>
         </template>
 
-        
     </Card>
 </div>
 

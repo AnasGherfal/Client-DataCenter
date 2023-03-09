@@ -138,7 +138,7 @@ const openModal = () => {
 
 </form>
 <template #footer>
-    <Button @click="submitForm" class="p-button-primry" icon="pi pi-check" label="إضافة" type="submit" />
+    <Button @click="submitForm" class="p-button-primry" icon="fa-solid fa-plus" label="إضافة" type="submit" />
 <Button @click="resetForm" icon="pi pi-refresh" label="مسح" class="p-button-secondary" style="margin-right: .5em;background-color: red;" />
 <Toast position="bottom-right" />
 

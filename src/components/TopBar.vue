@@ -26,7 +26,7 @@ import { ref } from 'vue';
 
 
         <div>
-            <img alt="logo" src="../assets/logos/LTT-logo.png" height="40" style="margin-right:0px ;">
+            <img alt="logo" src="../assets/logos/LTT-logo.png " height="40" style="margin-right:0px; --fa-animation-iteration-count:5" class="fa-bounce">
         </div>
 
         <div>
@@ -51,5 +51,8 @@ import { ref } from 'vue';
     height: 60px;
     position: absolute;
     z-index: 2;
+}
+img{
+
 }
 </style>
