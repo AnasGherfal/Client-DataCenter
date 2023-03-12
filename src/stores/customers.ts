@@ -2,7 +2,7 @@ import { ref, computed, reactive, onMounted } from 'vue'
 import { defineStore } from 'pinia'
 import axios from "axios"
 
-export const useCustomersStore = defineStore('user', () => {
+export const useCustomersStore = defineStore('customer', () => {
 
   const Customers = ref([]);
   onMounted(async () => {

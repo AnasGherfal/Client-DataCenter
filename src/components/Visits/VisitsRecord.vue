@@ -15,6 +15,7 @@ const filters = ref({
         <Card>
             <template #title>
                 سجل الزيارات
+                <Divider/>
             </template>
             <template #content>
             <DataTable  ref="dt" :value="users" dataKey="id" 

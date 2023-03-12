@@ -3,12 +3,12 @@ import { computed, reactive, ref } from 'vue';
 import { email, minLength, required, helpers } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
-import {useUsersStore} from '@/stores/users'
+import {useCounterStore} from '@/stores/counter'
 import axios from 'axios';
 import Divider from 'primevue/divider';
 
 
-const store = useUsersStore();
+const store = useCounterStore();
 const pp = ref<string>('');
 const state = reactive({
     name: "" as string,
@@ -45,7 +45,6 @@ const submitForm = async () => {
     if(result){
     axios.post("http://localhost:3000/users",state)
    .then(function(response) {
-   console.log(store.users)
 })
 .catch(function(error){
    console.log(error)
