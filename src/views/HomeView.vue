@@ -6,8 +6,8 @@
 </template>
 
 <script setup lang="ts">
-import InfoList from '../components/InfoPage/InfoList.vue'
-import ChartInfo from '../components/InfoPage/ChartInfo.vue';
-import CardInfo from '../components/InfoPage/CardInfo.vue';
+import InfoList from '../components/MainPage/InfoList.vue'
+import ChartInfo from '../components/MainPage/ChartInfo.vue';
+import CardInfo from '../components/MainPage/CardInfo.vue';
 
 </script>

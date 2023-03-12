@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import { ref } from 'vue';
-import SideBar from './components/SideBar.vue'
-import TopBar from './components/TopBar.vue'
-import ProFile from './components/Users/ProFile.vue'
+import SideBar from './layouts/SideBar.vue'
+import TopBar from './layouts/TopBar.vue'
+// import CustomerProfile from './components/Users/CustomerProfile.vue'
 </script>
 
 <template>
@@ -21,7 +21,7 @@ import ProFile from './components/Users/ProFile.vue'
     <div style="width: 73%; margin-right: 26%; padding: 25px;">
       <!-- main -->
       <RouterView/>
-  <!-- <ProFile/> -->
+  <!-- <CustomerProfile/> -->
     </div>
     
     </div>

@@ -3,23 +3,22 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import { email, minLength, required, helpers } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
-import { useUsersStore } from '@/stores/users';
+import { useCustomersStore } from '@/stores/customers';
 import addCompanion from './addCompanion.vue';
 
-const store = useUsersStore();
+const store = useCustomersStore();
 
 const state = reactive({
     CustomerName: "",
     authorizedName: "",
     companionName: "",
     visitReason: "",
-    expectedStartVisit:"" as string ,
-    expectedEndVisit: "" as string,
+    expectedStartVisit:""  ,
+    expectedEndVisit: "" ,
     visitDuration: "ساعه",
     price: "100دينار",
 })
 
-const minDate = ref(new Date());
 const visitReason = ref([
     { name: 'صيانه' },
     { name: 'انهاء عمل' },
@@ -27,13 +26,17 @@ const visitReason = ref([
 
 
 let today = new Date();
+let month = today.getMonth;
+let year = today.getFullYear;
 let hours = today.getHours();
+
+const minDate = ref(new Date());
 
 
 // const duration = Math.abs(state.expectedEndVisit - state.expectedStartVisit)
 
 
-const invalidDates = ref();
+ const invalidDates = ref();
 
 const filterdUsers = ref();
 

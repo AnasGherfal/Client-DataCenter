@@ -20,13 +20,15 @@ const router = createRouter({
       path: '/users',
       name: 'users',
 
-      component: () => import('../views/Users/UsersView.vue')
+      component: () => import('../views/Customers/CustomerFormView.vue')
     },
     {
       path: '/UsersRecord',
       name: 'UsersRecord',
 
-      component: () => import('../views/Users/UsersRecordView.vue')
+      component: () => import('../views/Customers/CustomerRecordView.vue')
+
+      
     },
     {
       path: '/AddService',

@@ -4,3 +4,16 @@
   -o-animation: fa-bounce 2s infinite linear;
   animation: fa-bounce 2s infinite linear;
 }
+.fa-spin-hover:hover {
+  -webkit-animation: fa-spin 2s infinite linear;
+  -moz-animation: fa-spin 2s infinite linear;
+  -o-animation: fa-spin 2s infinite linear;
+  animation: fa-spin 2s infinite linear;
+}
+
+.fa-flip-hover:hover{
+  -webkit-animation: fa-flip 2s infinite linear;
+  -moz-animation: fa-flip 2s infinite linear;
+  -o-animation: fa-flip 2s infinite linear;
+  animation: fa-flip 2s infinite linear;
+}

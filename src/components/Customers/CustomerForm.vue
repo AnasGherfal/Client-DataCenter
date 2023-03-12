@@ -3,12 +3,12 @@ import { computed, reactive, ref } from 'vue';
 import { email, minLength, required, helpers } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
-import {useUsersStore} from '@/stores/users'
+import {useCustomersStore} from '@/stores/customers'
 import axios from 'axios';
 import Divider from 'primevue/divider';
 
 
-const store = useUsersStore();
+const store = useCustomersStore();
 const pp = ref<string>('');
 const state = reactive({
     name: "" as string,
@@ -50,15 +50,12 @@ const submitForm = async () => {
 .catch(function(error){
    console.log(error)
  })
+ toast.add({severity:'success', summary: 'Success Message', detail:'تمت إضافة العميل', life: 3000});
+
 }else{
     console.log("empty")
 }
-
-    if(result){
-        toast.add({severity:'success', summary: 'Success Message', detail:'تمت إضافة العميل', life: 3000});
-    }
-
-        }
+ }
 
 const resetForm = () => {
     state.name = '';
@@ -90,8 +87,8 @@ const resetForm = () => {
                     <div class="field col-12 md:col-4 ">
                         <span class="p-float-label" >
                             <InputText id="name" type="text" v-model="state.name"  />
-                            <label  for="name">اسم </label>
-                            <error  v-for="error in v$.name.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
+                            <error  v-for="error in v$.name.$errors" :key="error.$uid" class="p-error ">{{error.$message}}</error>
+                            <label  for="name" >اسم </label>
                         </span>
 
                     </div>
@@ -139,7 +136,6 @@ const resetForm = () => {
                      invalidFileSizeMessage="Exceeded the maximum file size"
                      />
                      </div>
-
 
                 </div>
                 <Button @click="submitForm" icon="fa-solid fa-plus" label="إضافة" type="submit" />

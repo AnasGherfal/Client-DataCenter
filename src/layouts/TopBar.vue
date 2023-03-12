@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import TextBar from './Nav/TextBar.vue';
-import IconGroup from './Nav/IconGroup.vue';
+import IconGroup from './IconGroup.vue';
 import Divider from 'primevue/divider';
 
 import { ref } from 'vue';
@@ -26,7 +25,7 @@ import { ref } from 'vue';
 
 
         <div>
-            <img alt="logo" src="../assets/logos/LTT-logo.png " height="40" style="margin-right:0px; --fa-animation-iteration-count:5" class="fa-bounce">
+            <img alt="logo" src="../assets/pics/LTT-logo.png " height="40" style="margin-right:0px; --fa-animation-iteration-count:5" class="fa-bounce">
         </div>
 
         <div>
@@ -52,7 +51,5 @@ import { ref } from 'vue';
     position: absolute;
     z-index: 2;
 }
-img{
 
-}
 </style>

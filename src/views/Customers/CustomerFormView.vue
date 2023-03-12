@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CustomerForm from '@/components/Users/Form.vue';
+import CustomerForm from '@/components/Customers/CustomerForm.vue';
 </script>
 
 <template>

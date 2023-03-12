@@ -1,3 +1,12 @@
+<script setup lang="ts">
+import { useCounterStore } from '@/stores/packages'
+import Divider from 'primevue/divider';
+
+const store = useCounterStore()
+
+</script>
+
+
 <template>
     <div class="grid"> 
         <div  v-for="servic in store.Services"
@@ -53,13 +62,7 @@
         </div>
         </template>
 
-<script setup lang="ts">
-import { useCounterStore } from '@/stores/packages'
-import Divider from 'primevue/divider';
 
-const store = useCounterStore()
-
-</script>
 
 <style scoped>
 span{

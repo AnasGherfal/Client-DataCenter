@@ -39,7 +39,8 @@ import Calendar from 'primevue/calendar';
 import Ripple from 'primevue/ripple';
 import MultiSelect from 'primevue/multiselect';
 import InputNumber from 'primevue/inputnumber';
-
+import TabView from 'primevue/tabview';
+import TabPanel from 'primevue/tabpanel';
 
 
 const app = createApp(App)
@@ -68,6 +69,8 @@ app.component('Calendar', Calendar);
 app.component('MultiSelect', MultiSelect);
 app.component('Divider', Divider);
 app.component('InputNumber', InputNumber);
+app.component('TabView', TabView);
+app.component('TabPanel', TabPanel);
 
 app.directive('tooltip', Tooltip);
 app.directive('ripple', Ripple);

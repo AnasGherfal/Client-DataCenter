@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CustomerTable from '@/components/Users/TableRecord.vue';
+import CustomerTable from '@/components/Customers/CustomersRecord.vue';
 </script>
 
 <template>

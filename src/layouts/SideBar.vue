@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import Menu from 'primevue/menu';
+import Tooltip from 'primevue/tooltip';
 
         const items = ref([
             {
@@ -10,12 +11,7 @@ import Menu from 'primevue/menu';
                     icon: 'fa-solid fa-house',
                     to: '/'
                 },
-                {
-                    label: 'مخطط الشهر',
-                    icon: 'pi pi-chart-bar',
-                    to:''
 
-                }
             ]},
             {
                 label: 'العملاء',
@@ -23,8 +19,8 @@ import Menu from 'primevue/menu';
                 {
                     label: 'اضافة عميل',
                     icon: 'fa-solid fa-user-plus',
-                    to: '/users'
-
+                    to: '/users',
+                
                 },
                     {
                     
@@ -41,7 +37,6 @@ import Menu from 'primevue/menu';
                     label: 'انشاء زيارة ',
                     icon: 'fa-solid fa-circle-plus',
                     to: '/CreateVisit'
-
                 },
                     {
                     
@@ -60,7 +55,7 @@ import Menu from 'primevue/menu';
                 {
                     label: 'اضافة اشتراك',
                     icon: 'pi pi-plus-circle',
-                    to:'/AddService'
+                    to:'/AddService',
                 },
                 {
                     label: 'الباقات',
@@ -78,7 +73,7 @@ import Menu from 'primevue/menu';
 </script>
 
 <template>
-    <Menu class="overflow-auto fixed  mt-4 fadeinright animation-duration-500" style="border-radius:15px;width: 25%; height: calc(100vh - 7.6rem);"  :model="items" />
+    <Menu  class="overflow-auto fixed  mt-4 fadeinright animation-duration-500" style="border-radius:15px;width: 25%; height: calc(100vh - 7.6rem);"  :model="items" />
 </template>
 
 

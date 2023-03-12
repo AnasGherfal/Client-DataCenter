@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, inject, onMounted, ref } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
-import {useUsersStore} from '@/stores/users'
+import {useCustomersStore} from '@/stores/customers'
 import axios from 'axios';
 
-const store = useUsersStore();
+const store = useCustomersStore();
 
 
 const filters = ref({
@@ -68,8 +68,11 @@ const columns = ref([
                     <MultiSelect :modelValue="selectedColumns" :options="columns" optionLabel="header" @update:modelValue="onToggle"
                         placeholder="حدد الأعمدة" style="width: 10em"/>
                 </div>
+                <Button class="mr-4">اضافة عميل
+
+                </Button>
 					</div>
-                    
+                   
                 </template>
                 <Column field="name" header="الإسم "  style="min-width:10rem;  "></Column>
                 <Column  v-for="(col,index) of selectedColumns" :field="col.field"  :header="col.header" :key="col.field + '_' + index" style="min-width:10rem;  "

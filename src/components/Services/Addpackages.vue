@@ -4,9 +4,7 @@ import { email, minLength, required, helpers, integer } from "@vuelidate/validat
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import { useCounterStore } from '@/stores/packages'
-import ServicesList from './ServicesList.vue';
-import Divider from 'primevue/divider';
-import Dialog from 'primevue/dialog';
+
 
 const state = reactive({
     name: '',
@@ -145,7 +143,7 @@ const openModal = () => {
             </template>
         </Dialog>
 
-    <Button @click="openModal" style="height: 40px; width: 40px;" icon="fa-solid fa-plus text-green-50" class="fixed mb-4 ml-4 bottom-0 left-0 p-button-primry " />
+    <Button @click="openModal" style="height: 40px; width: 40px;" icon="fa-solid fa-plus  text-green-50" class="fixed mb-4 ml-4 bottom-0 left-0 p-button-primry fa-beat" />
 </template>
 
 
