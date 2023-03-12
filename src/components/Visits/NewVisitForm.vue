@@ -33,8 +33,8 @@ let hours = today.getHours();
 // const duration = Math.abs(state.expectedEndVisit - state.expectedStartVisit)
 
 
-const invalidDates = ref();
-
+const invalidDates = new Date();
+invalidDates.setUTCMilliseconds(Date.parse(state.expectedStartVisit));
 const filterdUsers = ref();
 
 const searchUsers = () => {
@@ -79,6 +79,7 @@ const resetForm = () => {
         <Card>
             <template #title>
                 إنشاء زيارة
+                <Divider/>
             </template>
             <template #content>
                 <form @submit.prevent="submitForm">
@@ -105,8 +106,7 @@ const resetForm = () => {
                                 emptySelectionMessage="ll" :selectionLimit="2" />
                                 <label for="authorizedName">المخولين</label>
 
-                                <error v-for="error in v$.authorizedName.$errors" :key="error.$uid" class="p-error">{{
-                                    error.$message }}</error>
+                                <error v-for="error in v$.authorizedName.$errors" :key="error.$uid" class="p-error">{{  error.$message }}</error>
 
                             </span>
 
@@ -125,7 +125,7 @@ const resetForm = () => {
 
                                 <Calendar inputId="expectedStartVisit" v-model="state.expectedStartVisit" dateFormat="yy/mm/dd" :showTime="true"
                                     selectionMode="single" :minDate="minDate" :showButtonBar="true" :manualInput="true" 
-                                    :stepMinute="5" hourFormat="12" :disabledDates="invalidDates" />
+                                    :stepMinute="5" hourFormat="12" />
                                 <label for="expectedStartVisit">تاريخ بداية الزيارة المتوقع</label>
                             </span>
                         </div>
@@ -135,8 +135,8 @@ const resetForm = () => {
                         <div class="field col-12 md:col-4">
                             <span class="p-float-label ">
                                 <Calendar inputId="expectedEndVisit" v-model="state.expectedEndVisit" dateFormat="yy/mm/dd" :showTime="true"
-                                    selectionMode="single" :minDate="minDate" :showButtonBar="true" :manualInput="true" 
-                                    :stepMinute="5" hourFormat="12" :disabledDates="invalidDates" />
+                                    selectionMode="single" :minDate="invalidDates" :showButtonBar="true" :manualInput="true" 
+                                    :stepMinute="5" hourFormat="12"  />
                                 <label for="expectedEndVisit">تاريخ انتهاء الزيارة المتوقع</label>
                             </span>
                         </div>

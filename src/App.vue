@@ -4,6 +4,7 @@ import { ref } from 'vue';
 import SideBar from './components/SideBar.vue'
 import TopBar from './components/TopBar.vue'
 import ProFile from './components/Users/ProFile.vue'
+import ServiceInfo from './views/ServiceInfo/ServiceInfo.vue';
 </script>
 
 <template>
@@ -21,7 +22,8 @@ import ProFile from './components/Users/ProFile.vue'
     <div style="width: 73%; margin-right: 26%; padding: 25px;">
       <!-- main -->
       <RouterView/>
-  <!-- <ProFile/> -->
+      <!-- <ServiceInfo/> -->
+      <!-- <ProFile/> -->
     </div>
     
     </div>

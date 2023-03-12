@@ -52,7 +52,5 @@ import { ref } from 'vue';
     position: absolute;
     z-index: 2;
 }
-img{
 
-}
 </style>

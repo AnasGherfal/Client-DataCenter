@@ -29,7 +29,9 @@ body {
   }
   .p-button .p-button-icon-left {
     margin-left: .5rem;
+    margin-right: 0rem !important;
   }
+
 .p-inputtext	{
     border-radius: 10px !important;
     
@@ -100,4 +102,15 @@ error{
         text-align: right;
         direction: ltr;
     }
+
+    .p-menu .p-menuitem > .p-menuitem-content .p-menuitem-link .p-menuitem-icon {
+        color: #898989;
+        margin-left: .5rem;
+      }
+
+    .p-menu .p-menuitem > .p-menuitem-content .p-menuitem-link .p-menuitem-icon {
+  color: #898989;
+  margin-left: .5rem;
+}
+
 

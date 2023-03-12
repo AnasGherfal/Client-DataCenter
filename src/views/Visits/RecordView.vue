@@ -4,7 +4,6 @@ import VisitsRecord from '@/components/Visits/VisitsRecord.vue';
 
 <template>
 <VisitsRecord/>
-      
   </template>
   
   <style>

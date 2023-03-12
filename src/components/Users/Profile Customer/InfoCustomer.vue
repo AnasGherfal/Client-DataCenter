@@ -89,11 +89,7 @@ function focusname(){
 
             </template>
             <template #content>
-                <div >
-
-                <div  style="height: 1%;">
-                     <img src="./assest/user-sign-icon-person-symbol-human-avatar-vector-12693195.png" style="height: 200px;width: 200px;"/>
-                     </div>
+                <div>
                      <div>
                 <form @submit.prevent="submitForm">
 
