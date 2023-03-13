@@ -139,18 +139,24 @@ import Tooltip from 'primevue/tooltip';
   border-radius: 20px;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 900px) {
 .p-menuitem-text	{
     display:none;
 }
     
 }
 
-@media screen and (max-width: 300px) {
+@media screen and (max-width: 900px) {
     .p-menu{
-    display: none;
+    display:none;
 }
+.p-menuitem-text	{
+    display:none;
 }
+   
+}
+
+
 
 // class="p-menuitem-link router-link-active router-link-active-exact"
 </style>

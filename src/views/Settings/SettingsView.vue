@@ -3,6 +3,7 @@ import { computed, reactive } from 'vue';
 import AddNewHours from './AddNewHoursView.vue';
 import PakagesList from '@/components/Services/PakagesList.vue'
 import VisitHours from './VisitHoursView.vue'
+import Addpackages from '@/components/Services/Addpackages.vue';
 const state = reactive({
 
 })
@@ -31,7 +32,9 @@ const state = reactive({
                         </template>
 
                         <div>
+
                             <PakagesList />
+                            <Addpackages/>
 
                         </div>
 

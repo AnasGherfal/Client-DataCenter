@@ -51,8 +51,10 @@ const toggle = (event:any) => {
     </div>
      </template>  
 
-     <style >
-
+     <style scoped>
+.ml-2 {
+  margin-right: 0.5rem !important;
+}
 
     </style>
      
