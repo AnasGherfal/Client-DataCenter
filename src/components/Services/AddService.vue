@@ -7,38 +7,26 @@ import AutoComplete from 'primevue/autocomplete';
 import Divider from 'primevue/divider';
 
 const state = reactive({
-    name: "",
-    email: "",
-    phoneNumber1: '',
-    phoneNumber2: '',
-    address: '',
-    File: '',
-    subscriptionType: '',
-    numberOfHours:'',
-
-})
-
-const stateService = reactive({
     nameCustomer: "",
     startDate:'',
     endtDate:'',
     subscriptionType:'',
     File: '',
+
 })
 
 const rules = computed(() =>{
     return {
-    name:{  required: helpers.withMessage('الاسم مطلوب',required)},
-    startDate: {required: helpers.withMessage('الايميل مطلوب',required),},
-    endDate: {required: helpers.withMessage('العنوان مطلوب',required)},
+    nameCustomer:{  required: helpers.withMessage('الاسم مطلوب',required)},
+    startDate: {required: helpers.withMessage('الايميل مطلوب',required)},
+    endtDate: {required: helpers.withMessage('العنوان مطلوب',required)},
     subscriptionType: {required: helpers.withMessage('العنوان مطلوب',required)},
-    File: {required: helpers.withMessage('رقم الهاتف مطلوب',required)},
     }
 })
 
 const toast = useToast();
 
-const v$ = useVuelidate(rules, stateService );
+const v$ = useVuelidate(rules , state);
 
 const submitForm = async () => {
     const result = await v$.value.$validate();
@@ -50,11 +38,11 @@ const submitForm = async () => {
         }
 
 const resetForm = () => {
-         stateService.File='',
-         stateService.endtDate='',
-         stateService.startDate='',
-         stateService.nameCustomer='',
-         stateService.subscriptionType=''
+    state.File='',
+    state.endtDate='',
+    state.startDate='',
+    state.nameCustomer='',
+    state.subscriptionType=''
         }
 
         const minDate = ref(new Date());
@@ -80,39 +68,42 @@ const resetForm = () => {
                 <div class="grid p-fluid ">
                     <div class="field col-12 md:col-4 ">
                         <span class="p-float-label" >
-                            <AutoComplete v-model="stateService.nameCustomer"  optionLabel="name" /> 
-                                                       <label  for="name">اسم العميل </label>
-                            <error  v-for="error in v$.name.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error> </span>
-
+                            <AutoComplete v-model="state.nameCustomer"  optionLabel="nameCustomer" /> 
+                            <label  for="nameCustomer">اسم العميل </label>
+                            <error  v-for="error in v$.nameCustomer.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error> </span>
                     </div>
                     
                     <div class="field col-12 md:col-4">
                             <span class="p-float-label ">
-                                <Calendar inputId="startDate" v-model="stateService.startDate" dateFormat="yy/mm/dd"
+                                <Calendar inputId="startDate" v-model="state.startDate" dateFormat="yy/mm/dd"
                                     selectionMode="single" :minDate="minDate" :showButtonBar="true" :manualInput="false"
                                     :disabledDates="invalidDates" />
-                                <label for="visitDate">تاريخ بداية الاشتراك</label>
+                                <label for="startDate">تاريخ بداية الاشتراك</label>
+                                <error  v-for="error in v$.startDate.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
                             </span>
                         </div>
 
                         <div class="field col-12 md:col-4">
                             <span class="p-float-label ">
-                                <Calendar inputId="endDate" v-model="stateService.endtDate" dateFormat="yy/mm/dd"
+                                <Calendar inputId="endDate" v-model="state.endtDate" dateFormat="yy/mm/dd"
                                     selectionMode="single" :minDate="minDate" :showButtonBar="true" :manualInput="false"
                                     :disabledDates="invalidDates" />
-                                <label for="visitDate">تاريخ انتهاء الاشتراك</label>
+                                <label for="endtDate">تاريخ انتهاء الاشتراك</label>
+                                <error  v-for="error in v$.endtDate.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
+
                             </span>
                         </div>
 
                     <div class="field col-12 md:col-4">
                         <span class="p-float-label ">
-                            <Dropdown id="subscriptionType" v-model="stateService.subscriptionType" placeholder="اختر الباقه" emptyMessage="لايوجد باقات"/>
-                            <label for="subscription">الباقة</label>
+                            <Dropdown id="subscriptionType" v-model="state.subscriptionType" placeholder="اختر الباقه" emptyMessage="لايوجد باقات"/>
+                            <label for="subscriptionType">الباقة</label>
+                            <error  v-for="error in v$.subscriptionType.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
                         </span>
                     </div>
 
                     <div class="field col-12 md:col-4" style="height: 1%;">
-                    <FileUpload v-model="stateService.File" style="font-family: tajawal; width: 100%; height: 40px; border-radius: 10px; background-color: white; color:black; border-color: gray"
+                    <FileUpload v-model="state.File" style="font-family: tajawal; width: 100%; height: 40px; border-radius: 10px; background-color: white; color:black; border-color: gray"
                     mode="basic"
                      name="File" 
                      url="./upload" 

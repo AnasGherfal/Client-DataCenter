@@ -18,7 +18,7 @@ import TopBar from './layouts/TopBar.vue'
         <SideBar/>
     </div> 
 
-    <div style="width: 73%; margin-right: 26%; padding: 25px;">
+    <div class="hideaa" style="transition: all 0.5s ease; width: 73%; margin-right: 26%; padding: 25px;">
       <!-- main -->
       <RouterView/>
   <!-- <CustomerProfile/> -->
@@ -33,7 +33,12 @@ import TopBar from './layouts/TopBar.vue'
 
 </template>
 
-<style >
+<style>
+@media screen and (max-width: 900px) {
+    .hideaa{
+      width: 100% !important; margin-right: 0% !important;
+    }
+}
 
 
 body{

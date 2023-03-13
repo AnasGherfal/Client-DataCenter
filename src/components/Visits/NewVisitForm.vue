@@ -19,6 +19,10 @@ const state = reactive({
     price: "100دينار",
 })
 
+const compList = reactive([{}])
+console.log(compList)
+
+
 const visitReason = ref([
     { name: 'صيانه' },
     { name: 'انهاء عمل' },
@@ -69,10 +73,10 @@ const resetForm = () => {
     state.authorizedName = '';
     state.companionName = '';
     state.visitReason = "";
-    state.expectedStartVisit = "";
+    state.expectedStartVisit     = "";
     state.expectedEndVisit =  "",
-        state.visitDuration = "",
-        state.price = ""
+    state.visitDuration = "",
+    state.price = ""
 }
 
 </script>
@@ -145,10 +149,6 @@ const resetForm = () => {
                         </div>
 
 
-                        <div class="field col-12 md:col-4">
-
-                        <addCompanion/>
-                             </div>
                      <div class="field col-12 md:col-2">
                             <span class="p-float-label ">
                                 <InputText id="companionName" v-model="state.visitDuration" :readonly="true" />
@@ -164,19 +164,25 @@ const resetForm = () => {
                             </span>
                         </div>
                     </div>
+
                     
-                    <h3>
+
+                    
+                    <addCompanion :compList="compList" />
+                    <br><br>
+                    <h3 v-if="compList.length">
                         المُرافقين :
                     </h3>
-                    
-                   <Button @click="submitForm" icon="fa-solid fa-plus" label="إنشاء" type="submit" />
-                   <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-secondary"
-                   style="margin-right: .5rem;  background-color: red;" />
-                   <Toast position="bottom-right" />
-                   
+
+                    <Button @click="submitForm" icon="fa-solid fa-plus" label="إنشاء" type="submit" />
+                    <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-secondary"
+                    style="margin-right: .5rem;  background-color: red;" />
+                    <Toast position="bottom-right" />
                 </form>
+
+                </template>
+                   
                 
-            </template>
 
 
         </Card>

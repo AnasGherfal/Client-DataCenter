@@ -73,7 +73,7 @@ import Tooltip from 'primevue/tooltip';
 </script>
 
 <template>
-    <Menu  class="overflow-auto fixed  mt-4 fadeinright animation-duration-500" style="border-radius:15px;width: 25%; height: calc(100vh - 7.6rem);"  :model="items" />
+    <Menu  class="overflow-auto fixed  mt-4 fadeinright animation-duration-500" style="border-radius:15px; width:25%; height: calc(100vh - 7.6rem);"  :model="items" />
 </template>
 
 
@@ -132,18 +132,24 @@ import Tooltip from 'primevue/tooltip';
   border-radius: 20px;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 900px) {
 .p-menuitem-text	{
     display:none;
 }
     
 }
 
-@media screen and (max-width: 300px) {
+@media screen and (max-width: 900px) {
     .p-menu{
-    display: none;
+    display:none;
 }
+.p-menuitem-text	{
+    display:none;
 }
+   
+}
+
+
 
 // class="p-menuitem-link router-link-active router-link-active-exact"
 </style>
