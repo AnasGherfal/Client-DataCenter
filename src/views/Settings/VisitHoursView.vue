@@ -1,26 +1,27 @@
 <script lang="ts" setup>
 import { useToast } from 'primevue/usetoast';
-import { computed, reactive } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import AddNewHours from './AddNewHoursView.vue';
-import PakagesList from '@/components/Services/PakagesList.vue'
 import { required, helpers, minValue, requiredIf, email } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
+import axios from 'axios';
 
+let visitsHours = ref();
 
 const state = reactive({
+    hoursName:'',
     startWorkTime: '',
     endWorkTime: '',
-    priceInWorkTime: 0,
-    priceAfterWorkTime: 0,
-    priceAfterMidnight: 0,
-    name: ''
+    priceFirstHour: 0,
+    priceAfter: 0,
+
 })
+let pp = reactive([])
 
 console.log(state.startWorkTime+1)
 
 const rules = computed(() => {
     return {
-        name: { required: helpers.withMessage('الاسم مطلوب', required) },
         endWorkTime: { requiredIf: helpers.withMessage('الحقل مطلوب ', requiredIf(state.startWorkTime)), minValue: helpers.withMessage('يجب ان يكون يساوي او بعد وقت البدايه', minValue(state.startWorkTime)) },
     }
 })
@@ -39,16 +40,27 @@ const submitForm = async () => {
 
 }
 
-function addHours() {
 
-}
 
-function pp(start: string, end: string) {
-    if (end <= start) {
-        return false
-    } return true
-}
+ onMounted( async () =>{ 
+    await axios.get("http://localhost:3000/visitHours")
+        .then((response) =>{
+            visitsHours = response.data;
+            console.log(visitsHours)
+    })
+//     .then((data:any) => {
+//         let results = [];
+//         for(const id in data) {
+//             results.push({id:id, name: data[id].name})
+//         }
+//         console.log(results)
+//  })
 
+    .catch(function(error){
+        console.log(error)
+      })
+
+    })
 
 </script>
 
@@ -57,17 +69,17 @@ function pp(start: string, end: string) {
 
         <form @submit.prevent="submitForm">
 
+        <div v-for="(i, index) in visitsHours" :key="index">
 
-        <h3>ساعات الدوام</h3>
+            <h3>{{ i.name }}</h3>
 
-        <div class="grid p-fluid ">
-
+        <div class="grid p-fluid " >
             <div class="field col-12 md:col-4 mt-5">
                 <span class="p-float-label ">
 
-                    <Calendar @date-select="pp" inputId="startWorkTime" v-model="state.startWorkTime"
+                    <Calendar  inputId="startTime" v-model="i.startTime" 
                         dateFormat="yy/mm/dd" :showTime="true" :timeOnly="true" selectionMode="single"
-                        :manualInput="true" :stepMinute="5" hourFormat="12" />
+                        :manualInput="true" :stepMinute="5" hourFormat="12" /> 
                     <label for="startWorkTime">من </label>
 
                 </span>
@@ -75,12 +87,12 @@ function pp(start: string, end: string) {
             <div class="field col-12 md:col-4 mt-5">
                 <span class="p-float-label ">
 
-                    <Calendar id="endWorkTime" @date-select="pp" inputId="endWorkTime" v-model="state.endWorkTime"
+                    <Calendar  inputId="endTime" v-model="i['endTime']"
                         dateFormat="yy/mm/dd" :showTime="true" :timeOnly="true" selectionMode="single"
                         :manualInput="true" :stepMinute="5" hourFormat="12" />
                     <error v-for="error in v$.endWorkTime.$errors" :key="error.$uid" class="p-error ">
                         {{ error.$message }}</error>
-                        <label for="endWorkTime">الى</label>
+                        <label for="endTime">الى</label>
 
                     </span>
                 </div>
@@ -88,16 +100,17 @@ function pp(start: string, end: string) {
             <div class="field col-12 md:col-2">
 
                 <label for="priceInWorkTime">السعر </label>
-                <InputNumber inputId="stacked" v-model="state.priceInWorkTime" suffix=" دينار" :step="0.25" :min="0"
+                <InputNumber inputId="stacked" v-model="i['priceFirstHour']" suffix=" دينار" :step="0.25" :min="0"
                     :allowEmpty="false" :highlightOnFocus="true" />
             </div>
             <div class="field col-12 md:col-2">
                 <label for="priceInWorkTime">السعر </label>
-                <InputNumber inputId="stacked" v-model="state.priceInWorkTime" suffix=" دينار" :step="0.25" :min="0"
+                <InputNumber inputId="stacked" v-model="i['priceAfter']" suffix=" دينار" :step="0.25" :min="0"
                     :allowEmpty="false" :highlightOnFocus="true" />
                 </div>
 
             </div>
+        </div>
 
             <!-- <h3>ساعات بعد الدوام</h3>
 

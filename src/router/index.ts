@@ -26,8 +26,7 @@ const router = createRouter({
       path: '/UsersRecord',
       name: 'UsersRecord',
 
-      component: () => import('../views/Customers/CustomerRecordView.vue')
-
+      component: () => import('../views/Customers/CustomerRecordView.vue'),   
       
     },
     {
@@ -49,7 +48,7 @@ const router = createRouter({
       component: () => import('../views/Visits/VisitView.vue')
     },
     {
-      path: '/VisitsRecords',
+      path: '/visitsRecords',
       name: 'VisitsRecords',
 
       component: () => import('../views/Visits/RecordView.vue')
@@ -59,6 +58,12 @@ const router = createRouter({
       name: 'SettingsView',
 
       component: () => import('../views/Settings/SettingsView.vue')
+    },
+    {
+      path: '/adminProfile',
+      name: 'AdminProfile',
+
+      component: () => import('../views/AdminProfile/adminProfileView.vue')
     },
   ]
 })

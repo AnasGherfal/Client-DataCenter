@@ -68,9 +68,8 @@ const columns = ref([
                     <MultiSelect :modelValue="selectedColumns" :options="columns" optionLabel="header" @update:modelValue="onToggle"
                         placeholder="حدد الأعمدة" style="width: 10em"/>
                 </div>
-                <Button class="mr-4">اضافة عميل
-
-                </Button>
+                
+                <Button icon="fa-solid fa-plus" @click="$router.push('/users')" class="mr-4"></Button>
 					</div>
                    
                 </template>

@@ -4,12 +4,12 @@ import axios from "axios"
 
 export const useCustomersStore = defineStore('customer', () => {
 
-  const Customers = ref([]);
+  const customers = ref([]);
   onMounted(async () => {
     await axios.get("http://localhost:3000/users")
       .then(function (response) {
-        Customers.value = response.data;
-        console.log(Customers)
+        customers.value = response.data;
+        console.log(customers)
       })
       .catch(function (error) {
         console.log(error)
@@ -18,6 +18,6 @@ export const useCustomersStore = defineStore('customer', () => {
   })
 
 
-  return { users: Customers }
+  return { users: customers }
 
 })

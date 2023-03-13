@@ -35,7 +35,7 @@ import { ref } from 'vue';
 
         <Divider layout="vertical" />
 
-        <IconGroup style="margin-right:calc(100% - 32rem);" />
+        <IconGroup style="margin-right:calc(100% - 29rem);" />
 
 
     </div>
