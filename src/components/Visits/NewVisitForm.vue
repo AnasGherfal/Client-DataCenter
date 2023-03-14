@@ -20,7 +20,6 @@ const state = reactive({
 })
 
 const compList = reactive([{}])
-console.log(compList)
 
 
 const visitReason = ref([
@@ -170,9 +169,16 @@ const resetForm = () => {
                     
                     <addCompanion :compList="compList" />
                     <br><br>
-                    <h3 v-if="compList.length">
+                    <div v-if="compList.length>1">
+                        {{ compList }}
                         المُرافقين :
-                    </h3>
+                        <div class="field col-12 md:col-2">
+
+                         <Card v-for="i in compList">
+                           
+                         </Card>
+                         </div>
+                        </div>
 
                     <Button @click="submitForm" icon="fa-solid fa-plus" label="إنشاء" type="submit" />
                     <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-secondary"

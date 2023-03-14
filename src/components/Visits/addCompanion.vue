@@ -7,7 +7,8 @@ import { useCounterStore } from '@/stores/packages'
 import Divider from 'primevue/divider';
 import Dialog from 'primevue/dialog';
 
-const props= defineProps(["compList"])
+const props= (['compList'])
+
 const state = reactive({
     compName: '',
     compaAdject: '',
@@ -15,7 +16,6 @@ const state = reactive({
     compVal: '',
 })
 
-console.log(props.compList)
 const rules = computed(() =>{
     return {
     compName:{  required: helpers.withMessage('ادخل اسم المرافق',required)},
@@ -43,7 +43,7 @@ const resetForm = () => {
     state.compaAdject= '';
     state.compTypeVal = '';
     state.compVal= '';
-    props.compList.push(state)
+    props.push(state.compName)
         }
 
     const store=useCounterStore()

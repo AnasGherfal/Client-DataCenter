@@ -33,7 +33,7 @@ const filters = ref({
 					</div>
                     
                 </template>
-                <Column field="code" header="الإسم "  style="min-width:12rem;  "></Column>
+                <Column field="code" header="الإسم" Frozen  style="min-width:12rem;" ></Column>
                 <Column field="name" header="  الحاله "  style="min-width:12rem"></Column>
                 <Column field="name" header="البريد الالكتروني"  style="min-width:12rem"></Column>
                 <Column field="name" header=" العنوان"  style="min-width:12rem"></Column>
