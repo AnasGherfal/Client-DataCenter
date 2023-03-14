@@ -1,7 +1,5 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import Menu from 'primevue/menu';
-import Tooltip from 'primevue/tooltip';
 
         const items = ref([
             {
@@ -71,15 +69,21 @@ import Tooltip from 'primevue/tooltip';
 
         ]);
 
-        const visible= ref( true)
+        const menu = ref();
 
+        const toggle = (event:any) => {
+        menu.value.toggle(event);
+};
 
 
 </script>
 
 <template>
 
-    <Menu  class="overflow-auto fixed  mt-4 fadeinright animation-duration-500" style="border-radius:15px;width: 25%; height: calc(100vh - 7.6rem);"  :model="items" />
+    <Menu ref="menu"  :model="items" :popup="false" class="overflow-auto fixed  mt-4 fadeinright animation-duration-500" style="border-radius:15px;width: 25%; height: calc(100vh - 7.6rem);" >
+    </Menu>
+
+    <!-- <Button  label="hh" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" /> -->
 
 </template>
 
@@ -139,14 +143,14 @@ import Tooltip from 'primevue/tooltip';
   border-radius: 20px;
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 600px) {
 .p-menuitem-text	{
     display:none;
 }
     
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 600px) {
     .p-menu{
     display:none;
 }

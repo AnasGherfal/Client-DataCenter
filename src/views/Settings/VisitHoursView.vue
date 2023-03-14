@@ -68,12 +68,12 @@ const submitForm = async () => {
     <div>
 
         <form @submit.prevent="submitForm">
-
-        <div v-for="(i, index) in visitsHours" :key="index">
+ 
+        <div v-for="(i) in visitsHours" :key="i.id">
 
             <h3>{{ i.name }}</h3>
 
-        <div class="grid p-fluid " >
+        <div class="grid p-fluid " > 
             <div class="field col-12 md:col-4 mt-5">
                 <span class="p-float-label ">
 

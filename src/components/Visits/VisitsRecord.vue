@@ -4,6 +4,7 @@ import { FilterMatchMode } from 'primevue/api';
 
 
 const users = ref(['fdf','dff']);
+
 const filters = ref({
     'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
@@ -18,7 +19,9 @@ const filters = ref({
                 <Divider/>
             </template>
             <template #content>
-            <DataTable  ref="dt" :value="users" dataKey="id" 
+            <DataTable  ref="dt" :value="users" dataKey="id"                  filterDisplay="row"
+           :globalFilterFields="['name', 'country.name', 'representative.name', 'balance', 'status']"
+
                 :paginator="true" :rows="10" :filters="filters"
                 paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]"
                 currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} سجل الزيارات" responsiveLayout="scroll">
@@ -33,7 +36,7 @@ const filters = ref({
 					</div>
                     
                 </template>
-                <Column field="code" header="الإسم "  style="min-width:12rem;  "></Column>
+                <Column field="code" header="الإسم "  style="min-width:12rem;  " frozen></Column>
                 <Column field="name" header="  الحاله "  style="min-width:12rem"></Column>
                 <Column field="name" header="البريد الالكتروني"  style="min-width:12rem"></Column>
                 <Column field="name" header=" العنوان"  style="min-width:12rem"></Column>
