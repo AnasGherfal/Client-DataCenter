@@ -41,7 +41,7 @@ import MultiSelect from 'primevue/multiselect';
 import InputNumber from 'primevue/inputnumber';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
-
+import Tag from 'primevue/tag';
 
 const app = createApp(App)
 
@@ -71,6 +71,7 @@ app.component('Divider', Divider);
 app.component('InputNumber', InputNumber);
 app.component('TabView', TabView);
 app.component('TabPanel', TabPanel);
+app.component('Tag', Tag);
 
 app.directive('tooltip', Tooltip);
 app.directive('ripple', Ripple);

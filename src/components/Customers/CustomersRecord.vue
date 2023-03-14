@@ -3,6 +3,8 @@ import { computed, inject, onMounted, ref } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
 import {useCustomersStore} from '@/stores/customers'
 import axios from 'axios';
+import Row from 'primevue/row'; 
+                  // optional
 
 const store = useCustomersStore();
 
@@ -21,10 +23,23 @@ const columns = ref([
 
         ]);
         const selectedColumns = ref(columns.value);
+        const loading = ref(true);
 
         const onToggle = (val:any) => {
             selectedColumns.value = columns.value.filter(col => val.includes(col));
         };
+
+        const filterss = ref({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+
+    status: { value: null, matchMode: FilterMatchMode.EQUALS },
+    verified: { value: null, matchMode: FilterMatchMode.EQUALS }
+});
+
+const statuses = ref(['نشط', 'غير نشط', 'من',]);
+
+
 
 //  onMounted( () =>{
 //          axios.get("http://localhost:3000/users")
@@ -37,6 +52,20 @@ const columns = ref([
 //       })
 
 //     })
+
+const getSeverity = (status:any) => {
+    switch (status) {
+        case 'نشط':
+            return 'success';
+
+        case 'غير نشط':
+            return 'danger';
+
+    }
+}
+
+const balanceFrozen = ref(true);
+
 </script>
 
 <template>
@@ -51,7 +80,8 @@ const columns = ref([
            
                 
             <DataTable  ref="dt" :value="store.users" dataKey="id" 
-                :paginator="true" :rows="5" :filters="filters"
+                :paginator="true" :rows="5" v-model:filters="filters" 
+                :globalFilterFields="['name', 'status']"
                 paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]"
                 currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} عميل" responsiveLayout="scroll">
                 <template #header>
@@ -69,18 +99,31 @@ const columns = ref([
                         placeholder="حدد الأعمدة" style="width: 10em"/>
                 </div>
                 
-                <Button icon="fa-solid fa-plus" @click="$router.push('/users')" class="mr-4"></Button>
+                <Button    @click="$router.push('/users')" class="mr-4 p-button-primry "> اضافة عميل</Button>
 					</div>
                    
                 </template>
-                <Column field="name" header="الإسم "  style="min-width:10rem;  "></Column>
-                <Column  v-for="(col,index) of selectedColumns" :field="col.field"  :header="col.header" :key="col.field + '_' + index" style="min-width:10rem;  "
-                ></Column>
-                <!-- <Column field="status" header="  الحاله "  style="min-width:12rem"></Column>
+                <Column field="name" header="الإسم"  style="min-width:10rem;" alignFrozen="right" :frozen="balanceFrozen" class="font-bold"></Column>
+                <!-- <Column  v-for="(col,index) of selectedColumns" :field="col.field"  :header="col.header" :key="col.field + '_' + index" style="min-width:10rem;  "
+                ></Column> -->
+                
+                <Column field="status" header="  الحاله "  style="min-width:12rem" :showFilterMenu="false" :filterMenuStyle="{ width: '14rem' }">
+                    <template #body="{ data }">
+                    <Tag :value="data.status" :severity="getSeverity(data.status)" />
+                </template>
+                <template #filter="{ filterModel, filterCallback }">
+                    <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="statuses" placeholder="Select One" class="p-column-filter" style="min-width: 12rem" :showClear="true">
+                        <template #option="slotProps">
+                            <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" />
+                        </template>
+                    </Dropdown>
+                </template>
+                
+                </Column>
                 <Column field="email" header="البريد الالكتروني"  style="min-width:12rem"></Column>
                 <Column field="address" header=" العنوان"  style="min-width:12rem"></Column>
                 <Column field="phoneNumber1" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
-                <Column field="phoneNumber2" header="  رقم الهاتف 2"  style="min-width:12rem"></Column> -->
+                <Column field="phoneNumber2" header="  رقم الهاتف 2"  style="min-width:12rem"></Column>
 
 
 </DataTable>
