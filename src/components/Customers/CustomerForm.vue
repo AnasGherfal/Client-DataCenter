@@ -84,9 +84,10 @@ const resetForm = () => {
         <Card>
 
             <template #title>
-                <Button @click="backButton" icon="fa-solid fa-arrow-left fa-shake-hover" style="right:90%"  >
-                </Button>   
+ 
                 إضافة عميل
+                <Button @click="backButton" icon="fa-solid fa-arrow-left fa-shake-hover" style="right:80%"  >
+                </Button>  
                 <Divider />
 
             </template>
@@ -146,7 +147,7 @@ const resetForm = () => {
                         </div>
 
                     </div>
-                    <Button @click="submitForm" icon="fa-solid fa-plus" label="إضافة" type="submit" />
+                    <Button @click="submitForm" icon="fa-solid fa-plus" label="إضافة" type="submit"  />
                     <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-secondary"
                         style="margin-right: .5em; background-color: red;" />
                     <Toast position="bottom-right" />
@@ -168,7 +169,6 @@ const resetForm = () => {
 
 .p-float-label>label {
     right: 0.5rem;
-    color: black;
     transition-duration: 0.3s
 }
 

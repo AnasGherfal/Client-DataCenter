@@ -73,6 +73,7 @@ import { ref } from 'vue';
     margin: 10px;
 }
 .p-menuitem-text{
+    color: var(--primary-color);
 
     margin-right: 5px;
     font-family: 'Tajawal';
@@ -97,7 +98,7 @@ import { ref } from 'vue';
 }
     .router-link-active{
         .p-menuitem-icon{
-            color: navy !important;
+            color: var(--primary-color) !important;
         }
         .p-menuitem-text{
             font-weight:600;
