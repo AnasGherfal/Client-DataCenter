@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import CustomerForm from '@/views/Customers/CustomerFormView.vue';
 import { computed, inject, onMounted, ref } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
 import {useCustomersStore} from '@/stores/customers'
@@ -129,7 +130,11 @@ const getSeverity = (status:any) => {
                 <Column field="address" header=" العنوان"  style="min-width:12rem"></Column>
                 <Column field="phoneNumber1" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
                 <Column field="phoneNumber2" header="  رقم الهاتف 2"  style="min-width:12rem"></Column>
-
+                <Column :exportable="false" style="min-width:8rem">
+        <template #body="slotProps">
+            <Button icon="fa-solid fa-user"  @click="editProduct(slotProps.data)" />
+        </template>
+    </Column>
 
 </DataTable>
 </template>

@@ -21,6 +21,7 @@ import TopBar from './layouts/TopBar.vue'
     <div class="content" style="transition: all 0.5s ease; width: 73%; margin-right: 26%; padding: 25px;">
       <!-- main -->
       <RouterView/>
+      <!-- <ServiceInfo/> -->
   <!-- <CustomerProfile/> -->
     </div>
     

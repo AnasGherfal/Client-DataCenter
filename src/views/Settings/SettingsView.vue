@@ -33,8 +33,8 @@ const state = reactive({
 
                         <div>
 
-                            <PakagesList />
                             <Addpackages/>
+                            <PakagesList />
 
                         </div>
 
