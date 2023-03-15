@@ -1,9 +1,16 @@
 <template>
-        <div class="bg-white shadow-2 p-3 border-round-2xl mt-3">
+    <Card class="shadow-2  border-round-2xl ">
+        <template #header >
 
-        <h3>مخطط الاحصائيات السنوي</h3>
-        <Chart type="line" :data="basicData" :options="basicOptions" />
-        </div>
+            
+                <h3 class="p-3">مخطط الاحصائيات السنوي</h3>
+        </template>
+
+<template #content>
+<Chart type="line" :data="basicData" :options="basicOptions" />
+</template>
+    </Card>
+
 </template>
 
 <script lang="ts" setup>
