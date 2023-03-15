@@ -32,30 +32,30 @@ onMounted( async () =>{
     
                     <div class="justify-content-between ">
                          <div>
-                        <span class="block text-center text-blue-800 text-3xl  font-bold">{{ servic.name }}</span>
-                        <div class="text-center mb-3  text-blue-800">عدد الزيارات المتاحة في هده الباقة في الشهر : {{ servic.monthlyVistsShare }}</div>
-                        <div class="text-blue-800 text-center font-semibold text-4xl">{{ servic.pricePerYear }}<span class="text-xs mr-1 text-blue-800">د.ل</span></div>
+                        <span class="block text-center  text-3xl  font-bold">{{ servic.name }}</span>
+                        <div class="text-center mb-3  ">عدد الزيارات المتاحة في هده الباقة في الشهر : {{ servic.monthlyVistsShare }}</div>
+                        <div class=" text-center font-semibold text-4xl">{{ servic.pricePerYear }}<span class="text-xs mr-1 text-blue-800">د.ل</span></div>
                     </div>
                     <Divider/>
                   
                 </div>
-                <p class="font-bold text-blue-800">خواص هده الباقة :</p>
+                <p class="font-bold">خواص هده الباقة :</p>
 
-                <div style="direction:ltr;" class="text-center font-bold text-l"> 
+                <div style="direction:ltr;" class="text-center font-bold text-sm"> 
                 <i class="text-green-600 fa-solid fa-circle-check mr-2"></i>  
                 <span>(Acp Port): {{ servic.AcpPort }}</span>
-                <span class="text-green-500 font-medium"></span>
+                <span class=" font-medium"></span>
                 </div>
 
-                <div class="text-center font-semibold text-l">   
+                <div class="text-center font-semibold text-sm">   
                 <span>DNS : {{ servic.Dns }}</span>
                 <i class="text-green-600 fa-solid fa-circle-check mr-2"></i>
-                <span class="text-green-500 font-medium"></span>
+                <span class=" font-medium"></span>
                 </div>
 
                 
 
-                <div style="direction:ltr;" class="text-center font-bold text-l">   
+                <div style="direction:ltr;" class="text-center font-bold text-sm">   
                     <i class="text-green-600 fa-solid fa-circle-check mr-1"></i>
                 <span> (Amount Of Power) : {{servic.amountOfPower}} </span>
                 <span class="text-green-500 font-medium"></span>
@@ -76,9 +76,7 @@ onMounted( async () =>{
 
 
 <style scoped>
-span{
-    color: green;
-}
+
 
 
 </style>
