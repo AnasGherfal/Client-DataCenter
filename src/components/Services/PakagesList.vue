@@ -1,15 +1,26 @@
 <script setup lang="ts">
-import { useCounterStore } from '@/stores/packages'
+import axios from 'axios';
 import Divider from 'primevue/divider';
+import { onMounted, ref } from 'vue';
 
-const store = useCounterStore()
-
+const packagesList=ref()
+onMounted( async () =>{ 
+    await axios.get("http://localhost:3000/services")
+        .then((response) =>{
+            packagesList.value = response.data;
+            console.log(packagesList)
+    })
+    .catch(function(error){
+        console.log(error)
+      })
+    })
+    
 </script>
 
 
 <template>
     <div class="grid"> 
-        <div  v-for="servic in store.Services"
+        <div  v-for="servic in packagesList"
         :key="servic.id" class="col-12 md:col-6 lg:col-4" >
         <card>
             <template #header>

@@ -4,6 +4,8 @@ import { email, minLength, required, helpers, integer } from "@vuelidate/validat
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import { useCounterStore } from '@/stores/packages'
+import Dialog from 'primevue/dialog';
+
 
 
 const state = reactive({
@@ -81,10 +83,11 @@ const openModal = () => {
 
 <template >
     <Dialog  header="اضافة باقة" contentStyle="height: 200px; padding: 20px;"  v-model:visible="displayModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '60vw'}" :modal="true">
-    
   <form @submit.prevent="submitForm">
+
    <div class="grid p-fluid ">
-    <div class="field col-12 md:col-4 ">
+    
+    <div class="field col-12 md:col-4">
         <span class="p-float-label" >
             <InputText id="name" type="text" v-model="state.name"  />
             <label  for="name">اسم الباقة </label>
@@ -109,7 +112,7 @@ const openModal = () => {
     </div>
 
     <div class="field col-12 md:col-4">
-        <span class="p-float-label ">
+        <span class="p-float-label">
             <InputText id="monthlyVistsShare" type="text" v-model="state.monthlyVistsShare" />
             <label for="monthlyVistsShare" >عدد الزيارات في الشهر</label>
             <error  v-for="error in v$.monthlyVistsShare.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
@@ -136,14 +139,14 @@ const openModal = () => {
 
 </form>
 <template #footer>
-    <Button @click="submitForm" class="p-button-primry" icon="fa-solid fa-plus" label="إضافة" type="submit" />
+<Button @click="submitForm" class="p-button-primry" icon="fa-solid fa-plus" label="إضافة" type="submit" />
 <Button @click="resetForm" icon="pi pi-refresh" label="مسح" class="p-button-secondary" style="margin-right: .5em;background-color: red;" />
 <Toast position="bottom-right" />
 
             </template>
         </Dialog>
+        <Button @click="openModal" style="width: 200px;"  icon="fa-solid fa-plus  text-green-50" class=" mb-4 ml-4 p-button-primry " >اضافة باقة</Button>
 
-    <Button @click="openModal" style="height: 40px; width: 40px;" icon="fa-solid fa-plus  text-green-50" class="fixed mb-4 ml-4 bottom-0 left-0 p-button-primry fa-beat" />
 </template>
 
 
