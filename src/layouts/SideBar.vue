@@ -9,59 +9,34 @@ import { ref } from 'vue';
                     icon: 'fa-solid fa-house',
                     to: '/'
                 },
+                ]}
 
-            ]},
-            {
-                label: 'العملاء',
+                ,{
+                label: 'السجلات',
                 items: [
-                {
-                    label: 'اضافة عميل',
-                    icon: 'fa-solid fa-user-plus',
-                    to: 'users',
-
-                
-                },
                     {
                     
                     label: 'سجل العملاء',
                     icon: 'fa-solid fa-users',
-                    to:'/UsersRecord'
+                    to:  '/customersRecord',
                     
-                }
-            ]},
-              
-            {
-                label: 'الزيارات',
-                items: [
-                {
-                    label: 'انشاء زيارة ',
-                    icon: 'fa-solid fa-circle-plus',
-                    to: '/CreateVisit'
                 },
+              
+            
                     {
                     
                     label: 'سجل الزيارات',
                     icon: 'fa-solid fa-book',
                     to:'/VisitsRecords'
-                }
-            ]}
-            ,{
-                label: 'الباقات',
-                items: [
+                },
+   
                 {
                     label: 'سجل الاشتراكات',
-                    icon: 'pi pi-server',
+                    icon: 'fa-solid fa-calculator',
+                    to:'/SubscriptionsRecord'
                 },
-                {
-                    label: 'اضافة اشتراك',
-                    icon: 'pi pi-plus-circle',
-                    to:'/AddService',
-                },
-                {
-                    label: 'الباقات',
-                    icon: 'pi pi-plus-circle',
-                    to: '/Services'
-                },
+
+
             ]},
             
                 
@@ -98,15 +73,12 @@ import { ref } from 'vue';
     margin: 10px;
 }
 .p-menuitem-text{
-    color: #1643a0 !important;
 
     margin-right: 5px;
-    color: black !important;
     font-family: 'Tajawal';
 }
 
 .p-submenu-header{
-    color: #1643a0 !important;
     font-family:'tajawal';
     font-weight: 800 !important;  
 }

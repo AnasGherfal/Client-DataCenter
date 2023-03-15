@@ -3,7 +3,7 @@ import { RouterLink, RouterView } from 'vue-router'
 import { ref } from 'vue';
 import SideBar from './layouts/SideBar.vue'
 import TopBar from './layouts/TopBar.vue'
-// import CustomerProfile from './components/Users/CustomerProfile.vue'
+// import CustomerProfile from './components/Customers/CustomerProfile.vue'
 </script>
 
 <template>
@@ -44,8 +44,6 @@ import TopBar from './layouts/TopBar.vue'
 body{
   padding:0;
   margin: 0;
-  background-color: #f2f2f2;
-  font-family:' bold',Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;  
 }
 
 /* width */
@@ -70,6 +68,8 @@ body{
 ::-webkit-scrollbar-thumb:hover {
   background: gray; 
 }
+
+
 
 
 /* #loading {

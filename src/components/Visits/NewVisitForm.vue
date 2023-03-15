@@ -5,6 +5,7 @@ import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import { useCustomersStore } from '@/stores/customers';
 import addCompanion from './addCompanion.vue';
+import router from '@/router';
 
 const store = useCustomersStore();
 
@@ -78,14 +79,27 @@ const resetForm = () => {
     state.price = ""
 }
 
+function backButton() {
+    router.push("/VisitsRecords")
+
+}
+
 </script>
 
 <template >
     <div>{{ state.expectedEndVisit }}
         <Card>
+
             <template #title>
+                <div class="grid p-fluid ">
+
                 إنشاء زيارة
+                <Button @click="backButton" icon="fa-solid fa-arrow-left fa-shake-hover" style="right:80% "  >
+                </Button> 
+                </div>
+                
                 <Divider/>
+                
             </template>
             <template #content>
                 <form @submit.prevent="submitForm">

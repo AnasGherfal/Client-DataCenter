@@ -5,6 +5,7 @@ import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import AutoComplete from 'primevue/autocomplete';
 import Divider from 'primevue/divider';
+import router from '@/router';
 
 const state = reactive({
     nameCustomer: "",
@@ -47,6 +48,12 @@ const resetForm = () => {
 
         const minDate = ref(new Date());
         const invalidDates = ref();
+
+
+        function backButton() {
+    router.push("/subscriptionsRecord")
+
+}
         </script>
 
 
@@ -54,9 +61,10 @@ const resetForm = () => {
      <div>
         <Card >
             <template  #title>
-          
+
                 إضافة اشتراك  
-             
+                <Button @click="backButton" icon="fa-solid fa-arrow-left fa-shake-hover" style="right:75% "  >
+                </Button> 
                 <Divider layout="horizontal" />
 
             </template>

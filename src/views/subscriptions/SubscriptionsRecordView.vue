@@ -65,15 +65,17 @@ const getSeverity = (status:any) => {
 }
 
 
+
 </script>
 
 <template>
     <RouterView></RouterView>
 
-    <div v-if="$route.path !== '/customersRecord/addCustomers'">
+    <div v-if="$route.path !== '/subscriptionsRecord/addSubsciptions'">
         <Card>
     
             <template #title>
+
                 سجل العملاء
             </template>
             <template #content >
@@ -85,7 +87,7 @@ const getSeverity = (status:any) => {
                 paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]"
                 currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} عميل" responsiveLayout="scroll">
                 <template #header>
-                    <div class="grid p-fluid">
+                    <div class="grid ">
                     <div class="table-header flex flex-column md:flex-row justiify-content-between ">
 						<span class="p-input-icon-left p-float-label ">
                             <i class="fa-solid fa-magnifying-glass" />
@@ -94,15 +96,10 @@ const getSeverity = (status:any) => {
 
                         </span>
 
-                        <div style="text-align:left; margin-right: 0.5rem;;">
-
-                    <MultiSelect :modelValue="selectedColumns" :options="columns" optionLabel="header" @update:modelValue="onToggle"
-                        placeholder="حدد الأعمدة" style="width: 10em"/>
-                </div>
                 
                 <!-- <RouterLink :to="$route.params.id + '/users'"> -->
-                    <RouterLink to="/customersRecord/addCustomers" style="text-decoration: none">
-                <Button icon="fa-solid fa-plus" label="إضافة عميل" style="width: 150px;" class="mr-2"> </Button>
+                    <RouterLink to="/subscriptionsRecord/addSubsciptions" style="text-decoration: none">
+                <Button icon="fa-solid fa-plus" label="إضافة اشتراك" style="width: 150px;" class="mr-2"> </Button>
             </RouterLink>
 					</div>
                     </div>

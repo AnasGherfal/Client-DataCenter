@@ -6,11 +6,11 @@ import { required, helpers, minValue, requiredIf, email } from "@vuelidate/valid
 import { useVuelidate } from "@vuelidate/core";
 import axios from 'axios';
 
-let visitsHours = ref();
+const visitsHours = ref();
 
 const state = reactive({
     hoursName:'',
-    startWorkTime: '',
+    startWorkTime:'',
     endWorkTime: '',
     priceFirstHour: 0,
     priceAfter: 0,
@@ -45,8 +45,8 @@ const submitForm = async () => {
  onMounted( async () =>{ 
     await axios.get("http://localhost:3000/visitHours")
         .then((response) =>{
-            visitsHours = response.data;
-            console.log(visitsHours)
+            visitsHours.value = response.data;
+            console.log(visitsHours) 
     })
 //     .then((data:any) => {
 //         let results = [];
@@ -69,12 +69,12 @@ const submitForm = async () => {
 
         <form @submit.prevent="submitForm">
  
-        <div v-for="(i) in visitsHours" :key="i.id">
+        <div v-for="i in visitsHours" :key="i.id">  
 
             <h3>{{ i.name }}</h3>
 
         <div class="grid p-fluid " > 
-            <div class="field col-12 md:col-4 mt-5">
+            <div class="field col-12 md:col-4 mt-2">
                 <span class="p-float-label ">
 
                     <Calendar  inputId="startTime" v-model="i.startTime" 
@@ -84,10 +84,10 @@ const submitForm = async () => {
 
                 </span>
             </div>
-            <div class="field col-12 md:col-4 mt-5">
+            <div class="field col-12 md:col-4 mt-2">
                 <span class="p-float-label ">
 
-                    <Calendar  inputId="endTime" v-model="i['endTime']"
+                    <Calendar  inputId="endTime" v-model="i.endTime"
                         dateFormat="yy/mm/dd" :showTime="true" :timeOnly="true" selectionMode="single"
                         :manualInput="true" :stepMinute="5" hourFormat="12" />
                     <error v-for="error in v$.endWorkTime.$errors" :key="error.$uid" class="p-error ">
@@ -97,19 +97,21 @@ const submitForm = async () => {
                     </span>
                 </div>
 
-            <div class="field col-12 md:col-2">
-
-                <label for="priceInWorkTime">السعر </label>
-                <InputNumber inputId="stacked" v-model="i['priceFirstHour']" suffix=" دينار" :step="0.25" :min="0"
-                    :allowEmpty="false" :highlightOnFocus="true" />
             </div>
-            <div class="field col-12 md:col-2">
-                <label for="priceInWorkTime">السعر </label>
-                <InputNumber inputId="stacked" v-model="i['priceAfter']" suffix=" دينار" :step="0.25" :min="0"
-                    :allowEmpty="false" :highlightOnFocus="true" />
-                </div>
+            <div class="grid p-fluid " > 
 
-            </div>
+            <div class="field col-12 md:col-4">
+
+<label for="priceFirstHour"> سعر الساعه الاولى </label>
+<InputNumber inputId="stacked" v-model="i.priceFirstHour" suffix=" دينار" :step="0.25" :min="0"
+    :allowEmpty="false" :highlightOnFocus="true" />
+</div>
+<div class="field col-12 md:col-4">
+<label for="priceAfter" >سعر اكثر من ساعه </label>
+<InputNumber inputId="stacked" v-model="i.priceAfter" suffix=" دينار" :step="0.25" :min="0"
+    :allowEmpty="false" :highlightOnFocus="true" />
+</div>
+</div>
         </div>
 
             <!-- <h3>ساعات بعد الدوام</h3>

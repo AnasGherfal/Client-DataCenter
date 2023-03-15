@@ -17,15 +17,14 @@ import { ref } from 'vue';
               backdrop-filter: blur(5px);
                width: 100%;
                 height:75px;
-            	padding: 20px ;
-            	  background-color: rgba(255, 255, 255, 0.6);">
+            	padding: 20px ;">
 
 
 
 
 
         <div>
-            <img alt="logo" src="../assets/pics/LTT-logo.png " height="40" style="margin-right:0px; --fa-animation-iteration-count:5" class="fa-bounce">
+            <img  alt="logo" src="../assets/pics/LTT-logo.png " height="40" style="margin-right:0px; --fa-animation-iteration-count:5" class="logo fa-bounce">
         </div>
 
         <div>
@@ -50,6 +49,12 @@ import { ref } from 'vue';
     height: 60px;
     position: absolute;
     z-index: 2;
+}
+
+@media screen and (max-width: 400px) {
+    p{
+    display:none;
+}
 }
 
 </style>

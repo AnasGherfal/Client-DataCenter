@@ -16,45 +16,54 @@ const router = createRouter({
 
       component: () => import('../views/AboutView.vue')
     },
-    {
-      path: '/users',
-      name: 'users',
 
-      component: () => import('../views/Customers/CustomerFormView.vue')
-    },
     {
-      path: '/UsersRecord',
-      name: 'UsersRecord',
+      path: '/customersRecord',
+      name: 'CustomersRecord',
 
       component: () => import('../views/Customers/CustomerRecordView.vue'),   
+
+      children:[
+        
+        {
+        path:'addCustomers',
+        props:true,
+        component: () => import('../views/Customers/CustomerFormView.vue')
+        }
+      ]
       
     },
     {
-      path: '/AddService',
-      name: 'AddService',
+      path: '/subscriptionsRecord',
+      name: 'SubscriptionsRecord',
 
-      component: () => import('../components/Services/AddService.vue')
-    },
-    {
-      path: '/Services',
-      name: 'Services',
+      component: () => import('../views/subscriptions/SubscriptionsRecordView.vue'),
 
-      component: () => import('../views/Services.vue')
+      children:[
+        {
+        path:'addSubsciptions',  
+        component: () => import('../views/subscriptions/AddsubscriptionsView.vue'),
+        }
+      ]
     },
-    {
-      path: '/CreateVisit',
-      name: 'NewVisit',
 
-      component: () => import('../views/Visits/VisitView.vue')
-    },
     {
       path: '/visitsRecords',
       name: 'VisitsRecords',
 
-      component: () => import('../views/Visits/RecordView.vue')
+      component: () => import('../views/Visits/RecordView.vue'),
+
+      children:[
+        {
+          path: 'createVisit',
+          props:true,
+    
+          component: () => import('../views/Visits/VisitView.vue')
+        },
+      ]
     },
     {
-      path: '/SettingsView',
+      path: '/settingsView',
       name: 'SettingsView',
 
       component: () => import('../views/Settings/SettingsView.vue')

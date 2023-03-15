@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
+import router from '@/router';
 
 
 const users = ref(['fdf','dff']);
@@ -8,24 +9,32 @@ const users = ref(['fdf','dff']);
 const filters = ref({
     'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
+
+function backButton() {
+    router.push("/VisitsRecords")
+
+}
 </script>
 
 <template>
-    <div>
+        <RouterView></RouterView>
+
+    <div v-if="$route.path !== '/visitsRecords/createVisit'">
        
         <Card>
             <template #title>
                 سجل الزيارات
-                <Divider/>
             </template>
             <template #content>
-            <DataTable  ref="dt" :value="users" dataKey="id"                  filterDisplay="row"
+            <DataTable :value="users" dataKey="id"        filterDisplay="row"
            :globalFilterFields="['name', 'country.name', 'representative.name', 'balance', 'status']"
 
                 :paginator="true" :rows="10" :filters="filters"
                 paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]"
                 currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} سجل الزيارات" responsiveLayout="scroll">
                 <template #header>
+                    <div class="grid p-fluid">
+
                     <div class="table-header flex flex-column md:flex-row justiify-content-between">
 						<span class="p-input-icon-left p-float-label ">
                             <i class="fa-solid fa-magnifying-glass" />
@@ -33,7 +42,12 @@ const filters = ref({
                             <label for="phoneNum1"> البحث </label>
 
                         </span>
+
+                        <RouterLink to="/visitsRecords/createVisit" style="text-decoration: none">
+                <Button icon="fa-solid fa-plus" label="إضافة زيارة" style="width: 150px;" class="mr-2"> </Button>
+            </RouterLink>
 					</div>
+                    </div>
                     
                 </template>
                 <Column field="code" header="الإسم "  style="min-width:12rem;  " frozen></Column>

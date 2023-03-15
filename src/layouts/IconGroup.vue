@@ -18,18 +18,18 @@ const toggle = (event:any) => {
      
      <template>
     <div class="inline-flex fadeinleft animation-duration-1000" style=" height:30px; margin-top: -18px; margin-right:12px;">
-        <Button style="height: 40px; width: 40px; --fa-animation-iteration-count: 2;" icon="fa-solid fa-moon fa-fade" class="m-1 p-button-secondary p-button-text"  />
+        <Button style="height: 40px; width: 40px; --fa-animation-iteration-count: 2;" icon="fa-solid fa-moon fa-fade" class="m-1 p-button-text"  />
 
 
         
         <RouterLink to="/SettingsView" style="text-decoration: none">
 
-        <Button  style="height: 40px; width: 40px; --fa-animation-iteration-count: 1;" icon="fa-solid fa-gear fa-spin fa-spin-hover" class="m-1 p-button-secondary p-button-text transition-colors 
+        <Button  style="height: 40px; width: 40px; --fa-animation-iteration-count: 1;" icon="fa-solid fa-gear fa-spin fa-spin-hover" class="m-1 p-button-text transition-colors 
         transition-duration-500   " 
         v-tooltip="{value:'اعدادات النظام', fitContent:true}" />
         </RouterLink>
 
-        <Button  @click="toggle"  style="height: 40px; width: 40px; --fa-animation-iteration-count: 2;" icon="fa-solid fa-ellipsis-vertical" class="m-1 p-button-secondary p-button-text fa-bounce-hover"
+        <Button  @click="toggle"  style="height: 40px; width: 40px; --fa-animation-iteration-count: 2;" icon="fa-solid fa-ellipsis-vertical" class="m-1  p-button-text fa-bounce-hover"
          aria-haspopup="true" aria-controls="overlay_menu" v-tooltip="{value:'قائمه', fitContent:true}" />
         <Menu ref="menu" :model="items" :popup="true" >
           <template #start>

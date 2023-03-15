@@ -17,3 +17,10 @@
   -o-animation: fa-flip 2s infinite linear;
   animation: fa-flip 2s infinite linear;
 }
+
+.fa-shake-hover:hover{
+  -webkit-animation: fa-shake 2s infinite linear;
+  -moz-animation: fa-shake 2s infinite linear;
+  -o-animation: fa-shake 2s infinite linear;
+  animation: fa-shake 2s infinite linear;
+}
