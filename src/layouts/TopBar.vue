@@ -28,7 +28,7 @@ import { ref } from 'vue';
         </div>
 
         <div>
-            <p style="color:#1643a0;font-size: 23px ;font-weight: 800;  width:257px; height:40px;">ليبيا للاتصالات والتقنية
+            <p style="font-size: 23px ;font-weight: 800;  width:257px; height:40px;">ليبيا للاتصالات والتقنية
             </p>
         </div>
 
@@ -49,6 +49,10 @@ import { ref } from 'vue';
     height: 60px;
     position: absolute;
     z-index: 2;
+}
+p{
+    color: var(--primary-color);	
+
 }
 
 @media screen and (max-width: 400px) {

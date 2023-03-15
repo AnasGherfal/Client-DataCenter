@@ -2,6 +2,8 @@
 import Button from 'primevue/button';
 import { ref } from 'vue';
 
+
+
 const menu = ref();
 const items = ref([
 { separator: true },
@@ -14,6 +16,11 @@ const items = ref([
 const toggle = (event:any) => {
     menu.value.toggle(event);
 };
+
+
+// Composition API
+
+        
 </script>
      
      <template>
