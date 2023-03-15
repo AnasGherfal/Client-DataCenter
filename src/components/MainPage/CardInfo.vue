@@ -2,51 +2,62 @@
 import DialogCard from './CardInfo/DialogCard.vue';
 </script>
 <template>
-    <div class="grid"> 
-        <div class="col-12 md:col-6 lg:col-4">
-            <div class="bg-green-50 shadow-2 p-3 border-round-2xl">
-                <div class="flex justify-content-between mb-3">
-                    
-                    <div>
-                        <span class="block text-green-700 font-medium mb-3 font-semibold">خدمات حالياً مفعلة</span>
-                        <div class="text-green-700 font-medium text-xl">47 خدمة</div>
-                    </div>
-                    <div class="flex align-items-center justify-content-center bg-green-500 border-round" style="width:2.5rem;height:2.5rem">
-                        <i class="pi pi-bolt text-green-50 text-xl"></i>
-                    </div>
-                </div>
-                <span class="text-green-500 font-medium">.....</span>
-                <span class="text-500">......</span>
-            </div>
-        </div>
+    <div class="grid" > 
 
-        <div class="col-12 md:col-6 lg:col-4">
-            <div class="bg-orange-50 shadow-2 p-3 border-round-2xl" >
-                <div class="flex  justify-content-between mb-3 ">
-                    <div>
-                        <span class="block text-orange-600 font-medium mb-3 font-semibold">اقتراب انتهاء الصلاحية</span>
-                        <div class="text-orange-600 font-medium text-xl">5 خدمات</div>
-                    </div>
-                    <div class="flex align-items-center justify-content-center bg-orange-500 border-round" style="width:2.5rem;height:2.5rem">
-                        <i  class="pi pi-history text-green-50 text-xl"></i>
-                    </div>
-                </div>
-                <span class="text-600 ">اقل من شهر على انتهاء الخدمة</span>
-            </div>
-        </div>
-        <div class="col-12 md:col-6 lg:col-4">
-            <div class="bg-red-50 shadow-2 p-3 border-round-2xl">
+        <Card style="height: 140px; width: 32%;" class="col-12  mr-1 lg:col-4 mb-3  shadow-2 p-3">
+                <template #header>
+            <div class="  border-round-2xl">
                 <div class="flex justify-content-between mb-3">
                     <div>
-                        <span class="block text-red-600 font-medium mb-3 font-semibold">خدمات غير مفعلة</span>
-                        <div class="text-red-600 font-medium text-xl">47 خدمة</div>
+                        <span class="block text-green-600 font-medium font-semibold">خدمات حالياً مفعلة</span>
                     </div>
                        <DialogCard/>
                 </div>
-                <span class="text-red-500 font-medium">.....</span>
-                <span class="text-500">......</span>
             </div>
-        </div>
+       
+            <div class="text-green-600 font-medium text-xl">47 خدمة</div>
+      
+            <span class="text-green-500 font-medium">.....</span>
+            <span class="text-500">......</span>
+        </template>
+        </Card>
+
+        <Card style="height: 140px; width: 32%;" class="col-12  mr-2 lg:col-4 mb-3 shadow-2 p-3">
+                <template #header>
+            <div class="  border-round-2xl">
+                <div class="flex justify-content-between mb-3">
+                    <div>
+                        <span class="block text-orange-600 font-medium font-semibold">اقتراب انتهاء الصلاحية</span>
+                    </div>
+                       <DialogCard/>
+                </div>
+            </div>
+       
+            <div class="text-orange-600 font-medium text-xl">5 خدمات</div>
+      
+            <span class="text-orange-500 font-medium">.....</span>
+            <span class="text-500">......</span>
+        </template>
+        </Card>
+
+            <Card style="height: 140px; width: 32%;" class="col-12  mr-2 lg:col-4 mb-3 shadow-2 p-3">
+                <template #header>
+            <div class="  border-round-2xl">
+                <div class="flex justify-content-between mb-3">
+                    <div>
+                        <span class="block text-red-600 font-medium font-semibold">خدمات غير مفعلة</span>
+                    </div>
+                       <DialogCard/>
+                </div>
+            </div>
+       
+            <div class="text-red-600 font-medium text-xl">47 خدمة</div>
+      
+            <span class="text-red-500 font-medium">.....</span>
+            <span class="text-500">......</span>
+        </template>
+
+        </Card>
     </div>
 </template>
 

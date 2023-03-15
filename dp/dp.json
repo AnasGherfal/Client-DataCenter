@@ -175,7 +175,7 @@
 	  },
 	  {
 		"id":"Full Rack",
-		"name": "استضافة  الخزانة(Full Rack)",
+		"name": "استضافة  الخزانة(FR)",
 		"amountOfPower":"32امبير- 230 فولت",
 		"AddamountOfPower":"32امبير- 230 فولت",
 		"AcpPort":"12 منفذ اضافي  12 منفذ اساسي",
