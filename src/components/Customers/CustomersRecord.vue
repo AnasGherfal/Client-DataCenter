@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import CustomerForm from '@/views/Customers/CustomerFormView.vue';
 import { computed, inject, onMounted, ref } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
 import {useCustomersStore} from '@/stores/customers'

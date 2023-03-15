@@ -145,7 +145,7 @@ const openModal = () => {
 
             </template>
         </Dialog>
-        <Button @click="openModal" style="width: 200px;"  icon="fa-solid fa-plus  text-green-50" class=" mb-4 ml-4 p-button-primry " >اضافة باقة</Button>
+        <Button @click="openModal" style="" label="اضافة باقه"  icon="fa-solid fa-plus " class=" mb-4 ml-4 p-button-primry " ></Button>
 
 </template>
 
