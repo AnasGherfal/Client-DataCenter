@@ -3,7 +3,8 @@ import { RouterLink, RouterView } from 'vue-router'
 import { ref } from 'vue';
 import SideBar from './layouts/SideBar.vue'
 import TopBar from './layouts/TopBar.vue'
-// import CustomerProfile from './components/Customers/CustomerProfile.vue'
+import ServiceInfo from './views/ServiceInfo/ServiceInfo.vue';
+import CustomerProfile from './components/Customers/CustomerProfile.vue'
 </script>
 
 <template>
@@ -21,6 +22,7 @@ import TopBar from './layouts/TopBar.vue'
     <div class="content" style="transition: all 0.5s ease; width: 73%; margin-right: 26%; padding: 25px;">
       <!-- main -->
       <RouterView/>
+      <!-- <ServiceInfo/> -->
   <!-- <CustomerProfile/> -->
     </div>
     

@@ -99,7 +99,7 @@ const getSeverity = (status:any) => {
                 
                 <!-- <RouterLink :to="$route.params.id + '/users'"> -->
                     <RouterLink to="/subscriptionsRecord/addSubsciptions" style="text-decoration: none">
-                <Button icon="fa-solid fa-plus" label="إضافة اشتراك" style="width: 150px;" class="mr-2"> </Button>
+                <Button icon="fa-solid fa-plus" label="إضافة اشتراك"  class="mr-2"> </Button>
             </RouterLink>
 					</div>
                     </div>

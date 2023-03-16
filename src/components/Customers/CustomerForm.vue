@@ -98,7 +98,7 @@ const resetForm = () => {
                 <form @submit.prevent="submitForm">
 
                     <div class="grid p-fluid ">
-                        <div class="field col-12 md:col-4 ">
+                        <div class="field col-12 md:col-6 lg:col-4 ">
                             <span class="p-float-label">
                                 <InputText id="name" type="text" v-model="state.name" />
                                 <error v-for="error in v$.name.$errors" :key="error.$uid" class="p-error ">
@@ -107,7 +107,7 @@ const resetForm = () => {
                             </span>
 
                         </div>
-                        <div class="field col-12 md:col-4">
+                        <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
                                 <InputText id="email" type="text" v-model="state.email" />
                                 <label for="email">البريد الإلكتروني</label>
@@ -116,7 +116,7 @@ const resetForm = () => {
 
                             </span>
                         </div>
-                        <div class="field col-12 md:col-4">
+                        <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
                                 <InputText id="address" type="text" v-model="state.address" />
                                 <label for="address">العنوان</label>
@@ -125,7 +125,7 @@ const resetForm = () => {
 
                             </span>
                         </div>
-                        <div class="field col-12 md:col-4">
+                        <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
                                 <InputMask id="phoneNum1" v-model="state.phoneNumber1" mask="999-999-9999" />
                                 <label for="phoneNum1">رقم هاتف </label>
@@ -133,7 +133,7 @@ const resetForm = () => {
                                     error.$message }}</error>
                             </span>
                         </div>
-                        <div class="field col-12 md:col-4">
+                        <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
                                 <InputMask id="phoneNum2" v-model="state.phoneNumber2" mask=" 999-999-9999" />
                                 <label for="phoneNum2">رقم هاتف 2</label>
@@ -141,8 +141,8 @@ const resetForm = () => {
                         </div>
 
 
-                        <div class="field col-12 md:col-4">
-                            <FileUpload class="field col-12 md:col-4" v-model="state.file"
+                        <div class="field col-12 md:col-6 lg:col-4">
+                            <FileUpload class="field col-12 md:col-6 lg:col-4" v-model="state.file"
                                 style="width: 100%; height: 40px; background-color: white; color:black; border-color: lightgray"
                                 mode="basic" name="file[]" url="./upload" chooseLabel=" ارفق ملف" cancelLabel="إلغاء"
                                 :showUploadButton="false" :showCancelButton="false" :maxFileSize="1000000"

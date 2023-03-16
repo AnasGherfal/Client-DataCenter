@@ -2,9 +2,8 @@
 import DialogCard from './CardInfo/DialogCard.vue';
 </script>
 <template>
-    <div class="grid" > 
-
-        <Card style="height: 140px; width: 32%;" class="col-12  mr-1 lg:col-4 mb-3  shadow-2 p-3">
+    <div class="grid justify-content" > 
+        <Card style="height: 140px;" class="col-12 mr-1  lg:col-4 mb-3 p-3">
                 <template #header>
             <div class="  border-round-2xl">
                 <div class="flex justify-content-between mb-3">
@@ -21,8 +20,7 @@ import DialogCard from './CardInfo/DialogCard.vue';
             <span class="text-500">......</span>
         </template>
         </Card>
-
-        <Card style="height: 140px; width: 32%;" class="col-12  mr-2 lg:col-4 mb-3 shadow-2 p-3">
+        <Card style="height: 140px;" class="col-12 mr-2  lg:col-4 mb-3 p-3">
                 <template #header>
             <div class="  border-round-2xl">
                 <div class="flex justify-content-between mb-3">
@@ -39,8 +37,7 @@ import DialogCard from './CardInfo/DialogCard.vue';
             <span class="text-500">......</span>
         </template>
         </Card>
-
-            <Card style="height: 140px; width: 32%;" class="col-12  mr-2 lg:col-4 mb-3 shadow-2 p-3">
+            <Card style="height: 140px;" class="col-12  mr-2 lg:col-4 mb-3 p-3">
                 <template #header>
             <div class="  border-round-2xl">
                 <div class="flex justify-content-between mb-3">

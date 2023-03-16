@@ -63,10 +63,8 @@ const resetForm = () => {
             <template  #title>
 
                 إضافة اشتراك  
-                <Button @click="backButton" icon="fa-solid fa-arrow-left fa-shake-hover" style="float: left; "  >
-                </Button> 
+                <Button @click="backButton" icon="fa-solid   fa-arrow-left fa-shake-hover" rounded aria-label="Filter" style="float: left;"/>
                 <Divider layout="horizontal" />
-
             </template>
 
 
@@ -74,14 +72,14 @@ const resetForm = () => {
                 <form @submit.prevent="submitForm">
 
                 <div class="grid p-fluid ">
-                    <div class="field col-12 md:col-4 ">
+                    <div class="field col-12 md:col-6 lg:col-4">
                         <span class="p-float-label" >
                             <AutoComplete v-model="state.nameCustomer"  optionLabel="nameCustomer" /> 
                             <label  for="nameCustomer">اسم العميل </label>
                             <error  v-for="error in v$.nameCustomer.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error> </span>
                     </div>
                     
-                    <div class="field col-12 md:col-4">
+                    <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
                                 <Calendar inputId="startDate" v-model="state.startDate" dateFormat="yy/mm/dd"
                                     selectionMode="single" :minDate="minDate" :showButtonBar="true" :manualInput="false"
@@ -91,7 +89,7 @@ const resetForm = () => {
                             </span>
                         </div>
 
-                        <div class="field col-12 md:col-4">
+                        <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
                                 <Calendar inputId="endDate" v-model="state.endtDate" dateFormat="yy/mm/dd"
                                     selectionMode="single" :minDate="minDate" :showButtonBar="true" :manualInput="false"
@@ -102,7 +100,7 @@ const resetForm = () => {
                             </span>
                         </div>
 
-                    <div class="field col-12 md:col-4">
+                    <div class="field col-12 md:col-6 lg:col-4">
                         <span class="p-float-label ">
                             <Dropdown id="subscriptionType" v-model="state.subscriptionType" placeholder="اختر الباقه" emptyMessage="لايوجد باقات"/>
                             <label for="subscriptionType">الباقة</label>
@@ -110,7 +108,7 @@ const resetForm = () => {
                         </span>
                     </div>
 
-                    <div class="field col-12 md:col-4" style="height: 1%;">
+                    <div class="field col-12 md:col-6 lg:col-4" style="height: 1%;">
                     <FileUpload v-model="state.File" style="font-family: tajawal; width: 100%; height: 40px; border-radius: 10px; background-color: white; color:black; border-color: gray"
                     mode="basic"
                      name="File" 
