@@ -48,17 +48,21 @@ import { ref } from 'vue';
 
         const toggle = (event:any) => {
         menu.value.toggle(event);
-};
+         };
+         
 
 
 </script>
 
 <template>
-
     <Menu ref="menu"  :model="items" :popup="false" class="overflow-auto fixed  mt-4 fadeinright animation-duration-500" style="border-radius:15px;width: 25%; height: calc(100vh - 7.6rem);" >
     </Menu>
 
-    <!-- <Button  label="hh" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" /> -->
+    <div>
+       <Button type="button" icon="pi pi-check" text  aria-label="Filter" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" />
+       <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
+       <Toast />
+   </div>
 
 </template>
 

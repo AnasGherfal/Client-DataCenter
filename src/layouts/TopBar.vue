@@ -2,7 +2,10 @@
 import IconGroup from './IconGroup.vue';
 import Divider from 'primevue/divider';
 
+import SideBar from './SideBar.vue';
+
 import { ref } from 'vue';
+
 
 </script>
 
@@ -34,9 +37,6 @@ import { ref } from 'vue';
 
         <!-- <IconGroup style="margin-right:calc(100% - 29rem);" /> -->
                 <IconGroup style="margin-right: auto" />
-
-
-
     </div>
 </template>
 

@@ -93,9 +93,7 @@ function backButton() {
             <template #title>
 
                 إنشاء زيارة
-                <Button @click="backButton" icon="fa-solid fa-arrow-left fa-shake-hover" style="float: left;"  >
-                </Button> 
-                
+                <Button @click="backButton" icon="fa-solid   fa-arrow-left fa-shake-hover" rounded aria-label="Filter" style="float: left;"/>                
                 <Divider/>
                 
             </template>
@@ -193,8 +191,8 @@ function backButton() {
                         </div>
 
                     <Button @click="submitForm" icon="fa-solid fa-plus" label="إنشاء" type="submit" />
-                    <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-secondary"
-                    style="margin-right: .5rem;  background-color: red;" />
+                    <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger"
+                    style="margin-right: .5rem;" />
                     <Toast position="bottom-right" />
                 </form>
 
