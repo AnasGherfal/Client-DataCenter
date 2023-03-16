@@ -44,18 +44,18 @@ function backButton() {
                         </span>
 
                         <RouterLink to="/visitsRecords/createVisit" style="text-decoration: none">
-                <Button icon="fa-solid fa-plus" label="إضافة زيارة" style="width: 150px;" class="mr-2"> </Button>
+                <Button icon="fa-solid fa-plus" label="انشاء زيارة" style="width: 150px;" class="mr-2"> </Button>
             </RouterLink>
 					</div>
                     </div>
                     
                 </template>
-                <Column field="code" header="الإسم "  style="min-width:12rem;  " frozen></Column>
-                <Column field="name" header="  الحاله "  style="min-width:12rem"></Column>
-                <Column field="name" header="البريد الالكتروني"  style="min-width:12rem"></Column>
-                <Column field="name" header=" العنوان"  style="min-width:12rem"></Column>
-                <Column field="name" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
-                <Column field="name" header="  رقم الهاتف 2"  style="min-width:12rem"></Column>
+                <Column field="code" header="اسم العميل "  style="min-width:12rem;" frozen></Column>
+                <Column field="name" header="سبب الزياره"  style="min-width:12rem"></Column>
+                <Column field="name" header=" المده"  style="min-width:12rem"></Column>
+                <Column field="name" header="السعر"  style="min-width:5rem"></Column>
+                <Column  style="min-width:10rem">
+                <Button>i</Button></Column>
 
 
 </DataTable>

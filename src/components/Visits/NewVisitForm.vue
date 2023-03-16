@@ -144,7 +144,7 @@ function backButton() {
                                 <Calendar inputId="expectedStartVisit" v-model="state.expectedStartVisit" dateFormat="yy/mm/dd" :showTime="true"
                                     selectionMode="single" :minDate="minDate" :showButtonBar="true" :manualInput="true" 
                                     :stepMinute="5" hourFormat="12" />
-                                <label for="expectedStartVisit">تاريخ بداية الزيارة المتوقع</label>
+                                <label for="expectedStartVisit">تاريخ بداية الزيارة </label>
                             </span>
                         </div>
 
@@ -155,7 +155,7 @@ function backButton() {
                                 <Calendar inputId="expectedEndVisit" v-model="state.expectedEndVisit" dateFormat="yy/mm/dd" :showTime="true"
                                     selectionMode="single" :minDate="invalidDates" :showButtonBar="true" :manualInput="true" 
                                     :stepMinute="5" hourFormat="12"  />
-                                <label for="expectedEndVisit">تاريخ انتهاء الزيارة المتوقع</label>
+                                <label for="expectedEndVisit">تاريخ انتهاء الزيارة </label>
                             </span>
                         </div>
 

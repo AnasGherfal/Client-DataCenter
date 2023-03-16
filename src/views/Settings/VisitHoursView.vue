@@ -10,10 +10,6 @@ const visitsHours = ref();
 
 const state = reactive({
     hoursName: [
-        { id: 1, name: 'ساعات الدوام' },
-        { id: 2, name: 'ساعات بعد الدوام' },
-        { id: 3, name: 'ساعات بعد منتصف الليل' },
-
 
     ],
     startWorkTime: '',
@@ -22,11 +18,9 @@ const state = reactive({
     priceAfter: 0,
 
 })
-const selectedHours= ref(state.hoursName[0]);
-
+const selectedHours = ref();
 let pp = reactive([])
 
-console.log(state.startWorkTime + 1)
 
 const rules = computed(() => {
     return {
@@ -41,8 +35,17 @@ const v$ = useVuelidate(rules, state);
 
 const submitForm = async () => {
     const result = await v$.value.$validate();
+    
     console.log(result)
     if (result) {
+        await axios.patch("http://localhost:3000/visitHours")
+        .then((response) => {
+            visitsHours.value = response.data;
+            console.log(visitsHours)
+        })
+        .catch(function (error) {
+            console.log(error)
+        })
         toast.add({ severity: 'success', summary: 'Success Message', detail: 'يجب ان يكون يساوي او بعد وقت البدايه', life: 3000 });
     }
 
@@ -56,19 +59,13 @@ onMounted(async () => {
             visitsHours.value = response.data;
             console.log(visitsHours)
         })
-        //     .then((data:any) => {
-        //         let results = [];
-        //         for(const id in data) {
-        //             results.push({id:id, name: data[id].name})
-        //         }
-        //         console.log(results)
-        //  })
-
         .catch(function (error) {
             console.log(error)
         })
 
 })
+
+
 
 </script>
 
@@ -78,41 +75,23 @@ onMounted(async () => {
     <form @submit.prevent="submitForm">
         <div class="grid p-fluid ">
             <div class="field col-12 md:col-4 mt-2">
-                <span class="p-float-label ">
-                    <Dropdown v-model="selectedHours" :options="state.hoursName" optionLabel="name"
+                <span class="p-float-label " >
+                    <Dropdown v-model="selectedHours" :options="visitsHours" optionLabel="name"
                         placeholder="اختر ساعات للتعديل" class="w-full md:w-14rem" />
                     <label for="hoursName">الساعات</label>
 
                 </span>
             </div>
-        </div>
-        <div v-if="selectedHours.id == 1">
-            <h3>{{ selectedHours.name }}</h3>
-
-            
-            
-        </div>
-        <div v-if="selectedHours.id == 2">
-            <h3>{{ selectedHours.name }}</h3>
-            
-        </div>
-        <div v-if="selectedHours.id == 3">
-            <h3>{{ selectedHours.name }}</h3>
-            
-        </div>
-
-
-
-
-
-
-        <!-- <div v-for="i in visitsHours" :key="i.id">
-
+        </div> 
+        
+        <div 
+        v-if="selectedHours ">
+            <h3>{{ selectedHours.name}}</h3>
             <div class="grid p-fluid ">
                 <div class="field col-12 md:col-4 mt-2">
                     <span class="p-float-label ">
 
-                        <Calendar inputId="startTime" v-model="i.startTime" dateFormat="yy/mm/dd" :showTime="true"
+                        <Calendar inputId="startTime" v-model="selectedHours.startTime" dateFormat="yy/mm/dd" :showTime="true"
                             :timeOnly="true" selectionMode="single" :manualInput="true" :stepMinute="5"
                             hourFormat="12" />
                         <label for="startWorkTime">من </label>
@@ -122,7 +101,7 @@ onMounted(async () => {
                 <div class="field col-12 md:col-4 mt-2">
                     <span class="p-float-label ">
 
-                        <Calendar inputId="endTime" v-model="i.endTime" dateFormat="yy/mm/dd" :showTime="true"
+                        <Calendar inputId="endTime" v-model="selectedHours.endTime" dateFormat="yy/mm/dd" :showTime="true"
                             :timeOnly="true" selectionMode="single" :manualInput="true" :stepMinute="5"
                             hourFormat="12" />
                         <error v-for="error in v$.endWorkTime.$errors" :key="error.$uid" class="p-error ">
@@ -138,66 +117,16 @@ onMounted(async () => {
                     <div class="field col-12 md:col-4">
 
                         <label for="priceFirstHour"> سعر الساعه الاولى </label>
-                        <InputNumber inputId="stacked" v-model="i.priceFirstHour" suffix=" دينار" :step="0.25" :min="0"
+                        <InputNumber inputId="stacked" v-model="selectedHours.priceFirstHour" suffix=" دينار" :step="0.25" :min="0"
                             :allowEmpty="false" :highlightOnFocus="true" />
                     </div>
                     <div class="field col-12 md:col-4">
                         <label for="priceAfter">سعر اكثر من ساعه </label>
-                        <InputNumber inputId="stacked" v-model="i.priceAfter" suffix=" دينار" :step="0.25" :min="0"
+                        <InputNumber inputId="stacked" v-model="selectedHours.priceAfter" suffix=" دينار" :step="0.25" :min="0"
                             :allowEmpty="false" :highlightOnFocus="true" />
                     </div>
                 </div>
-            </div> -->
-
-            <!-- <h3>ساعات بعد الدوام</h3>
-
-                                        <div class="grid p-fluid ">
-
-                                            <div class="field col-12 md:col-4">
-                                                <span class="p-float-label ">
-
-                                                    <Calendar inputId="startWorkTime" v-model="state.startWorkTime" dateFormat="yy/mm/dd"
-                                                        :showTime="true" :timeOnly="true" selectionMode="single" :manualInput="true"
-                                                        :stepMinute="5" hourFormat="12" />
-                                                    <label for="startWorkTime">وقت بداية الدوام</label>
-                                                </span>
-                                            </div>
-                                            <div class="field col-12 md:col-4">
-                                                <span class="p-float-label ">
-
-                                                    <Calendar inputId="endWorkTime" v-model="state.endWorkTime" dateFormat="yy/mm/dd"
-                                                            :showTime="true" :timeOnly="true" selectionMode="single" :manualInput="true"
-                                                            :stepMinute="5" hourFormat="12" />
-                                                        <label for="endWorkTime">وقت نهاية الدوام</label>
-                                                    </span>
-                                                </div>
-
-                                            </div> -->
-
-            <!-- <h3>ساعات الليل</h3> -->
-
-            <!-- <div class="grid p-fluid ">
-
-                                                <div class="field col-12 md:col-4">
-                                                    <span class="p-float-label ">
-
-                                                        <Calendar inputId="startWorkTime" v-model="state.startWorkTime" dateFormat="yy/mm/dd"
-                                                            :showTime="true" :timeOnly="true" selectionMode="single" :manualInput="true"
-                                                            :stepMinute="5" hourFormat="12" />
-                                                        <label for="startWorkTime">وقت بداية الدوام</label>
-                                                    </span>
-                                                </div>
-                                                <div class="field col-12 md:col-4">
-                                                    <span class="p-float-label ">
-
-                                                        <Calendar inputId="endWorkTime" v-model="state.endWorkTime" dateFormat="yy/mm/dd"
-                                                            :showTime="true" :timeOnly="true" selectionMode="single" :manualInput="true"
-                                                            :stepMinute="5" hourFormat="12" />
-                                                        <label for="endWorkTime">وقت نهاية الدوام</label>
-                                                    </span>
-                                                </div>
-
-                                            </div> -->
+            </div> 
 
             <Divider />
 

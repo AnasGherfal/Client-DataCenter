@@ -51,7 +51,7 @@ import { ref } from 'vue';
     z-index: 2;
 }
 p{
-    
+    color:var(--primary-color)
 }
 
 @media screen and (max-width: 500px) {

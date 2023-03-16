@@ -2,8 +2,9 @@
 import DialogCard from './CardInfo/DialogCard.vue';
 </script>
 <template>
-    <div class="grid justify-content" > 
-        <Card style="height: 140px;" class="col-12 mr-1  lg:col-4 mb-3 p-3">
+    <div class="pp grid-container" style="display: grid;   grid-template-columns: auto auto auto;
+" > 
+        <Card style="height: 140px; width: auto;" class=" grid-item col-12 mr-1  lg:col-4 mb-3 p-3">
                 <template #header>
             <div class="  border-round-2xl">
                 <div class="flex justify-content-between mb-3">
@@ -20,7 +21,7 @@ import DialogCard from './CardInfo/DialogCard.vue';
             <span class="text-500">......</span>
         </template>
         </Card>
-        <Card style="height: 140px;" class="col-12 mr-2  lg:col-4 mb-3 p-3">
+        <Card style="height: 140px; width: auto;" class=" grid-item col-12 mr-1  lg:col-4 mb-3 p-3">
                 <template #header>
             <div class="  border-round-2xl">
                 <div class="flex justify-content-between mb-3">
@@ -37,7 +38,7 @@ import DialogCard from './CardInfo/DialogCard.vue';
             <span class="text-500">......</span>
         </template>
         </Card>
-            <Card style="height: 140px;" class="col-12  mr-2 lg:col-4 mb-3 p-3">
+            <Card style="height: 140px; width: auto;" class="col-12  mr-1 lg:col-4 mb-3 p-3">
                 <template #header>
             <div class="  border-round-2xl">
                 <div class="flex justify-content-between mb-3">
@@ -57,4 +58,16 @@ import DialogCard from './CardInfo/DialogCard.vue';
         </Card>
     </div>
 </template>
+
+<style>
+@media screen and (max-width: 600px){
+
+    .pp{
+        display:block !important;
+        
+
+}
+}
+
+</style>
 
