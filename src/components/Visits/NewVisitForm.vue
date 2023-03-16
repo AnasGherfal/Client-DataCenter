@@ -94,7 +94,7 @@ function backButton() {
                 <div class="grid p-fluid ">
 
                 إنشاء زيارة
-                <Button @click="backButton" icon="fa-solid fa-arrow-left fa-shake-hover" style="right:80% "  >
+                <Button @click="backButton" icon="fa-solid fa-arrow-left fa-shake-hover" style="right:75% "  >
                 </Button> 
                 </div>
                 
@@ -106,7 +106,7 @@ function backButton() {
 
                     <div class="grid p-fluid ">
 
-                        <div class="field col-12 md:col-4 ">
+                        <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label">
                                 <MultiSelect v-model="state.CustomerName" :options="store.users" optionLabel="name" :filter="true"
                                  placeholder=" اختر عميل" 
@@ -120,7 +120,7 @@ function backButton() {
 
                         </div>
 
-                        <div class="field col-12 md:col-4 ">
+                        <div class="field col-12 md:col-6 lg:col-4 ">
                             <span class="p-float-label">
                                 <MultiSelect v-model="state.authorizedName" :options="store.users" optionLabel="email" placeholder="اختر" 
                                 emptySelectionMessage="ll" :selectionLimit="2" />
@@ -132,7 +132,7 @@ function backButton() {
 
                         </div>
 
-                        <div class="field col-12 md:col-4">
+                        <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
                                 <Dropdown id="" v-model="state.visitReason" :options="visitReason" optionLabel="name" />
                                 <label for="phoneNum1">سبب الزيارة </label>
@@ -140,7 +140,7 @@ function backButton() {
                             </span>
                         </div>
 
-                        <div class="field col-12 md:col-4">
+                        <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
 
                                 <Calendar inputId="expectedStartVisit" v-model="state.expectedStartVisit" dateFormat="yy/mm/dd" :showTime="true"
@@ -152,7 +152,7 @@ function backButton() {
 
 
 
-                        <div class="field col-12 md:col-4">
+                        <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
                                 <Calendar inputId="expectedEndVisit" v-model="state.expectedEndVisit" dateFormat="yy/mm/dd" :showTime="true"
                                     selectionMode="single" :minDate="invalidDates" :showButtonBar="true" :manualInput="true" 
@@ -162,14 +162,14 @@ function backButton() {
                         </div>
 
 
-                     <div class="field col-12 md:col-2">
+                     <div class="field col-6 md:col-3 lg:col-2">
                             <span class="p-float-label ">
                                 <InputText id="companionName" v-model="state.visitDuration" :readonly="true" />
                                 <label for="companionName"> مدة الزيارة </label>
 
                             </span>
                         </div>
-                        <div class="field col-12 md:col-2">
+                        <div class="field col-6 md:col-3 lg:col-2">
                             <span class="p-float-label ">
                                 <InputText id="companionName" v-model="state.price" :readonly="true" />
                                 <label for="companionName"> السعر </label>

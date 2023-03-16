@@ -21,18 +21,14 @@ import { ref } from 'vue';
 
 
 
-
-
         <div>
             <img  alt="logo" src="../assets/pics/LTT-logo.png " height="40" style="margin-right:0px; --fa-animation-iteration-count:5" class="logo fa-bounce">
         </div>
 
-        <div>
-            <p style="font-size: 23px ;font-weight: 800;  width:257px; height:40px;">ليبيا للاتصالات والتقنية
+        <div style="font-size:20px ;font-weight: 800;  width:257px; height:40px;margin-right: 10px;margin-top: -20px;">
+            <p >ليبيا للاتصالات والتقنية
             </p>
         </div>
-
-        <Divider layout="vertical" />
 
         <IconGroup style="margin-right:calc(100% - 29rem);" />
 
@@ -55,7 +51,7 @@ p{
 
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 500px) {
     p{
     display:none;
 }
