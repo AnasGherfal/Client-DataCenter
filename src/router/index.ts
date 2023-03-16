@@ -29,6 +29,11 @@ const router = createRouter({
         path:'addCustomers',
         props:true,
         component: () => import('../views/Customers/CustomerFormView.vue')
+        },
+        {
+          path:'CustomerProfile',
+          props:true,
+          component: () => import('../components/Customers/CustomerProfile.vue')
         }
       ]
       

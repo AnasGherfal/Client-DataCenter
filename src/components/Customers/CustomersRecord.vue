@@ -4,6 +4,8 @@ import { FilterMatchMode } from 'primevue/api';
 import {useCustomersStore} from '@/stores/customers'
 import axios from 'axios';
 import Row from 'primevue/row'; 
+import router from '@/router';
+
                   // optional
 
 const store = useCustomersStore();
@@ -41,18 +43,6 @@ const statuses = ref(['نشط', 'غير نشط', 'من',]);
 
 
 
-//  onMounted( () =>{
-//          axios.get("http://localhost:3000/users")
-//         .then(function(response) {
-//             users.value = response.data;
-//         console.log(users)
-//     })
-//     .catch(function(error){
-//         console.log(error)
-//       })
-
-//     })
-
 const getSeverity = (status:any) => {
     switch (status) {
         case 'نشط':
@@ -64,13 +54,17 @@ const getSeverity = (status:any) => {
     }
 }
 
+function goInfoPage() {
+    router.push("CustomerProfile")
 
+}
 </script>
 
 <template>
+    
     <RouterView></RouterView>
 
-    <div v-if="$route.path !== '/customersRecord/addCustomers'">
+    <div v-if=" ($route.path !== '/customersRecord/addCustomers' && $route.path !== '/customersRecord/CustomerProfile') ">
         <Card>
     
             <template #title>
@@ -130,9 +124,12 @@ const getSeverity = (status:any) => {
                 <Column field="phoneNumber1" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
                 <Column field="phoneNumber2" header="  رقم الهاتف 2"  style="min-width:12rem"></Column>
                 <Column :exportable="false" style="min-width:8rem">
-        <template #body="slotProps">
-            <Button icon="fa-solid fa-user"  @click="editProduct(slotProps.data)" />
-        </template>
+
+       
+            <RouterLink to="/customersRecord/CustomerProfile">
+            <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel" />
+        </RouterLink>
+            <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"  @click="goInfoPage" />
     </Column>
 
 </DataTable>
