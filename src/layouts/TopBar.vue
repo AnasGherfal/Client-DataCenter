@@ -34,7 +34,9 @@ import { ref } from 'vue';
 
         <Divider layout="vertical" />
 
-        <IconGroup style="margin-right:calc(100% - 29rem);" />
+        <!-- <IconGroup style="margin-right:calc(100% - 29rem);" /> -->
+                <IconGroup style="margin-right: auto" />
+
 
 
     </div>
@@ -51,8 +53,7 @@ import { ref } from 'vue';
     z-index: 2;
 }
 p{
-    color: var(--primary-color);	
-
+    
 }
 
 @media screen and (max-width: 400px) {

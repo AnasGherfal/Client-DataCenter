@@ -63,7 +63,7 @@ const resetForm = () => {
             <template  #title>
 
                 إضافة اشتراك  
-                <Button @click="backButton" icon="fa-solid fa-arrow-left fa-shake-hover" style="right:75% "  >
+                <Button @click="backButton" icon="fa-solid fa-arrow-left fa-shake-hover" style="float: left; "  >
                 </Button> 
                 <Divider layout="horizontal" />
 

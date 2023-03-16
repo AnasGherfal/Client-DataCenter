@@ -84,10 +84,13 @@ const resetForm = () => {
         <Card>
 
             <template #title>
- 
+                <div  >
+
                 إضافة عميل
-                <Button @click="backButton" icon="fa-solid fa-arrow-left fa-shake-hover" style="right:80%"  >
+
+                <Button @click="backButton" icon="fa-solid fa-arrow-left fa-shake-hover" style="float: left;" >
                 </Button>  
+            </div>
                 <Divider />
 
             </template>

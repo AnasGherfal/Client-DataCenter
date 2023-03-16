@@ -91,12 +91,10 @@ function backButton() {
         <Card>
 
             <template #title>
-                <div class="grid p-fluid ">
 
                 إنشاء زيارة
-                <Button @click="backButton" icon="fa-solid fa-arrow-left fa-shake-hover" style="right:80% "  >
+                <Button @click="backButton" icon="fa-solid fa-arrow-left fa-shake-hover" style="float: left;"  >
                 </Button> 
-                </div>
                 
                 <Divider/>
                 
