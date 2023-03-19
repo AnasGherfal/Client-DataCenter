@@ -60,12 +60,12 @@ import { ref } from 'vue';
 </script>
 
 <template>
-    <Menu  ref="menu"  :model="items" :popup="false" class="hidee overflow-auto fixed  mt-4 fadeinright animation-duration-500" style="border-radius:15px;width: 25%; height: calc(100vh - 7.6rem);" >
+    <Menu  ref="menu"  :model="items" :popup="false" class="sidebar overflow-auto fixed  mt-4 fadeinright animation-duration-500" style="border-radius:15px;width: 25%; height: calc(100vh - 7.6rem);" >
     </Menu>
 
     <div>
        <Button style="display:none;" 
-       class="fixed hidebot" 
+       class="SideBarbutton fixed " 
        type="button" 
        icon="fa-solid fa-bars" text  
        aria-label="Filter" @click="toggle" 
@@ -138,13 +138,13 @@ import { ref } from 'vue';
 
 
 @media screen and (max-width: 600px) {
-    .hidee{
+    .sidebar{
     display:none;
 }
-.hidee	{
+.sidebar	{
     display:none;
 }
-.hidebot{
+.SideBarbutton{
     display:inline !important;
 }
 }
