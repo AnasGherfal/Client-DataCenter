@@ -2,6 +2,11 @@
 import InfoCustomer from './Profile Customer/InfoCustomer.vue'
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
+import Authorized from './Authorized.vue';
+import { computed, reactive, ref } from 'vue';
+
+
+
 </script>
 
 <template>
@@ -17,6 +22,7 @@ import TabPanel from 'primevue/tabpanel';
                         <span>المخولين</span>
                     </template>
                      <!-- المخولون الخاصون بالعميل -->
+                   <Authorized/>
                 </TabPanel>
                 <TabPanel>
                     <template #header>
@@ -29,7 +35,6 @@ import TabPanel from 'primevue/tabpanel';
                     <template #header>
                         <i class="ml-2 pi pi-cog"></i>
                         <span>جدول الخدمات</span>
-                        
                     </template>
                    <!-- الخدمات الخاصة بالعميل -->
                 </TabPanel>

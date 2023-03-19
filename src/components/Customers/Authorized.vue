@@ -3,6 +3,7 @@ import { computed, reactive, ref } from 'vue';
 import { email, minLength, required, helpers } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
+import Dialog from 'primevue/dialog';
 
 const state = reactive({
     name: "",
@@ -48,17 +49,23 @@ const resetForm = () => {
 
         }
 
+        const displayModal = ref(false);
 
+const openModal = () => {
+            displayModal.value = true;
+        };
+        const closeModal = () => {
+            displayModal.value = false;
+        }
 </script>
 
 
 <template >
     <div>
-        <Card style="width: 90%; margin-top: 2rem; margin-right: 40%; border-radius: 10px;">
-            <template #title>
-                إضافة مخول
-            </template>
-            <template #content>
+        <Dialog  header="اضافة مُخول" contentStyle="height: 280px; padding: 20px;"  v-model:visible="displayModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '60vw'}" :modal="true">
+                     
+
+            <template #default>
                 <form @submit.prevent="submitForm">
 
                 <div class="grid p-fluid ">
@@ -103,30 +110,28 @@ const resetForm = () => {
                     </div>
 
                     <div class="field col-12 md:col-4" style="height: 1%;">
-                    <FileUpload 
-                    mode="basic"
-                     name="file[]" 
-                     url="./upload" 
-                     chooseLabel=" ارفق ملف " 
-                     cancelLabel="إلغاء"
-                     :showUploadButton="false"
-                     :showCancelButton="false"
-                     :maxFileSize="1000000"
-                     invalidFileSizeMessage="Exceeded the maximum file size"
-                     />
+                        <FileUpload class="field col-12 md:col-6 lg:col-4" 
+                                style="width: 100%; height: 40px; background-color: white; color:black; border-color: lightgray"
+                                mode="basic" name="file[]" url="./upload" chooseLabel=" ارفق ملف" cancelLabel="إلغاء"
+                                :showUploadButton="false" :showCancelButton="false" :maxFileSize="1000000"
+                                invalidFileSizeMessage="Exceeded the maximum file size" />
                      </div>
 
 
                 </div>
                 <Button @click="submitForm" icon="pi pi-check" label="إضافة" type="submit"   />
-                <Button @click="resetForm" icon="pi pi-refresh" label="مسح" class="p-button-secondary" style="margin-right: .5em; background-color: red; " />
+                <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger"
+                    style="margin-right: .5rem;" />
                 <Toast position="bottom-right" />
 
             </form>
             </template>
             
 
-        </Card>
+        </Dialog>
+        <Button @click="openModal"  class=" p-button-primary" > 
+                        اضافة مُخول
+        </Button>
     </div>
 </template>
 

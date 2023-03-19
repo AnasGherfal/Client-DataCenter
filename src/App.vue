@@ -22,10 +22,10 @@ import VistProfile from './components/Visits/VistProfile.vue';
 
     <div class="content" style="transition: all 0.5s ease; width: 73%; margin-right: 26%; padding: 25px;">
       <!-- main -->
-      <RouterView/>
+      <!-- <RouterView/> -->
       <!-- <ServiceInfo/> -->
   <!-- <CustomerProfile/> -->
-  <!-- <VistProfile/> -->
+  <VistProfile/>
   
     </div>
     
