@@ -146,6 +146,7 @@ import { ref } from 'vue';
 }
 .SideBarbutton{
     display:inline !important;
+    top:60px
 }
 }
 

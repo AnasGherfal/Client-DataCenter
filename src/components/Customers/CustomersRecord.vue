@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { computed, inject, onMounted, ref } from 'vue';
+import {  ref } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
 import {useCustomersStore} from '@/stores/customers'
 import axios from 'axios';
-import Row from 'primevue/row'; 
 import router from '@/router';
 
                   // optional
@@ -12,11 +11,12 @@ const store = useCustomersStore();
 
 
 const filters = ref({
-    'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    status: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
 
 const columns = ref([
-            {field: 'status', header: 'الحاله'},
+            // {field: 'status', header: 'الحاله'},
             {field: 'email', header: 'البريد الإكتروني'},
 
             {field: 'address', header: 'العنوان'},
@@ -31,15 +31,9 @@ const columns = ref([
             selectedColumns.value = columns.value.filter(col => val.includes(col));
         };
 
-        const filterss = ref({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
 
-    status: { value: null, matchMode: FilterMatchMode.EQUALS },
-    verified: { value: null, matchMode: FilterMatchMode.EQUALS }
-});
 
-const statuses = ref(['نشط', 'غير نشط', 'من',]);
+const statuses = ref(['نشط', 'غير نشط', 'منتهي الصلاحيه']);
 
 
 
@@ -73,7 +67,7 @@ function goInfoPage() {
             <template #content >
            
                 
-            <DataTable   ref="dt" :value="store.users" dataKey="id" 
+            <DataTable  filterDisplay="row"  ref="dt" :value="store.users" dataKey="id" 
                 :paginator="true" :rows="5" v-model:filters="filters" 
                 :globalFilterFields="['name', 'status']"
                 paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]"
@@ -94,7 +88,6 @@ function goInfoPage() {
                         placeholder="حدد الأعمدة" style="width: 10em"/>
                 </div>
                 
-                <!-- <RouterLink :to="$route.params.id + '/users'"> -->
                     <RouterLink to="/customersRecord/addCustomers" style="text-decoration: none">
                 <Button icon="fa-solid fa-plus" label="إضافة عميل" style="width: 150px;" class="mr-2"> </Button>
             </RouterLink>
@@ -103,10 +96,9 @@ function goInfoPage() {
                    
                 </template>
                 <Column field="name" header="الإسم"  style="min-width:10rem;"  class="font-bold"></Column>
-                <!-- <Column  v-for="(col,index) of selectedColumns" :field="col.field"  :header="col.header" :key="col.field + '_' + index" style="min-width:10rem;  "
-                ></Column> -->
+
                 
-                <Column field="status" header="  الحاله " filterField="status" style="min-width:12rem" :showFilterMenu="false" :filterMenuStyle="{ width: '14rem' }">
+                <Column field="status" header="  الحاله " filterField="status" style="min-width:8rem" :showFilterMenu="false" :filterMenuStyle="{ width: '14rem' }">
                     <template #body="{ data }">
                     <Tag :value="data.status" :severity="getSeverity(data.status)" />
                 </template>
@@ -119,11 +111,13 @@ function goInfoPage() {
                 </template>
                 
                 </Column>
-                <Column field="email" header="البريد الالكتروني"  style="min-width:12rem"></Column>
+                <Column  v-for="(col,index) of selectedColumns" :field="col.field"  :header="col.header" :key="col.field + '_' + index" style="min-width:10rem;  "
+                ></Column>
+                <!-- <Column field="email" header="البريد الالكتروني"  style="min-width:12rem"></Column>
                 <Column field="address" header=" العنوان"  style="min-width:12rem"></Column>
                 <Column field="phoneNumber1" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
-                <Column field="phoneNumber2" header="  رقم الهاتف 2"  style="min-width:12rem"></Column>
-                <Column header="kk"  style="min-width:8rem">
+                <Column field="phoneNumber2" header="  رقم الهاتف 2"  style="min-width:12rem"></Column> -->
+                <Column style="min-width:8rem">
 
                     <template #body="slotProps">
 

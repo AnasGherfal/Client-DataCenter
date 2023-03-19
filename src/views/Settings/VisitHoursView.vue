@@ -46,7 +46,8 @@ const submitForm = async () => {
         .catch(function (error) {
             console.log(error)
         })
-        toast.add({ severity: 'success', summary: 'Success Message', detail: 'يجب ان يكون يساوي او بعد وقت البدايه', life: 3000 });
+
+        toast.add({ severity: 'error', summary: 'حدث خطأ', detail: 'لم يتم التعديل', life: 3000 });
     }
 
 }

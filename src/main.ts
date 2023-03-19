@@ -18,7 +18,10 @@ import './assets/style/iconsStyle.scss'
 
 import 'primevue/resources/primevue.min.css'
 import 'primeicons/primeicons.css'
-import 'primeflex/primeflex.css' 
+import 'primeflex/primeflex.css'
+import lottie from 'lottie-web';
+import { defineElement } from 'lord-icon-element';
+
 
 import Sidebar from 'primevue/sidebar';
 import Button from 'primevue/button';
@@ -52,6 +55,9 @@ app.use(PrimeVue, { ripple: true });
 app.use(VueAxios, axios)
 
 app.provide('axios', app.config.globalProperties.axios)  // provide 'axios'
+
+// define "lord-icon" custom element with default properties
+defineElement(lottie.loadAnimation);
 
 app.use(ToastService);
 
