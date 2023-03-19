@@ -19,10 +19,10 @@ const value = ref(30);
        
        <template #content>
 
-        <div class="flex ">
+        <div class="flex flex-row">
             <div class="flex-1" style=" text-align: center;">
-            <Knob :size="Card" v-model="value" readonly />
-            <h2> الأيام المتبقية</h2>
+            <Knob :size="Knob" v-model="value" readonly />
+            <h3> الأيام المتبقية</h3>
             </div>
             <Divider class="p-divider-solid" layout="vertical" />
     
@@ -34,19 +34,21 @@ const value = ref(30);
             <Divider class="p-divider-solid" layout="horizontal" />
             <h4 style="margin: 0;">Amount Of Power</h4>
             <p style="margin: 0;">28 امبير ,230 فولت رئيسية عدد 2</p>
-
             <Divider class="p-divider-solid" layout="horizontal" />
             <h4 style="margin: 0;">Acp Port</h4>
             <p style="margin: 0;">2</p>
 
-            <Divider class="p-divider-solid" layout="horizontal" />
+        </div>
+        <Divider class="p-divider-solid" layout="vertical" />
+
+        <div class="flex-1">
+          
             <h4 style="margin: 0;">Dns</h4>
             <p style="margin: 0;">(rDNS&DNS)13</p>
 
             <Divider class="p-divider-solid" layout="horizontal" />
-            <h4 style="margin: 0;">عدد الزيارات في الشهر</h4>
+            <h4 style="margin: 0;">عدد الزيارات المتبقية في الشهر</h4>
             <p style="margin: 0;">15 ساعة</p>
-
         </div>
     </div>
 
@@ -57,7 +59,7 @@ const value = ref(30);
             <TabPanel>
                 <template #header>
                     <i class="fa-solid fa-book mr-2"></i>
-                    <span> سجل زيارات هده الخدمة </span>
+                    <span> سجل زيارات هدا الاشتراك </span>
                 </template>
     <!-- سجل زيارات هده الخدمة -->
             </TabPanel>

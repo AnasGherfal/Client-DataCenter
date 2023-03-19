@@ -73,7 +73,7 @@ function goInfoPage() {
             <template #content >
            
                 
-            <DataTable  ref="dt" :value="store.users" dataKey="id" 
+            <DataTable   ref="dt" :value="store.users" dataKey="id" 
                 :paginator="true" :rows="5" v-model:filters="filters" 
                 :globalFilterFields="['name', 'status']"
                 paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]"
@@ -88,7 +88,7 @@ function goInfoPage() {
 
                         </span>
 
-                        <div style="text-align:left; margin-right: 0.5rem;;">
+                        <div style="text-align:left; margin-right: 0.5rem;">
 
                     <MultiSelect :modelValue="selectedColumns" :options="columns" optionLabel="header" @update:modelValue="onToggle"
                         placeholder="حدد الأعمدة" style="width: 10em"/>
@@ -125,12 +125,15 @@ function goInfoPage() {
                 <Column field="phoneNumber2" header="  رقم الهاتف 2"  style="min-width:12rem"></Column>
                 <Column :exportable="false" style="min-width:8rem">
 
-       
+                    <template #body="slotProps">
+
             <RouterLink to="/customersRecord/CustomerProfile">
-            <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel" />
-        </RouterLink>
+            <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel" @click="goInfoPage" />
+            </RouterLink>
             <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"  @click="goInfoPage" />
-    </Column>
+           </template>
+        </Column>
+
 
 </DataTable>
 </template>

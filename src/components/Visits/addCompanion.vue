@@ -107,8 +107,8 @@ const openModal = () => {
   </form>
   <template #footer>
       <Button @click="submitForm" class="p-button-primry" icon="fa-solid fa-plus" label="إضافة" type="submit" />
-  <Button @click="resetForm" icon="pi pi-refresh" label="مسح" class="p-button-secondary" style="margin-right: .5em;background-color: red;" />
-  <Toast position="bottom-right" />
+  <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger"
+                    style="margin-right: .5rem;" />
                   <!-- <Button label="No" icon="pi pi-times" @click="closeModal" class="p-button-text"/>
                   <Button label="Yes" icon="pi pi-check" @click="closeModal" autofocus /> -->
               </template>

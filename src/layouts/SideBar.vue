@@ -55,11 +55,19 @@ import { ref } from 'vue';
 </script>
 
 <template>
-    <Menu ref="menu"  :model="items" :popup="false" class="overflow-auto fixed  mt-4 fadeinright animation-duration-500" style="border-radius:15px;width: 25%; height: calc(100vh - 7.6rem);" >
+    <Menu  ref="menu"  :model="items" :popup="false" class="hidee overflow-auto fixed  mt-4 fadeinright animation-duration-500" style="border-radius:15px;width: 25%; height: calc(100vh - 7.6rem);" >
     </Menu>
 
     <div>
-       <Button type="button" icon="pi pi-check" text  aria-label="Filter" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" />
+       <Button style="display:none;" 
+       class="fixed hidebot" 
+       type="button" 
+       icon="fa-solid fa-bars" text  
+       aria-label="Filter" @click="toggle" 
+       aria-haspopup="true" 
+       aria-controls="overlay_menu" 
+       v-tooltip="{value:'الشريط الجانبي', fitContent:true}" />
+       
        <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
        <Toast />
    </div>
@@ -120,21 +128,18 @@ import { ref } from 'vue';
   border-radius: 20px;
 }
 
-@media screen and (max-width: 600px) {
-.p-menuitem-text	{
-    display:none;
-}
-    
-}
+
 
 @media screen and (max-width: 600px) {
-    .p-menu{
+    .hidee{
     display:none;
 }
-.p-menuitem-text	{
+.hidee	{
     display:none;
 }
-   
+.hidebot{
+    display:inline !important;
+}
 }
 
 

@@ -169,7 +169,6 @@ function backButton() {
                             <span class="p-float-label ">
                                 <InputText id="companionName" v-model="state.price" :readonly="true" />
                                 <label for="companionName"> السعر </label>
-
                             </span>
                         </div>
                     </div>

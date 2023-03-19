@@ -34,7 +34,7 @@ const store = useCustomersStore();
 
         <Button type="button" icon="pi pi-ban"  @click="toggle" aria-haspopup="true" aria-controls="overlay_panel" />
 
-        <OverlayPanel ref="op" appendTo="body" :showCloseIcon="true" id="overlay_panel" style="width: 450px" :breakpoints="{'960px':'75vw'}">
+        <OverlayPanel ref="op" appendTo="body" :showCloseIcon="true" id="overlay_panel" style="width: 450px" :breakpoints="{'800px':'50vw'}">
             <DataTable :value="store.users" v-model:selection="selectedProduct" selectionMode="single" :paginator="true" :rows="5" @rowSelect="onProductSelect" responsiveLayout="scroll" >
                 <Column field="name" header="Name" sortable style="width: 50%"></Column>
                 <Column field="email" header="email" sortable style="width: 30%"> </Column>
