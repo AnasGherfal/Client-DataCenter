@@ -123,7 +123,7 @@ function goInfoPage() {
                 <Column field="address" header=" العنوان"  style="min-width:12rem"></Column>
                 <Column field="phoneNumber1" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
                 <Column field="phoneNumber2" header="  رقم الهاتف 2"  style="min-width:12rem"></Column>
-                <Column :exportable="false" style="min-width:8rem">
+                <Column header="kk"  style="min-width:8rem">
 
                     <template #body="slotProps">
 
@@ -135,6 +135,7 @@ function goInfoPage() {
         </Column>
 
 
+    
 </DataTable>
 </template>
 </Card>

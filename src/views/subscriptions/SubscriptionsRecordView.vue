@@ -76,7 +76,7 @@ const getSeverity = (status:any) => {
     
             <template #title>
 
-                سجل العملاء
+                سجل الاشتراكات
             </template>
             <template #content >
            
