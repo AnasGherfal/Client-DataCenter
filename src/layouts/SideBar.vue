@@ -60,12 +60,20 @@ import { ref } from 'vue';
 </script>
 
 <template>
-    <Menu  ref="menu"  :model="items" :popup="false" class=" sideBar overflow-auto fixed  mt-4 fadeinright animation-duration-500" style="border-radius:15px;width: 25%; height: calc(100vh - 7.6rem);" >
+    <Menu  ref="menu"  :model="items" :popup="false" class="hidee overflow-auto fixed  mt-4 fadeinright animation-duration-500" style="border-radius:15px;width: 25%; height: calc(100vh - 7.6rem);" >
     </Menu>
 
     <div>
-       <Button type="button" icon="pi pi-check" text  aria-label="Filter" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" />
-       <Menu  ref="menu" id="overlay_menu" :model="items" :popup="true" />
+       <Button style="display:none;" 
+       class="fixed hidebot" 
+       type="button" 
+       icon="fa-solid fa-bars" text  
+       aria-label="Filter" @click="toggle" 
+       aria-haspopup="true" 
+       aria-controls="overlay_menu" 
+       v-tooltip="{value:'الشريط الجانبي', fitContent:true}" />
+       
+       <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
        <Toast />
    </div>
 
@@ -128,21 +136,17 @@ import { ref } from 'vue';
 }
 
 
-@media screen and (max-width: 600px) {
-.sideBar	{
-    display:none;
-}
-    
-}
 
 @media screen and (max-width: 600px) {
-    .sideBar{
+    .hidee{
     display:none;
 }
-.sideBar	{
+.hidee	{
     display:none;
 }
-   
+.hidebot{
+    display:inline !important;
+}
 }
 
 

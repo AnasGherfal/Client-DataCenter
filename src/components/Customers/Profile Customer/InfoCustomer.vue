@@ -13,8 +13,8 @@ const pp = ref<string>('');
 const state = reactive({
     name: "" as string,
     email: "",
-    phoneNumber1: '',
-    phoneNumber2: '',
+    phoneNumber1: '092-687-1312',
+    phoneNumber2: '092-687-1312',
     address: '',
     File: '',
     subscriptionType: '',
@@ -122,14 +122,14 @@ function focusname(){
                     </div>
                     <div class="field col-12 md:col-6">
                         <span class="p-float-label ">
-                            <InputMask id ="phoneNum1" value="092-687-7622" v-model="state.phoneNumber1" disabled="true" />
+                            <InputMask id ="phoneNum1"  value="092-687-7622" v-model="state.phoneNumber1" mask="999-999-9999" disabled="true" />
                             <label style="color: black;top: -.75rem; font-size: 12px;" for="phoneNum1">رقم هاتف </label>
                             <error  v-for="error in v$.phoneNumber1.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
                         </span>
                     </div>
                     <div class="field col-12 md:col-6">
                         <span class="p-float-label ">
-                            <InputMask id="phoneNum2" v-model="state.phoneNumber2" mask=" 999-999-9999" disabled="true" />
+                            <InputMask id="phoneNum2" value="092-687-1312" v-model="state.phoneNumber2" mask="999-999-9999" disabled="true" />
                             <label style="color: black;top: -.75rem; font-size: 12px;" for="phoneNum2">رقم هاتف 2</label>
                         </span>
                     </div>
