@@ -10,7 +10,7 @@ import { ref } from 'vue';
 </script>
 
 <template>
-    <div class=" scalein   animation-duration-1000
+    <div class=" topbar scalein   animation-duration-1000
             	fixed
                 z-5 
                 flex 
@@ -41,15 +41,7 @@ import { ref } from 'vue';
 </template>
 
 <style scoped>
-.nav {
-    text-align: end;
-    background-color: rgb(247, 249, 255);
 
-    width: 99%;
-    height: 60px;
-    position: absolute;
-    z-index: 2;
-}
 p{
     color:var(--primary-color)
 }

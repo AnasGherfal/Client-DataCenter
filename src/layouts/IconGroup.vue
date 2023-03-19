@@ -3,7 +3,7 @@ import Button from 'primevue/button';
 import { ref } from 'vue';
 
 
-
+const checked = ref<boolean>(false);
 const menu = ref();
 const items = ref([
 { separator: true },
@@ -17,16 +17,24 @@ const toggle = (event:any) => {
     menu.value.toggle(event);
 };
 
+function theme(){
 
-// Composition API
-
+    if(checked.value == true)
+    (async () => {
+          await import('../assets/style/darkTheme.css');
+      })();
+      else if(checked.value == false)
+    (async () => {
+          await import('../assets/style/lightTheme.css');
+      })();
+}
         
 </script>
      
      <template>
     <div class="inline-flex fadeinleft animation-duration-1000" style=" height:30px; margin-top: -18px; margin-right:12px;">
-        <Button style="height: 40px; width: 40px; --fa-animation-iteration-count: 2;" icon="fa-solid fa-moon fa-fade" class="m-1 p-button-text"  />
-
+        <ToggleButton @click="theme" off-label="o" v-model="checked" style="height: 40px; width: 40px; --fa-animation-iteration-count: 2;"  class="m-1 p-button-text" 
+        offIcon="fa-solid fa-moon fa-fade" onIcon="fa-solid fa-sun" />
 
         
         <RouterLink to="/SettingsView" style="text-decoration: none">

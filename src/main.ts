@@ -43,7 +43,7 @@ import InputNumber from 'primevue/inputnumber';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import Tag from 'primevue/tag';
-
+import ToggleButton from 'primevue/togglebutton';
 const app = createApp(App)
 
 app.use(createPinia())
@@ -73,6 +73,7 @@ app.component('InputNumber', InputNumber);
 app.component('TabView', TabView);
 app.component('TabPanel', TabPanel);
 app.component('Tag', Tag);
+app.component('ToggleButton', ToggleButton);
 
 app.directive('tooltip', Tooltip);
 app.directive('ripple', Ripple);

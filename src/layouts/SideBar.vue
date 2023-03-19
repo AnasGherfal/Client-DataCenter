@@ -35,6 +35,11 @@ import { ref } from 'vue';
                     icon: 'fa-solid fa-calculator',
                     to:'/SubscriptionsRecord'
                 },
+                {
+                    label: ' سجل الفواتير',
+                    icon: 'fa-solid fa-receipt',
+                    to:'/invoices'
+                }
 
 
             ]},
@@ -55,12 +60,12 @@ import { ref } from 'vue';
 </script>
 
 <template>
-    <Menu ref="menu"  :model="items" :popup="false" class="overflow-auto fixed  mt-4 fadeinright animation-duration-500" style="border-radius:15px;width: 25%; height: calc(100vh - 7.6rem);" >
+    <Menu  ref="menu"  :model="items" :popup="false" class=" sideBar overflow-auto fixed  mt-4 fadeinright animation-duration-500" style="border-radius:15px;width: 25%; height: calc(100vh - 7.6rem);" >
     </Menu>
 
     <div>
        <Button type="button" icon="pi pi-check" text  aria-label="Filter" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" />
-       <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
+       <Menu  ref="menu" id="overlay_menu" :model="items" :popup="true" />
        <Toast />
    </div>
 
@@ -75,6 +80,7 @@ import { ref } from 'vue';
 
 .p-menuitem-content{
     margin: 10px;
+    
 }
 .p-menuitem-text{
     color: var(--primary-color);
@@ -86,6 +92,7 @@ import { ref } from 'vue';
 .p-submenu-header{
     font-family:'tajawal';
     font-weight: 800 !important;  
+    
 }
 .p-menuitem {
     .router-link-active
@@ -120,18 +127,19 @@ import { ref } from 'vue';
   border-radius: 20px;
 }
 
+
 @media screen and (max-width: 600px) {
-.p-menuitem-text	{
+.sideBar	{
     display:none;
 }
     
 }
 
 @media screen and (max-width: 600px) {
-    .p-menu{
+    .sideBar{
     display:none;
 }
-.p-menuitem-text	{
+.sideBar	{
     display:none;
 }
    
