@@ -65,6 +65,11 @@ const router = createRouter({
     
           component: () => import('../views/Visits/VisitView.vue')
         },
+        {
+          path:'VistProfile',
+          props:true,
+          component: () => import('../components/Visits/VistProfile.vue')
+        }
       ]
     },
     {
@@ -82,7 +87,14 @@ const router = createRouter({
     {
       path:'/invoices',
       name: 'Invoices',
-      component:() => import('../views/Invoices/InvoicesView.vue')
+      component:() => import('../views/Invoices/InvoicesView.vue'),
+      children:[
+        {
+          path:'InvoicesInfo',
+          props:true,
+          component:() => import('../views/Invoices/InvoicesInfo.vue')
+        },
+    ]
     }
   ]
 })

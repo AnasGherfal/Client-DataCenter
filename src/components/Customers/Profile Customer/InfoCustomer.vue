@@ -75,11 +75,17 @@ function focusname(){
      return true
     }
 }
+
+defineProps<{
+  nameProp: string 
+
+}>()
 </script>
 
 
 <template >
     <div>
+
         <Card >
             <template #title>
                 <i class="fa-solid fa-user"></i>
@@ -98,7 +104,7 @@ function focusname(){
                 <div class="grid p-fluid " >
                     <div class="field col-12 md:col-6 ">
                         <span class="p-float-label" >
-                            <InputText id="name" type="text"  value="اشرف" disabled="true" />
+                            <InputText id="name" type="text" :value="nameProp" disabled="true" />
                             <label style="color: black;top: -.75rem; font-size: 12px;" for="name">اسم </label>
                             <error  v-for="error in v$.name.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
                         </span>
