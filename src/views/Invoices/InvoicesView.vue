@@ -20,19 +20,15 @@ const filters = ref({
 </script>
 
 <template>
-    <div>
+    <div v-if="$route.path !== '/invoices/InvoicesInfo'">
+
         <Card>
             <template #title> سجل الفواتير</template>
             <template #content>
-                <TabView ref="tabview" class="tabview-custom">
-                    <TabPanel>
-                        <template #header>
-                            <i class="fa-solid fa-clock ml-2"></i>
-                            <span> الفواتير المدفوعه</span>
+                   
                             
 
 
-                        </template>
                         <DataTable  filterDisplay="row"  ref="dt" :value="invoices" dataKey="id" 
                 :paginator="true" :rows="5" v-model:filters="filters" 
                 :globalFilterFields="['name', 'status']"
@@ -77,26 +73,7 @@ const filters = ref({
 
     
 </DataTable>
-                        <VisitHours/>
-                        
-                    </TabPanel>
-                    <TabPanel>
-                        <template #header>
-                            <i class="fa-solid fa-gauge ml-2"></i>
-                            <span>الفواتير الغير مدفوعه</span>
 
-                        </template>
-
-                        <div>
-
-                            <Addpackages/>
-                            <PakagesList />
-
-                        </div>
-
-                    </TabPanel>
-
-                </TabView>
             </template>
 
         </Card>

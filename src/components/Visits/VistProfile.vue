@@ -14,7 +14,7 @@ const state = reactive({
     authorizedName: "شم",
     companionName: "م",
     visitReason: "",
-    expectedStartVisit:""  ,
+    expectedStartVisit:"12/11/2022"  ,
     expectedEndVisit: "" ,
     visitDuration: "ساعه",
     price: "100دينار",
@@ -99,30 +99,33 @@ function backButton() {
             </template>
             <template #content>
                 <div class="flex flex-row">
-                    <div class="flex-1" style=" text-align: ;">
-                        <h3 class="text-center" style="margin: 0;">اسم الجهة : {{ state.CustomerName }}</h3>
-                        <Divider class="p-divider-solid mt-2" layout="horizontal" />
-                         <h4 v-if="state.authorizedName" style="margin: 0;">المخولين:</h4>
-                         <p  class="inline mr-2" v-for="aut in state.authorizedName">
+                    
+                    <div class="flex-1">
+                        <h3 style="margin: 0;">اسم الجهة : {{ state.CustomerName }}</h3>
+                         <div>
+                         <h4   v-if="state.authorizedName">المخولين:</h4>
+                         <p  class=" mr-2" v-for="aut in state.authorizedName">
                            - {{ aut }}
                         </p>
 
-                        <h4  v-if="state.companionName" style="margin-bottom:0;">المرافقين:</h4>
-                        <p  class="inline mr-2" v-for="comp in state.companionName">
+                        <h4   v-if="state.companionName" style="margin-bottom:0;">المرافقين:</h4>
+                        <p  class="mr-2" v-for="comp in state.companionName">
                            - {{ comp }}
                         </p>
+                        </div>
                     </div>
             <Divider class="p-divider-solid" layout="vertical" />
     
             <div class="flex-1"> 
 
 
-            <h4 style="margin: 0;">تاريخ الزيارة :</h4>
-            <p>
-             تاريخ بدء الزيارة :   {{ state.expectedStartVisit }}
+            <h3 style="margin: 0;">تاريخ الزيارة :</h3>
+            <p class="inline-block">
+             -تاريخ بدء الزيارة :   {{ state.expectedStartVisit }}
             </p>
-            <p>
-             تاريخ انتهاء الزيارة :   {{ state.expectedEndVisit }}
+
+            <p class="inline-block">
+             -تاريخ انتهاء الزيارة :   {{ state.expectedEndVisit }}
             </p>
 
         </div>
@@ -130,12 +133,11 @@ function backButton() {
 
         <div class="flex-1">
           
-            <h4 style="margin: 0;">عدد ساعات الزيارة</h4>
-            <p style="margin: 0;">{{ state.visitDuration }}</p>
+            <h3 style="margin: 0;">عدد ساعات الزيارة</h3>
+            <p>{{ state.visitDuration }}</p>
 
-            <Divider class="p-divider-solid" layout="horizontal" />
-            <h4 style="margin: 0;">تكلفة الزيارة :</h4>
-            <p style="margin: 0;">{{ state.price }}</p>
+            <h3 style="margin: 0;">تكلفة الزيارة :</h3>
+            <p >{{ state.price }}</p>
         </div>
     </div>
             </template>
@@ -145,6 +147,17 @@ function backButton() {
 
         </Card>
     </div>
+    <Card class="mt-3">
+        <template #title>
+           سبب الزيارة :{{  }}
+        </template>
+        <template #content>
+        وصف الزيارة :
+        <p>
+            
+        </p>
+        </template>
+    </Card>
 </template>
 <style >
 .p-button-icon {

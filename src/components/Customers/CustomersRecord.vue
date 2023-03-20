@@ -50,7 +50,6 @@ const getSeverity = (status:any) => {
 
 function goInfoPage() {
     router.push("CustomerProfile")
-
 }
 </script>
 
@@ -121,9 +120,10 @@ function goInfoPage() {
 
                     <template #body="slotProps">
 
-            <RouterLink to="/customersRecord/CustomerProfile">
+            <RouterLink  to="/customersRecord/CustomerProfile">
             <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel" @click="goInfoPage" />
             </RouterLink>
+
             <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"  @click="goInfoPage" />
            </template>
         </Column>

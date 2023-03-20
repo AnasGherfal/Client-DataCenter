@@ -6,12 +6,12 @@ import Authorized from './Authorized.vue';
 import { computed, reactive, ref } from 'vue';
 
 
-
 </script>
 
 <template>
-<InfoCustomer/>
-
+<InfoCustomer
+ nameProp="AShraf"
+ />
 <div class="bg-white shadow-2 p-3 mt-3 border-round-2xl" >
 
     <div class="card">

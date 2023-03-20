@@ -54,7 +54,6 @@ app.use(VueAxios, axios)
 app.provide('axios', app.config.globalProperties.axios)  // provide 'axios'
 
 
-
 app.use(ToastService);
 
 app.component('Sidebar', Sidebar);
