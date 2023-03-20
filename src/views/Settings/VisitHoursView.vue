@@ -33,22 +33,26 @@ const v$ = useVuelidate(rules, state);
 
 
 
+const handleInput=(event:any)=>{
+    // setPost({})
+
+}
 const submitForm = async () => {
     const result = await v$.value.$validate();
     
     console.log(result)
-    if (result) {
-        await axios.patch("http://localhost:3000/visitHours")
+    toast.add({ severity: 'error', summary: 'حدث خطأ', detail: 'لم يتم التعديل', life: 3000 });
+
+        await axios.patch("http://localhost:3000/visitHours", {startTime:"7:00 am"})
         .then((response) => {
             visitsHours.value = response.data;
-            console.log(visitsHours)
+            console.log(response)
         })
         .catch(function (error) {
             console.log(error)
         })
 
-        toast.add({ severity: 'error', summary: 'حدث خطأ', detail: 'لم يتم التعديل', life: 3000 });
-    }
+    
 
 }
 
@@ -58,7 +62,7 @@ onMounted(async () => {
     await axios.get("http://localhost:3000/visitHours")
         .then((response) => {
             visitsHours.value = response.data;
-            console.log(visitsHours)
+      
         })
         .catch(function (error) {
             console.log(error)
@@ -131,10 +135,11 @@ onMounted(async () => {
 
             <Divider />
 
-            <Button @click="submitForm" icon="fa-solid fa-floppy-disk fa-flip fa-flip-hover"
+            <Button @click="submitForm" icon="fa-solid fa-floppy-disk fa-flip fa-flip-hover" 
                 style="--fa-animation-duration: 2s; --fa-animation-delay:5s; --fa-animation-iteration-count:5" label="تخزين"
                 class="" />
             <Toast position="bottom-right" />
+
         </form>
 
     </div>

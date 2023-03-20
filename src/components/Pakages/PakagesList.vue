@@ -8,7 +8,6 @@ onMounted( async () =>{
     await axios.get("http://localhost:3000/services")
         .then((response) =>{
             packagesList.value = response.data;
-            console.log(packagesList)
     })
     .catch(function(error){
         console.log(error)
