@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {  ref } from 'vue';
+import {  ref, reactive } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
 import {useCustomersStore} from '@/stores/customers'
 import axios from 'axios';
@@ -48,8 +48,18 @@ const getSeverity = (status:any) => {
     }
 }
 
-function goInfoPage() {
-    router.push("CustomerProfile")
+const state = ref({})
+function getid(index: {}) {
+    state.value = index;
+    console.log(state.value.name)
+    router.push("CustomerProfile/" + state.value.name)
+
+}
+
+
+function goInfoPage(user: {}) {
+    state.value = user;
+    router.push("CustomerProfile/" + state.value.name )
 }
 </script>
 
@@ -121,10 +131,10 @@ function goInfoPage() {
                     <template #body="slotProps">
 
             <RouterLink  to="/customersRecord/CustomerProfile">
-            <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel" @click="goInfoPage" />
+            <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel"  />
             </RouterLink>
 
-            <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"  @click="goInfoPage" />
+            <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"  @click="getid(slotProps.data)" />
            </template>
         </Column>
 

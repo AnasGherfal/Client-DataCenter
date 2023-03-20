@@ -43,9 +43,10 @@ const submitForm = async () => {
     console.log(result)
     toast.add({ severity: 'error', summary: 'حدث خطأ', detail: 'لم يتم التعديل', life: 3000 });
 
-        await axios.patch("http://localhost:3000/visitHours", {startTime:"7:00 am"})
+        await axios.patch("http://localhost:3000/visitHours/2", {startTime:"7:00 am"})
         .then((response) => {
-            visitsHours.value = response.data;
+            console.log(response)
+            response.data=visitsHours.value
             console.log(response)
         })
         .catch(function (error) {
@@ -56,11 +57,27 @@ const submitForm = async () => {
 
 }
 
+// async submitForm() {
+//   try {
+//     const user = await axios.put(
+//       "http://localhost:3000/visitHours",
+//       {
+//         name: this.user.name,
+//         email: this.user.email,
+//       }
+//     );
 
+//     console.log(user.data);
+//     alert("User updated!");
+//   } catch (e) {
+//     console.log(e);
+//   }
+// },
 
 onMounted(async () => {
     await axios.get("http://localhost:3000/visitHours")
         .then((response) => {
+            console.log(response.data)
             visitsHours.value = response.data;
       
         })

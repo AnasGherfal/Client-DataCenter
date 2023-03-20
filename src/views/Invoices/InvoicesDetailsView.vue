@@ -1,25 +1,39 @@
-<script setup lang="ts">
+<script lang="ts" setup>
+import {useCustomersStore} from '@/stores/customers'
+
+const store = useCustomersStore();
 
 </script>
 
-
 <template>
-    <Card>
-        <template #title>
-            helo
-        </template>
-    </Card>
-<!-- <Card>
-<template #title>
-    <div class="flex justify-content-between flex-wrap card-container purple-container">
-        <div class="flex align-items-center justify-content-center w-4rem h-4rem bg-purple-500 font-bold text-white border-round m-2">1</div>
-        <div class="flex align-items-center justify-content-center w-4rem h-4rem bg-purple-500 font-bold text-white border-round m-2">3</div>
+<Card>
+<template #header>
+    <div class="flex justify-content-between flex-wrap card-container ">
+        <div class="align-items-center justify-content-center  border-round m-3 ">
+                <h1 class=" m-0">فاتورة/#13</h1>
+                <h5 class="text-600  m-0">مركز ادارة الخدمات والبيانات</h5>
+                <div class="border-green-500 border-round-md text-center justify-content-center">
+                <p class="text-md"> مدفوعة</p>
+                </div>
+            
+        </div>
+        <div class="align-items-center justify-content-center  border-round m-3 ">
+               <p >تاريخ الانشاء : 12/2/2022</p> 
+               <p >تاريخ الاستحقاق : 11/1/2023</p>        
+       
+        </div>
     </div>
 </template>
 <template #content>
-<div>
-    asdfghjyuio
-</div>
+<DataTable style="text-align: right;" :value="store.users"  stripedRows tableStyle="min-width: 50rem">
+    <Column style="text-align: right;" field="id" header="id"></Column>
+    <Column style="text-align: right;" field="name" header="الوصف"></Column>
+    <Column style="text-align: right;" field="status" header="الكمية"></Column>
+    <Column style="text-align: right;" field="endDate" header="السعر"></Column>
+    
+</DataTable>
 </template>
-</Card> -->
+</Card>
 </template>
+
+<style ></style>
