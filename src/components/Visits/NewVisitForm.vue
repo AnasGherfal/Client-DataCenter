@@ -14,8 +14,8 @@ const state = reactive({
     authorizedName: "",
     companionName: "",
     visitReason: "",
-    expectedStartVisit:""  ,
-    expectedEndVisit: "" ,
+    startVisit: "",
+    EndVisit: "",
     visitDuration: "ساعه",
     price: "100دينار",
 })
@@ -37,10 +37,11 @@ let hours = today.getHours();
 const minDate = ref(new Date());
 
 
-// const duration = Math.abs(state.expectedEndVisit - state.expectedStartVisit)
+// const duration = Math.abs(state.EndVisit - state.startVisit)
 
 
- const invalidDates = ref();
+const invalidDates = ref();
+
 
 const filterdUsers = ref();
 
@@ -73,10 +74,10 @@ const resetForm = () => {
     state.authorizedName = '';
     state.companionName = '';
     state.visitReason = "";
-    state.expectedStartVisit     = "";
-    state.expectedEndVisit =  "",
-    state.visitDuration = "",
-    state.price = ""
+    state.startVisit = "";
+    state.EndVisit = "",
+        state.visitDuration = "",
+        state.price = ""
 }
 
 function backButton() {
@@ -87,15 +88,16 @@ function backButton() {
 </script>
 
 <template >
-    <div>{{ state.expectedEndVisit }}
+    <div>{{ state.EndVisit }}
         <Card>
 
             <template #title>
 
                 إنشاء زيارة
-                <Button @click="backButton" icon="fa-solid   fa-arrow-left fa-shake-hover" rounded aria-label="Filter" style="float: left;"/>                
-                <Divider/>
-                
+                <Button @click="backButton" icon="fa-solid   fa-arrow-left fa-shake-hover" rounded aria-label="Filter"
+                    style="float: left;" />
+                <Divider />
+
             </template>
             <template #content>
                 <form @submit.prevent="submitForm">
@@ -104,9 +106,8 @@ function backButton() {
 
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label">
-                                <MultiSelect v-model="state.CustomerName" :options="store.users" optionLabel="name" :filter="true"
-                                 placeholder=" اختر عميل" 
-                                 :selectionLimit="1" />
+                                <MultiSelect v-model="state.CustomerName" :options="store.users" optionLabel="name"
+                                    :filter="true" placeholder=" اختر عميل" :selectionLimit="1" />
                                 <label for="CustomerName">العملاء</label>
 
                                 <error v-for="error in v$.CustomerName.$errors" :key="error.$uid" class="p-error">{{
@@ -118,11 +119,12 @@ function backButton() {
 
                         <div class="field col-12 md:col-6 lg:col-4 ">
                             <span class="p-float-label">
-                                <MultiSelect v-model="state.authorizedName" :options="store.users" optionLabel="email" placeholder="اختر" 
-                                emptySelectionMessage="ll" :selectionLimit="2" />
+                                <MultiSelect v-model="state.authorizedName" :options="store.users" optionLabel="email"
+                                    placeholder="اختر" emptySelectionMessage="ll" :selectionLimit="2" />
                                 <label for="authorizedName">المخولين</label>
 
-                                <error v-for="error in v$.authorizedName.$errors" :key="error.$uid" class="p-error">{{  error.$message }}</error>
+                                <error v-for="error in v$.authorizedName.$errors" :key="error.$uid" class="p-error">{{
+                                    error.$message }}</error>
 
                             </span>
 
@@ -139,10 +141,10 @@ function backButton() {
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
 
-                                <Calendar inputId="expectedStartVisit" v-model="state.expectedStartVisit" dateFormat="yy/mm/dd" :showTime="true"
-                                    selectionMode="single" :minDate="minDate" :showButtonBar="true" :manualInput="true" 
-                                    :stepMinute="5" hourFormat="12" />
-                                <label for="expectedStartVisit">تاريخ بداية الزيارة </label>
+                                <Calendar inputId="startVisit" v-model="state.startVisit"
+                                    dateFormat="yy/mm/dd" :showTime="true" selectionMode="single" :minDate="minDate"
+                                    :showButtonBar="true" :manualInput="true" :stepMinute="5" hourFormat="12" />
+                                <label for="startVisit">تاريخ بداية الزيارة </label>
                             </span>
                         </div>
 
@@ -150,15 +152,15 @@ function backButton() {
 
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
-                                <Calendar inputId="expectedEndVisit" v-model="state.expectedEndVisit" dateFormat="yy/mm/dd" :showTime="true"
-                                    selectionMode="single" :minDate="invalidDates" :showButtonBar="true" :manualInput="true" 
-                                    :stepMinute="5" hourFormat="12"  />
-                                <label for="expectedEndVisit">تاريخ انتهاء الزيارة </label>
+                                <Calendar inputId="EndVisit" v-model="state.EndVisit" dateFormat="yy/mm/dd"
+                                    :showTime="true" selectionMode="single" :minDate="invalidDates" :showButtonBar="true"
+                                    :manualInput="true" :stepMinute="5" hourFormat="12" />
+                                <label for="EndVisit">تاريخ انتهاء الزيارة </label>
                             </span>
                         </div>
 
 
-                     <div class="field col-6 md:col-3 lg:col-2">
+                        <div class="field col-6 md:col-3 lg:col-2">
                             <span class="p-float-label ">
                                 <InputText id="companionName" v-model="state.visitDuration" :readonly="true" />
                                 <label for="companionName"> مدة الزيارة </label>
@@ -173,31 +175,31 @@ function backButton() {
                         </div>
                     </div>
 
-                    
 
-                    
+
+
                     <addCompanion :compList="compList" />
                     <br><br>
-                    <div v-if="compList.length>1">
+                    <div v-if="compList.length > 1">
                         {{ compList }}
                         المُرافقين :
                         <div class="field col-12 md:col-2">
 
-                         <Card v-for="i in compList">
-                           
-                         </Card>
-                         </div>
+                            <Card v-for="i in compList">
+
+                            </Card>
                         </div>
+                    </div>
 
                     <Button @click="submitForm" icon="fa-solid fa-plus" label="إنشاء" type="submit" />
                     <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger"
-                    style="margin-right: .5rem;" />
+                        style="margin-right: .5rem;" />
                     <Toast position="bottom-right" />
                 </form>
 
-                </template>
-                   
-                
+            </template>
+
+
 
 
         </Card>
@@ -212,8 +214,4 @@ function backButton() {
     border-top: 0 none;
     direction: ltr;
 }
-
-
-
-
 </style>

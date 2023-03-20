@@ -53,10 +53,14 @@ error{
 //--Buttons--//
 
 
-
-
-
 //---Data Table---//
+//text allign to the right
+.p-datatable .p-datatable-tbody > tr > td {
+    text-align: right !important;
+    border: 1px solid #e9ecef ;
+    border-width: 0 0 1px 0 ;
+    padding: 1rem 1rem ;
+}
 .p-paginator .p-dropdown .p-dropdown-label {
     padding-right: 0.5rem !important;
 }
@@ -118,6 +122,7 @@ error{
   color: #898989;
   margin-left: .5rem;
 }
+
 
 
 

@@ -18,8 +18,7 @@ const state = reactive({
     phoneNumber2: '',
     address: '',
     file: '',
-    subscriptionType: '',
-    numberOfHours: '',
+
 
 })
 
@@ -46,7 +45,6 @@ const submitForm = async () => {
     if (result) {
         axios.post("http://localhost:3000/users", state)
             .then(function (response) {
-                console.log(store.users)
             })
             .catch(function (error) {
                 console.log(error)
@@ -141,7 +139,7 @@ const resetForm = () => {
 
                         <div class="field col-12 md:col-6 lg:col-4">
                             <FileUpload class="field col-12 md:col-6 lg:col-4" v-model="state.file"
-                                style="width: 100%; height: 40px; background-color: white; color:black; border-color: lightgray"
+                                style="width: 50%; height: 50px; border-color: lightgray"
                                 mode="basic" name="file[]" url="./upload" chooseLabel=" ارفق ملف" cancelLabel="إلغاء"
                                 :showUploadButton="false" :showCancelButton="false" :maxFileSize="1000000"
                                 invalidFileSizeMessage="Exceeded the maximum file size" />

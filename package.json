@@ -26,6 +26,7 @@
     "scss": "^0.2.4",
     "vue": "^3.2.45",
     "vue-axios": "^3.5.2",
+    "vue-json-edit": "^1.4.3",
     "vue-router": "^4.1.6"
   },
   "devDependencies": {

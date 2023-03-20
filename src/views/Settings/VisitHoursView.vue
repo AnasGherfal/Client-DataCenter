@@ -37,49 +37,16 @@ const handleInput=(event:any)=>{
     // setPost({})
 
 }
-const submitForm = async () => {
-    const result = await v$.value.$validate();
-    
-    console.log(result)
-    toast.add({ severity: 'error', summary: 'حدث خطأ', detail: 'لم يتم التعديل', life: 3000 });
-
-        await axios.patch("http://localhost:3000/visitHours/2", {startTime:"7:00 am"})
-        .then((response) => {
-            console.log(response)
-            response.data=visitsHours.value
-            console.log(response)
-        })
-        .catch(function (error) {
-            console.log(error)
-        })
-
-    
-
-}
-
-// async submitForm() {
-//   try {
-//     const user = await axios.put(
-//       "http://localhost:3000/visitHours",
-//       {
-//         name: this.user.name,
-//         email: this.user.email,
-//       }
-//     );
-
-//     console.log(user.data);
-//     alert("User updated!");
-//   } catch (e) {
-//     console.log(e);
-//   }
-// },
 
 onMounted(async () => {
     await axios.get("http://localhost:3000/visitHours")
         .then((response) => {
             console.log(response.data)
             visitsHours.value = response.data;
-      
+            state.startWorkTime=response.data[0].startTime
+            state.priceFirstHour=response.data[0].priceFirstHour
+
+            
         })
         .catch(function (error) {
             console.log(error)
@@ -87,6 +54,29 @@ onMounted(async () => {
 
 })
 
+const submitForm = async () => {
+    const result = await v$.value.$validate();
+    
+    console.log(result)
+    toast.add({ severity: 'error', summary: 'حدث خطأ', detail: 'لم يتم التعديل', life: 3000 });
+
+       const val = await axios.patch("http://localhost:3000/visitHours/1", 
+       {startTime : state.startWorkTime,
+        priceFirstHour : state.priceFirstHour,} 
+       )
+        .then((response) => {
+            console.log(response.data.startTime)
+
+           
+            // response.data[0].startTime=state.startWorkTime 
+            console.log(state.startWorkTime)
+            
+      
+        })
+        .catch(function (error) {
+            console.log(error)
+        })
+}
 
 
 </script>
@@ -112,8 +102,8 @@ onMounted(async () => {
             <div class="grid p-fluid ">
                 <div class="field col-12 md:col-4 mt-2">
                     <span class="p-float-label ">
-
-                        <Calendar inputId="startTime" v-model="selectedHours.startTime" dateFormat="yy/mm/dd" :showTime="true"
+{{ state.startWorkTime }}
+                        <Calendar inputId="startTime" v-model="state.startWorkTime" dateFormat="yy/mm/dd" :showTime="true"
                             :timeOnly="true" selectionMode="single" :manualInput="true" :stepMinute="5"
                             hourFormat="12" />
                         <label for="startWorkTime">من </label>
@@ -139,7 +129,7 @@ onMounted(async () => {
                     <div class="field col-12 md:col-4">
 
                         <label for="priceFirstHour"> سعر الساعه الاولى </label>
-                        <InputNumber inputId="stacked" v-model="selectedHours.priceFirstHour" suffix=" دينار" :step="0.25" :min="0"
+                        <InputNumber inputId="stacked" v-model="state.priceFirstHour" suffix=" دينار" :step="0.25" :min="0"
                             :allowEmpty="false" :highlightOnFocus="true" />
                     </div>
                     <div class="field col-12 md:col-4">
