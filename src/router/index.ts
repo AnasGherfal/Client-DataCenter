@@ -90,9 +90,9 @@ const router = createRouter({
       component:() => import('../views/Invoices/InvoicesView.vue'),
       children:[
         {
-          path:'InvoicesInfo',
+          path:'invoicesDetails',
           props:true,
-          component:() => import('../views/Invoices/InvoicesInfo.vue')
+          component:() => import('../views/Invoices/InvoicesDetailsView.vue')
         },
     ]
     }

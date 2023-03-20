@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import Card from 'primevue/card';
 
 </script>
 
 
 <template>
-    sakjsj
+    <Card>
+        <template #title>
+            helo
+        </template>
+    </Card>
 <!-- <Card>
 <template #title>
     <div class="flex justify-content-between flex-wrap card-container purple-container">
