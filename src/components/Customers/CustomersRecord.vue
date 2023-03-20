@@ -142,10 +142,9 @@ function goInfoPage() {
 
 
 
-.p-datatable .p-datatable-tbody > tr > td {
-    text-align: right;
-    border: 1px solid #e9ecef;
-    border-width: 0 0 1px 0;
-    padding: 1rem 1rem;
-}
+
+ /* .pi-times:before {
+     content: "\e90b";
+     margin-right: 2rem;
+ } */
 </style>

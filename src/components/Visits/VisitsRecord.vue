@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
 import router from '@/router';
+import axios from 'axios';
 
 
-const users = ref(['fdf','dff']);
+const visits = ref(['']);
 
 const filters = ref({
     'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -14,6 +15,18 @@ function backButton() {
     router.push("/VisitsRecords")
 
 }
+
+onMounted(async () => {
+    await axios.get("http://localhost:3000/visits")
+      .then(function (response) {
+        visits.value = response.data;
+        console.log(visits)
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+
+  })
 </script>
 
 <template>
@@ -26,7 +39,7 @@ function backButton() {
                 سجل الزيارات
             </template>
             <template #content>
-            <DataTable :value="users" dataKey="id"        filterDisplay="row"
+            <DataTable :value="visits" dataKey="id"        filterDisplay="row"
            :globalFilterFields="['name', 'country.name', 'representative.name', 'balance', 'status']"
 
                 :paginator="true" :rows="10" :filters="filters"
@@ -50,13 +63,18 @@ function backButton() {
                     </div>
                     
                 </template>
-                <Column field="code" header="اسم العميل "  style="min-width:12rem;" frozen></Column>
-                <Column field="name" header="سبب الزياره"  style="min-width:12rem"></Column>
-                <Column field="name" header=" المده"  style="min-width:12rem"></Column>
-                <Column field="name" header="السعر"  style="min-width:5rem"></Column>
-                <Column  style="min-width:10rem">
-                <Button>i</Button></Column>
+                <Column field="name" header="اسم العميل "  style="min-width:12rem;"></Column>
+                <Column field="visitReason" header="سبب الزياره"  style="min-width:12rem"></Column>
+                <Column field="visitDuration" header=" المده"  style="min-width:12rem"></Column>
+                <Column field="visitPrice" header="السعر"  style="min-width:5rem"></Column>
+                <Column  style="min-width:8rem">
+                    <template #body="slotProps">
 
+                <Button v-tooltip="{value:'التفاصيل', fitContent:true}" icon="fa-solid fa-circle-info"  severity="info" text rounded></Button>
+                <Button v-tooltip="{value:'مسح', fitContent:true}" icon="fa-solid fa-trash"  severity="danger" text rounded></Button>
+
+                    </template><i class="fa-solid fa-circle-info"></i>
+                </Column>
 
 </DataTable>
 </template>
