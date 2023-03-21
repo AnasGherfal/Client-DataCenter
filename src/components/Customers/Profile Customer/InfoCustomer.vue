@@ -77,7 +77,9 @@ function focusname(){
 }
 
 defineProps<{
-  nameProp: string 
+  name: string,
+  email: string,
+  address: string 
 
 }>()
 </script>
@@ -104,7 +106,7 @@ defineProps<{
                 <div class="grid p-fluid " >
                     <div class="field col-12 md:col-6 ">
                         <span class="p-float-label" >
-                            <InputText id="name" type="text" :value="nameProp" disabled="true" />
+                            <InputText id="name" type="text" :value="name" disabled="true" />
                             <label style="color: black;top: -.75rem; font-size: 12px;" for="name">اسم </label>
                             <error  v-for="error in v$.name.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
                         </span>
@@ -112,7 +114,7 @@ defineProps<{
                     </div>
                    <div class="field col-12 md:col-6">
                         <span class="p-float-label ">
-                            <InputText id="email" type="text" value="ashraf.howel@gmail.com" v-model="state.email" disabled="true" />
+                            <InputText id="email" type="text" :value="email" v-model="state.email" disabled="true" />
                             <label style="color: black;top: -.75rem; font-size: 12px;" for="email">البريد الإلكتروني</label>
                             <error  v-for="error in v$.email.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
 
@@ -120,7 +122,7 @@ defineProps<{
                     </div>
                     <div class="field col-12 md:col-6">
                         <span class="p-float-label ">
-                            <InputText id="address" value="هون" type="text" v-model="state.address" disabled="true" />
+                            <InputText id="address" :value="address" type="text" v-model="state.address" disabled="true" />
                             <label style="color: black;top: -.75rem; font-size: 12px;" for="address" >العنوان</label>
                             <error  v-for="error in v$.address.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {  ref, reactive } from 'vue';
+import {  ref, reactive, onMounted } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
 import {useCustomersStore} from '@/stores/customers'
 import axios from 'axios';
@@ -48,18 +48,22 @@ const getSeverity = (status:any) => {
     }
 }
 
-const state = ref({})
-function getid(index: {}) {
-    state.value = index;
-    console.log(state.value.name)
-    router.push("CustomerProfile/" + state.value.name)
+const rotName = ref()
+const rot=ref()
 
+function getid(index: {}) {
+    rotName.value = index;
+    console.log(rotName.value.name)
+    rot.value = "/customersRecord/CustomerProfile/"+ rotName.value.name
+    router.push("/customersRecord/CustomerProfile/"+ rotName.value.name  )
 }
 
 
 function goInfoPage(user: {}) {
-    state.value = user;
-    router.push("CustomerProfile/" + state.value.name )
+    rotName.value = user;
+    console.log(rotName.value.name)
+
+    // router.push("customersRecord/CustomerProfile")
 }
 </script>
 
@@ -67,7 +71,7 @@ function goInfoPage(user: {}) {
     
     <RouterView></RouterView>
 
-    <div v-if=" ($route.path !== '/customersRecord/addCustomers' && $route.path !== '/customersRecord/CustomerProfile') ">
+    <div v-if=" ($route.path === '/customersRecord')">
         <Card>
     
             <template #title>
@@ -130,11 +134,10 @@ function goInfoPage(user: {}) {
 
                     <template #body="slotProps">
 
-            <RouterLink  to="/customersRecord/CustomerProfile">
-            <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel"  />
-            </RouterLink>
-
-            <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"  @click="getid(slotProps.data)" />
+            <RouterLink :to="'customersRecord/CustomerProfile/'+slotProps.data.name">
+            <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel"/>
+           </RouterLink>
+            <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"  @click="goInfoPage(slotProps.data)" />
            </template>
         </Column>
 

@@ -3,15 +3,44 @@ import InfoCustomer from './Profile Customer/InfoCustomer.vue'
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import Authorized from './Authorized.vue';
-import { computed, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
+import router from '@/router';
+import { RouterLink, routerKey } from 'vue-router';
+import axios from "axios"
+import { propsToAttrMap } from '@vue/shared';
 
+
+const num= defineProps<{
+    nameId: string
+}>()
+
+console.log(num.nameId)
+
+const tab= ref({})
+
+onMounted(async () => {
+    await axios.get("http://localhost:3000/users[i]")
+      .then(function (response) {
+        tab.value = response.data.filter((users:{name:String}) => users.name === num.nameId);
+        console.log(tab)
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+
+  })
+  console.log(typeof(tab))
+  const prof = tab
 
 </script>
 
 <template>
-<InfoCustomer
- nameProp="AShraf"
- />
+    {{ tab }}
+    
+<!-- <InfoCustomer
+ :name="prof.name"
+ :email="prof.email"
+ :address="prof.address" /> -->
 <div class="bg-white shadow-2 p-3 mt-3 border-round-2xl" >
 
     <div class="card">
