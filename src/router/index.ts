@@ -31,8 +31,7 @@ const router = createRouter({
         component: () => import('../views/Customers/CustomerFormView.vue')
         },
         {
-          path:'CustomerProfile',
-          props:true,
+          path:'customerProfile/:id',
           component: () => import('../components/Customers/CustomerProfile.vue')
         }
       ]
@@ -66,9 +65,9 @@ const router = createRouter({
           component: () => import('../views/Visits/VisitView.vue')
         },
         {
-          path:'VistProfile',
+          path:'vistDetails/:id',
           props:true,
-          component: () => import('../components/Visits/VistProfile.vue')
+          component: () => import('../components/Visits/VisitDetails.vue')
         }
       ]
     },

@@ -48,8 +48,12 @@ const getSeverity = (status:any) => {
     }
 }
 
-function goInfoPage() {
-    router.push("CustomerProfile")
+const state=ref();
+function goInfoPage(index:{}) {
+    state.value = index
+    router.push("/customersRecord/customerProfile/" + state.value.name )
+    
+    
 }
 </script>
 
@@ -57,7 +61,7 @@ function goInfoPage() {
     
     <RouterView></RouterView>
 
-    <div v-if=" ($route.path !== '/customersRecord/addCustomers' && $route.path !== '/customersRecord/CustomerProfile') ">
+<div v-if=" ($route.path !== '/customersRecord/addCustomers' && $route.path !== '/customersRecord/customerProfile' && $route.path !==`/customersRecord/customerProfile/:${store.users}`) ">
         <Card>
     
             <template #title>
@@ -120,9 +124,8 @@ function goInfoPage() {
 
                     <template #body="slotProps">
 
-            <RouterLink  to="/customersRecord/CustomerProfile">
-            <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel" @click="goInfoPage" />
-            </RouterLink>
+            
+            <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel" @click="goInfoPage(slotProps.data)" />
 
             <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"  @click="goInfoPage" />
            </template>

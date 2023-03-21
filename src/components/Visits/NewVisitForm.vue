@@ -81,7 +81,7 @@ const resetForm = () => {
 }
 
 function backButton() {
-    router.push("/VisitsRecords")
+    router.push("/visitsRecords")
 
 }
 

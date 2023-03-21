@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import { computed, reactive, ref } from 'vue';
 
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
+
 import { FilterMatchMode } from 'primevue/api';
 
 const state = reactive({
@@ -22,7 +21,7 @@ const filters = ref({
 <template>
             <RouterView></RouterView>
 
-    <div v-if="$route.path !== '/invoices/invoicesDetails'">
+    <div v-if="$route.path !== '/invoices/invoicesDetailsView'">
 
         <Card>
             <template #title> سجل الفواتير</template>

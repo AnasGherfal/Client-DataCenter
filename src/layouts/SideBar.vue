@@ -27,13 +27,13 @@ import { ref } from 'vue';
                     
                     label: 'سجل الزيارات',
                     icon: 'fa-solid fa-book',
-                    to:'/VisitsRecords'
+                    to:'/visitsRecords'
                 },
    
                 {
                     label: 'سجل الاشتراكات',
                     icon: 'fa-solid fa-calculator',
-                    to:'/SubscriptionsRecord'
+                    to:'/subscriptionsRecord'
                 },
                 {
                     label: ' سجل الفواتير',
