@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {  ref } from 'vue';
+import {  ref, reactive, onMounted } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
 import {useCustomersStore} from '@/stores/customers'
 import axios from 'axios';
@@ -48,12 +48,22 @@ const getSeverity = (status:any) => {
     }
 }
 
-const state=ref();
-function goInfoPage(index:{}) {
-    state.value = index
-    router.push("/customersRecord/customerProfile/" + state.value.name )
-    
-    
+const rotName = ref()
+const rot=ref()
+
+function getid(index: {}) {
+    rotName.value = index;
+    console.log(rotName.value.name)
+    rot.value = "/customersRecord/CustomerProfile/"+ rotName.value.name
+    router.push("/customersRecord/CustomerProfile/"+ rotName.value.name  )
+}
+
+
+function goInfoPage(user: {}) {
+    rotName.value = user;
+    console.log(rotName.value.name)
+
+    // router.push("customersRecord/CustomerProfile")
 }
 </script>
 
@@ -61,7 +71,7 @@ function goInfoPage(index:{}) {
     
     <RouterView></RouterView>
 
-<div v-if=" ($route.path !== '/customersRecord/addCustomers' && $route.path !== '/customersRecord/customerProfile' && $route.path !==`/customersRecord/customerProfile/:${store.users}`) ">
+    <div v-if=" ($route.path === '/customersRecord')">
         <Card>
     
             <template #title>
@@ -124,10 +134,10 @@ function goInfoPage(index:{}) {
 
                     <template #body="slotProps">
 
-            
-            <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel" @click="goInfoPage(slotProps.data)" />
-
-            <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"  @click="goInfoPage" />
+            <RouterLink :to="'customersRecord/CustomerProfile/'+slotProps.data.name">
+            <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel"/>
+           </RouterLink>
+            <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"  @click="goInfoPage(slotProps.data)" />
            </template>
         </Column>
 

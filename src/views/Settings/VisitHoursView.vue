@@ -55,6 +55,7 @@ const handleInput = (event: any) => {
 onMounted(async () => {
     await axios.get("http://localhost:3000/visitHours")
         .then((response) => {
+            console.log(response.data)
             visitsHours.value = response.data;
             state.startWorkTime = response.data[0].startTime
             state.priceFirstHour = response.data[0].priceFirstHour
