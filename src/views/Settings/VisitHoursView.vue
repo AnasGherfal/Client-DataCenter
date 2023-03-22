@@ -8,7 +8,6 @@ import axios from 'axios';
 import moment from 'moment';
 
 
-const visitsHours = ref();
 
 const state = reactive({
     hoursName: [
@@ -20,9 +19,11 @@ const state = reactive({
     priceAfter: 0,
 
 })
+let visitsHours = ref();
+
 const selectedHours = ref();
 
-let pp = reactive([])
+const formChanged = ref(false);
 
 // const timeOptions = {
 //   timeOnly: true,
@@ -55,11 +56,11 @@ const handleInput = (event: any) => {
 onMounted(async () => {
     await axios.get("http://localhost:3000/visitHours")
         .then((response) => {
-            console.log(response.data)
             visitsHours.value = response.data;
+            console.log(visitsHours)
+
             state.startWorkTime = response.data[0].startTime
             state.priceFirstHour = response.data[0].priceFirstHour
-
 
         })
         .catch(function (error) {
@@ -67,18 +68,19 @@ onMounted(async () => {
         })
 
 })
+const num = ref([{id:1},{id:2},{id:3}])
 
-const submitForm = async () => {
+const submitForm = async (id:any) => {
     const result = await v$.value.$validate();
 
     console.log(result)
     toast.add({ severity: 'error', summary: 'حدث خطأ', detail: 'لم يتم التعديل', life: 3000 });
 
-    const val = await axios.patch(`http://localhost:3000/visitHours/`,
+    const val = await axios.patch(`http://localhost:3000/visitHours/`,[
         {
             startTime: moment(state.startWorkTime).format( 'hh:mm a'),
             priceFirstHour: state.priceFirstHour,
-        }
+        }]
     )
         .then((response) => {
             console.log(response.data.startTime)
@@ -117,10 +119,10 @@ const submitForm = async () => {
                 <div class="grid p-fluid ">
                     <div class="field col-12 md:col-4 mt-2">
                         <span class="p-float-label ">
-                            <Calendar inputId="startTime" v-model="state.startWorkTime" :showTime="true"   
+                            <Calendar inputId="startTime" v-model="state.startWorkTime" valu :showTime="true"   
                              :timeOnly="true" 
                             hourFormat="12"
-                                selectionMode="single" :manualInput="true" :stepMinute="5"  />
+                                selectionMode="single" :manualInput="true" :stepMinute="5" @click="formChanged = true" />
                             <label for="startWorkTime">من </label>
 
                         </span>
@@ -130,7 +132,7 @@ const submitForm = async () => {
 
                             <Calendar inputId="endTime" v-model="selectedHours.endTime" dateFormat="yy/mm/dd"
                                 :showTime="true" :timeOnly="true" selectionMode="single" :manualInput="true" :stepMinute="5"
-                                hourFormat="12" />
+                                hourFormat="12" @input="formChanged = true"/>
                             <!-- <error v-for="error in v$.endWorkTime.$errors" :key="error.$uid" class="p-error ">
                                 {{ error.$message }}</error> -->
                             <label for="endTime">الى</label>
@@ -145,7 +147,7 @@ const submitForm = async () => {
 
                         <label for="priceFirstHour"> سعر الساعه الاولى </label>
                         <InputNumber inputId="stacked" v-model="state.priceFirstHour" suffix=" دينار" :step="0.25" :min="0"
-                            :allowEmpty="false" :highlightOnFocus="true" />
+                            :allowEmpty="false" :highlightOnFocus="true" @input="formChanged = true"/>
                     </div>
                     <div class="field col-12 md:col-4">
                         <label for="priceAfter">سعر اكثر من ساعه </label>
@@ -157,7 +159,7 @@ const submitForm = async () => {
 
             <Divider />
 
-            <Button @click="submitForm" icon="fa-solid fa-floppy-disk fa-flip fa-flip-hover"
+            <Button @click="submitForm" :disabled="!formChanged" icon="fa-solid fa-floppy-disk fa-flip fa-flip-hover"
                 style="--fa-animation-duration: 2s; --fa-animation-delay:5s; --fa-animation-iteration-count:5" label="تخزين"
                 class="" />
             <Toast position="bottom-right" />
