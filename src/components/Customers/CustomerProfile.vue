@@ -13,15 +13,13 @@ import { propsToAttrMap } from '@vue/shared';
 const num= defineProps<{
     nameId: string
 }>()
-
-console.log(num.nameId)
-
 const tab= ref({})
 
 onMounted(async () => {
-    await axios.get("http://localhost:3000/users[i]")
+    await axios.get("http://localhost:3000/users")
       .then(function (response) {
-        tab.value = response.data.filter((users:{name:String}) => users.name === num.nameId);
+        tab.value = response.data.filter((users:{name:String}) => users.name === num.nameId)[0];
+
         console.log(tab)
       })
       .catch(function (error) {
@@ -30,17 +28,17 @@ onMounted(async () => {
 
   })
   console.log(typeof(tab))
-  const prof = tab
+//   const prof = tab
 
 </script>
 
-<template>
-    {{ tab }}
-    
-<!-- <InfoCustomer
- :name="prof.name"
- :email="prof.email"
- :address="prof.address" /> -->
+<template>    
+<InfoCustomer
+ :name="tab.name"
+ :email1="tab.email"
+ :address="tab.address"
+ :phoneNumber1="tab.phoneNumber1"
+ :phoneNumber2="tab.phoneNumber2" />
 <div class="bg-white shadow-2 p-3 mt-3 border-round-2xl" >
 
     <div class="card">

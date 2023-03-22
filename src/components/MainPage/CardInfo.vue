@@ -11,7 +11,7 @@ import DialogCard from './CardInfo/DialogCard.vue';
                     <div>
                         <span class="block text-green-600 font-medium font-semibold">خدمات حالياً مفعلة</span>
                     </div>
-                       <DialogCard/>
+                       <DialogCard iconShape="fa-solid fa-bolt" stateCheck="نشط"/>
                 </div>
             </div>
        
@@ -28,7 +28,7 @@ import DialogCard from './CardInfo/DialogCard.vue';
                     <div>
                         <span class="block text-orange-600 font-medium font-semibold">اقتراب انتهاء الصلاحية</span>
                     </div>
-                       <DialogCard/>
+                       <DialogCard iconShape="fa-solid fa-bell" stateCheck="غير نشط"/>
                 </div>
             </div>
        
@@ -45,7 +45,7 @@ import DialogCard from './CardInfo/DialogCard.vue';
                     <div>
                         <span class="block text-red-600 font-medium font-semibold">خدمات غير مفعلة</span>
                     </div>
-                       <DialogCard/>
+                       <DialogCard iconShape="fa-solid fa-circle-xmark" stateCheck="غير نشط"/>
                 </div>
             </div>
        
