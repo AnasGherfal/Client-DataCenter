@@ -24,21 +24,45 @@ const store = useCustomersStore();
             op.value.hide();
             
         };
+        const stateTest =defineProps<{
+            stateCheck: string
+            iconShape: string
+        }>()
+        const tab1=ref()
 
+    onMounted(async () => {
+    await axios.get("http://localhost:3000/users")
+      .then(function (response) {
+        console.log(response)
+        tab1.value = response.data.filter((users:{state:String}) => users.status === stateTest.stateCheck);
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+    })
+    console.log(tab1)
 
 </script>
 
 <template>
+
     <div>
         <Toast />
 
-        <Button type="button" icon="pi pi-ban"  @click="toggle" aria-haspopup="true" aria-controls="overlay_panel" />
+        <Button type="button" :icon="iconShape"  @click="toggle" aria-haspopup="true" aria-controls="overlay_panel" />
 
         <OverlayPanel ref="op" appendTo="body" :showCloseIcon="true" id="overlay_panel" style="width: 450px" :breakpoints="{'800px':'50vw'}">
-            <DataTable :value="store.users" v-model:selection="selectedProduct" selectionMode="single" :paginator="true" :rows="5" @rowSelect="onProductSelect" responsiveLayout="scroll" >
+            <DataTable :value="tab1" v-model:selection="selectedProduct" selectionMode="single" :paginator="true" :rows="5" @rowSelect="onProductSelect" responsiveLayout="scroll" >
                 <Column field="name" header="Name" sortable style="width: 50%"></Column>
-                <Column field="email" header="email" sortable style="width: 30%"> </Column>
                 <Column field="status" header="status" sortable style="width: 50%"></Column>
+                <Column style="min-width:8rem">
+
+<template #body="slotProps">
+<RouterLink :to="'customersRecord/CustomerProfile/'+slotProps.data.name">
+<Button icon="fa-solid fa-user"  text rounded aria-label="Cancel"/>
+</RouterLink>
+</template>
+</Column>
             </DataTable>
         </OverlayPanel>
     </div>
@@ -48,10 +72,7 @@ const store = useCustomersStore();
 
 <style lang="scss" scoped>
 
-.p-button:hover{
-    background-color: red !important;
 
-}
 .product-image {
     width: 50px;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)
@@ -59,21 +80,10 @@ const store = useCustomersStore();
 
 
 .p-button[data-v-a8d0e435] {
-  color: #ffffff;
-  background: rgb(243, 33, 33);
-  border: 1px solid #F32121;
-    border-top-color: rgb(243, 33, 33);
-    border-right-color: rgb(243, 33, 33);
-    border-bottom-color: rgb(243, 33, 33);
-    border-left-color: rgb(243, 33, 33);
-  border-top-color: rgb(243, 33, 33);
-  border-right-color: rgb(243, 33, 33);
-  border-bottom-color: rgb(243, 33, 33);
-  border-left-color: rgb(243, 33, 33);
+
   padding: 0.5rem 1rem;
   font-size: 1rem;
-  transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
-  border-radius: 7px;
-  height: 43px;
+  border-radius: 10px;
+  height: 45px;
   }
 </style>

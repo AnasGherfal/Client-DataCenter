@@ -35,7 +35,7 @@ onMounted(async () => {
 <template>
         <RouterView></RouterView>
 
-    <div v-if="$route.path !== '/visitsRecords/createVisit'">
+    <div v-if="$route.path === '/VisitsRecords'">
        
         <Card>
             <template #title>
