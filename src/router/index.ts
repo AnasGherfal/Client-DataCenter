@@ -66,9 +66,9 @@ const router = createRouter({
           component: () => import('../views/Visits/VisitView.vue')
         },
         {
-          path:'VistProfile',
+          path:'vistDetails/:id',
           props:true,
-          component: () => import('../components/Visits/VistProfile.vue')
+          component: () => import('../components/Visits/VisitDetails.vue')
         }
       ]
     },

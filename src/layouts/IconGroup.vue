@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Button from 'primevue/button';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+
 
 
 const checked = ref<boolean>(false);
@@ -17,24 +18,46 @@ const toggle = (event:any) => {
     menu.value.toggle(event);
 };
 
-function theme(){
+const toggleTheme = (): void => {
+    console.log('Toggle theme clicked');
 
-    if(checked.value == true)
-    (async () => {
-          await import('../assets/style/darkTheme.css');
-      })();
-      else if(checked.value == false)
-    (async () => {
-          await import('../assets/style/lightTheme.css');
-      })();
-}
+      const themeLink = document.querySelector('link[href*="primevue/resources/themes"]') as HTMLLinkElement | null;
+      console.log('themeLink:', themeLink);
+
+      if (themeLink && themeLink.getAttribute('href')?.includes('saga-blue')) {
+        themeLink.setAttribute('href', 'primevue/resources/themes/lara-light-blue/theme.css');
+      } else if (themeLink) {
+        themeLink.setAttribute('href', 'primevue/resources/themes/saga-blue/theme.css');
+      }
+    };
+
+    onMounted(() => {
+      const themeLink = document.querySelector('link[href*="primevue/resources/themes"]') as HTMLLinkElement | null;
+      if (!themeLink) {
+        // If link tag is not found, wait until the DOM is ready to try again
+        document.addEventListener('DOMContentLoaded', () => {
+          toggleTheme();
+        });
+      }
+    });
+// function theme(){
+
+//     if(checked.value == true)
+//     (async () => {
+//           await import('../assets/style/darkTheme.css');
+//       })();
+//       else if(checked.value == false)
+//     (async () => {
+//           await import('../assets/style/lightTheme.css');
+//       })();
+// }
         
 </script>
      
      <template>
     <div class="inline-flex fadeinleft animation-duration-1000" style=" height:30px; margin-top: -18px; margin-right:12px;">
-        <ToggleButton @click="theme" off-label="o" v-model="checked" style="height: 40px; width: 40px; --fa-animation-iteration-count: 2;"  class="m-1 p-button-text" 
-        offIcon="fa-solid fa-moon fa-fade" onIcon="fa-solid fa-sun" />
+        <Button @click="toggleTheme"   style="height: 40px; width: 40px; --fa-animation-iteration-count: 2;"  class="m-1 p-button-text" 
+        icon="fa-solid fa-moon fa-fade" />
 
         
         <RouterLink to="/SettingsView" style="text-decoration: none">

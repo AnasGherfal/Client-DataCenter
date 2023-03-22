@@ -11,10 +11,7 @@ const filters = ref({
     'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
 
-function backButton() {
-    router.push("/VisitsRecords")
 
-}
 
 onMounted(async () => {
     await axios.get("http://localhost:3000/visits")
@@ -27,6 +24,12 @@ onMounted(async () => {
       })
 
   })
+
+  const rotName = ref()
+  function openVisitsDetails(index:{}){
+    rotName.value = index
+    router.push("/visitsRecords/vistDetails/" + rotName.value.name )
+  }
 </script>
 
 <template>
@@ -70,7 +73,7 @@ onMounted(async () => {
                 <Column  style="min-width:8rem">
                     <template #body="slotProps">
 
-                <Button v-tooltip="{value:'التفاصيل', fitContent:true}" icon="fa-solid fa-circle-info"  severity="info" text rounded></Button>
+                <Button @click="openVisitsDetails(slotProps.data)" v-tooltip="{value:'التفاصيل', fitContent:true}" icon="fa-solid fa-circle-info"  severity="info" text rounded></Button>
                 <Button v-tooltip="{value:'مسح', fitContent:true}" icon="fa-solid fa-trash"  severity="danger" text rounded></Button>
 
                     </template><i class="fa-solid fa-circle-info"></i>
