@@ -20,8 +20,8 @@ const columns = ref([
             {field: 'email', header: 'البريد الإكتروني'},
 
             {field: 'address', header: 'العنوان'},
-            {field: 'phoneNumber1', header: 'رقم الهاتف (1)'},
-            {field: 'phoneNumber2', header: 'رقم الهاتف (2)'}
+            {field: 'primaryPhone', header: 'رقم الهاتف (1)'},
+            {field: 'secondaryPhone', header: 'رقم الهاتف (2)'}
 
         ]);
         const selectedColumns = ref(columns.value);

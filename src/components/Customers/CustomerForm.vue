@@ -14,8 +14,8 @@ const pp = ref<string>('');
 const state = reactive({
     name: "" as string,
     email: "",
-    phoneNumber1: '',
-    phoneNumber2: '',
+    primaryPhone: '',
+    secondaryPhone: '',
     address: '',
     file: '',
 
@@ -29,7 +29,7 @@ const rules = computed(() => {
         name: { required: helpers.withMessage('الاسم مطلوب', required) },
         email: { required: helpers.withMessage('الايميل مطلوب', required), email: helpers.withMessage(' ليس عنوان بريد إلكتروني صالح', email) },
         address: { required: helpers.withMessage('العنوان مطلوب', required) },
-        phoneNumber1: { required: helpers.withMessage('رقم الهاتف مطلوب', required) },
+        primaryPhone: { required: helpers.withMessage('رقم الهاتف مطلوب', required) },
     }
 })
 
@@ -43,13 +43,14 @@ const submitForm = async () => {
     const result = await v$.value.$validate();
 
     if (result) {
-        axios.post("http://localhost:3000/users", state)
+        axios.post("https://localhost:7003/api/Customers", state)
             .then(function (response) {
+                console.log(response)
             })
             .catch(function (error) {
                 console.log(error)
             })
-        router.push("/usersRecord")
+        router.push("/customersRecord")
         toast.add({ severity: 'success', summary: 'Success Message', detail: 'تمت إضافة العميل', life: 3000 });
 
     } else {
@@ -65,8 +66,8 @@ function backButton() {
 const resetForm = () => {
     state.name = '';
     state.email = '';
-    state.phoneNumber1 = '';
-    state.phoneNumber2 = '';
+    state.primaryPhone = '';
+    state.secondaryPhone = '';
     state.address = '';
     state.file = '';
 
@@ -122,16 +123,16 @@ const resetForm = () => {
                             </span>
                         </div>
                         <div class="field col-12 md:col-6 lg:col-4">
-                            <span class="p-float-label ">
-                                <InputMask id="phoneNum1" v-model="state.phoneNumber1" mask="999-999-9999" />
+                            <span class="p-float-label ">{{ state.primaryPhone }}
+                                <InputMask id="phoneNum1" v-model="state.primaryPhone" mask="218-99-999-9999+"  />
                                 <label for="phoneNum1">رقم هاتف </label>
-                                <error v-for="error in v$.phoneNumber1.$errors" :key="error.$uid" class="p-error">{{
+                                <error v-for="error in v$.primaryPhone.$errors" :key="error.$uid" class="p-error">{{
                                     error.$message }}</error>
                             </span>
                         </div>
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
-                                <InputMask id="phoneNum2" v-model="state.phoneNumber2" mask=" 999-999-9999" />
+                                <InputMask id="phoneNum2" v-model="state.secondaryPhone" mask=" 999-999-9999" />
                                 <label for="phoneNum2">رقم هاتف 2</label>
                             </span>
                         </div>

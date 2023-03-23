@@ -27,7 +27,7 @@ import { ref } from 'vue';
                     
                     label: 'سجل الزيارات',
                     icon: 'fa-solid fa-book',
-                    to:'/visitsRecords'
+                    to:'/VisitsRecords'
                 },
    
                 {
