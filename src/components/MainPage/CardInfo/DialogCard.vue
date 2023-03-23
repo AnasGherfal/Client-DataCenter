@@ -34,7 +34,7 @@ const store = useCustomersStore();
     await axios.get("http://localhost:3000/users")
       .then(function (response) {
         console.log(response)
-        tab1.value = response.data.filter((users:{state:String}) => users.status === stateTest.stateCheck);
+        tab1.value = response.data.filter((users:{status: string;state:String}) => users.status === stateTest.stateCheck);
       })
       .catch(function (error) {
         console.log(error)

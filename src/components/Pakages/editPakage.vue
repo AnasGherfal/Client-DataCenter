@@ -148,8 +148,11 @@ const openModal = () => {
 
             </template>
         </Dialog>
-        <Button @click="openModal" style="" label="اضافة باقه"  icon="fa-solid fa-plus " class=" mb-4 ml-4 p-button-primry " ></Button>
-
+        <Button  @click="openModal"
+             style="height: 25px; width: 25px;"
+             icon=" fa-solid fa-pen"
+             class=" mt-2 mr-2 p-button-primary p-button-text" 
+             v-tooltip="{value:'تعديل الباقة', fitContent:true}" />
 </template>
 
 

@@ -21,7 +21,7 @@ const filters = ref({
 <template>
             <RouterView></RouterView>
 
-    <div v-if="$route.path !== '/invoices/invoicesDetailsView'">
+    <div v-if="$route.path === '/invoices'">
 
         <Card>
             <template #title> سجل الفواتير</template>

@@ -62,8 +62,7 @@ const toggleTheme = (): void => {
         
         <RouterLink to="/SettingsView" style="text-decoration: none">
 
-        <Button  style="height: 40px; width: 40px; --fa-animation-iteration-count: 1;" icon="fa-solid fa-gear fa-spin fa-spin-hover" class="m-1 p-button-text transition-colors 
-        transition-duration-500   " 
+        <Button  style="height: 40px; width: 40px; --fa-animation-iteration-count: 1;" icon="fa-solid fa-gear fa-spin fa-spin-hover" class="m-1 p-button-text transition-colors transition-duration-500" 
         v-tooltip="{value:'اعدادات النظام', fitContent:true}" />
         </RouterLink>
 

@@ -41,18 +41,6 @@ const statuses = ref(['نشط', 'غير نشط', 'من',]);
 
 
 
-//  onMounted( () =>{
-//          axios.get("http://localhost:3000/users")
-//         .then(function(response) {
-//             users.value = response.data;
-//         console.log(users)
-//     })
-//     .catch(function(error){
-//         console.log(error)
-//       })
-
-//     })
-
 const getSeverity = (status:any) => {
     switch (status) {
         case 'نشط':
@@ -71,7 +59,7 @@ const getSeverity = (status:any) => {
 <template>
     <RouterView></RouterView>
 
-    <div v-if="$route.path !== '/subscriptionsRecord/addSubsciptions'">
+    <div v-if="$route.path === '/subscriptionsRecord'">
         <Card>
     
             <template #title>

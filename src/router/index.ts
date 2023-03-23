@@ -48,7 +48,10 @@ const router = createRouter({
         {
         path:'addSubsciptions',  
         component: () => import('../views/subscriptions/AddsubscriptionsView.vue'),
-        }
+        },{
+          path:'SubscriptionsDetaView',  
+          component: () => import('../views/subscriptions/SubscriptionsDetaView.vue'),
+          }
       ]
     },
 

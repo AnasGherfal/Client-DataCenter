@@ -135,7 +135,7 @@
     {
       "id": 1,
       "name": "ساعات الدوام",
-      "startTime": "07:10 pm",
+      "startTime": "02:15 pm",
       "endTime": "3:30 pm",
       "priceFirstHour": 120.42,
       "priceAfter": 100.64
@@ -215,6 +215,33 @@
       "Dns": "(rDNS&DNS)29",
       "monthlyVistsShare": "25",
       "pricePerYear": "89000"
+    },
+    {
+      "name": "مكانية",
+      "amountOfPower": "123",
+      "AcpPort": "1643",
+      "Dns": "12",
+      "monthlyVistsShare": "30",
+      "pricePerYear": "22033",
+      "id": "l5LtXNr"
+    },
+    {
+      "name": "باقة خاصة بـ(احميدة)",
+      "amountOfPower": "10000000",
+      "AcpPort": "3",
+      "Dns": "11",
+      "monthlyVistsShare": "0",
+      "pricePerYear": "10000000",
+      "id": "tkCTY5J"
+    },
+    {
+      "name": "v cc",
+      "amountOfPower": "cxvcx",
+      "AcpPort": "zxcc",
+      "Dns": "saa",
+      "monthlyVistsShare": "hj",
+      "pricePerYear": "zxc",
+      "id": "mGg5Oq2"
     }
   ]
 }

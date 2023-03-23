@@ -8,7 +8,7 @@ import axios from 'axios';
 import moment from 'moment';
 
 
-const visitsHours = ref();
+let visitsHours = ref();
 
 const state = reactive({
     hoursName: [
@@ -20,21 +20,17 @@ const state = reactive({
     priceAfter: 0,
 
 })
-const selectedHours = ref();
+const selectedHours = ref({
+    
+    name:state.hoursName,
+    endTime:state.endWorkTime,
+    priceAfter:state.priceAfter,
+    
+
+});
 
 let pp = reactive([])
 
-// const timeOptions = {
-//   timeOnly: true,
-//   hourFormat: '12' as '24' | '12' | undefined,
-// };
-
-// const formattedTimeValue = 
-// startWorkTimeDate.toLocaleTimeString('en-US', {
-//         hour: '2-digit',
-//         minute: '2-digit',
-//         hour12: true,
-//       })
     
 const rules = computed(() => {
     return {
@@ -56,11 +52,9 @@ onMounted(async () => {
     await axios.get("http://localhost:3000/visitHours")
         .then((response) => {
             console.log(response.data)
-            visitsHours.value = response.data;
+            visitsHours = response.data;
             state.startWorkTime = response.data[0].startTime
             state.priceFirstHour = response.data[0].priceFirstHour
-
-
         })
         .catch(function (error) {
             console.log(error)
@@ -74,7 +68,9 @@ const submitForm = async () => {
     console.log(result)
     toast.add({ severity: 'error', summary: 'حدث خطأ', detail: 'لم يتم التعديل', life: 3000 });
 
-    const val = await axios.patch(`http://localhost:3000/visitHours/`,
+    if(selectedHours!==null){
+     console.log(visitsHours.value)
+    const val = await axios.patch(`http://localhost:3000/visitHours/${visitsHours.value.id}`,
         {
             startTime: moment(state.startWorkTime).format( 'hh:mm a'),
             priceFirstHour: state.priceFirstHour,
@@ -92,19 +88,21 @@ const submitForm = async () => {
         .catch(function (error) {
             console.log(error)
         })
+    }
 }
 
 
 </script>
 
 <template>
+    {{ }}
     <div>
 
         <form @submit.prevent="submitForm">
             <div class="grid p-fluid ">
                 <div class="field col-12 md:col-4 mt-2">
                     <span class="p-float-label ">
-                        <Dropdown v-model="selectedHours" :options="visitsHours" optionLabel="name"
+                        <Dropdown v-model="selectedHours"  :options="visitsHours" optionLabel="name" 
                             placeholder="اختر ساعات للتعديل" class="w-full md:w-14rem" />
                         <label for="hoursName">الساعات</label>
 

@@ -7,19 +7,18 @@ import { useCustomersStore } from '@/stores/customers'
 import axios from 'axios';
 import Divider from 'primevue/divider';
 import router from '@/router';
+import InputText from 'primevue/inputtext';
 
 
 const store = useCustomersStore();
 const pp = ref<string>('');
+
 const state = reactive({
-    name: "" as string,
-    email: "",
-    phoneNumber1: '',
-    phoneNumber2: '',
-    address: '',
-    file: '',
-
-
+  name: "",
+  address: "",
+  primaryPhone: "",
+  secondaryPhone: "",
+  email:""
 })
 
 
@@ -29,7 +28,7 @@ const rules = computed(() => {
         name: { required: helpers.withMessage('الاسم مطلوب', required) },
         email: { required: helpers.withMessage('الايميل مطلوب', required), email: helpers.withMessage(' ليس عنوان بريد إلكتروني صالح', email) },
         address: { required: helpers.withMessage('العنوان مطلوب', required) },
-        phoneNumber1: { required: helpers.withMessage('رقم الهاتف مطلوب', required) },
+        primaryPhone: { required: helpers.withMessage('رقم الهاتف مطلوب', required) },
     }
 })
 
@@ -41,9 +40,9 @@ const v$ = useVuelidate(rules, state);
 
 const submitForm = async () => {
     const result = await v$.value.$validate();
-
+  console.log(state)
     if (result) {
-        axios.post("http://localhost:3000/users", state)
+        axios.post("https://localhost:7003/api/Customers", state)
             .then(function (response) {
             })
             .catch(function (error) {
@@ -65,12 +64,9 @@ function backButton() {
 const resetForm = () => {
     state.name = '';
     state.email = '';
-    state.phoneNumber1 = '';
-    state.phoneNumber2 = '';
+    state.primaryPhone = '';
+    state.secondaryPhone = '';
     state.address = '';
-    state.file = '';
-
-
 }
 
 
@@ -123,26 +119,32 @@ const resetForm = () => {
                         </div>
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
-                                <InputMask id="phoneNum1" v-model="state.phoneNumber1" mask="999-999-9999" />
-                                <label for="phoneNum1">رقم هاتف </label>
-                                <error v-for="error in v$.phoneNumber1.$errors" :key="error.$uid" class="p-error">{{
+                                <InputText id="primaryPhone" v-model="state.primaryPhone"  />
+                                <label for="primaryPhone">رقم هاتف </label>
+                                <error v-for="error in v$.primaryPhone.$errors" :key="error.$uid" class="p-error">{{
                                     error.$message }}</error>
                             </span>
                         </div>
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
-                                <InputMask id="phoneNum2" v-model="state.phoneNumber2" mask=" 999-999-9999" />
-                                <label for="phoneNum2">رقم هاتف 2</label>
+                                <InputMask id="secondaryPhone" v-model="state.secondaryPhone" mask="+218-99-999-9999" />
+                                <label for="secondaryPhone">رقم هاتف 2</label>
                             </span>
                         </div>
 
 
                         <div class="field col-12 md:col-6 lg:col-4">
-                            <FileUpload class="field col-12 md:col-6 lg:col-4" v-model="state.file"
-                                style="width: 50%; height: 50px; border-color: lightgray"
-                                mode="basic" name="file[]" url="./upload" chooseLabel=" ارفق ملف" cancelLabel="إلغاء"
-                                :showUploadButton="false" :showCancelButton="false" :maxFileSize="1000000"
-                                invalidFileSizeMessage="Exceeded the maximum file size" />
+                    <FileUpload  style="font-family: tajawal; width: 100%; height: 40px; border-radius: 10px; background-color: white; color:black; border-color: gray"
+                    mode="basic"
+                     name="File" 
+                     url="./upload" 
+                     chooseLabel=" ارفق ملف" 
+                     cancelLabel="إلغاء"
+                     :showUploadButton="false"
+                     :showCancelButton="false"
+                     :maxFileSize="1000000"
+                     invalidFileSizeMessage="Exceeded the maximum file size"
+                     />
                         </div>
 
                     </div>
@@ -165,7 +167,9 @@ const resetForm = () => {
     padding-left: 0.5rem;
 }
 
-
+.p-inputmask p-inputtext{
+    direction: rtl;
+}
 
 .p-float-label>label {
     right: 0.5rem;

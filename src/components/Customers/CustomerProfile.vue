@@ -16,9 +16,11 @@ const num= defineProps<{
 const tab= ref({})
 
 onMounted(async () => {
-    await axios.get("http://localhost:3000/users")
+    await axios.get("https://localhost:7003/api/Customers/")
       .then(function (response) {
-        tab.value = response.data.filter((users:{name:String}) => users.name === num.nameId)[0];
+
+
+        tab.value = response.data.content.filter((users:{name:String}) => users.name === num.nameId)[0];
 
         console.log(tab)
       })
@@ -32,14 +34,15 @@ onMounted(async () => {
 
 </script>
 
-<template>    
+<template> 
 <InfoCustomer
  :name="tab.name"
  :email1="tab.email"
  :address="tab.address"
- :phoneNumber1="tab.phoneNumber1"
- :phoneNumber2="tab.phoneNumber2" />
+ :primaryPhone="tab.primaryPhone"
+ :secondaryPhone="tab.secondaryPhone" />
 <div class="bg-white shadow-2 p-3 mt-3 border-round-2xl" >
+    {{ tab }}   
 
     <div class="card">
             <TabView class="tabview-custom" ref="tabview4">

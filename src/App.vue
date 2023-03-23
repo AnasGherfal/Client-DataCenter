@@ -3,7 +3,6 @@ import { RouterLink, RouterView } from 'vue-router'
 import { ref } from 'vue';
 import SideBar from './layouts/SideBar.vue'
 import TopBar from './layouts/TopBar.vue'
-import ServiceInfo from './views/ServiceInfo/ServiceInfo.vue';
 import CustomerProfile from './components/Customers/CustomerProfile.vue'
 import VistProfile from './components/Visits/VisitDetails.vue';
 </script>

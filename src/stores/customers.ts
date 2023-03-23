@@ -6,10 +6,10 @@ export const useCustomersStore = defineStore('customer', () => {
 
   const customers = ref([]);
   onMounted(async () => {
-    await axios.get("http://localhost:3000/users")
+    await axios.get("https://localhost:7003/api/Customers/")
       .then(function (response) {
-        customers.value = response.data;
-        console.log(customers)
+        console.log(response)
+        customers.value = response.data.content;
       })
       .catch(function (error) {
         console.log(error)
@@ -19,6 +19,6 @@ export const useCustomersStore = defineStore('customer', () => {
   
 
 
-  return { users: customers }
+  return {  customers }
 
 })
