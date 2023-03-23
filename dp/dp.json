@@ -133,24 +133,27 @@
   ],
   "visitHours": [
     {
-      "0": {
-        "startTime": "01:45 pm",
-        "priceFirstHour": 120.42
-      },
       "id": 1,
       "name": "ساعات الدوام",
+<<<<<<< HEAD
       "startTime": "02:15 pm",
       "endTime": "3:30 pm",
       "priceFirstHour": 120.42,
       "priceAfter": 100.64
+=======
+      "startTime": "11:05 am",
+      "endTime": "0911",
+      "priceFirstHour": 100,
+      "priceAfter": 21
+>>>>>>> 85870593131f4ab4cb567652481355dc65408b3b
     },
     {
       "id": 2,
       "name": "ساعات بعد الدوام",
-      "startTime": "4:00 pm",
-      "endTime": "11:00 pm",
-      "priceFirstHour": 56,
-      "priceAfter": 384.56
+      "startTime": "11:20 am",
+      "endTime": "22",
+      "priceFirstHour": 33,
+      "priceAfter": 43
     },
     {
       "id": 3,

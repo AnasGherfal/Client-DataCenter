@@ -6,6 +6,7 @@ import { useToast } from "primevue/usetoast";
 import { useCustomersStore } from '@/stores/customers';
 import addCompanion from './addCompanion.vue';
 import router from '@/router';
+import moment from 'moment';
 
 const store = useCustomersStore();
 
@@ -14,8 +15,8 @@ const state = reactive({
     authorizedName: "",
     companionName: "",
     visitReason: "",
-    startVisit: "",
-    EndVisit: "",
+    startVisit: ref<string>(moment().format('hh:mm a')),
+    endVisit: "",
     visitDuration: "ساعه",
     price: "100دينار",
 })
@@ -36,8 +37,19 @@ let hours = today.getHours();
 
 const minDate = ref(new Date());
 
+const date = new Date((moment(state.startVisit).format('hh:mm a')))
 
-// const duration = Math.abs(state.EndVisit - state.startVisit)
+const disabledDates = computed(() => {
+    
+      if (state.startVisit) {
+        return {
+          to: state.endVisit
+        };
+      } else {
+        return null;
+      }
+    });
+// const duration = Math.abs(state.e - state.startVisit)
 
 
 const invalidDates = ref();
@@ -55,6 +67,11 @@ const rules = computed(() => {
         authorizedName: { required: helpers.withMessage('رقم المخول مطلوب', required) },
     }
 })
+
+    // Validate that end date is not before start date
+    const isEndDateValid = computed(() => {
+      return !state.endVisit || !state.startVisit || state.endVisit >= state.startVisit ;
+    });
 
 const toast = useToast();
 
@@ -75,20 +92,20 @@ const resetForm = () => {
     state.companionName = '';
     state.visitReason = "";
     state.startVisit = "";
-    state.EndVisit = "",
+    state.endVisit = "",
         state.visitDuration = "",
         state.price = ""
 }
 
 function backButton() {
-    router.push("/visitsRecords")
+    router.push("/VisitsRecords")
 
 }
 
 </script>
 
 <template >
-    <div>{{ state.EndVisit }}
+    <div>{{ state.endVisit }}
         <Card>
 
             <template #title>
@@ -142,20 +159,20 @@ function backButton() {
                             <span class="p-float-label ">
 
                                 <Calendar inputId="startVisit" v-model="state.startVisit"
-                                    dateFormat="yy/mm/dd" :showTime="true" selectionMode="single" :minDate="minDate"
-                                    :showButtonBar="true" :manualInput="true" :stepMinute="5" hourFormat="12" />
+                                    dateFormat="yy/mm/dd" :showTime="true" selectionMode="single" :minDate="date"
+                                    :showButtonBar="true" :manualInput="true" :stepMinute="5" hourFormat="12"  />
                                 <label for="startVisit">تاريخ بداية الزيارة </label>
                             </span>
                         </div>
-
+                        {{ date }}
 
 
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
-                                <Calendar inputId="EndVisit" v-model="state.EndVisit" dateFormat="yy/mm/dd"
-                                    :showTime="true" selectionMode="single" :minDate="invalidDates" :showButtonBar="true"
+                                <Calendar inputId="endVisit" v-model="state.endVisit" dateFormat="yy/mm/dd"
+                                    :showTime="true" selectionMode="single" :minDate="date" :showButtonBar="true"
                                     :manualInput="true" :stepMinute="5" hourFormat="12" />
-                                <label for="EndVisit">تاريخ انتهاء الزيارة </label>
+                                <label for="e">تاريخ انتهاء الزيارة </label>
                             </span>
                         </div>
 
