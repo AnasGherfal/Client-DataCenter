@@ -25,10 +25,10 @@ onMounted(async () => {
 })
 
 const rotName = ref()
-function openVisitsDetails(index: {}) {
-    rotName.value = index
-    router.push("/visitsRecords/vistDetails/" + rotName.value.name)
-}
+// function openVisitsDetails(index: {}) {
+//     rotName.value = index
+//     router.push("/visitsRecords/vistDetails/" + rotName.value.name)
+// }
 </script>
 
 <template>
@@ -74,13 +74,17 @@ function openVisitsDetails(index: {}) {
                     <Column style="min-width:8rem">
                         <template #body="slotProps">
 
-                            <Button @click="openVisitsDetails(slotProps.data)"
-                                v-tooltip="{ value: 'التفاصيل', fitContent: true }" icon="fa-solid fa-circle-info"
-                                severity="info" text rounded></Button>
-                            <Button v-tooltip="{ value: 'مسح', fitContent: true }" icon="fa-solid fa-trash" severity="danger"
-                                text rounded></Button>
+                            <RouterLink :to="'/visitsRecords/vistDetails/' + slotProps.data.name"
+                            style="text-decoration: none">
+                                <Button icon="fa-solid fa-circle-info" severity="info" text rounded 
+                                v-tooltip="{ value: 'التفاصيل', fitContent: true }"  />
+                            </RouterLink>
 
-                        </template><i class="fa-solid fa-circle-info"></i>
+
+                            <Button v-tooltip="{ value: 'مسح', fitContent: true }" icon="fa-solid fa-trash"
+                                severity="danger" text rounded></Button>
+
+                        </template>
                     </Column>
 
                 </DataTable>

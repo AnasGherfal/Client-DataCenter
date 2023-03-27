@@ -140,9 +140,6 @@ function goInfoPage(user: {}) {
             <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"  @click="goInfoPage(slotProps.data)" />
            </template>
         </Column>
-
-
-    
 </DataTable>
 </template>
 </Card>

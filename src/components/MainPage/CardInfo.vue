@@ -2,7 +2,7 @@
 import DialogCard from './CardInfo/DialogCard.vue';
 </script>
 <template>
-    <div class="pp grid-container" style="display: grid;   grid-template-columns: auto auto auto;
+    <div class="pp grid-container" style="display: grid; gap: 1rem;   grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
 " > 
         <Card style="height: 140px; width: auto;" class=" grid-item col-12 mr-1  lg:col-4 mb-3 p-3">
                 <template #header>

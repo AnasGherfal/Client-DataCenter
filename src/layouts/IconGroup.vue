@@ -18,45 +18,24 @@ const toggle = (event:any) => {
     menu.value.toggle(event);
 };
 
-const toggleTheme = (): void => {
-    console.log('Toggle theme clicked');
+const isDarkTheme = ref(false);
 
-      const themeLink = document.querySelector('link[href*="primevue/resources/themes"]') as HTMLLinkElement | null;
-      console.log('themeLink:', themeLink);
+const toggleThemeMode = () => {
+  isDarkTheme.value = !isDarkTheme.value;
+  const theme = isDarkTheme.value ? 'dark' : 'light';
+  document.body.classList.remove('light', 'dark');
+  document.body.classList.add(theme);
+};
 
-      if (themeLink && themeLink.getAttribute('href')?.includes('saga-blue')) {
-        themeLink.setAttribute('href', 'primevue/resources/themes/lara-light-blue/theme.css');
-      } else if (themeLink) {
-        themeLink.setAttribute('href', 'primevue/resources/themes/saga-blue/theme.css');
-      }
-    };
 
-    onMounted(() => {
-      const themeLink = document.querySelector('link[href*="primevue/resources/themes"]') as HTMLLinkElement | null;
-      if (!themeLink) {
-        // If link tag is not found, wait until the DOM is ready to try again
-        document.addEventListener('DOMContentLoaded', () => {
-          toggleTheme();
-        });
-      }
-    });
-// function theme(){
 
-//     if(checked.value == true)
-//     (async () => {
-//           await import('../assets/style/darkTheme.css');
-//       })();
-//       else if(checked.value == false)
-//     (async () => {
-//           await import('../assets/style/lightTheme.css');
-//       })();
-// }
+
         
 </script>
      
      <template>
     <div class="inline-flex fadeinleft animation-duration-1000" style=" height:30px; margin-top: -18px; margin-right:12px;">
-        <Button @click="toggleTheme"   style="height: 40px; width: 40px; --fa-animation-iteration-count: 2;"  class="m-1 p-button-text" 
+        <Button @click="toggleThemeMode"   style="height: 40px; width: 40px; --fa-animation-iteration-count: 2;"  class="m-1 p-button-text" 
         icon="fa-solid fa-moon fa-fade" />
 
         

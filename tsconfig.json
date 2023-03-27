@@ -4,6 +4,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "primevue/*": [
+        "node_modules/primevue/*"
+      ],
       "@/*": ["./src/*"]
     }
   },

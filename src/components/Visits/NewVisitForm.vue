@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
-import { email, minLength, required, helpers } from "@vuelidate/validators";
+import {required, helpers, minValue  } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import { useCustomersStore } from '@/stores/customers';
@@ -11,11 +11,11 @@ import moment from 'moment';
 const store = useCustomersStore();
 
 const state = reactive({
-    CustomerName: "",
+    customerName: "",
     authorizedName: "",
     companionName: "",
     visitReason: "",
-    startVisit: ref<string>(moment().format('hh:mm a')),
+    startVisit: "",
     endVisit: "",
     visitDuration: "ساعه",
     price: "100دينار",
@@ -30,26 +30,18 @@ const visitReason = ref([
 ])
 
 
-let today = new Date();
-let month = today.getMonth;
-let year = today.getFullYear;
-let hours = today.getHours();
-
-const minDate = ref(new Date());
+const startDate =ref(new Date());
+const endDate = ref(new Date());
 
 const date = new Date((moment(state.startVisit).format('hh:mm a')))
+const minDate = ref(date);
 
-const disabledDates = computed(() => {
-    
-      if (state.startVisit) {
-        return {
-          to: state.endVisit
-        };
-      } else {
-        return null;
+
+const updateEndDate = () => {
+      if (startDate.value > endDate.value) {
+        endDate.value = startDate.value;
       }
-    });
-// const duration = Math.abs(state.e - state.startVisit)
+    };
 
 
 const invalidDates = ref();
@@ -63,8 +55,12 @@ const searchUsers = () => {
 
 const rules = computed(() => {
     return {
-        CustomerName: { required: helpers.withMessage('اسم العميل مطلوب', required) },
-        authorizedName: { required: helpers.withMessage('رقم المخول مطلوب', required) },
+        customerName: { required: helpers.withMessage(' الحقل مطلوب', required) },
+        authorizedName: { required: helpers.withMessage('الحقل مطلوب', required) },
+        visitReason:{required: helpers.withMessage('الحقل مطلوب', required) },
+        startVisit: { required: helpers.withMessage('  الحقل مطلوب', required) },
+        endVisit: { required: helpers.withMessage(' الحقل مطلوب', required), minValue: helpers.withMessage('تاريخ انتهاء الزياره يجب ان يكون بعد تاريخ البدايه', minValue(state.startVisit))},
+
     }
 })
 
@@ -77,6 +73,12 @@ const toast = useToast();
 
 const v$ = useVuelidate(rules, state);
 
+function invalidDate(){
+    if(state.endVisit<= state.startVisit){
+        alert('error')
+    }
+}
+
 const submitForm = async () => {
     const result = await v$.value.$validate();
 
@@ -87,7 +89,7 @@ const submitForm = async () => {
 }
 
 const resetForm = () => {
-    state.CustomerName = '';
+    state.customerName = '';
     state.authorizedName = '';
     state.companionName = '';
     state.visitReason = "";
@@ -105,13 +107,11 @@ function backButton() {
 </script>
 
 <template >
-    <div>{{ state.endVisit }}
+    <div>
         <Card>
-
             <template #title>
-
                 إنشاء زيارة
-                <Button @click="backButton" icon="fa-solid   fa-arrow-left fa-shake-hover" rounded aria-label="Filter"
+                <Button @click="backButton" icon="fa-solid fa-arrow-left fa-shake-hover" rounded aria-label="Filter"
                     style="float: left;" />
                 <Divider />
 
@@ -123,11 +123,11 @@ function backButton() {
 
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label">
-                                <MultiSelect v-model="state.CustomerName" :options="store.users" optionLabel="name"
-                                    :filter="true" placeholder=" اختر عميل" :selectionLimit="1" />
-                                <label for="CustomerName">العملاء</label>
+                                <MultiSelect v-model="state.customerName" :options="store.users" optionLabel="name"
+                                    :filter="true" placeholder=" اختر عميل" :selectionLimit="1"/>
+                                <label for="customerName">العملاء</label>
 
-                                <error v-for="error in v$.CustomerName.$errors" :key="error.$uid" class="p-error">{{
+                                <error v-for="error in v$.customerName.$errors" :key="error.$uid" class="p-error">{{
                                     error.$message }}</error>
 
                             </span>
@@ -150,7 +150,9 @@ function backButton() {
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
                                 <Dropdown id="" v-model="state.visitReason" :options="visitReason" optionLabel="name" />
-                                <label for="phoneNum1">سبب الزيارة </label>
+                                <label for="visitReason">سبب الزيارة </label>
+                                <error v-for="error in v$.visitReason.$errors" :key="error.$uid" class="p-error">{{
+                                    error.$message }}</error>
 
                             </span>
                         </div>
@@ -159,20 +161,23 @@ function backButton() {
                             <span class="p-float-label ">
 
                                 <Calendar inputId="startVisit" v-model="state.startVisit"
-                                    dateFormat="yy/mm/dd" :showTime="true" selectionMode="single" :minDate="date"
-                                    :showButtonBar="true" :manualInput="true" :stepMinute="5" hourFormat="12"  />
+                                    dateFormat="yy/mm/dd" :showTime="true" selectionMode="single" :minDate="startDate" 
+                                    :showButtonBar="true" :manualInput="true" :stepMinute="5" hourFormat="12" @onChange="updateEndDate"  />
                                 <label for="startVisit">تاريخ بداية الزيارة </label>
+                                <error v-for="error in v$.startVisit.$errors" :key="error.$uid" class="p-error">{{
+                                    error.$message }}</error>
+                                
                             </span>
                         </div>
-                        {{ date }}
-
 
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
                                 <Calendar inputId="endVisit" v-model="state.endVisit" dateFormat="yy/mm/dd"
-                                    :showTime="true" selectionMode="single" :minDate="date" :showButtonBar="true"
+                                    :showTime="true" selectionMode="single" :minDate="startDate"  :showButtonBar="true"
                                     :manualInput="true" :stepMinute="5" hourFormat="12" />
-                                <label for="e">تاريخ انتهاء الزيارة </label>
+                                <label for="endVisit">تاريخ انتهاء الزيارة </label>
+                                <error v-for="error in v$.endVisit.$errors" :key="error.$uid" class="p-error">{{
+                                    error.$message }}</error>
                             </span>
                         </div>
 

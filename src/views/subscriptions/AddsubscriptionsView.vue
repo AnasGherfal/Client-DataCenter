@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue';
-import { email, minLength, required, helpers } from "@vuelidate/validators";
+import {required, helpers, minValue  } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import AutoComplete from 'primevue/autocomplete';
@@ -18,10 +18,10 @@ const state = reactive({
 
 const rules = computed(() =>{
     return {
-    nameCustomer:{  required: helpers.withMessage('الاسم مطلوب',required)},
-    startDate: {required: helpers.withMessage('الايميل مطلوب',required)},
-    endtDate: {required: helpers.withMessage('العنوان مطلوب',required)},
-    subscriptionType: {required: helpers.withMessage('العنوان مطلوب',required)},
+    nameCustomer:{  required: helpers.withMessage('الحقل مطلوب',required)},
+    startDate: {required: helpers.withMessage('الحقل مطلوب',required)},
+    endtDate:  { required: helpers.withMessage(' الحقل مطلوب', required), minValue: helpers.withMessage('تاريخ انتهاء الاشتراك يجب ان يكون بعد تاريخ البدايه', minValue(state.startDate))},
+    subscriptionType: {required: helpers.withMessage('الحقل مطلوب',required)},
     }
 })
 

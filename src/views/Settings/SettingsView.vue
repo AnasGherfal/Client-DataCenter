@@ -47,5 +47,4 @@ const state = reactive({
     </div>
 </template>
 
-<style ></style>
 

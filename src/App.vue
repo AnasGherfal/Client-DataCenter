@@ -1,18 +1,30 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import { usePrimeVue } from 'primevue/config';
 import SideBar from './layouts/SideBar.vue'
 import TopBar from './layouts/TopBar.vue'
+import LoadingPage from './views/LoadingPage.vue';
+
 import ServiceInfo from './views/ServiceInfo/ServiceInfo.vue';
 import CustomerProfile from './components/Customers/CustomerProfile.vue'
 import VistProfile from './components/Visits/VisitDetails.vue';
+
+// const loading = ref(false);
+// onMounted(() => {
+//       setTimeout(() => {
+//         loading.value = false;
+//       }, 1000); // Set the timeout to the amount of time you want the loading page to display
+//     });
+
+
 </script>
 
 <template>
-    <div>
-      <!-- Header -->
+  
+
+  <main>
       <TopBar/>
-    </div>
  
     <div style="width: 100%; margin-top: 75px;" class="absolute">
 
@@ -23,6 +35,8 @@ import VistProfile from './components/Visits/VisitDetails.vue';
     <div class="content" style="transition: all 0.5s ease; width: 73%; margin-right: 26%; padding: 25px;">
       <!-- main -->
       <RouterView/>
+      <!-- <LoadingPage v-if="loading" /> -->
+
       <!-- <ServiceInfo/> -->
   <!-- <CustomerProfile/> -->
   <!-- <VistProfile/> -->
@@ -31,14 +45,12 @@ import VistProfile from './components/Visits/VisitDetails.vue';
     
     </div>
 
-    <!-- Loading  -->
-    <!-- <div id="loading">
-  <img id="loading-image" src="./assets/logos/LTT-logo.png" height="40" alt="Loading..." />
-</div> -->
-
+</main>
 </template>
 
 <style>
+
+
 @media screen and (max-width: 600px) {
     .content{
       width: 100% !important; margin-right: 0% !important;
@@ -94,3 +106,5 @@ body{
   z-index: 100;
 } */
 </style>
+
+

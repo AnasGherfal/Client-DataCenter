@@ -5,7 +5,6 @@ import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import { useCustomersStore } from '@/stores/customers'
 import axios from 'axios';
-import Divider from 'primevue/divider';
 import router from '@/router';
 
 
@@ -29,9 +28,14 @@ const rules = computed(() => {
         name: { required: helpers.withMessage('الاسم مطلوب', required) },
         email: { required: helpers.withMessage('الايميل مطلوب', required), email: helpers.withMessage(' ليس عنوان بريد إلكتروني صالح', email) },
         address: { required: helpers.withMessage('العنوان مطلوب', required) },
-        primaryPhone: { required: helpers.withMessage('رقم الهاتف مطلوب', required) },
+        primaryPhone: { required: helpers.withMessage('الحقل مطلوب', required), isLibyanPhoneNumber: helpers.withMessage(' , ليس رقم ليبي صالح', isLibyanPhoneNumber) },
     }
 })
+
+function isLibyanPhoneNumber(input: string): boolean {
+  const phoneRegex = /^(?:\+?218)(?:(?:91|92|94|95)\d{7})$/;
+  return phoneRegex.test(input);
+}
 
 const toast = useToast();
 
@@ -70,8 +74,6 @@ const resetForm = () => {
     state.secondaryPhone = '';
     state.address = '';
     state.file = '';
-
-
 }
 
 
@@ -95,7 +97,7 @@ const resetForm = () => {
                 <form @submit.prevent="submitForm">
 
                     <div class="grid p-fluid ">
-                        <div class="field col-12 md:col-6 lg:col-4 ">
+                        <div class=" field col-12 md:col-6 lg:col-4 ">
                             <span class="p-float-label">
                                 <InputText id="name" type="text" v-model="state.name" />
                                 <error v-for="error in v$.name.$errors" :key="error.$uid" class="p-error ">
@@ -108,8 +110,7 @@ const resetForm = () => {
                             <span class="p-float-label ">
                                 <InputText id="email" type="text" v-model="state.email" />
                                 <label for="email">البريد الإلكتروني</label>
-                                <error v-for="error in v$.email.$errors" :key="error.$uid" class="p-error">{{ error.$message
-                                }}</error>
+                                <error v-for="error in v$.email.$errors" :key="error.$uid" class="p-error">{{ error.$message}}</error>
 
                             </span>
                         </div>
@@ -117,17 +118,16 @@ const resetForm = () => {
                             <span class="p-float-label ">
                                 <InputText id="address" type="text" v-model="state.address" />
                                 <label for="address">العنوان</label>
-                                <error v-for="error in v$.address.$errors" :key="error.$uid" class="p-error">{{
-                                    error.$message }}</error>
+                                <error v-for="error in v$.address.$errors" :key="error.$uid" class="p-error">
+                                {{error.$message }}</error>
 
                             </span>
                         </div>
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">{{ state.primaryPhone }}
-                                <InputMask id="phoneNum1" v-model="state.primaryPhone" mask="218-99-999-9999+"  />
+                                <InputText id="phoneNum1" v-model="state.primaryPhone"  />
                                 <label for="phoneNum1">رقم هاتف </label>
-                                <error v-for="error in v$.primaryPhone.$errors" :key="error.$uid" class="p-error">{{
-                                    error.$message }}</error>
+                                <error v-for="error in v$.primaryPhone.$errors" :key="error.$uid" class="p-error">{{error.$message }}</error>
                             </span>
                         </div>
                         <div class="field col-12 md:col-6 lg:col-4">
