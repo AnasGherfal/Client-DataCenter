@@ -39,25 +39,25 @@ const v$ = useVuelidate(rules, state);
 
 
 
-const submitForm = async () => {
-    const result = await v$.value.$validate();
+// const submitForm = async () => {
+//     const result = await v$.value.$validate();
 
-    if(result){
-    axios.post("http://localhost:3000/users",state)
-   .then(function(response) {
-})
-.catch(function(error){
-   console.log(error)
- })
-}else{
-    console.log("empty")
-}
+//     if(result){
+//     axios.post("http://localhost:3000/users",state)
+//    .then(function(response) {
+// })
+// .catch(function(error){
+//    console.log(error)
+//  })
+// }else{
+//     console.log("empty")
+// }
 
-    if(result){
-        toast.add({severity:'success', summary: 'Success Message', detail:'تمت إضافة العميل', life: 3000});
-    }
+//     if(result){
+//         toast.add({severity:'success', summary: 'Success Message', detail:'تمت إضافة العميل', life: 3000});
+//     }
 
-        }
+//         }
 
 const resetForm = () => {
     state.name = '';
@@ -80,8 +80,8 @@ const dataClinet= defineProps<{
   name: string,
   email1: string,
   address: string,
-  phoneNumber1: string,
-  phoneNumber2: string,
+  primaryPhone: string,
+  secondaryPhone: string,
 }>()
 
 </script>
@@ -132,14 +132,14 @@ const dataClinet= defineProps<{
                     </div>
                     <div class="field col-12 md:col-6">
                         <span class="p-float-label ">
-                            <InputMask id ="phoneNum1"  :value="phoneNumber1" v-model="dataClinet.phoneNumber1" mask="999-999-9999" disabled="true" />
+                            <InputMask id ="phoneNum1"  :value="primaryPhone" v-model="dataClinet.primaryPhone" mask="999-999-9999" disabled="true" />
                             <label style="color: black;top: -.75rem; font-size: 12px;" for="phoneNum1">رقم هاتف </label>
                             <error  v-for="error in v$.phoneNumber1.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
                         </span>
                     </div>
                     <div class="field col-12 md:col-6">
                         <span class="p-float-label ">
-                            <InputMask id="phoneNum2" :value="phoneNumber2" v-model="dataClinet.phoneNumber2" mask="999-999-9999" disabled="true" />
+                            <InputMask id="phoneNum2" :value="secondaryPhone" v-model="dataClinet.secondaryPhone" mask="999-999-9999" disabled="true" />
                             <label style="color: black;top: -.75rem; font-size: 12px;" for="phoneNum2">رقم هاتف 2</label>
                         </span>
                     </div>

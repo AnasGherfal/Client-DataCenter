@@ -6,10 +6,12 @@ import { useToast } from "primevue/usetoast";
 import { useCustomersStore } from '@/stores/customers'
 import axios from 'axios';
 import router from '@/router';
+import InputText from 'primevue/inputtext';
 
 
 const store = useCustomersStore();
 const pp = ref<string>('');
+
 const state = reactive({
     name: "" as string,
     email: "",
@@ -45,7 +47,7 @@ const v$ = useVuelidate(rules, state);
 
 const submitForm = async () => {
     const result = await v$.value.$validate();
-
+  console.log(state)
     if (result) {
         axios.post("https://localhost:7003/api/Customers", state)
             .then(function (response) {
@@ -60,7 +62,7 @@ const submitForm = async () => {
     } else {
         console.log("empty")
     }
-}
+} 
 
 function backButton() {
     router.push("/customersRecord")
@@ -132,18 +134,24 @@ const resetForm = () => {
                         </div>
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
-                                <InputMask id="phoneNum2" v-model="state.secondaryPhone" mask=" 999-999-9999" />
-                                <label for="phoneNum2">رقم هاتف 2</label>
+                                <InputMask id="secondaryPhone" v-model="state.secondaryPhone" mask="+218-99-999-9999" />
+                                <label for="secondaryPhone">رقم هاتف 2</label>
                             </span>
                         </div>
 
 
                         <div class="field col-12 md:col-6 lg:col-4">
-                            <FileUpload class="field col-12 md:col-6 lg:col-4" v-model="state.file"
-                                style="width: 50%; height: 50px; border-color: lightgray"
-                                mode="basic" name="file[]" url="./upload" chooseLabel=" ارفق ملف" cancelLabel="إلغاء"
-                                :showUploadButton="false" :showCancelButton="false" :maxFileSize="1000000"
-                                invalidFileSizeMessage="Exceeded the maximum file size" />
+                    <FileUpload  style="font-family: tajawal; width: 100%; height: 40px; border-radius: 10px; background-color: white; color:black; border-color: gray"
+                    mode="basic"
+                     name="File" 
+                     url="./upload" 
+                     chooseLabel=" ارفق ملف" 
+                     cancelLabel="إلغاء"
+                     :showUploadButton="false"
+                     :showCancelButton="false"
+                     :maxFileSize="1000000"
+                     invalidFileSizeMessage="Exceeded the maximum file size"
+                     />
                         </div>
 
                     </div>
@@ -166,7 +174,9 @@ const resetForm = () => {
     padding-left: 0.5rem;
 }
 
-
+.p-inputmask p-inputtext{
+    direction: rtl;
+}
 
 .p-float-label>label {
     right: 0.5rem;

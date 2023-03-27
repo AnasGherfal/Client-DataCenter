@@ -6,7 +6,6 @@ import SideBar from './layouts/SideBar.vue'
 import TopBar from './layouts/TopBar.vue'
 import LoadingPage from './views/LoadingPage.vue';
 
-import ServiceInfo from './views/ServiceInfo/ServiceInfo.vue';
 import CustomerProfile from './components/Customers/CustomerProfile.vue'
 import VistProfile from './components/Visits/VisitDetails.vue';
 

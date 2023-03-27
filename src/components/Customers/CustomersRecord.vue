@@ -2,7 +2,6 @@
 import {  ref, reactive, onMounted } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
 import {useCustomersStore} from '@/stores/customers'
-import axios from 'axios';
 import router from '@/router';
 
                   // optional
@@ -44,7 +43,6 @@ const getSeverity = (status:any) => {
 
         case 'غير نشط':
             return 'danger';
-
     }
 }
 
@@ -68,7 +66,6 @@ function goInfoPage(user: {}) {
 </script>
 
 <template>
-    
     <RouterView></RouterView>
 
     <div v-if=" ($route.path === '/customersRecord')">
@@ -80,7 +77,7 @@ function goInfoPage(user: {}) {
             <template #content >
            
                 
-            <DataTable  filterDisplay="row"  ref="dt" :value="store.users" dataKey="id" 
+            <DataTable  filterDisplay="row"  ref="dt" :value="store.customers" dataKey="id" 
                 :paginator="true" :rows="5" v-model:filters="filters" 
                 :globalFilterFields="['name', 'status']"
                 paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]"
@@ -128,8 +125,8 @@ function goInfoPage(user: {}) {
                 ></Column>
                 <!-- <Column field="email" header="البريد الالكتروني"  style="min-width:12rem"></Column>
                 <Column field="address" header=" العنوان"  style="min-width:12rem"></Column>
-                <Column field="phoneNumber1" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
-                <Column field="phoneNumber2" header="  رقم الهاتف 2"  style="min-width:12rem"></Column> -->
+                <Column field="primaryPhone" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
+                <Column field="secondaryPhone" header="  رقم الهاتف 2"  style="min-width:12rem"></Column> -->
                 <Column style="min-width:8rem">
 
                     <template #body="slotProps">

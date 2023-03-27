@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { computed, reactive } from 'vue';
 import AddNewHours from './AddNewHoursView.vue';
-import PakagesList from '@/components/Pakages/PakagesList.vue'
-import VisitHours from './VisitHoursView.vue'
-import Addpackages from '@/components/Pakages/Addpackages.vue';
+import ServicesList from '../Services/ServicesList.vue'
+import VisitHours from './VisitHoursView.vue';
+import AddService from '../Services/AddService.vue'
 const state = reactive({
 
 })
@@ -33,8 +33,8 @@ const state = reactive({
 
                         <div>
 
-                            <Addpackages/>
-                            <PakagesList />
+                            <AddService />
+                            <ServicesList />
 
                         </div>
 

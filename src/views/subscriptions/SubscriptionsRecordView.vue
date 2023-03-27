@@ -63,7 +63,7 @@ const getSeverity = (status: any) => {
 <template>
     <RouterView></RouterView>
 
-    <div v-if="$route.path !== '/subscriptionsRecord/addSubsciptions'">
+    <div v-if="$route.path === '/subscriptionsRecord'">
         <Card>
 
             <template #title>

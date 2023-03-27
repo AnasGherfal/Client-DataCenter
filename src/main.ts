@@ -44,6 +44,9 @@ import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import Tag from 'primevue/tag';
 import ToggleButton from 'primevue/togglebutton';
+import ConfirmationService from 'primevue/confirmationservice';
+
+
 const app = createApp(App)
 
 app.use(createPinia())
@@ -75,7 +78,7 @@ app.component('TabView', TabView);
 app.component('TabPanel', TabPanel);
 app.component('Tag', Tag);
 app.component('ToggleButton', ToggleButton);
-
+app.use(ConfirmationService);
 app.directive('tooltip', Tooltip);
 app.directive('ripple', Ripple);
 
