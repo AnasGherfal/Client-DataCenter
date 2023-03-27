@@ -50,7 +50,7 @@ const router = createRouter({
         component: () => import('../views/subscriptions/AddsubscriptionsView.vue'),
         },{
           path:'SubscriptionsDetaView',  
-          component: () => import('../views/subscriptions/SubscriptionsDetaView.vue'),
+          component: () => import('../views/subscriptions/SubscriptionsDataView.vue'),
           }
       ]
     },

@@ -114,7 +114,7 @@ const openModal = () => {
               </template>
           </Dialog>
   
-      <Button @click="openModal"  class=" p-button-primary" > 
-        اضافة مُرافق
+      <Button @click="openModal"  class=" p-button-primary" icon="fa-solid fa-plus" label="اضافة مُرافق"> 
+        
       </Button>
 </template>
