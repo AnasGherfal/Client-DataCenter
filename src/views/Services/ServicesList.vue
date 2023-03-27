@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import axios from 'axios';
 import { onMounted, ref } from 'vue';
-import editPakage from './editPakage.vue';
+import editservice from './editservice.vue';
+import DeletService from './Deletservice.vue';
 
 const packagesList=ref()
 onMounted( async () =>{ 
@@ -13,14 +14,7 @@ onMounted( async () =>{
         console.log(error)
       })
     })
-    
-    const deleteProductsDialog=false;
 
-    function deleteProducts(){
-
-        deleteProductsDialog=true;
-    }
-    
 </script>
 
 
@@ -30,32 +24,20 @@ onMounted( async () =>{
         :key="servic.id" class="col-12 md:col-6 lg:col-4" >
         <card>
         <template #header>
-            <editPakage style="height: 25px; width: 25px;"
-            />
+            
+            <editservice :pakge="servic"  :key="servic.id"/>
 
-            <Button style="height: 25px; width: 25px;float: left;"
-             icon=" fa-solid fa-trash text-red-600"
-             class=" mt-2 ml-2 p-button-secondary p-button-text" 
-            v-tooltip="{value:'حدف الباقة', fitContent:true}" />
-            <Dialog v-model:visible="deleteProductsDialog" :style="{width: '450px'}" header="Confirm" :modal="true">
-            <div class="confirmation-content">
-                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-                <span v-if="product">Are you sure you want to delete the selected products?</span>
-            </div>
-            <template #footer>
-                <Button label="No" icon="pi pi-times" text @click="deleteProductsDialog = false"/>
-                <Button label="Yes" icon="pi pi-check" text @click="deleteSelectedProducts" />
-            </template>
-        </Dialog>
+            <DeletService :pakge="servic" :key="servic.id"/>
+
         </template>
             <template #content>
 
-            <div style="height-min: 450px;" >  
+            <div style="height-min: 450px;">  
     
                     <div class="justify-content-between ">
                          <div>
                         <span class="block text-center  text-3xl  font-bold">{{ servic.name }}</span>
-                        <div class="text-center mb-3  ">عدد الزيارات المتاحة في هده الباقة في الشهر : {{ servic.monthlyVisits }}</div>
+                        <div class="text-center mb-3">عدد الزيارات المتاحة في هده الباقة في الشهر : {{ servic.monthlyVisits }}</div>
                         <div class=" text-center font-semibold text-4xl">{{ servic.price }}<span class="text-xs mr-1 text-blue-800">د.ل</span></div>
                     </div>
                     <Divider/>

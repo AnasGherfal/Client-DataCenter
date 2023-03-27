@@ -14,13 +14,6 @@ const store = useCustomersStore();
 const pp = ref<string>('');
 
 const state = reactive({
-<<<<<<< HEAD
-  name: "",
-  address: "",
-  primaryPhone: "",
-  secondaryPhone: "",
-  email:""
-=======
     name: "" as string,
     email: "",
     primaryPhone: '',
@@ -29,7 +22,6 @@ const state = reactive({
     file: '',
 
 
->>>>>>> 85870593131f4ab4cb567652481355dc65408b3b
 })
 
 
@@ -66,7 +58,7 @@ const submitForm = async () => {
     } else {
         console.log("empty")
     }
-}
+} 
 
 function backButton() {
     router.push("/customersRecord")
@@ -130,28 +122,17 @@ const resetForm = () => {
                             </span>
                         </div>
                         <div class="field col-12 md:col-6 lg:col-4">
-<<<<<<< HEAD
-                            <span class="p-float-label ">
-                                <InputText id="primaryPhone" v-model="state.primaryPhone"  />
-                                <label for="primaryPhone">رقم هاتف </label>
-=======
                             <span class="p-float-label ">{{ state.primaryPhone }}
                                 <InputMask id="phoneNum1" v-model="state.primaryPhone" mask="218-99-999-9999+"  />
                                 <label for="phoneNum1">رقم هاتف </label>
->>>>>>> 85870593131f4ab4cb567652481355dc65408b3b
                                 <error v-for="error in v$.primaryPhone.$errors" :key="error.$uid" class="p-error">{{
                                     error.$message }}</error>
                             </span>
                         </div>
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
-<<<<<<< HEAD
                                 <InputMask id="secondaryPhone" v-model="state.secondaryPhone" mask="+218-99-999-9999" />
                                 <label for="secondaryPhone">رقم هاتف 2</label>
-=======
-                                <InputMask id="phoneNum2" v-model="state.secondaryPhone" mask=" 999-999-9999" />
-                                <label for="phoneNum2">رقم هاتف 2</label>
->>>>>>> 85870593131f4ab4cb567652481355dc65408b3b
                             </span>
                         </div>
 

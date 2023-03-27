@@ -135,17 +135,10 @@
     {
       "id": 1,
       "name": "ساعات الدوام",
-<<<<<<< HEAD
-      "startTime": "02:15 pm",
-      "endTime": "3:30 pm",
-      "priceFirstHour": 120.42,
-      "priceAfter": 100.64
-=======
       "startTime": "11:05 am",
       "endTime": "0911",
       "priceFirstHour": 100,
       "priceAfter": 21
->>>>>>> 85870593131f4ab4cb567652481355dc65408b3b
     },
     {
       "id": 2,

@@ -3,29 +3,29 @@ import { computed, reactive, ref } from 'vue';
 import { email, minLength, required, helpers, integer } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
-import { useCounterStore } from '@/stores/packages'
 import Dialog from 'primevue/dialog';
 import axios from 'axios';
 
-
-
+// define opject
 const state = reactive({
     name: '',
     amountOfPower: '',
-    AcpPort: '',
-    Dns: '',
-    monthlyVistsShare:'',
-    pricePerYear:'',
+    acpPort: '',
+    dns: '',
+    monthlyVisits: '',
+    price: '',
 })
+
+// error msg for valid
 
 const rules = computed(() =>{
     return {
     name:{  required: helpers.withMessage('ادخل اسم الباقة',required)},
     amountOfPower: {required: helpers.withMessage('يجب تعبئة ه>ا الحقل',required)},
-    Dns: {required: helpers.withMessage('يجب تعبئة ه>ا الحقل',required)},
-    AcpPort: {required: helpers.withMessage('يجب تعبئة ه>ا الحقل',required)},
-    monthlyVistsShare: {required: helpers.withMessage('يجب تعبئة ه>ا الحقل',required)},
-    pricePerYear: {required: helpers.withMessage('يجب تعبئة ه>ا الحقل',required)},
+    dns: {required: helpers.withMessage('يجب تعبئة ه>ا الحقل',required)},
+    acpPort: {required: helpers.withMessage('يجب تعبئة ه>ا الحقل',required)},
+    monthlyVisits: {required: helpers.withMessage('يجب تعبئة ه>ا الحقل',required)},
+    price: {required: helpers.withMessage('يجب تعبئة ه>ا الحقل',required)},
     }
 })
 
@@ -33,44 +33,41 @@ const toast = useToast();
 
 const v$ = useVuelidate(rules, state);
 
-// const submitForm = async () => {
-//     const result = await v$.value.$validate();
-
-//     if(result){
-//         toast.add({severity:'success', summary: 'Success Message', detail:'تمت إضافة الباقة', life: 3000});
-//     }
-
-//         }
-
 const resetForm = () => {
     state.name = '';
-    state.AcpPort= '';
+    state.acpPort= '';
     state.amountOfPower = '';
-    state.Dns= '';
-    state.monthlyVistsShare='';
-    state.pricePerYear='';
-        }
+    state.dns= '';
+    state.monthlyVisits='';
+    state.price='';
+    }
 
-        const submitForm = async () => {
+// submit form 
+
+    const submitForm = async () => {
     const result = await v$.value.$validate();
+    console.log(state)
 
     if (result) {
-        axios.post("http://localhost:3000/services", state)
+        axios.post("https://localhost:7003/api/Service", state)
             .then(function (response) {
+                console.log(state)        
+                toast.add({ severity: 'success', summary: 'Success Message', detail: 'تمت إضافة باقة', life: 3000 });
+
             })
             .catch(function (error) {
                 console.log(error)
+                toast.add({ severity: 'warn', summary: 'Warn Message', detail: 'هناك مشكلة في عملية الادخال', life: 3000 });
             })
             displayModal.value = false;
 
-        toast.add({ severity: 'success', summary: 'Success Message', detail: 'تمت إضافة باقة', life: 3000 });
-
     } else {
         console.log("empty")
+        toast.add({ severity: 'warn', summary: 'Warn Message', detail: 'هناك مشكلة في عملية الادخال', life: 3000 });
     }
 } 
   
-
+// funcation for dialog  
 
 const displayModal = ref(false);
 
@@ -85,7 +82,7 @@ const openModal = () => {
 
 <template >
     <Dialog  header="اضافة باقة" contentStyle="height: 200px; padding: 20px;"  v-model:visible="displayModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '60vw'}" :modal="true">
-  <form @submit.prevent="submitForm">
+  <form @submit.click="submitForm">
 
    <div class="grid p-fluid ">
     
@@ -107,33 +104,33 @@ const openModal = () => {
 
     <div class="field col-12 md:col-4">
         <span class="p-float-label ">
-            <InputText id="AcpPort" type="text" v-model="state.AcpPort" />
-            <label for="AcpPort" >Acp Port</label>
-            <error  v-for="error in v$.AcpPort.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
+            <InputText id="acpPort" type="text" v-model="state.acpPort" />
+            <label for="acpPort" >Acp Port</label>
+            <error  v-for="error in v$.acpPort.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
         </span>
     </div>
 
     <div class="field col-12 md:col-4">
         <span class="p-float-label">
-            <InputText id="monthlyVistsShare" type="text" v-model="state.monthlyVistsShare" />
-            <label for="monthlyVistsShare" >عدد الزيارات في الشهر</label>
-            <error  v-for="error in v$.monthlyVistsShare.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
+            <InputText id="monthlyVisits" type="text" v-model="state.monthlyVisits" />
+            <label for="monthlyVisits" >عدد الزيارات في الشهر</label>
+            <error  v-for="error in v$.monthlyVisits.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
         </span>
     </div>
 
     <div class="field col-12 md:col-4">
         <span class="p-float-label ">
-            <InputText id="Dns" type="text" v-model="state.Dns" />
+            <InputText id="Dns" type="text" v-model="state.dns" />
             <label for="Dns" >Dns</label>
-            <error  v-for="error in v$.Dns.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
+            <error  v-for="error in v$.dns.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
         </span>
     </div>
 
     <div class="field col-12 md:col-4">
         <span class="p-float-label ">
-            <InputText id="pricePerYear" type="text" v-model="state.pricePerYear" />
-            <label for="pricePerYear" > سعر الباقة بالدينار</label>
-            <error  v-for="error in v$.pricePerYear.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
+            <InputText id="price" type="text" v-model="state.price" />
+            <label for="price" > سعر الباقة بالدينار</label>
+            <error  v-for="error in v$.price.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
         </span>
     </div>
 
@@ -142,17 +139,14 @@ const openModal = () => {
 </form>
 <template #footer>
 <Button @click="submitForm" class="p-button-primry" icon="fa-solid fa-plus" label="إضافة" type="submit" />
-<Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger"
-                        style="margin-right: .5em;" />
-                        <Toast position="bottom-right" />
+<Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger" style="margin-right: .5em;" />
+        
+<!-- <Toast position="bottom-right" /> -->
 
             </template>
         </Dialog>
-        <Button  @click="openModal"
-             style="height: 25px; width: 25px;"
-             icon=" fa-solid fa-pen"
-             class=" mt-2 mr-2 p-button-primary p-button-text" 
-             v-tooltip="{value:'تعديل الباقة', fitContent:true}" />
+        <Button @click="openModal" style="" label="اضافة باقه"  icon="fa-solid fa-plus " class=" mb-4 ml-4 p-button-primry " ></Button>
+
 </template>
 
 

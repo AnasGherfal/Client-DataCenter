@@ -85,7 +85,6 @@ const getSeverity = (status:any) => {
                         </span>
 
                 
-                <!-- <RouterLink :to="$route.params.id + '/users'"> -->
                     <RouterLink to="/subscriptionsRecord/addSubsciptions" style="text-decoration: none">
                 <Button icon="fa-solid fa-plus" label="إضافة اشتراك"  class="mr-2"> </Button>
             </RouterLink>
@@ -94,8 +93,7 @@ const getSeverity = (status:any) => {
                    
                 </template>
                 <Column field="name" header="الإسم"  style="min-width:10rem;"  class="font-bold"></Column>
-                <!-- <Column  v-for="(col,index) of selectedColumns" :field="col.field"  :header="col.header" :key="col.field + '_' + index" style="min-width:10rem;  "
-                ></Column> -->
+
                 
                 <Column field="status" header="  الحاله " filterField="status" style="min-width:12rem" :showFilterMenu="false" :filterMenuStyle="{ width: '14rem' }">
                     <template #body="{ data }">
