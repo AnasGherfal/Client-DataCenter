@@ -47,11 +47,9 @@ const v$ = useVuelidate(rules, state);
 
 const submitForm = async () => {
     const result = await v$.value.$validate();
-  console.log(state)
     if (result) {
         axios.post("https://localhost:7003/api/Customers", state)
             .then(function (response) {
-                console.log(response)
             })
             .catch(function (error) {
                 console.log(error)
@@ -126,15 +124,15 @@ const resetForm = () => {
                             </span>
                         </div>
                         <div class="field col-12 md:col-6 lg:col-4">
-                            <span class="p-float-label ">{{ state.primaryPhone }}
-                                <InputText id="phoneNum1" v-model="state.primaryPhone"  />
+                            <span class="p-float-label ">
+                                <InputMask id="phoneNum1" v-model="state.primaryPhone" mask="+218999999999" />
                                 <label for="phoneNum1">رقم هاتف </label>
                                 <error v-for="error in v$.primaryPhone.$errors" :key="error.$uid" class="p-error">{{error.$message }}</error>
                             </span>
                         </div>
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
-                                <InputMask id="secondaryPhone" v-model="state.secondaryPhone" mask="+218-99-999-9999" />
+                                <InputMask id="secondaryPhone" v-model="state.secondaryPhone" mask="+218999999999" />
                                 <label for="secondaryPhone">رقم هاتف 2</label>
                             </span>
                         </div>
@@ -181,6 +179,11 @@ const resetForm = () => {
 .p-float-label>label {
     right: 0.5rem;
     transition-duration: 0.3s
+}
+
+.p-fluid .p-inputtext {
+    width: 100%;
+    direction: ltr;
 }
 
 /* .menuitem-content:hover {

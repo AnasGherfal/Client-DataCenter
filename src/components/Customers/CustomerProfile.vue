@@ -22,6 +22,7 @@ onMounted(async () => {
 
         tab.value = response.data.content.filter((users:{name:String}) => users.name === num.nameId)[0];
 
+
         console.log(tab)
       })
       .catch(function (error) {
@@ -34,13 +35,14 @@ onMounted(async () => {
 
 </script>
 
-<template> 
+<template>
 <InfoCustomer
  :name="tab.name"
  :email1="tab.email"
  :address="tab.address"
  :primaryPhone="tab.primaryPhone"
  :secondaryPhone="tab.secondaryPhone" />
+
 <div class="bg-white shadow-2 p-3 mt-3 border-round-2xl" >
     {{ tab }}   
 
