@@ -81,8 +81,8 @@ const openModal = () => {
 
 
 <template >
-    <Dialog  header="اضافة باقة" contentStyle="height: 200px; padding: 20px;"  v-model:visible="displayModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '60vw'}" :modal="true">
-  <form @submit.click="submitForm">
+    <Dialog  header="اضافة باقة" contentStyle="height: 250px; padding: 20px;"  v-model:visible="displayModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '60vw'}" :modal="true">
+  <form @submit="submitForm">
 
    <div class="grid p-fluid ">
     
@@ -136,10 +136,10 @@ const openModal = () => {
 
 </div>
 
+<Button  class="p-button-primry" icon="fa-solid fa-plus" label="إضافة" type="submit" />
+<Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger" style="margin-right: .5em;" />
 </form>
 <template #footer>
-<Button @click="submitForm" class="p-button-primry" icon="fa-solid fa-plus" label="إضافة" type="submit" />
-<Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger" style="margin-right: .5em;" />
         
 <!-- <Toast position="bottom-right" /> -->
 

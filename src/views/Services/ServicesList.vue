@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import axios from 'axios';
 import { onMounted, ref } from 'vue';
-import editservice from './editservice.vue';
-import DeletService from './Deletservice.vue';
+import editservice from './EditService.vue';
+import DeletService from './DeletService.vue';
+
 
 const packagesList=ref()
 onMounted( async () =>{ 
@@ -23,12 +24,10 @@ onMounted( async () =>{
         <div  v-for="servic in packagesList"
         :key="servic.id" class="col-12 md:col-6 lg:col-4" >
         <card>
-        <template #header>
-            
-            <editservice :pakge="servic"  :key="servic.id"/>
+        <template  #header>
+            <editservice :pakge="servic"  />
 
-            <DeletService :pakge="servic" :key="servic.id"/>
-
+            <DeletService :pakge="servic" :key="servic.id" />
         </template>
             <template #content>
 

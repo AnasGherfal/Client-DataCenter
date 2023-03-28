@@ -35,14 +35,13 @@ const toast = useToast();
 const v$ = useVuelidate(rules, state);
 
 
-
 const resetForm = () => {
     state.name = '';
     state.acpPort= '';
     state.amountOfPower = '';
     state.dns= '';
     state.monthlyVisits='';
-    state.price='';
+    state.price= ''
         }
 
     const submitForm = async () => {
@@ -59,13 +58,10 @@ const resetForm = () => {
         .catch(function (error) {
                 console.log(error)
                 toast.add({ severity: 'success', summary: 'Success Message', detail: 'تم تعديل الباقة', life: 3000 });
-
             })            
             displayModal.value = false;
     } else {
         console.log("empty")
-        toast.add({ severity: 'error', summary: 'Success Message', detail: 'هناك مشكلة بم يتم التعديل', life: 3000 });
-
     }
 } 
   
@@ -83,9 +79,8 @@ const openModal = () => {
 
 
 <template >
-    <Dialog  header="اضافة باقة" contentStyle="height: 200px; padding: 20px;"  v-model:visible="displayModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '60vw'}" :modal="true">
-  <form @submit.prevent="submitForm">
-
+<Dialog  header="اضافة باقة" contentStyle="height: 250px; padding: 20px;"  v-model:visible="displayModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '60vw'}" :modal="true">
+  <form @submit="submitForm">
    <div class="grid p-fluid ">
     
     <div class="field col-12 md:col-4">
@@ -137,15 +132,13 @@ const openModal = () => {
 
 </div>
 
-</form>
-<template #footer>
-<Button @click="submitForm" class="p-button-primry" icon="fa-solid fa-plus" label="تعديل" type="submit" />
-<Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger"
-                        style="margin-right: .5em;" />
-                        <Toast position="bottom-right"/>
 
-            </template>
+<Button @click="submitForm" class="p-button-primry" icon="fa-solid fa-plus" label="تعديل" type="submit" />
+<Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger" style="margin-right: .5em;" />
+</form>
+
         </Dialog>
+
         <Button  @click="openModal"
              style="height: 25px; width: 25px;"
              icon=" fa-solid fa-pen"

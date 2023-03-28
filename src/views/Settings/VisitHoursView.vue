@@ -157,7 +157,7 @@ const getIndex = (index:any) =>{
             <Button @click="submitForm" :disabled="!formChanged" icon="fa-solid fa-floppy-disk fa-flip fa-flip-hover"
                 style="--fa-animation-duration: 2s; --fa-animation-delay:5s; --fa-animation-iteration-count:5" label="تخزين"
                 class="" />
-            <Toast position="bottom-right" />
+            <!-- <Toast position="bottom-right" /> -->
 
         </form>
 
