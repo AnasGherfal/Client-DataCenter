@@ -78,7 +78,7 @@ function goInfoPage(user: {}) {
            
                 
             <DataTable  filterDisplay="row"  ref="dt" :value="store.customers" dataKey="id" 
-                :paginator="true" :rows="5" v-model:filters="filters" 
+                :paginator="true" :rows="5" v-model:filters="filters" :loading="!store.customers.length"
                 :globalFilterFields="['name', 'status']"
                 paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]"
                 currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} عميل" responsiveLayout="scroll">
@@ -105,7 +105,7 @@ function goInfoPage(user: {}) {
                     </div>
                    
                 </template>
-                <Column field="name" header="الإسم"  style="min-width:10rem;"  class="font-bold"></Column>
+                <Column field="name" header="الإسم"  style="min-width:10rem;"  class="font-bold" frozen></Column>
 
                 
                 <Column field="status" header="  الحاله " filterField="status" style="min-width:8rem" :showFilterMenu="false" :filterMenuStyle="{ width: '14rem' }">

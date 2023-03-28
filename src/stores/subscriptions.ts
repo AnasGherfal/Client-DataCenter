@@ -2,16 +2,16 @@ import { ref, computed, reactive, onMounted } from 'vue'
 import { defineStore } from 'pinia'
 import axios from "axios"
 
-export const useCustomersStore = defineStore('customer', () => {
+export const useSubscriptionsStore = defineStore('customer', () => {
 
-  const customers = ref<any[]>([]);
+  const subscriptions = ref<any[]>([]);
 
   onMounted(async () => {
-    await axios.get("https://localhost:7003/api/Customers")
+    await axios.get("https://localhost:7003/api/")
       .then(function (response) {
-        customers.value = response.data.content
+        subscriptions.value = response.data.content
 
-        console.log(customers)
+        console.log(subscriptions)
       })
       .catch(function (error) {
         console.log(error)
@@ -21,6 +21,6 @@ export const useCustomersStore = defineStore('customer', () => {
   
 
 
-  return {  customers }
+  return {  subscriptions }
 
 })

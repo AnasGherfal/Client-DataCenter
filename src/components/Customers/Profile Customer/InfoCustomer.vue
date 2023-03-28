@@ -13,8 +13,8 @@ const pp = ref<string>('');
 const state = reactive({
     name: "" as string,
     email: "",
-    phoneNumber1: '092-687-1312',
-    phoneNumber2: '092-687-1312',
+    primaryPhone: '092-687-1312',
+    secondaryPhone: '092-687-1312',
     address: '',
     File: '',
     subscriptionType: '',
@@ -29,7 +29,7 @@ const rules = computed(() =>{
     name:{  required: helpers.withMessage('الاسم مطلوب',required)},
     email: {required: helpers.withMessage('الايميل مطلوب',required), email: helpers.withMessage(' ليس عنوان بريد إلكتروني صالح', email)},
     address: {required: helpers.withMessage('العنوان مطلوب',required)},
-    phoneNumber1: {required: helpers.withMessage('رقم الهاتف مطلوب',required)},
+    primaryPhone: {required: helpers.withMessage('رقم الهاتف مطلوب',required)},
     }
 })
 
@@ -62,8 +62,8 @@ const v$ = useVuelidate(rules, state);
 const resetForm = () => {
     state.name = '';
     state.email = '';
-    state.phoneNumber1 = '';
-    state.phoneNumber2 = '';
+    state.primaryPhone = '';
+    state.secondaryPhone = '';
     state.address = '';
     state.File = '';
 
@@ -134,7 +134,7 @@ const dataClinet= defineProps<{
                         <span class="p-float-label ">
                             <InputMask id ="phoneNum1"  :value="primaryPhone" v-model="dataClinet.primaryPhone" mask="999-999-9999" disabled="true" />
                             <label style="color: black;top: -.75rem; font-size: 12px;" for="phoneNum1">رقم هاتف </label>
-                            <error  v-for="error in v$.phoneNumber1.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
+                            <error  v-for="error in v$.primaryPhone.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
                         </span>
                     </div>
                     <div class="field col-12 md:col-6">

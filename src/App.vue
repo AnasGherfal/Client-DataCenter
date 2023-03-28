@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import { onMounted, ref } from 'vue';
-import { usePrimeVue } from 'primevue/config';
 import SideBar from './layouts/SideBar.vue'
 import TopBar from './layouts/TopBar.vue'
 import LoadingPage from './views/LoadingPage.vue';
