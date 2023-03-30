@@ -11,7 +11,7 @@ import VueAxios from 'vue-axios'
 
 //style
 import './assets/style/style.scss'
-// import    './assets/themes/lightTheme.css'
+import    './assets/themes/lightTheme.css'
 import  './assets/themes/darkTheme.css'
 import './assets/style/iconsStyle.scss'
 
