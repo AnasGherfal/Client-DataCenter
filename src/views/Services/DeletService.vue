@@ -60,7 +60,5 @@ const delet = () => {
   margin-right: 1rem;
 }
 
-.mr-3 {
-  margin-left: 1rem !important;
-}
+
 </style>
