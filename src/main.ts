@@ -45,7 +45,7 @@ import TabPanel from 'primevue/tabpanel';
 import Tag from 'primevue/tag';
 import ToggleButton from 'primevue/togglebutton';
 import ConfirmationService from 'primevue/confirmationservice';
-
+import Skeleton from 'primevue/skeleton';
 
 const app = createApp(App)
 
@@ -78,6 +78,8 @@ app.component('TabView', TabView);
 app.component('TabPanel', TabPanel);
 app.component('Tag', Tag);
 app.component('ToggleButton', ToggleButton);
+app.component('Skeleton', Skeleton);
+
 app.use(ConfirmationService);
 app.directive('tooltip', Tooltip);
 app.directive('ripple', Ripple);

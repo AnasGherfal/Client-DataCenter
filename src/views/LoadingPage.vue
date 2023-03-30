@@ -1,29 +1,34 @@
 <template>
-    <div class="loading">
-      <div class="spinner"></div>
-    </div>
-  </template>
-  
-  <style>
-  .loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+  <div class="loading-page">
+    <div class="loader"></div>
+  </div>
+</template>
+
+<style>
+.loading-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f5f5;
+}
+
+.loader {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 6px solid #3498db;
+  border-top-color: transparent;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
-  
-  .spinner {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 5px solid rgba(255, 255, 255, 0.3);
-    border-top-color: #ffffff;
-    animation: spin 1s infinite linear;
-  }
-  
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  </style>
+}
+</style>

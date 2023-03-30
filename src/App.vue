@@ -8,20 +8,23 @@ import LoadingPage from './views/LoadingPage.vue';
 import CustomerProfile from './components/Customers/CustomerProfile.vue'
 import VistProfile from './components/Visits/VisitDetails.vue';
 
-// const loading = ref(false);
-// onMounted(() => {
-//       setTimeout(() => {
-//         loading.value = false;
-//       }, 1000); // Set the timeout to the amount of time you want the loading page to display
-//     });
+const loading = ref(true);
+onMounted(() => {
+      setTimeout(() => {
+        loading.value = false;
+      }, 500); // Set the timeout to the amount of time you want the loading page to display
+    });
 
 
 </script>
 
 <template>
+
+<LoadingPage v-if="loading"  />
   
 
-  <main>
+  <main v-else>
+
       <TopBar/>
  
     <div style="width: 100%; margin-top: 75px;" class="absolute">
@@ -32,8 +35,8 @@ import VistProfile from './components/Visits/VisitDetails.vue';
 
     <div class="content" style="transition: all 0.5s ease; width: 73%; margin-right: 26%; padding: 25px;">
       <!-- main -->
+
       <RouterView/>
-      <!-- <LoadingPage v-if="loading" /> -->
 
       <!-- <ServiceInfo/> -->
   <!-- <CustomerProfile/> -->
