@@ -38,22 +38,22 @@ const handleInput = (event: any) => {
 
 }
 
-onMounted(async () => {
-    await axios.get("http://localhost:3000/visitHours")
-        .then((response) => {
-            visitsHours.value = response.data;
-            // console.log(visitsHours)
+// onMounted(async () => {
+//     await axios.get("http://localhost:3000/visitHours")
+//         .then((response) => {
+//             visitsHours.value = response.data;
+//             // console.log(visitsHours)
 
-            state.startTime = visitsHours.value[0].startTime
-            // console.log(state.startTime)
+//             state.startTime = visitsHours.value[0].startTime
+//             // console.log(state.startTime)
 
 
-        })
-        .catch(function (error) {
-            console.log(error)
-        })
+//         })
+//         .catch(function (error) {
+//             console.log(error)
+//         })
 
-})
+// })
 const num = ([1,2,3])
 
 const submitForm = async () => {
@@ -63,23 +63,23 @@ const submitForm = async () => {
     toast.add({ severity: 'error', summary: 'حدث خطأ', detail: 'لم يتم التعديل', life: 3000 });
 
 
-    axios.patch(`http://localhost:3000/visitHours/${selected}`, 
-        { startTime: moment(state.startTime).format( 'hh:mm a') }, 
-        // startTime: moment(state.startTime).format( 'hh:mm a'),
-            // selectedHours: selectedHours.value,
-            // priceFirstHour: state.priceFirstHour,
-    )
-        .then((response) => {
-            console.log(response.data.startTime)
-            // state.startTime = response.data.time;
-            // response.data[0].startTime=state.startTime 
-            console.log(state.startTime)
+    // axios.patch(`http://localhost:3000/visitHours/${selected}`, 
+    //     { startTime: moment(state.startTime).format( 'hh:mm a') }, 
+    //     // startTime: moment(state.startTime).format( 'hh:mm a'),
+    //         // selectedHours: selectedHours.value,
+    //         // priceFirstHour: state.priceFirstHour,
+    // )
+    //     .then((response) => {
+    //         console.log(response.data.startTime)
+    //         // state.startTime = response.data.time;
+    //         // response.data[0].startTime=state.startTime 
+    //         console.log(state.startTime)
 
 
-        })
-        .catch(function (error) {
-            console.log(error)
-        })
+    //     })
+    //     .catch(function (error) {
+    //         console.log(error)
+    //     })
     
 
 }
@@ -157,7 +157,7 @@ const getIndex = (index:any) =>{
             <Button @click="submitForm" :disabled="!formChanged" icon="fa-solid fa-floppy-disk fa-flip fa-flip-hover"
                 style="--fa-animation-duration: 2s; --fa-animation-delay:5s; --fa-animation-iteration-count:5" label="تخزين"
                 class="" />
-            <Toast position="bottom-right" />
+            <!-- <Toast position="bottom-right" /> -->
 
         </form>
 

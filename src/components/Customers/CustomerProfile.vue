@@ -43,10 +43,10 @@ onMounted(async () => {
  :primaryPhone="tab.primaryPhone"
  :secondaryPhone="tab.secondaryPhone" />
 
-<div class="bg-white shadow-2 p-3 mt-3 border-round-2xl" >
-    {{ tab }}   
-
-    <div class="card">
+    
+    <card class=" shadow-2 p-3 mt-3 border-round-2xl">
+        <template #content >
+            {{ tab }}   
             <TabView class="tabview-custom" ref="tabview4">
                 <TabPanel>
                     <template #header>
@@ -71,8 +71,9 @@ onMounted(async () => {
                    <!-- الخدمات الخاصة بالعميل -->
                 </TabPanel>
             </TabView>
-        </div>
-        </div>
+        </template>
+    </card>
+    
 </template>
 
 <style>

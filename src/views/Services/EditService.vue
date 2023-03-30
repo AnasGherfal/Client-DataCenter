@@ -5,10 +5,13 @@ import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import Dialog from 'primevue/dialog';
 import axios from 'axios';
+import router from '@/router';
 
 const pakgeInfo = defineProps<{
 pakge:string
 }>()
+
+const componentKey= ref(0);
 
 const state = reactive({
     name: pakgeInfo.pakge.name,
@@ -35,14 +38,13 @@ const toast = useToast();
 const v$ = useVuelidate(rules, state);
 
 
-
 const resetForm = () => {
     state.name = '';
     state.acpPort= '';
     state.amountOfPower = '';
     state.dns= '';
     state.monthlyVisits='';
-    state.price='';
+    state.price= ''
         }
 
     const submitForm = async () => {
@@ -55,17 +57,21 @@ const resetForm = () => {
           dns: state.dns,
           monthlyVisits: state.monthlyVisits,
           price: state.price,
+          
         })
+        .then(response => { 
+            console.log(response.data.msg)
+            toast.add({ severity: 'success', summary: 'Success Message', detail:response.data.msg, life: 3000 });
+            router.go(0)
+})
         .catch(function (error) {
                 console.log(error)
-                toast.add({ severity: 'success', summary: 'Success Message', detail: 'تم تعديل الباقة', life: 3000 });
+            }) 
 
-            })            
             displayModal.value = false;
+            componentKey.value=+1;
     } else {
         console.log("empty")
-        toast.add({ severity: 'error', summary: 'Success Message', detail: 'هناك مشكلة بم يتم التعديل', life: 3000 });
-
     }
 } 
   
@@ -83,9 +89,8 @@ const openModal = () => {
 
 
 <template >
-    <Dialog  header="اضافة باقة" contentStyle="height: 200px; padding: 20px;"  v-model:visible="displayModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '60vw'}" :modal="true">
+<Dialog  header="اضافة باقة" contentStyle="height: 250px; padding: 20px;"  v-model:visible="displayModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '60vw'}" :modal="true">
   <form @submit.prevent="submitForm">
-
    <div class="grid p-fluid ">
     
     <div class="field col-12 md:col-4">
@@ -137,15 +142,13 @@ const openModal = () => {
 
 </div>
 
-</form>
-<template #footer>
-<Button @click="submitForm" class="p-button-primry" icon="fa-solid fa-plus" label="تعديل" type="submit" />
-<Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger"
-                        style="margin-right: .5em;" />
-                        <Toast position="bottom-right"/>
 
-            </template>
+<Button class="p-button-primry" icon="fa-solid fa-plus" label="تعديل" type="submit" />
+<Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger" style="margin-right: .5em;" />
+</form>
+
         </Dialog>
+
         <Button  @click="openModal"
              style="height: 25px; width: 25px;"
              icon=" fa-solid fa-pen"
@@ -164,11 +167,7 @@ error{
 .p-dropdown	{
     border-radius: 10px;
 }
-.p-float-label > label{
-right: 0.5rem;
-color: #000000;
-transition-duration: 0.2s
-}
+
 .p-dialog {
   display: flex;
   flex-direction: column;
