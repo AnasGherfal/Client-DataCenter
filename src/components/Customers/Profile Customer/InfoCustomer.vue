@@ -6,10 +6,15 @@ import { useToast } from "primevue/usetoast";
 import {useCounterStore} from '@/stores/counter'
 import axios from 'axios';
 import Divider from 'primevue/divider';
+import Button from 'primevue/button';
+import router from '@/router';
 
 
 const store = useCounterStore();
 const pp = ref<string>('');
+const actEdit=ref(true)
+
+
 const state = reactive({
     name: "" as string,
     email: "",
@@ -39,25 +44,25 @@ const v$ = useVuelidate(rules, state);
 
 
 
-// const submitForm = async () => {
-//     const result = await v$.value.$validate();
+const submitForm = async () => {
+    const result = await v$.value.$validate();
 
-//     if(result){
-//     axios.post("http://localhost:3000/users",state)
-//    .then(function(response) {
-// })
-// .catch(function(error){
-//    console.log(error)
-//  })
-// }else{
-//     console.log("empty")
-// }
+    if(result){
+    axios.post("http://localhost:3000/users",state)
+   .then(function(response) {
+})
+.catch(function(error){
+   console.log(error)
+ })
+}else{
+    console.log("empty")
+}
 
-//     if(result){
-//         toast.add({severity:'success', summary: 'Success Message', detail:'تمت إضافة العميل', life: 3000});
-//     }
+    if(result){
+        toast.add({severity:'success', summary: 'Success Message', detail:'تمت إضافة العميل', life: 3000});
+    }
 
-//         }
+        }
 
 const resetForm = () => {
     state.name = '';
@@ -83,32 +88,41 @@ const dataClinet= defineProps<{
   primaryPhone: string,
   secondaryPhone: string,
 }>()
-
+function backButton(){
+    router.go(-1)
+}
 </script>
 
 
 <template >
     <div>
-
         <Card >
             <template #title>
                 <i class="fa-solid fa-user"></i>
-                               البيانات الشخصية
+                   البيانات الشخصية  
+
+                   <Button @click="backButton" icon="fa-solid   fa-arrow-left fa-shake-hover" rounded aria-label="Filter" style="float: left;"/>
+
+                   <Button v-if="actEdit"  @click="actEdit=!actEdit"
+             icon=" fa-solid fa-pen"
+             style="width: 30px;height: 30px; margin-right: 10px;"
+             class=" p-button-primary p-button-text"
+             v-tooltip="{value:'تعديل البيانات الشخصية', fitContent:true}" />
+             
                 <Divider/>
 
             </template>
             <template #content>
                 <div >
 
-                <div  style="height: 1%;">
-                     </div>
+
                      <div>
                 <form @submit.prevent="submitForm">
 
                 <div class="grid p-fluid " >
                     <div class="field col-12 md:col-6 ">
                         <span class="p-float-label" >
-                            <InputText id="name" type="text" :value="name" disabled="true" />
+                            <InputText id="name" type="text" :value="name" :disabled="actEdit" />
                             <label style="color: black;top: -.75rem; font-size: 12px;" for="name">اسم </label>
                             <error  v-for="error in v$.name.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
                         </span>
@@ -116,7 +130,7 @@ const dataClinet= defineProps<{
                     </div>
                    <div class="field col-12 md:col-6">
                         <span class="p-float-label ">
-                            <InputText id="email" type="text" :value="email1" v-model="state.email" disabled="true" />
+                            <InputText id="email" type="text" :value="email1" v-model="state.email" :disabled="actEdit" />
                             <label style="color: black;top: -.75rem; font-size: 12px;" for="email">البريد الإلكتروني</label>
                             <error  v-for="error in v$.email.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
 
@@ -124,7 +138,7 @@ const dataClinet= defineProps<{
                     </div>
                     <div class="field col-12 md:col-6">
                         <span class="p-float-label ">
-                            <InputText id="address" :value="address" type="text" v-model="state.address" disabled="true" />
+                            <InputText id="address" :value="address" type="text" v-model="state.address" :disabled="actEdit" />
                             <label style="color: black;top: -.75rem; font-size: 12px;" for="address" >العنوان</label>
                             <error  v-for="error in v$.address.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
 
@@ -132,14 +146,14 @@ const dataClinet= defineProps<{
                     </div>
                     <div class="field col-12 md:col-6">
                         <span class="p-float-label ">
-                            <InputMask id ="phoneNum1"  :value="primaryPhone" v-model="dataClinet.primaryPhone" mask="999-999-9999" disabled="true" />
+                            <InputMask id ="phoneNum1"  :value="primaryPhone" v-model="dataClinet.primaryPhone" mask="999-999-9999" :disabled="actEdit" />
                             <label style="color: black;top: -.75rem; font-size: 12px;" for="phoneNum1">رقم هاتف </label>
                             <error  v-for="error in v$.primaryPhone.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
                         </span>
                     </div>
                     <div class="field col-12 md:col-6">
                         <span class="p-float-label ">
-                            <InputMask id="phoneNum2" :value="secondaryPhone" v-model="dataClinet.secondaryPhone" mask="999-999-9999" disabled="true" />
+                            <InputMask id="phoneNum2" :value="secondaryPhone" v-model="dataClinet.secondaryPhone" mask="999-999-9999" :disabled="actEdit" />
                             <label style="color: black;top: -.75rem; font-size: 12px;" for="phoneNum2">رقم هاتف 2</label>
                         </span>
                     </div>
@@ -148,6 +162,14 @@ const dataClinet= defineProps<{
 
             </form>
         </div>
+
+    <div v-if="!actEdit">
+        <Button  @click="submitForm" icon="fa-solid fa-plus" label="تعديل" type="submit"  />
+
+        <Button  @click="actEdit=!actEdit" icon="fa-solid fa-delete-left" label="إلغاء التعديل" class="p-button-danger" style="margin-right: .5em;" />
+    </div>
+
+
         </div>
             </template>
             
@@ -169,7 +191,6 @@ error{
 }
 .p-float-label > label{
 right: 0.5rem;
-color: black;
 transition-duration: 0.3s
 }
 
@@ -181,7 +202,6 @@ transition-duration: 0.3s
 }
 
 
-/* .menuitem-content:hover {
 
-} */
+
 </style>

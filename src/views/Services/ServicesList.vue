@@ -5,6 +5,7 @@ import editservice from './EditService.vue';
 import DeletService from './DeletService.vue';
 
 
+
 const packagesList=ref()
 onMounted( async () =>{ 
     await axios.get("https://localhost:7003/api/Service")
@@ -20,7 +21,8 @@ onMounted( async () =>{
 
 
 <template>
-    <div class="grid"> 
+
+    <div class="grid" >
         <div  v-for="servic in packagesList"
         :key="servic.id" class="col-12 md:col-6 lg:col-4" >
         <card>
@@ -56,7 +58,6 @@ onMounted( async () =>{
                 <span class=" font-medium"></span>
                 </div>
 
-                
 
                 <div style="direction:ltr;" class="text-center font-bold text-sm">   
                     <i class="text-green-600 fa-solid fa-circle-check mr-1"></i>

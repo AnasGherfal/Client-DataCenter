@@ -155,8 +155,8 @@ const resetForm = () => {
                     </div>
                     <Button @click="submitForm" icon="fa-solid fa-plus" label="إضافة" type="submit"  />
 
-                    <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger"
-                        style="margin-right: .5em;" />
+                    <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger" style="margin-right: .5em;" />
+                    
                     <Toast position="bottom-right" />
 
                 </form>

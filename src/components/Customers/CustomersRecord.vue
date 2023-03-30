@@ -3,11 +3,16 @@ import {  ref, reactive, onMounted } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
 import {useCustomersStore} from '@/stores/customers'
 import router from '@/router';
+import axios from 'axios';
+import Dialog from 'primevue/dialog';
+import { useToast } from "primevue/usetoast";
+const toast = useToast();
 
-                  // optional
+
+// optional
 
 const store = useCustomersStore();
-
+const deleteCustomersDialog = ref(false)
 
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -59,10 +64,38 @@ function getid(index: {}) {
 
 function goInfoPage(user: {}) {
     rotName.value = user;
-    console.log(rotName.value.name)
+    console.log(rotName.value.id)
+
+    axios.delete('https://localhost:7003/api/Customers/'+ rotName.value.id )
+      .then(response => {
+       console.log(response)
+       console.log(response.data.msg)
+       toast.add({ severity: 'success', summary: 'Success Message', detail: response.data.msg, life: 3000 });
+
+       router.getRoutes("/customersRecord");
+       
+      });
+       
+ 
 
     // router.push("customersRecord/CustomerProfile")
 }
+
+//Delet Customer
+const delet = () => {
+
+axios.delete('https://localhost:7003/api/Service?id='+rotName.value.id )
+.then(response => {
+ console.log(response)
+ router.replace
+ toast.add({ severity: 'success', summary: 'Confirmed', detail: response.data.msg, life: 3000 });
+ deleteCustomersDialog.value = false
+
+});
+
+
+};
+
 </script>
 
 <template>
@@ -76,7 +109,9 @@ function goInfoPage(user: {}) {
             </template>
             <template #content >
            
-                
+                <RouterLink to="/customersRecord/addCustomers" style="text-decoration: none">
+                <Button icon="fa-solid fa-plus" label="إضافة عميل" style="width: 150px;" class="mr-2"> </Button>
+            </RouterLink>   
             <DataTable  filterDisplay="row"  ref="dt" :value="store.customers" dataKey="id" 
                 :paginator="true" :rows="5" v-model:filters="filters" :loading="!store.customers.length"
                 :globalFilterFields="['name', 'status']"
@@ -98,9 +133,7 @@ function goInfoPage(user: {}) {
                         placeholder="حدد الأعمدة" style="width: 10em"/>
                 </div>
                 
-                    <RouterLink to="/customersRecord/addCustomers" style="text-decoration: none">
-                <Button icon="fa-solid fa-plus" label="إضافة عميل" style="width: 150px;" class="mr-2"> </Button>
-            </RouterLink>
+                
 					</div>
                     </div>
                    
@@ -134,7 +167,21 @@ function goInfoPage(user: {}) {
             <RouterLink :to="'customersRecord/CustomerProfile/'+slotProps.data.name">
             <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel"/>
            </RouterLink>
-            <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"  @click="goInfoPage(slotProps.data)" />
+             
+            <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"  @click="deleteCustomersDialog=true" />
+
+            <Dialog v-model:visible="deleteCustomersDialog" :style="{width: '450px'}" header="Confirm" :modal="true">
+            <div class="confirmation-content">
+                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+                <span v-if="slotProps.data">هل انت متأكد من حدف <b>{{slotProps.data.name}}</b> ؟</span>
+            </div>
+            <template #footer>
+                <Button label="No" icon="pi pi-times" text @click="deleteCustomersDialog = false"/>
+                <Button label="Yes" icon="pi pi-check" text @click="delet" />
+            </template>
+        </Dialog>
+
+            <toast/>
            </template>
         </Column>
 </DataTable>
@@ -147,11 +194,4 @@ function goInfoPage(user: {}) {
 
 <style>
 
-
-
-
- /* .pi-times:before {
-     content: "\e90b";
-     margin-right: 2rem;
- } */
 </style>

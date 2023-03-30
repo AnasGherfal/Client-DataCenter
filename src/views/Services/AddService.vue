@@ -5,6 +5,7 @@ import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import Dialog from 'primevue/dialog';
 import axios from 'axios';
+import router from '@/router';
 
 // define opject
 const state = reactive({
@@ -51,9 +52,9 @@ const resetForm = () => {
     if (result) {
         axios.post("https://localhost:7003/api/Service", state)
             .then(function (response) {
-                console.log(state)        
+                console.log(response.data.msg)        
                 toast.add({ severity: 'success', summary: 'Success Message', detail: 'تمت إضافة باقة', life: 3000 });
-
+                router.go(0)
             })
             .catch(function (error) {
                 console.log(error)
@@ -82,7 +83,7 @@ const openModal = () => {
 
 <template >
     <Dialog  header="اضافة باقة" contentStyle="height: 250px; padding: 20px;"  v-model:visible="displayModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '60vw'}" :modal="true">
-  <form @submit="submitForm">
+  <form @submit.prevent="submitForm">
 
    <div class="grid p-fluid ">
     
@@ -162,7 +163,6 @@ error{
 }
 .p-float-label > label{
 right: 0.5rem;
-color: #000000;
 transition-duration: 0.2s
 }
 .p-dialog {
@@ -174,7 +174,5 @@ transition-duration: 0.2s
   border-radius: 30px;
 }
 
-/* .menuitem-content:hover {
 
-} */
 </style>
