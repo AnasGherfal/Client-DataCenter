@@ -12,6 +12,7 @@ import BackButton from '../BackButton.vue';
 
 const store = useCustomersStore();
 
+
 // const rules = computed(() => {
 //     return {
 //         name: { required: helpers.withMessage('الاسم مطلوب', required) },

@@ -65,14 +65,13 @@ function isLibyanPhoneNumber(input: string): boolean {
   async function submitForm()  {
         const result = await v$.value.$validate();
 
+
             if (result) {
         loading.value = true;
-        setTimeout(() => {
 
             loading.value = false;
             router.go(-1)
 
-        }, 500);
 
         await axios.post("https://localhost:7003/api/Customers", state)
                 .then(function (response) {
@@ -84,6 +83,9 @@ function isLibyanPhoneNumber(input: string): boolean {
                   })
                 .catch(function (error) {
                     console.log(error)
+                }).finally(function (){
+               
+
                 })
               } else {
                         console.log("empty")
