@@ -7,22 +7,18 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import router from '@/router';
 import { RouterLink, routerKey } from 'vue-router';
 import axios from "axios"
-import { propsToAttrMap } from '@vue/shared';
 
 
 const num= defineProps<{
     nameId: string
 }>()
+
 const tab= ref({})
 
 onMounted(async () => {
     await axios.get("https://localhost:7003/api/Customers/")
       .then(function (response) {
-
-
         tab.value = response.data.content.filter((users:{name:String}) => users.name === num.nameId)[0];
-
-
         console.log(tab)
       })
       .catch(function (error) {
@@ -30,23 +26,22 @@ onMounted(async () => {
       })
 
   })
+  console.log(tab.value)
+
   console.log(typeof(tab))
 //   const prof = tab
 
 </script>
 
 <template>
+                {{ tab }}   
+
 <InfoCustomer
- :name="tab.name"
- :email1="tab.email"
- :address="tab.address"
- :primaryPhone="tab.primaryPhone"
- :secondaryPhone="tab.secondaryPhone" />
+:customer="tab" />
 
     
     <card class=" shadow-2 p-3 mt-3 border-round-2xl">
         <template #content >
-            {{ tab }}   
             <TabView class="tabview-custom" ref="tabview4">
                 <TabPanel>
                     <template #header>

@@ -57,45 +57,48 @@ const getSeverity = (status:any) => {
 }
 
 const rotName = ref()
-const rot=ref()
-
-function getid(index: {}) {
-    rotName.value = index;
-    console.log(rotName.value.name)
-    rot.value = "/customersRecord/CustomerProfile/"+ rotName.value.name
-    router.push("/customersRecord/CustomerProfile/"+ rotName.value.name  )
-}
+// const rot=ref()
 
 
 
-function goInfoPage(user: {}) {
-    rotName.value = user;
-    console.log(rotName.value.id)
 
-    axios.delete('https://localhost:7003/api/Customers/'+ rotName.value.id )
-      .then(response => {
-       console.log(response)
-       console.log(response.data.msg)
-       toast.add({ severity: 'success', summary: 'Success Message', detail: response.data.msg, life: 3000 });
+
+// function goInfoPage(user: {}) {
+//     rotName.value = user;
+//     console.log(rotName.value.id)
+
+//     axios.delete('https://localhost:7003/api/Customers/'+ rotName.value.id )
+//       .then(response => {
+//        console.log(response)
+//        console.log(response.data.msg)
+//        toast.add({ severity: 'success', summary: 'Success Message', detail: response.data.msg, life: 3000 });
 
        
-      });
+//       });
        
  
 
-    // router.go("customersRecord/CustomerProfile")
-}
+//     // router.go("customersRecord/CustomerProfile")
+// }
 
 const forceRerender = () => {
   componentKey.value += 1;
 }
-//Delet Customer
-const deleteCustomer = () => {
 
-axios.delete('https://localhost:7003/api/Service?id='+rotName.value.id )
+//Delet Customer
+
+function getid(index: {}) {
+    rotName.value = index;
+    console.log(rotName.value.name)
+    deleteCustomersDialog.value=true
+}
+
+const deleteCustomer = () => {
+console.log(rotName.value)
+axios.delete('https://localhost:7003/api/Customers/'+rotName.value.id )
 .then(response => {
  console.log(response)
- router.replace
+ store.getdata();
  toast.add({ severity: 'success', summary: 'Confirmed', detail: response.data.msg, life: 3000 });
  deleteCustomersDialog.value = false
 
@@ -137,32 +140,39 @@ axios.delete('https://localhost:7003/api/Service?id='+rotName.value.id )
     
                 <div v-else >
            
-                <RouterLink to="/customersRecord/addCustomers" style="text-decoration: none">
-                <Button icon="fa-solid fa-plus" label="إضافة عميل" style="width: 150px;" class="mr-2"> </Button>
-            </RouterLink>   
+   
             <DataTable  filterDisplay="row"  ref="dt" :value="store.customers" dataKey="id" 
                 :paginator="true" :rows="5" v-model:filters="filters" :key="componentKey"
                 :globalFilterFields="['name', 'status']"
                 paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]"
                 currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} عميل" responsiveLayout="scroll">
                 <template #header>
-                    <div class="grid p-fluid">
+                    
+            <div class="grid p-fluid">
+
+                    <div class=" field col-12 md:col-6 lg:col-4 ">
+
                     <div class="table-header flex flex-column md:flex-row justiify-content-between ">
 						<span class="p-input-icon-left p-float-label ">
                             <i class="fa-solid fa-magnifying-glass" />
                             <InputText v-model="filters['global'].value" placeholder="" />
                             <label for="phoneNum1"> البحث </label>
                         </span>
-
-                        <div style="text-align:left; margin-right: 0.5rem;">
-
-                    <MultiSelect :modelValue="selectedColumns" :options="columns" optionLabel="header" @update:modelValue="onToggle"
-                        placeholder="حدد الأعمدة" style="width: 10em"/>
-                </div>
-                
-                
-					</div>
                     </div>
+                    </div>
+
+                    <div class=" field col-12 md:col-6 lg:col-4 " >
+                    <MultiSelect :modelValue="selectedColumns" :options="columns" optionLabel="header" @update:modelValue="onToggle"
+                        placeholder="حدد الأعمدة" />
+                    </div>
+
+                <div class=" field col-12 md:col-6 lg:col-4 ">
+                 <RouterLink to="/customersRecord/addCustomers" style="text-decoration: none">
+                <Button icon="fa-solid fa-plus" label="إضافة عميل" > </Button>
+                 </RouterLink>
+                </div>
+
+            </div>
                    
                 </template>
                 
@@ -190,28 +200,32 @@ axios.delete('https://localhost:7003/api/Service?id='+rotName.value.id )
                 <Column field="secondaryPhone" header="  رقم الهاتف 2"  style="min-width:12rem"></Column> -->
                 <Column style="min-width:8rem">
 
-                    <template #body="slotProps">
+             <template #body="slotProps">
 
             <RouterLink :to="'customersRecord/CustomerProfile/'+slotProps.data.name">
             <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel"/>
            </RouterLink>
              
-            <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"  @click="deleteCustomersDialog=true" />
+            <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"  @click="getid(slotProps.data)" />
 
-            <Dialog v-model:visible="deleteCustomersDialog" :style="{width: '450px'}" header="Confirm" :modal="true">
-            <div class="confirmation-content">
+            <Dialog  v-model:visible="deleteCustomersDialog" :style="{width: '450px'}" header="Confirm" :modal="true">
+
+            <div  class="confirmation-content">
                 <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-                <span v-if="slotProps.data">هل انت متأكد من حدف <b>{{slotProps.data.name}}</b> ؟</span>
+                <span v-if="rotName">هل انت متأكد من حدف <b>{{rotName.name}}</b> ؟</span>
             </div>
             <template #footer>
                 <Button label="No" icon="pi pi-times" text @click="deleteCustomersDialog = false"/>
                 <Button label="Yes" icon="pi pi-check" text @click="deleteCustomer" />
             </template>
-        </Dialog>
 
-            <toast/>
-           </template>
+        </Dialog>
+        <toast/>
+
+        </template>
+
         </Column>
+
 </DataTable>
 </div>
 </template>

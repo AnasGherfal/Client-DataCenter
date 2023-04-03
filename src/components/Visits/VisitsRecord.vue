@@ -51,19 +51,21 @@ const rotName = ref()
                     <template #header>
                         <div class="grid p-fluid">
 
-                            <div class="table-header flex flex-column md:flex-row justiify-content-between">
+                            <div class=" field col-12 md:col-6 lg:col-4 ">
                                 <span class="p-input-icon-left p-float-label ">
                                     <i class="fa-solid fa-magnifying-glass" />
                                     <InputText v-model="filters['global'].value" placeholder="Search..." />
                                     <label for="phoneNum1"> البحث </label>
 
                                 </span>
+                            </div>
+                            <div class=" field col-12 md:col-6 lg:col-4 ">
 
                                 <RouterLink to="/visitsRecords/createVisit" style="text-decoration: none">
-                                    <Button icon="fa-solid fa-plus" label="انشاء زيارة" style="width: 150px;" class="mr-2">
+                                    <Button icon="fa-solid fa-plus" label="انشاء زيارة">
                                     </Button>
                                 </RouterLink>
-                            </div>
+                                </div>
                         </div>
 
                     </template>

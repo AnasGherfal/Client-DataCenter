@@ -7,6 +7,9 @@ import Dialog from 'primevue/dialog';
 import axios from 'axios';
 import router from '@/router';
 
+
+
+const emit=defineEmits(['getList'])
 // define opject
 const state = reactive({
     name: '',
@@ -53,8 +56,8 @@ const resetForm = () => {
         axios.post("https://localhost:7003/api/Service", state)
             .then(function (response) {
                 console.log(response.data.msg)        
+                emit('getList')
                 toast.add({ severity: 'success', summary: 'Success Message', detail: 'تمت إضافة باقة', life: 3000 });
-                router.go(0)
             })
             .catch(function (error) {
                 console.log(error)

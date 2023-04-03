@@ -7,14 +7,10 @@ import { useCustomersStore } from '@/stores/customers'
 import axios from 'axios';
 import router from '@/router';
 import InputText from 'primevue/inputtext';
+import BackButton from '../BackButton.vue';
 
 
 const store = useCustomersStore();
-
-
-
-
-
 
 // const rules = computed(() => {
 //     return {
@@ -64,9 +60,6 @@ const toast = useToast();
 //     }
 // }
 
-function backButton() {
-    router.go(-1)
-}
 const loading = ref(false);
 
 
@@ -91,8 +84,7 @@ const resetForm = () => {
 
                 إضافة عميل
 
-                <Button @click="backButton" icon="fa-solid   fa-arrow-left fa-shake-hover" rounded aria-label="Filter"
-                    style="float: left;" />
+                <BackButton style="float: left;"/>
 
                 <Divider />
 

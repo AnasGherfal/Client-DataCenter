@@ -5,8 +5,8 @@ import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import { useCustomersStore } from '@/stores/customers';
 import addCompanion from './addCompanion.vue';
-import router from '@/router';
 import moment from 'moment';
+import BackButton from '../BackButton.vue';
 
 const store = useCustomersStore();
 
@@ -99,10 +99,7 @@ const resetForm = () => {
         state.price = ""
 }
 
-function backButton() {
-    router.push("/VisitsRecords")
 
-}
 
 </script>
 
@@ -111,8 +108,8 @@ function backButton() {
         <Card>
             <template #title>
                 إنشاء زيارة
-                <Button @click="backButton" icon="fa-solid fa-arrow-left fa-shake-hover" rounded aria-label="Filter"
-                    style="float: left;" />
+                <BackButton style="float: left;"/>
+
                 <Divider />
 
             </template>

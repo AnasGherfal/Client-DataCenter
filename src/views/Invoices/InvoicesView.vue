@@ -37,14 +37,15 @@ const filters = ref({
                 currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} عميل" responsiveLayout="scroll">
                 <template #header>
                     <div class="grid p-fluid">
-                    <div class="table-header flex flex-column md:flex-row justiify-content-between ">
+                        
+                        <div class=" field col-12 md:col-6 lg:col-4 ">
 						<span class="p-input-icon-left p-float-label ">
                             <i class="fa-solid fa-magnifying-glass" />
                             <InputText v-model="filters['global'].value" placeholder="" />
                             <label for="phoneNum1"> البحث </label>
-
                         </span>
 					</div>
+
                     </div>
                    
                 </template>

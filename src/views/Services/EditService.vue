@@ -10,6 +10,7 @@ import router from '@/router';
 const pakgeInfo = defineProps<{
 pakge:string
 }>()
+const emit=defineEmits(['getList'])
 
 const componentKey= ref(0);
 
@@ -57,12 +58,11 @@ const resetForm = () => {
           dns: state.dns,
           monthlyVisits: state.monthlyVisits,
           price: state.price,
-          
         })
         .then(response => { 
             console.log(response.data.msg)
+            emit('getList')
             toast.add({ severity: 'success', summary: 'Success Message', detail:response.data.msg, life: 3000 });
-            router.go(0)
 })
         .catch(function (error) {
                 console.log(error)

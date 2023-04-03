@@ -3,7 +3,7 @@ import axios from 'axios';
 import { onMounted, ref } from 'vue';
 import editservice from './EditService.vue';
 import DeletService from './DeletService.vue';
-
+import AddService from './AddService.vue';
 
 
 const packagesList=ref()
@@ -17,19 +17,29 @@ onMounted( async () =>{
       })
     })
 
+    function getList() {
+        console.log("yes we dident")
+      axios.get("https://localhost:7003/api/Service").then((resp) => {
+        packagesList.value = resp.data.content;;        
+      });
+    }
+
 </script>
 
 
 <template>
+<div>
+    <AddService @getList="getList" />
 
+</div>
     <div class="grid" >
         <div  v-for="servic in packagesList"
         :key="servic.id" class="col-12 md:col-6 lg:col-4" >
         <card>
         <template  #header>
-            <editservice :pakge="servic"  />
+            <editservice :pakge="servic" @getList="getList" />
 
-            <DeletService :pakge="servic" :key="servic.id" />
+            <DeletService :pakge="servic" :key="servic.id" @getList="getList" />
         </template>
             <template #content>
 

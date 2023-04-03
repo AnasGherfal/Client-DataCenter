@@ -3,9 +3,7 @@ import { computed, reactive, ref } from 'vue';
 import { required, helpers, minValue } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
-import AutoComplete from 'primevue/autocomplete';
-import Divider from 'primevue/divider';
-import router from '@/router';
+import BackButton from '@/components/BackButton.vue';
 
 const state = reactive({
     nameCustomer: "",
@@ -50,10 +48,7 @@ const minDate = ref(new Date());
 const invalidDates = ref();
 
 
-function backButton() {
-    router.push("/subscriptionsRecord")
 
-}
 </script>
 
 
@@ -63,8 +58,8 @@ function backButton() {
             <template #title>
 
                 إضافة اشتراك
-                <Button @click="backButton" icon="fa-solid   fa-arrow-left fa-shake-hover" rounded aria-label="Filter"
-                    style="float: left;" />
+                <BackButton style="float: left;"/>
+
                 <Divider layout="horizontal" />
             </template>
 

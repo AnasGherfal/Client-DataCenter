@@ -33,7 +33,6 @@ const state = reactive({
 
                         <div>
 
-                            <AddService />
                             <ServicesList />
 
                         </div>

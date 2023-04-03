@@ -1,39 +1,28 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import { email, minLength, required, helpers } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import {useCounterStore} from '@/stores/counter'
 import axios from 'axios';
-import Divider from 'primevue/divider';
-import Button from 'primevue/button';
-import router from '@/router';
 
+import BackButton from '@/components/BackButton.vue';
 
+const actEdit=ref(true);
 const store = useCounterStore();
-const pp = ref<string>('');
-const actEdit=ref(true)
 
+const dataClinet = defineProps<{
+customer: any
 
-const state = reactive({
-    name: "" as string,
-    email: "",
-    primaryPhone: '092-687-1312',
-    secondaryPhone: '092-687-1312',
-    address: '',
-    File: '',
-    subscriptionType: '',
-    numberOfHours:'',
-
-})
-
-
+}>()
+  
+  const state = dataClinet.customer 
 
 const rules = computed(() =>{
     return {
     name:{  required: helpers.withMessage('الاسم مطلوب',required)},
     email: {required: helpers.withMessage('الايميل مطلوب',required), email: helpers.withMessage(' ليس عنوان بريد إلكتروني صالح', email)},
-    address: {required: helpers.withMessage('العنوان مطلوب',required)},
+    // address: {required: helpers.withMessage('العنوان مطلوب',required)},
     primaryPhone: {required: helpers.withMessage('رقم الهاتف مطلوب',required)},
     }
 })
@@ -48,32 +37,34 @@ const submitForm = async () => {
     const result = await v$.value.$validate();
 
     if(result){
-    axios.post("http://localhost:3000/users",state)
+    axios.put("https://localhost:7003/api/Customers/"+dataClinet.customer.id,state)
    .then(function(response) {
+    console.log(response.data.msg)
+    toast.add({severity:'success', summary: 'Success Message', detail:response.data.msg, life: 3000});
 })
 .catch(function(error){
    console.log(error)
+   
  })
 }else{
     console.log("empty")
 }
 
-    if(result){
-        toast.add({severity:'success', summary: 'Success Message', detail:'تمت إضافة العميل', life: 3000});
-    }
 
         }
 
-const resetForm = () => {
-    state.name = '';
-    state.email = '';
-    state.primaryPhone = '';
-    state.secondaryPhone = '';
-    state.address = '';
-    state.File = '';
 
 
-        }
+// const resetForm = () => {
+//     state.name = '';
+//     state.email = '';
+//     state.primaryPhone = '';
+//     state.secondaryPhone = '';
+//     state.address = '';
+//     state.File = '';
+
+
+//         }
 
 function focusname(){
     if(state.name){
@@ -81,16 +72,11 @@ function focusname(){
     }
 }
 
-const dataClinet= defineProps<{
-  name: string,
-  email1: string,
-  address: string,
-  primaryPhone: string,
-  secondaryPhone: string,
-}>()
-function backButton(){
-    router.go(-1)
-}
+
+
+
+
+
 </script>
 
 
@@ -101,7 +87,7 @@ function backButton(){
                 <i class="fa-solid fa-user"></i>
                    البيانات الشخصية  
 
-                   <Button @click="backButton" icon="fa-solid   fa-arrow-left fa-shake-hover" rounded aria-label="Filter" style="float: left;"/>
+                   <BackButton style="float: left;"/>
 
                    <Button v-if="actEdit"  @click="actEdit=!actEdit"
              icon=" fa-solid fa-pen"
@@ -122,15 +108,17 @@ function backButton(){
                 <div class="grid p-fluid " >
                     <div class="field col-12 md:col-6 ">
                         <span class="p-float-label" >
-                            <InputText id="name" type="text" :value="name" :disabled="actEdit" />
+                            <InputText id="name" type="text" v-model="state.name" :disabled="actEdit" />
                             <label style="color: black;top: -.75rem; font-size: 12px;" for="name">اسم </label>
                             <error  v-for="error in v$.name.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
                         </span>
-
                     </div>
+
+{{ dataClinet.customer }}
+ 
                    <div class="field col-12 md:col-6">
                         <span class="p-float-label ">
-                            <InputText id="email" type="text" :value="email1" v-model="state.email" :disabled="actEdit" />
+                            <InputText id="email" type="text"  v-model="state.email" :disabled="actEdit" />
                             <label style="color: black;top: -.75rem; font-size: 12px;" for="email">البريد الإلكتروني</label>
                             <error  v-for="error in v$.email.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
 
@@ -140,20 +128,23 @@ function backButton(){
                         <span class="p-float-label ">
                             <InputText id="address" :value="address" type="text" v-model="state.address" :disabled="actEdit" />
                             <label style="color: black;top: -.75rem; font-size: 12px;" for="address" >العنوان</label>
-                            <error  v-for="error in v$.address.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
+                            <!-- <error  v-for="error in v$.address.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error> -->
 
                         </span>
                     </div>
+
+                    {{ state }}
+
                     <div class="field col-12 md:col-6">
                         <span class="p-float-label ">
-                            <InputMask id ="phoneNum1"  :value="primaryPhone" v-model="dataClinet.primaryPhone" mask="999-999-9999" :disabled="actEdit" />
+                            <InputText id ="phoneNum1"  v-model="state.primaryPhone" :disabled="actEdit" />
                             <label style="color: black;top: -.75rem; font-size: 12px;" for="phoneNum1">رقم هاتف </label>
                             <error  v-for="error in v$.primaryPhone.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
                         </span>
                     </div>
                     <div class="field col-12 md:col-6">
                         <span class="p-float-label ">
-                            <InputMask id="phoneNum2" :value="secondaryPhone" v-model="dataClinet.secondaryPhone" mask="999-999-9999" :disabled="actEdit" />
+                            <InputText id="phoneNum2" :value="secondaryPhone" v-model="state.secondaryPhone"  :disabled="actEdit" />
                             <label style="color: black;top: -.75rem; font-size: 12px;" for="phoneNum2">رقم هاتف 2</label>
                         </span>
                     </div>
