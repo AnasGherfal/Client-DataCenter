@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import {  ref, reactive, onMounted, computed } from 'vue';
+import { ref, reactive, onMounted, computed } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
-import {useCustomersStore} from '@/stores/customers'
+import { useCustomersStore } from '@/stores/customers'
 import router from '@/router';
 import axios from 'axios';
 import { email, minLength, required, helpers } from "@vuelidate/validators";
@@ -21,19 +21,19 @@ const filters = ref({
 });
 
 const columns = ref([
-            // {field: 'status', header: 'الحاله'},
-            {field: 'email', header: 'البريد الإكتروني'},
+    // {field: 'status', header: 'الحاله'},
+    { field: 'email', header: 'البريد الإكتروني' },
 
-            {field: 'address', header: 'العنوان'},
-            {field: 'primaryPhone', header: 'رقم الهاتف (1)'},
-            {field: 'secondaryPhone', header: 'رقم الهاتف (2)'}
+    { field: 'address', header: 'العنوان' },
+    { field: 'primaryPhone', header: 'رقم الهاتف (1)' },
+    { field: 'secondaryPhone', header: 'رقم الهاتف (2)' }
 
-        ]);
-        const selectedColumns = ref(columns.value);
+]);
+const selectedColumns = ref(columns.value);
 
-        const onToggle = (val:any) => {
-            selectedColumns.value = columns.value.filter(col => val.includes(col));
-        };
+const onToggle = (val: any) => {
+    selectedColumns.value = columns.value.filter(col => val.includes(col));
+};
 
 
 
@@ -41,12 +41,12 @@ const statuses = ref(['نشط', 'غير نشط', 'منتهي الصلاحيه'])
 const loading = ref(false);
 
 onMounted(() => {
-      setTimeout(() => {
+    setTimeout(() => {
         loading.value = false;
-      }, 2000); // Set the timeout to the amount of time you want the loading page to display
-    });
+    }, 2000); // Set the timeout to the amount of time you want the loading page to display
+});
 
-const getSeverity = (status:any) => {
+const getSeverity = (status: any) => {
     switch (status) {
         case 'نشط':
             return 'success';
@@ -57,13 +57,13 @@ const getSeverity = (status:any) => {
 }
 
 const rotName = ref()
-const rot=ref()
+const rot = ref()
 
 function getid(index: {}) {
     rotName.value = index;
     console.log(rotName.value.name)
-    rot.value = "/customersRecord/CustomerProfile/"+ rotName.value.name
-    router.push("/customersRecord/CustomerProfile/"+ rotName.value.name  )
+    rot.value = "/customersRecord/CustomerProfile/" + rotName.value.name
+    router.push("/customersRecord/CustomerProfile/" + rotName.value.name)
 }
 
 
@@ -72,34 +72,33 @@ function goInfoPage(user: {}) {
     rotName.value = user;
     console.log(rotName.value.id)
 
-    axios.delete('https://localhost:7003/api/Customers/'+ rotName.value.id )
-      .then(response => {
-       console.log(response)
-       console.log(response.data.msg)
-       toast.add({ severity: 'success', summary: 'Success Message', detail: response.data.msg, life: 3000 });
+    axios.delete('https://localhost:7003/api/Customers/' + rotName.value.id)
+        .then(response => {
+            console.log(response)
+            console.log(response.data.msg)
+            toast.add({ severity: 'success', summary: 'Success Message', detail: response.data.msg, life: 3000 });
 
-       
-      });
-       
- 
+
+        });
+
+
 
     // router.go("customersRecord/CustomerProfile")
 }
 
 const forceRerender = () => {
-  componentKey.value += 1;
+    componentKey.value += 1;
 }
 //Delet Customer
-const deleteCustomer = () => {
+const deleteCustomer = (index: {}) => {
+    console.log(index)
+    axios.delete('https://localhost:7003/api/Service?id=' + index)
+        .then(response => {
+            console.log(response)
+            toast.add({ severity: 'success', summary: 'Confirmed', detail: response.data.msg, life: 3000 });
+            deleteCustomersDialog.value = false
 
-axios.delete('https://localhost:7003/api/Service?id='+rotName.value.id )
-.then(response => {
- console.log(response)
- router.replace
- toast.add({ severity: 'success', summary: 'Confirmed', detail: response.data.msg, life: 3000 });
- deleteCustomersDialog.value = false
-
-});
+        });
 
 }
 
@@ -111,118 +110,122 @@ axios.delete('https://localhost:7003/api/Service?id='+rotName.value.id )
 
     <div v-if="($route.path === '/customersRecord')">
         <Card>
-    
+
             <template #title>
                 سجل العملاء
+
+                <RouterLink to="/customersRecord/addCustomers" style="text-decoration: none">
+                        <Button icon="fa-solid fa-plus" v-tooltip="{value:'إضافة عميل', fitContent:true}" label="" rounded style="  float: left;" class="mr-2"> </Button>
+                    </RouterLink>
             </template>
-            <template #content >
+            <template #content>
 
                 <div v-if="loading">
                     <div class="border-round border-1 surface-border p-4 surface-card">
-    <div class="flex mb-3">
-        <div>
-            <Skeleton width="10rem" class="mb-2"></Skeleton>
-            <Skeleton width="5rem" class="mb-2"></Skeleton>
-            <Skeleton height=".5rem"></Skeleton>
-        </div>
-    </div>
-    <Skeleton width="100%" height="150px"></Skeleton>
-    <div class="flex justify-content-between mt-3">
-        <Skeleton width="100%" height="2rem"></Skeleton>
-    </div>
-</div>
-
-
-            </div>
-    
-                <div v-else >
-           
-                <RouterLink to="/customersRecord/addCustomers" style="text-decoration: none">
-                <Button icon="fa-solid fa-plus" label="إضافة عميل" style="width: 150px;" class="mr-2"> </Button>
-            </RouterLink>   
-            <DataTable  filterDisplay="row"  ref="dt" :value="store.customers" dataKey="id" 
-                :paginator="true" :rows="5" v-model:filters="filters" :key="componentKey"
-                :globalFilterFields="['name', 'status']"
-                paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]"
-                currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} عميل" responsiveLayout="scroll">
-                <template #header>
-                    <div class="grid p-fluid">
-                    <div class="table-header flex flex-column md:flex-row justiify-content-between ">
-						<span class="p-input-icon-left p-float-label ">
-                            <i class="fa-solid fa-magnifying-glass" />
-                            <InputText v-model="filters['global'].value" placeholder="" />
-                            <label for="phoneNum1"> البحث </label>
-                        </span>
-
-                        <div style="text-align:left; margin-right: 0.5rem;">
-
-                    <MultiSelect :modelValue="selectedColumns" :options="columns" optionLabel="header" @update:modelValue="onToggle"
-                        placeholder="حدد الأعمدة" style="width: 10em"/>
-                </div>
-                
-                
-					</div>
+                        <div class="flex mb-3">
+                            <div>
+                                <Skeleton width="10rem" class="mb-2"></Skeleton>
+                                <Skeleton width="5rem" class="mb-2"></Skeleton>
+                                <Skeleton height=".5rem"></Skeleton>
+                            </div>
+                        </div>
+                        <Skeleton width="100%" height="150px"></Skeleton>
+                        <div class="flex justify-content-between mt-3">
+                            <Skeleton width="100%" height="2rem"></Skeleton>
+                        </div>
                     </div>
+
+
+                </div>
+
+                <div v-else>
+
                    
-                </template>
-                
-                <Column field="name" header="الإسم"  style="min-width:10rem;"  class="font-bold" frozen></Column>
-                
-                <Column field="status" header="  الحاله " filterField="status" style="min-width:8rem" :showFilterMenu="false" :filterMenuStyle="{ width: '14rem' }">
-                    <template #body="{ data }">
-                        
-                    <Tag :value="data.status" :severity="getSeverity(data.status)" />
-                </template>
-                <template #filter="{ filterModel, filterCallback }">
-                    <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="statuses" placeholder="Select One" class="p-column-filter" style="min-width: 12rem" :showClear="true">
-                        <template #option="slotProps">
-                            <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" />
+                    <DataTable filterDisplay="row" ref="dt" :value="store.customers" dataKey="id" :paginator="true"
+                        :rows="5" v-model:filters="filters" :key="componentKey" :globalFilterFields="['name', 'status']"
+                        paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown"
+                        :rowsPerPageOptions="[5, 10, 25]"
+                        currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} عميل" responsiveLayout="scroll">
+                        <template #header>
+                            <div class="grid p-fluid">
+                                <div class="table-header flex flex-column md:flex-row justiify-content-between ">
+                                    <span class="p-input-icon-left p-float-label ">
+                                        <i class="fa-solid fa-magnifying-glass" />
+                                        <InputText v-model="filters['global'].value" placeholder="" />
+                                        <label for="phoneNum1"> البحث </label>
+                                    </span>
+
+                                    <div style="text-align:left; margin-right: 0.5rem;">
+
+                                        <MultiSelect :modelValue="selectedColumns" :options="columns" optionLabel="header"
+                                            @update:modelValue="onToggle" placeholder="حدد الأعمدة" style="width: 10em" />
+                                    </div>
+
+
+                                </div>
+                            </div>
+
                         </template>
-                    </Dropdown>
-                </template>
-                
-                </Column>
-                <Column  v-for="(col,index) of selectedColumns" :field="col.field"  :header="col.header" :key="col.field + '_' + index" style="min-width:10rem;  "
-                ></Column>
-                <!-- <Column field="email" header="البريد الالكتروني"  style="min-width:12rem"></Column>
-                <Column field="address" header=" العنوان"  style="min-width:12rem"></Column>
-                <Column field="primaryPhone" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
-                <Column field="secondaryPhone" header="  رقم الهاتف 2"  style="min-width:12rem"></Column> -->
-                <Column style="min-width:8rem">
 
-                    <template #body="slotProps">
+                        <Column field="name" header="الإسم" style="min-width:10rem;" class="font-bold" frozen></Column>
 
-            <RouterLink :to="'customersRecord/CustomerProfile/'+slotProps.data.name">
-            <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel"/>
-           </RouterLink>
-             
-            <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"  @click="deleteCustomersDialog=true" />
+                        <Column field="status" header="  الحاله " filterField="status" style="min-width:8rem"
+                            :showFilterMenu="false" :filterMenuStyle="{ width: '14rem' }">
+                            <template #body="{ data }">
 
-            <Dialog v-model:visible="deleteCustomersDialog" :style="{width: '450px'}" header="Confirm" :modal="true">
-            <div class="confirmation-content">
-                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-                <span v-if="slotProps.data">هل انت متأكد من حدف <b>{{slotProps.data.name}}</b> ؟</span>
-            </div>
-            <template #footer>
-                <Button label="No" icon="pi pi-times" text @click="deleteCustomersDialog = false"/>
-                <Button label="Yes" icon="pi pi-check" text @click="deleteCustomer" />
+                                <Tag :value="data.status" :severity="getSeverity(data.status)" />
+                            </template>
+                            <template #filter="{ filterModel, filterCallback }">
+                                <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="statuses"
+                                    placeholder="Select One" class="p-column-filter" style="min-width: 12rem"
+                                    :showClear="true">
+                                    <template #option="slotProps">
+                                        <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" />
+                                    </template>
+                                </Dropdown>
+                            </template>
+
+                        </Column>
+                        <Column v-for="(col, index) of selectedColumns" :field="col.field" :header="col.header"
+                            :key="col.field + '_' + index" style="min-width:10rem;  "></Column>
+                        <!-- <Column field="email" header="البريد الالكتروني"  style="min-width:12rem"></Column>
+                    <Column field="address" header=" العنوان"  style="min-width:12rem"></Column>
+                    <Column field="primaryPhone" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
+                    <Column field="secondaryPhone" header="  رقم الهاتف 2"  style="min-width:12rem"></Column> -->
+                        <Column style="min-width:8rem">
+
+                            <template #body="slotProps">
+
+                                <RouterLink :to="'customersRecord/CustomerProfile/' + slotProps.data.name">
+                                    <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel" />
+                                </RouterLink>
+
+                                <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"
+                                    @click="deleteCustomersDialog = true" />
+
+                                <Dialog v-model:visible="deleteCustomersDialog" :style="{ width: '450px' }" header="Confirm"
+                                    :modal="true">
+                                    <div class="confirmation-content">
+                                        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+                                        <span v-if="slotProps.data">هل انت متأكد من حدف <b>{{ slotProps.data.name }}</b>
+                                            ؟</span>
+                                    </div>
+                                    <template #footer>
+                                        <Button label="No" icon="pi pi-times" text @click="deleteCustomersDialog = false" />
+
+                                        <Button label="Yes" icon="pi pi-check" text
+                                            @click="deleteCustomer(slotProps.data.id)" />
+                                    </template>
+                                </Dialog>
+
+                                <toast />
+                            </template>
+                        </Column>
+                    </DataTable>
+                </div>
             </template>
-        </Dialog>
+        </Card>
 
-            <toast/>
-           </template>
-        </Column>
-</DataTable>
-</div>
-</template>
-</Card>
+</div></template>
 
-    </div>
-
-      
-    
-</template>
-
-<style>
-
-</style>
+<style></style>

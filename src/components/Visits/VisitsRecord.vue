@@ -39,6 +39,11 @@ const rotName = ref()
         <Card>
             <template #title>
                 سجل الزيارات
+
+                <RouterLink to="/visitsRecords/createVisit" style="text-decoration: none">
+                                    <Button icon="fa-solid fa-plus" v-tooltip="{value:'إنشاء زياره', fitContent:true}" label="" rounded style=" float: left;" class="mr-2">
+                                    </Button>
+                                </RouterLink>
             </template>
             <template #content>
                 <DataTable :value="visits" dataKey="id" filterDisplay="row"
@@ -59,10 +64,7 @@ const rotName = ref()
 
                                 </span>
 
-                                <RouterLink to="/visitsRecords/createVisit" style="text-decoration: none">
-                                    <Button icon="fa-solid fa-plus" label="انشاء زيارة" style="width: 150px;" class="mr-2">
-                                    </Button>
-                                </RouterLink>
+
                             </div>
                         </div>
 

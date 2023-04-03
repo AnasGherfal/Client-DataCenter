@@ -69,6 +69,10 @@ const getSeverity = (status: any) => {
             <template #title>
 
                 سجل الاشتراكات
+
+                <RouterLink to="/subscriptionsRecord/addSubsciptions" style="text-decoration: none">
+                                    <Button icon="fa-solid fa-plus" v-tooltip="{value:'إضافة اشتراك', fitContent:true}" label="" style="float: left;" rounded> </Button>
+                                </RouterLink>
             </template>
             <template #content>
 
@@ -90,9 +94,7 @@ const getSeverity = (status: any) => {
 
 
                                 <!-- <RouterLink :to="$route.params.id + '/users'"> -->
-                                <RouterLink to="/subscriptionsRecord/addSubsciptions" style="text-decoration: none">
-                                    <Button icon="fa-solid fa-plus" label="إضافة اشتراك" class="mr-2"> </Button>
-                                </RouterLink>
+
                             </div>
                         </div>
 

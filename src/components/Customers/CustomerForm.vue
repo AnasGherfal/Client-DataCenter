@@ -12,10 +12,6 @@ import InputText from 'primevue/inputtext';
 const store = useCustomersStore();
 
 
-
-
-
-
 // const rules = computed(() => {
 //     return {
 //         name: { required: helpers.withMessage('الاسم مطلوب', required) },
