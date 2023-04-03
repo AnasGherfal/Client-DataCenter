@@ -93,11 +93,7 @@ const getSeverity = (status: any) => {
                                 </span>
                             </div>
 
-                            <div class=" field col-12 md:col-6 lg:col-4 ">
-                                <RouterLink to="/subscriptionsRecord/addSubsciptions" style="text-decoration: none">
-                                    <Button icon="fa-solid fa-plus" label="إضافة اشتراك"> </Button>
-                                </RouterLink>
-                                </div>
+
                         </div>
 
                     </template>

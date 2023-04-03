@@ -117,6 +117,9 @@ axios.delete('https://localhost:7003/api/Customers/'+rotName.value.id )
     
             <template #title>
                 سجل العملاء
+                <RouterLink to="/customersRecord/addCustomers" style="text-decoration: none">
+                        <Button icon="fa-solid fa-plus" v-tooltip="{value:'إضافة عميل', fitContent:true}" label="" rounded style="  float: left;" class="mr-2"> </Button>
+                    </RouterLink>
             </template>
             <template #content >
 
@@ -165,12 +168,6 @@ axios.delete('https://localhost:7003/api/Customers/'+rotName.value.id )
                     <MultiSelect :modelValue="selectedColumns" :options="columns" optionLabel="header" @update:modelValue="onToggle"
                         placeholder="حدد الأعمدة" />
                     </div>
-
-                <div class=" field col-12 md:col-6 lg:col-4 ">
-                 <RouterLink to="/customersRecord/addCustomers" style="text-decoration: none">
-                <Button icon="fa-solid fa-plus" label="إضافة عميل" > </Button>
-                 </RouterLink>
-                </div>
 
             </div>
                    

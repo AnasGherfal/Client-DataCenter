@@ -64,13 +64,7 @@ const rotName = ref()
 
                                 </span>
                             </div>
-                            <div class=" field col-12 md:col-6 lg:col-4 ">
 
-                                <RouterLink to="/visitsRecords/createVisit" style="text-decoration: none">
-                                    <Button icon="fa-solid fa-plus" label="انشاء زيارة">
-                                    </Button>
-                                </RouterLink>
-                                </div>
                         </div>
 
                     </template>
