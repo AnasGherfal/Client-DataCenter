@@ -5,7 +5,7 @@ import axios from 'axios';
 
 
 
-export const useCounterStore = defineStore('counter', () => {
+export const usePackagesStore = defineStore('package', () => {
 
   const Services = ref();
   const packagesList= ref();

@@ -74,7 +74,6 @@ import { ref } from 'vue';
        v-tooltip="{value:'الشريط الجانبي', fitContent:true}" />
        
        <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
-       <Toast />
    </div>
 
 </template>

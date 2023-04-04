@@ -21,19 +21,19 @@ const router = createRouter({
       path: '/customersRecord',
       name: 'CustomersRecord',
 
-      component: () => import('../views/Customers/CustomerRecordView.vue'),   
+      component: () => import('../views/Customers/CustomersRecord.vue'),  
 
       children:[
         
         {
         path:'addCustomers',
         props:true,
-        component: () => import('../views/Customers/CustomerFormView.vue')
+        component: () => import('../views/Customers/CustomerForm.vue')
         },
         {
           path:'CustomerProfile/:nameId',
           props:true,
-          component: () => import('../components/Customers/CustomerProfile.vue')
+          component: () => import('../views/Customers/CustomerProfile.vue')
         }
       ]
       
@@ -59,19 +59,19 @@ const router = createRouter({
       path: '/visitsRecords',
       name: 'VisitsRecords',
 
-      component: () => import('../views/Visits/RecordView.vue'),
+      component: () => import('../views/Visits/VisitsRecord.vue'),
 
       children:[
         {
           path: 'createVisit',
           props:true,
     
-          component: () => import('../views/Visits/VisitView.vue')
+          component: () => import('../views/Visits/VisitForm.vue')
         },
         {
           path:'vistDetails/:id',
           props:true,
-          component: () => import('../components/Visits/VisitDetails.vue')
+          component: () => import('../views/Visits/VisitDetails.vue')
         }
       ]
     },

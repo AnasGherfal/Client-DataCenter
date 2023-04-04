@@ -4,8 +4,6 @@ import { FilterMatchMode } from 'primevue/api';
 import {useCustomersStore} from '@/stores/customers'
 import router from '@/router';
 import axios from 'axios';
-import { email, minLength, required, helpers } from "@vuelidate/validators";
-import { useVuelidate } from "@vuelidate/core";
 import { useToast } from 'primevue/usetoast';
 import Dialog from 'primevue/dialog';
 const toast = useToast();
@@ -40,11 +38,7 @@ const columns = ref([
 const statuses = ref(['نشط', 'غير نشط', 'منتهي الصلاحيه']);
 const loading = ref(false);
 
-onMounted(() => {
-      setTimeout(() => {
-        loading.value = false;
-      }, 2000); // Set the timeout to the amount of time you want the loading page to display
-    });
+
 
 const getSeverity = (status:any) => {
     switch (status) {
@@ -57,35 +51,11 @@ const getSeverity = (status:any) => {
 }
 
 const rotName = ref()
-// const rot=ref()
-
-
-
-
-
-// function goInfoPage(user: {}) {
-//     rotName.value = user;
-//     console.log(rotName.value.id)
-
-//     axios.delete('https://localhost:7003/api/Customers/'+ rotName.value.id )
-//       .then(response => {
-//        console.log(response)
-//        console.log(response.data.msg)
-//        toast.add({ severity: 'success', summary: 'Success Message', detail: response.data.msg, life: 3000 });
-
-       
-//       });
-       
- 
-
-//     // router.go("customersRecord/CustomerProfile")
-// }
 
 const forceRerender = () => {
   componentKey.value += 1;
 }
 
-//Delet Customer
 
 function getid(index: {}) {
     rotName.value = index;
@@ -99,7 +69,7 @@ axios.delete('https://localhost:7003/api/Customers/'+rotName.value.id )
 .then(response => {
  console.log(response)
  store.getdata();
- toast.add({ severity: 'success', summary: 'Confirmed', detail: response.data.msg, life: 3000 });
+ toast.add({ severity: 'warn', summary: 'تم الحذف', detail: response.data.msg, life: 3000 });
  deleteCustomersDialog.value = false
 
 });
@@ -215,13 +185,15 @@ axios.delete('https://localhost:7003/api/Customers/'+rotName.value.id )
                 <Button label="No" icon="pi pi-times" text @click="deleteCustomersDialog = false"/>
                 <Button label="Yes" icon="pi pi-check" text @click="deleteCustomer" />
             </template>
+            
 
         </Dialog>
-        <toast/>
 
         </template>
 
         </Column>
+        <Toast position="bottom-left"/>
+
 
 </DataTable>
 </div>

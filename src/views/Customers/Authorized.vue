@@ -122,7 +122,6 @@ const openModal = () => {
                 <Button @click="submitForm" icon="pi pi-check" label="إضافة" type="submit"   />
                 <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger"
                     style="margin-right: .5rem;" />
-                <Toast position="bottom-right" />
 
             </form>
             </template>
