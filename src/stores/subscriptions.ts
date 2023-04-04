@@ -7,7 +7,7 @@ export const useSubscriptionsStore = defineStore('customer', () => {
   const subscriptions = ref<any[]>([]);
 
   onMounted(async () => {
-    await axios.get("https://localhost:7003/api/")
+    await axios.get("https://localhost:7003/api/Subscription")
       .then(function (response) {
         subscriptions.value = response.data.content
 
@@ -19,8 +19,21 @@ export const useSubscriptionsStore = defineStore('customer', () => {
 
   })
   
+  function getSub(){
+   
+     axios.get("https://localhost:7003/api/api/Subscription")
+      .then(function (response) {
+        subscriptions.value = response.data.content
+
+        console.log(subscriptions)
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+ 
+  }
 
 
-  return {  subscriptions }
+  return {  subscriptions,getSub }
 
 })
