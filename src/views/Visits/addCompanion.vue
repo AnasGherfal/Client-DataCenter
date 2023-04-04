@@ -3,7 +3,6 @@ import { computed, reactive, ref } from 'vue';
 import { email, minLength, required, helpers, integer } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
-import { useCounterStore } from '@/stores/packages'
 import Divider from 'primevue/divider';
 import Dialog from 'primevue/dialog';
 
@@ -46,7 +45,6 @@ const resetForm = () => {
     props.push(state.compName)
         }
 
-    const store=useCounterStore()
     
 
 const displayModal = ref(false);

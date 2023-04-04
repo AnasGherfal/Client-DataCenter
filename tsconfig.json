@@ -2,7 +2,7 @@
   "extends": "@vue/tsconfig/tsconfig.web.json",
   "include": ["env.d.ts", "src/**/*", "src/**/*.vue", "layouts/IconGroup.vue.ts", "layouts/TopBar.vue.ts", "layouts/SideBar.vue.ts"],
   "compilerOptions": {
-    "lib": ["es2018", "DOM"  ],
+    "lib": ["es2022", "DOM"  ],
     "baseUrl": ".",
     "paths": {
       "primevue/*": [

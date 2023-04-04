@@ -4,7 +4,7 @@ import { defineStore } from 'pinia'
 
 
 
-export const useCounterStore = defineStore('counter', () => {
+export const usePackagesStore = defineStore('package', () => {
 
 
 const Services =ref([

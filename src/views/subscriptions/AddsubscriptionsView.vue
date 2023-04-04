@@ -4,6 +4,9 @@ import { required, helpers, minValue } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import BackButton from '@/components/BackButton.vue';
+import {useCustomersStore} from '@/stores/customers'
+
+const store = useCustomersStore();
 
 const state = reactive({
     nameCustomer: "",
@@ -70,7 +73,7 @@ const invalidDates = ref();
                     <div class="grid p-fluid ">
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label">
-                                <AutoComplete v-model="state.nameCustomer" optionLabel="nameCustomer" />
+                                <AutoComplete v-model="state.nameCustomer" :suggestions="store.customers" optionLabel="nameCustomer" />
                                 <label for="nameCustomer">اسم العميل </label>
                                 <error v-for="error in v$.nameCustomer.$errors" :key="error.$uid" class="p-error">{{
                                     error.$message }}</error>

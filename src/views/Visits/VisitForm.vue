@@ -6,8 +6,7 @@ import { useToast } from "primevue/usetoast";
 import { useCustomersStore } from '@/stores/customers';
 import addCompanion from './addCompanion.vue';
 import moment from 'moment';
-import BackButton from '../BackButton.vue';
-
+import BackButton from '@/components/BackButton.vue';
 const store = useCustomersStore();
 
 const state = reactive({
@@ -213,7 +212,6 @@ const resetForm = () => {
                     <Button @click="submitForm" icon="fa-solid fa-plus" label="إنشاء" type="submit" />
                     <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger"
                         style="margin-right: .5rem;" />
-                    <Toast position="bottom-right" />
                 </form>
 
             </template>
