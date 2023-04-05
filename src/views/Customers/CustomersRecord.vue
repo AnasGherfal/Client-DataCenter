@@ -40,7 +40,7 @@ const loading = ref(false);
 
 
 
-const getSeverity = (status:any) => {
+const getSeverity = (status:string) => {
     switch (status) {
         case 'نشط':
             return 'success';

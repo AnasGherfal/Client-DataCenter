@@ -6,10 +6,13 @@ import { useToast } from "primevue/usetoast";
 import { useCustomersStore } from '@/stores/customers';
 import addCompanion from './addCompanion.vue';
 import moment from 'moment';
+import type {Visit} from './modules/VisitModule'
 import BackButton from '@/components/BackButton.vue';
+
+
 const store = useCustomersStore();
 
-const state = reactive({
+const visit: Visit = reactive({
     customerName: "",
     authorizedName: "",
     companionName: "",
@@ -32,7 +35,7 @@ const visitReason = ref([
 const startDate =ref(new Date());
 const endDate = ref(new Date());
 
-const date = new Date((moment(state.startVisit).format('hh:mm a')))
+const date = new Date((moment(visit.startVisit).format('hh:mm a')))
 const minDate = ref(date);
 
 
@@ -58,22 +61,22 @@ const rules = computed(() => {
         authorizedName: { required: helpers.withMessage('الحقل مطلوب', required) },
         visitReason:{required: helpers.withMessage('الحقل مطلوب', required) },
         startVisit: { required: helpers.withMessage('  الحقل مطلوب', required) },
-        endVisit: { required: helpers.withMessage(' الحقل مطلوب', required), minValue: helpers.withMessage('تاريخ انتهاء الزياره يجب ان يكون بعد تاريخ البدايه', minValue(state.startVisit))},
+        endVisit: { required: helpers.withMessage(' الحقل مطلوب', required), minValue: helpers.withMessage('تاريخ انتهاء الزياره يجب ان يكون بعد تاريخ البدايه', minValue(visit.startVisit))},
 
     }
 })
 
     // Validate that end date is not before start date
     const isEndDateValid = computed(() => {
-      return !state.endVisit || !state.startVisit || state.endVisit >= state.startVisit ;
+      return !visit.endVisit || !visit.startVisit || visit.endVisit >= visit.startVisit ;
     });
 
 const toast = useToast();
 
-const v$ = useVuelidate(rules, state);
+const v$ = useVuelidate(rules, visit);
 
 function invalidDate(){
-    if(state.endVisit<= state.startVisit){
+    if(visit.endVisit<= visit.startVisit){
         alert('error')
     }
 }
@@ -88,14 +91,14 @@ const submitForm = async () => {
 }
 
 const resetForm = () => {
-    state.customerName = '';
-    state.authorizedName = '';
-    state.companionName = '';
-    state.visitReason = "";
-    state.startVisit = "";
-    state.endVisit = "",
-        state.visitDuration = "",
-        state.price = ""
+    visit.customerName = '';
+    visit.authorizedName = '';
+    visit.companionName = '';
+    visit.visitReason = "";
+    visit.startVisit = "";
+    visit.endVisit = "",
+    visit.visitDuration = "",
+    visit.price = ""
 }
 
 
@@ -119,7 +122,7 @@ const resetForm = () => {
 
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label">
-                                <MultiSelect v-model="state.customerName" :options="store.users" optionLabel="name"
+                                <MultiSelect v-model="visit.customerName" :options="store.customers" optionLabel="name"
                                     :filter="true" placeholder=" اختر عميل" :selectionLimit="1"/>
                                 <label for="customerName">العملاء</label>
 
@@ -132,7 +135,7 @@ const resetForm = () => {
 
                         <div class="field col-12 md:col-6 lg:col-4 ">
                             <span class="p-float-label">
-                                <MultiSelect v-model="state.authorizedName" :options="store.users" optionLabel="email"
+                                <MultiSelect v-model="visit.authorizedName" :options="store.customers" optionLabel="email"
                                     placeholder="اختر" emptySelectionMessage="ll" :selectionLimit="2" />
                                 <label for="authorizedName">المخولين</label>
 
@@ -145,7 +148,7 @@ const resetForm = () => {
 
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
-                                <Dropdown id="" v-model="state.visitReason" :options="visitReason" optionLabel="name" />
+                                <Dropdown id="" v-model="visit.visitReason" :options="visitReason" optionLabel="name" />
                                 <label for="visitReason">سبب الزيارة </label>
                                 <error v-for="error in v$.visitReason.$errors" :key="error.$uid" class="p-error">{{
                                     error.$message }}</error>
@@ -156,7 +159,7 @@ const resetForm = () => {
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
 
-                                <Calendar inputId="startVisit" v-model="state.startVisit"
+                                <Calendar inputId="startVisit" v-model="visit.startVisit"
                                     dateFormat="yy/mm/dd" :showTime="true" selectionMode="single" :minDate="startDate" 
                                     :showButtonBar="true" :manualInput="true" :stepMinute="5" hourFormat="12" @onChange="updateEndDate"  />
                                 <label for="startVisit">تاريخ بداية الزيارة </label>
@@ -168,7 +171,7 @@ const resetForm = () => {
 
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
-                                <Calendar inputId="endVisit" v-model="state.endVisit" dateFormat="yy/mm/dd"
+                                <Calendar inputId="endVisit" v-model="visit.endVisit" dateFormat="yy/mm/dd"
                                     :showTime="true" selectionMode="single" :minDate="startDate"  :showButtonBar="true"
                                     :manualInput="true" :stepMinute="5" hourFormat="12" />
                                 <label for="endVisit">تاريخ انتهاء الزيارة </label>
@@ -180,14 +183,14 @@ const resetForm = () => {
 
                         <div class="field col-6 md:col-3 lg:col-2">
                             <span class="p-float-label ">
-                                <InputText id="companionName" v-model="state.visitDuration" :readonly="true" />
+                                <InputText id="companionName" v-model="visit.visitDuration" :readonly="true" />
                                 <label for="companionName"> مدة الزيارة </label>
 
                             </span>
                         </div>
                         <div class="field col-6 md:col-3 lg:col-2">
                             <span class="p-float-label ">
-                                <InputText id="companionName" v-model="state.price" :readonly="true" />
+                                <InputText id="companionName" v-model="visit.price" :readonly="true" />
                                 <label for="companionName"> السعر </label>
                             </span>
                         </div>
