@@ -6,16 +6,17 @@ import { useToast } from "primevue/usetoast";
 import { useCustomersStore } from '@/stores/customers';
 import addCompanion from './addCompanion.vue';
 import router from '@/router';
+import type {Visit} from './modules/VisitModule'
 
 const store = useCustomersStore();
 
-const state = reactive({
-    CustomerName: "ليبيا اب",
+const visit:Visit = reactive({
+    customerName: "ليبيا اب",
     authorizedName: "شم",
     companionName: "م",
     visitReason: "",
-    expectedStartVisit:"12/11/2022"  ,
-    expectedEndVisit: "" ,
+    startVisit:"12/11/2022"  ,
+    endVisit: "" ,
     visitDuration: "ساعه",
     price: "100دينار",
 })
@@ -37,7 +38,7 @@ let hours = today.getHours();
 const minDate = ref(new Date());
 
 
-// const duration = Math.abs(state.expectedEndVisit - state.expectedStartVisit)
+// const duration = Math.abs(visit:Visit.endVisit - visit:Visit.startVisit)
 
 
  const invalidDates = ref();
@@ -50,14 +51,14 @@ const searchUsers = () => {
 
 const rules = computed(() => {
     return {
-        CustomerName: { required: helpers.withMessage('اسم العميل مطلوب', required) },
-        authorizedName: { required: helpers.withMessage('رقم المخول مطلوب', required) },
+        customerName: { required: helpers.withMessage('اسم العميل مطلوب', required) },
+        authorizedName: { required: helpers.withMessage(' المخول مطلوب', required) },
     }
 })
 
 const toast = useToast();
 
-const v$ = useVuelidate(rules, state);
+const v$ = useVuelidate(rules, visit);
 
 const submitForm = async () => {
     const result = await v$.value.$validate();
@@ -69,14 +70,14 @@ const submitForm = async () => {
 }
 
 const resetForm = () => {
-    state.CustomerName = '';
-    state.authorizedName = '';
-    state.companionName = '';
-    state.visitReason = "";
-    state.expectedStartVisit     = "";
-    state.expectedEndVisit =  "",
-    state.visitDuration = "",
-    state.price = ""
+    visit.customerName = '';
+    visit.authorizedName = '';
+    visit.companionName = '';
+    visit.visitReason = "";
+    visit.startVisit     = "";
+    visit.endVisit =  "",
+    visit.visitDuration = "",
+    visit.price = ""
 }
 
 function backButton() {
@@ -87,7 +88,7 @@ function backButton() {
 </script>
 
 <template >
-    <div>{{ state.expectedEndVisit }}
+    <div>{{ visit.endVisit }}
         <Card>
 
             <template #title>
@@ -101,15 +102,15 @@ function backButton() {
                 <div class="flex flex-row">
                     
                     <div class="flex-1">
-                        <h3 style="margin: 0;">اسم الجهة : {{ state.CustomerName }}</h3>
+                        <h3 style="margin: 0;">اسم الجهة : {{ visit.customerName }}</h3>
                          <div>
-                         <h4   v-if="state.authorizedName">المخولين:</h4>
-                         <p  class=" mr-2" v-for="aut in state.authorizedName">
+                         <h4   v-if="visit.authorizedName">المخولين:</h4>
+                         <p  class=" mr-2" v-for="aut in visit.authorizedName">
                            - {{ aut }}
                         </p>
 
-                        <h4   v-if="state.companionName" style="margin-bottom:0;">المرافقين:</h4>
-                        <p  class="mr-2" v-for="comp in state.companionName">
+                        <h4   v-if="visit.companionName" style="margin-bottom:0;">المرافقين:</h4>
+                        <p  class="mr-2" v-for="comp in visit.companionName">
                            - {{ comp }}
                         </p>
                         </div>
@@ -121,11 +122,11 @@ function backButton() {
 
             <h3 style="margin: 0;">تاريخ الزيارة :</h3>
             <p class="inline-block">
-             -تاريخ بدء الزيارة :   {{ state.expectedStartVisit }}
+             -تاريخ بدء الزيارة :   {{ visit.startVisit }}
             </p>
 
             <p class="inline-block">
-             -تاريخ انتهاء الزيارة :   {{ state.expectedEndVisit }}
+             -تاريخ انتهاء الزيارة :   {{ visit.endVisit }}
             </p>
 
         </div>
@@ -134,10 +135,10 @@ function backButton() {
         <div class="flex-1">
           
             <h3 style="margin: 0;">عدد ساعات الزيارة</h3>
-            <p>{{ state.visitDuration }}</p>
+            <p>{{ visit.visitDuration }}</p>
 
             <h3 style="margin: 0;">تكلفة الزيارة :</h3>
-            <p >{{ state.price }}</p>
+            <p >{{ visit.price }}</p>
         </div>
     </div>
             </template>

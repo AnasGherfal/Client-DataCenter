@@ -3,10 +3,8 @@ import OverlayPanel from 'primevue/overlaypanel';
 import { ref, onMounted } from 'vue';
 import { useToast } from 'primevue/usetoast';
 
-import {useCustomersStore} from '@/stores/customers'
 import axios from 'axios';
 
-const store = useCustomersStore();
  
 
         const toast = useToast();
