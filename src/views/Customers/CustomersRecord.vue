@@ -6,6 +6,7 @@ import router from '@/router';
 import axios from 'axios';
 import { useToast } from 'primevue/usetoast';
 import Dialog from 'primevue/dialog';
+import AddBotton from '@/components/AddBotton.vue';
 const toast = useToast();
 
 
@@ -69,7 +70,7 @@ axios.delete('https://localhost:7003/api/Customers/'+rotName.value.id )
 .then(response => {
  console.log(response)
  store.getdata();
- toast.add({ severity: 'warn', summary: 'تم الحذف', detail: response.data.msg, life: 3000 });
+ toast.add({ severity: 'success', summary: 'تم الحذف', detail: response.data.msg, life: 3000 });
  deleteCustomersDialog.value = false
 
 });
@@ -87,9 +88,8 @@ axios.delete('https://localhost:7003/api/Customers/'+rotName.value.id )
     
             <template #title>
                 سجل العملاء
-                <RouterLink to="/customersRecord/addCustomers" style="text-decoration: none">
-                        <Button icon="fa-solid fa-plus" v-tooltip="{value:'إضافة عميل', fitContent:true}" label="" rounded style="  float: left;" class="mr-2"> </Button>
-                    </RouterLink>
+                <AddBotton name-button="اضافة عميل" rout-name="/customersRecord/addCustomers" />
+
             </template>
             <template #content >
 
@@ -145,7 +145,7 @@ axios.delete('https://localhost:7003/api/Customers/'+rotName.value.id )
                 
                 <Column field="name" header="الإسم"  style="min-width:10rem;"  class="font-bold" frozen></Column>
                 
-                <Column field="status" header="  الحاله " filterField="status" style="min-width:8rem" :showFilterMenu="false" :filterMenuStyle="{ width: '14rem' }">
+                <Column field="status" header="  الحاله " filterField="status" style="width:4rem" :showFilterMenu="false" :filterMenuStyle="{ width: '4rem' }">
                     <template #body="{ data }">
                         
                     <Tag :value="data.status" :severity="getSeverity(data.status)" />

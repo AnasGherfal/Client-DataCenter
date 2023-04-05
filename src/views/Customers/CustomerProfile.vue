@@ -7,13 +7,14 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import router from '@/router';
 import { RouterLink, routerKey } from 'vue-router';
 import axios from "axios"
+import type { Customer } from './CustomersModel';
 
 
 const num= defineProps<{
     nameId: string
 }>()
 
-const tab= ref({})
+const tab=ref({})
 
 onMounted(async () => {
     await axios.get("https://localhost:7003/api/Customers/")
@@ -26,18 +27,15 @@ onMounted(async () => {
       })
 
   })
-  console.log(tab.value)
+  console.log(tab)
 
   console.log(typeof(tab))
-//   const prof = tab
 
 </script>
 
 <template>
-                {{ tab }}   
-
 <InfoCustomer
-:customer="tab" />
+:customer="tab" :key="tab.id"/>
 
     
     <card class=" shadow-2 p-3 mt-3 border-round-2xl">
