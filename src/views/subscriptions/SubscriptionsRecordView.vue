@@ -4,6 +4,7 @@ import { FilterMatchMode } from 'primevue/api';
 import { useCustomersStore } from '@/stores/customers'
 import axios from 'axios';
 import Row from 'primevue/row';
+import AddBotton from '@/components/AddBotton.vue';
 // optional
 
 const store = useCustomersStore();
@@ -69,10 +70,7 @@ const getSeverity = (status: any) => {
             <template #title>
 
                 سجل الاشتراكات
-
-                <RouterLink to="/subscriptionsRecord/addSubsciptions" style="text-decoration: none">
-                                    <Button icon="fa-solid fa-plus" v-tooltip="{value:'إضافة اشتراك', fitContent:true}" label="" style="float: left;" rounded> </Button>
-                                </RouterLink>
+                <AddBotton name-button="إضافة اشتراك" rout-name="/subscriptionsRecord/addSubsciptions" />
             </template>
             <template #content>
 

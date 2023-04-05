@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
 import router from '@/router';
 import axios from 'axios';
+import AddBotton from '@/components/AddBotton.vue';
 
 
 const visits = ref(['']);
@@ -39,11 +40,8 @@ const rotName = ref()
         <Card>
             <template #title>
                 سجل الزيارات
+                <AddBotton name-button="إنشاء زياره" rout-name="/visitsRecords/createVisit" />
 
-                <RouterLink to="/visitsRecords/createVisit" style="text-decoration: none">
-                                    <Button icon="fa-solid fa-plus" v-tooltip="{value:'إنشاء زياره', fitContent:true}" label="" rounded style=" float: left;" class="mr-2">
-                                    </Button>
-                                </RouterLink>
             </template>
             <template #content>
                 <DataTable :value="visits" dataKey="id" filterDisplay="row"

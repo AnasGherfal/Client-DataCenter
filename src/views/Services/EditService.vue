@@ -26,11 +26,11 @@ const state = reactive({
 const rules = computed(() =>{
     return {
     name:{  required: helpers.withMessage('ادخل اسم الباقة',required)},
-    amountOfPower: {required: helpers.withMessage('يجب تعبئة ه>ا الحقل',required)},
-    dns: {required: helpers.withMessage('يجب تعبئة ه>ا الحقل',required)},
-    acpPort: {required: helpers.withMessage('يجب تعبئة ه>ا الحقل',required)},
-    monthlyVisits: {required: helpers.withMessage('يجب تعبئة ه>ا الحقل',required)},
-    price: {required: helpers.withMessage('يجب تعبئة ه>ا الحقل',required)},
+    amountOfPower: {required: helpers.withMessage('يجب تعبئة هذا الحقل',required)},
+    dns: {required: helpers.withMessage('يجب تعبئة هذا الحقل',required)},
+    acpPort: {required: helpers.withMessage('يجب تعبئة هذا الحقل',required)},
+    monthlyVisits: {required: helpers.withMessage('يجب تعبئة هذا الحقل',required)},
+    price: {required: helpers.withMessage('يجب تعبئة هذا الحقل',required)},
     }
 })
 

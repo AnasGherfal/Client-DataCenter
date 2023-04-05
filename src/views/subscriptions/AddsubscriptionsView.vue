@@ -15,10 +15,10 @@ const service=ref();
 const ServicesList=ref();
 
 const state = reactive({
-    nameCustomer: '',
+    nameCustomer: "",
     startDate:"" ,
-    endtDate: "" ,
-    subscriptionType: '',
+    endtDate: "",
+    subscriptionType: "",
     File: null,
 
 })
@@ -46,14 +46,8 @@ onMounted(async () => {
       })
 
   }) 
-  console.log(service)
+  
 
-const subrequest = reactive({
-    serviceId: state.subscriptionType,
-    customerId: customer,
-    startDate: state.startDate,
-    endDate: state.endtDate,
-})
 
 console.log(state.startDate)
 
@@ -64,6 +58,16 @@ const rules = computed(() => {
         endtDate: { required: helpers.withMessage(' الحقل مطلوب', required), minValue: helpers.withMessage('تاريخ انتهاء الاشتراك يجب ان يكون بعد تاريخ البدايه', minValue(state.startDate)) },
         subscriptionType: { required: helpers.withMessage('الحقل مطلوب', required) },
     }
+})
+
+console.log(state.subscriptionType.id)
+
+const subrequest = reactive({
+    serviceId: state.subscriptionType.id,
+    customerId: customer,
+    startDate: state.startDate,
+    endDate: state.endtDate,
+    subscriptionFileId:null
 })
 
 const toast = useToast();
@@ -125,7 +129,6 @@ const invalidDates = ref();
 
             <template #content>
                 <form @submit.prevent="submitForm">
-{{ subrequest.customerId }}
 {{ state }}
 
                     <div class="grid p-fluid ">
@@ -148,6 +151,8 @@ const invalidDates = ref();
                                     error.$message }}</error>
                             </span>
                         </div>
+{{ state.subscriptionType.id }}
+{{ subrequest }}
 
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
