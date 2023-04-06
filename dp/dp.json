@@ -160,6 +160,8 @@
   "visits": [
     {
       "id": 1,
+      "customerName": "anas",
+      "authorizedName": "admin",
       "visitReason": "صيانه",
       "visitDuration": "1 ساعه ",
       "visitPrice": "120 دينار"

@@ -7,7 +7,6 @@ import axios from "axios"
 export const useCustomersStore = defineStore('customer', () => {
 
   const customers = ref();
-  const data = ref()
 
   onMounted(async () => {
     await getdata();
@@ -25,14 +24,6 @@ function getdata(){
   })
   
  }
-
-
-
-
-
-  
-
-
-  return {  customers, data, getdata }
+  return {  customers, getdata }
 
 })

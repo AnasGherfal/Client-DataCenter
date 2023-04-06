@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
-import {required, helpers, minValue  } from "@vuelidate/validators";
+import { required, helpers, minValue } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
-import { useCustomersStore } from '@/stores/customers';
+import { useVistisStore } from '@/stores/visits';
 import addCompanion from './addCompanion.vue';
 import moment from 'moment';
-import type {Visit} from './modules/VisitModule'
+import type { Visit } from './modules/VisitModule'
 import BackButton from '@/components/BackButton.vue';
+import router from '@/router';
+import axios from 'axios';
 
 
-const store = useCustomersStore();
+const store = useVistisStore();
+const loading = ref(false);
 
 const visit: Visit = reactive({
     customerName: "",
@@ -32,7 +35,7 @@ const visitReason = ref([
 ])
 
 
-const startDate =ref(new Date());
+const startDate = ref(new Date());
 const endDate = ref(new Date());
 
 const date = new Date((moment(visit.startVisit).format('hh:mm a')))
@@ -40,10 +43,10 @@ const minDate = ref(date);
 
 
 const updateEndDate = () => {
-      if (startDate.value > endDate.value) {
+    if (startDate.value > endDate.value) {
         endDate.value = startDate.value;
-      }
-    };
+    }
+};
 
 
 const invalidDates = ref();
@@ -59,33 +62,54 @@ const rules = computed(() => {
     return {
         customerName: { required: helpers.withMessage(' الحقل مطلوب', required) },
         authorizedName: { required: helpers.withMessage('الحقل مطلوب', required) },
-        visitReason:{required: helpers.withMessage('الحقل مطلوب', required) },
+        visitReason: { required: helpers.withMessage('الحقل مطلوب', required) },
         startVisit: { required: helpers.withMessage('  الحقل مطلوب', required) },
-        endVisit: { required: helpers.withMessage(' الحقل مطلوب', required), minValue: helpers.withMessage('تاريخ انتهاء الزياره يجب ان يكون بعد تاريخ البدايه', minValue(visit.startVisit))},
+        endVisit: { required: helpers.withMessage(' الحقل مطلوب', required), minValue: helpers.withMessage('تاريخ انتهاء الزياره يجب ان يكون بعد تاريخ البدايه', minValue(visit.startVisit)) },
 
     }
 })
 
-    // Validate that end date is not before start date
-    const isEndDateValid = computed(() => {
-      return !visit.endVisit || !visit.startVisit || visit.endVisit >= visit.startVisit ;
-    });
+// Validate that end date is not before start date
+const isEndDateValid = computed(() => {
+    return !visit.endVisit || !visit.startVisit || visit.endVisit >= visit.startVisit;
+});
 
 const toast = useToast();
 
 const v$ = useVuelidate(rules, visit);
 
-function invalidDate(){
-    if(visit.endVisit<= visit.startVisit){
+function invalidDate() {
+    if (visit.endVisit <= visit.startVisit) {
         alert('error')
     }
 }
 
 const submitForm = async () => {
     const result = await v$.value.$validate();
-
     if (result) {
-        toast.add({ severity: 'success', summary: 'Success Message', detail: 'تمت إضافة زيارة', life: 3000 });
+
+        loading.value = true;
+
+        setTimeout(() => {
+            router.go(-1)
+            loading.value = false;
+
+        }, 1000);
+
+        await axios.post("http://localhost:3000/visits", visit)
+            .then(function (response) {
+                toast.add({ severity: 'success', summary: 'تمت الاضافه', detail: response.data.msg, life: 3000 });
+
+                console.log(visit)
+                console.log(response)
+                store.getdata();
+
+            })
+            .catch(function (error) {
+                console.log(error)
+            })
+    } else {
+        console.log("not valid")
     }
 
 }
@@ -97,8 +121,8 @@ const resetForm = () => {
     visit.visitReason = "";
     visit.startVisit = "";
     visit.endVisit = "",
-    visit.visitDuration = "",
-    visit.price = ""
+        visit.visitDuration = "",
+        visit.price = ""
 }
 
 
@@ -110,9 +134,10 @@ const resetForm = () => {
         <Card>
             <template #title>
                 إنشاء زيارة
-                <BackButton style="float: left;"/>
+                <BackButton style="float: left;" />
 
                 <Divider />
+                {{ visit.customerName }}
 
             </template>
             <template #content>
@@ -122,8 +147,8 @@ const resetForm = () => {
 
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label">
-                                <MultiSelect v-model="visit.customerName" :options="store.customers" optionLabel="name"
-                                    :filter="true" placeholder=" اختر عميل" :selectionLimit="1"/>
+                                <MultiSelect v-model="visit.customerName" :options="store.visits" optionLabel="customerName"
+                                    :filter="true" placeholder=" اختر عميل" :selectionLimit="1" />
                                 <label for="customerName">العملاء</label>
 
                                 <error v-for="error in v$.customerName.$errors" :key="error.$uid" class="p-error">{{
@@ -135,8 +160,9 @@ const resetForm = () => {
 
                         <div class="field col-12 md:col-6 lg:col-4 ">
                             <span class="p-float-label">
-                                <MultiSelect v-model="visit.authorizedName" :options="store.customers" optionLabel="email"
-                                    placeholder="اختر" emptySelectionMessage="ll" :selectionLimit="2" />
+                                <MultiSelect v-model="visit.authorizedName" :options="store.visits"
+                                    optionLabel="authorizedName" placeholder="اختر" emptySelectionMessage="ll"
+                                    :selectionLimit="2" />
                                 <label for="authorizedName">المخولين</label>
 
                                 <error v-for="error in v$.authorizedName.$errors" :key="error.$uid" class="p-error">{{
@@ -159,21 +185,21 @@ const resetForm = () => {
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
 
-                                <Calendar inputId="startVisit" v-model="visit.startVisit"
-                                    dateFormat="yy/mm/dd" :showTime="true" selectionMode="single" :minDate="startDate" 
-                                    :showButtonBar="true" :manualInput="true" :stepMinute="5" hourFormat="12" @onChange="updateEndDate"  />
+                                <Calendar inputId="startVisit" v-model="visit.startVisit" dateFormat="yy/mm/dd"
+                                    :showTime="true" selectionMode="single" :minDate="startDate" :showButtonBar="true"
+                                    :manualInput="true" :stepMinute="5" hourFormat="12" @onChange="updateEndDate" />
                                 <label for="startVisit">تاريخ بداية الزيارة </label>
                                 <error v-for="error in v$.startVisit.$errors" :key="error.$uid" class="p-error">{{
                                     error.$message }}</error>
-                                
+
                             </span>
                         </div>
 
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
-                                <Calendar inputId="endVisit" v-model="visit.endVisit" dateFormat="yy/mm/dd"
-                                    :showTime="true" selectionMode="single" :minDate="startDate"  :showButtonBar="true"
-                                    :manualInput="true" :stepMinute="5" hourFormat="12" />
+                                <Calendar inputId="endVisit" v-model="visit.endVisit" dateFormat="yy/mm/dd" :showTime="true"
+                                    selectionMode="single" :minDate="startDate" :showButtonBar="true" :manualInput="true"
+                                    :stepMinute="5" hourFormat="12" />
                                 <label for="endVisit">تاريخ انتهاء الزيارة </label>
                                 <error v-for="error in v$.endVisit.$errors" :key="error.$uid" class="p-error">{{
                                     error.$message }}</error>
