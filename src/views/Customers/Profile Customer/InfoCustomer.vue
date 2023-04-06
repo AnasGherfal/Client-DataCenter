@@ -7,16 +7,22 @@ import {useCounterStore} from '@/stores/counter'
 import axios from 'axios';
 
 import BackButton from '@/components/BackButton.vue';
+import type { Customer } from '../CustomersModel';
 
 const actEdit=ref(true);
 const store = useCounterStore();
 
-const dataClinet = defineProps<{
-customer: any
-
+const dataClinet= defineProps<{
+customer:any
 }>()
-  
-  const state = dataClinet.customer 
+
+  const state:Customer =reactive({
+    name: dataClinet.customer.name,
+    email: dataClinet.customer.email,
+    primaryPhone: dataClinet.customer.primaryPhone,
+    secondaryPhone: dataClinet.customer.secondaryPhone,
+    address:''
+  })  
 
 const rules = computed(() =>{
     return {
@@ -37,10 +43,13 @@ const submitForm = async () => {
     const result = await v$.value.$validate();
 
     if(result){
+
     axios.put("https://localhost:7003/api/Customers/"+dataClinet.customer.id,state)
    .then(function(response) {
     console.log(response.data.msg)
     toast.add({severity:'success', summary: 'Success Message', detail:response.data.msg, life: 3000});
+    actEdit.value=true;
+    console.log(actEdit.value)
 })
 .catch(function(error){
    console.log(error)
@@ -50,32 +59,7 @@ const submitForm = async () => {
     console.log("empty")
 }
 
-
         }
-
-
-
-// const resetForm = () => {
-//     state.name = '';
-//     state.email = '';
-//     state.primaryPhone = '';
-//     state.secondaryPhone = '';
-//     state.address = '';
-//     state.File = '';
-
-
-//         }
-
-function focusname(){
-    if(state.name){
-     return true
-    }
-}
-
-
-
-
-
 
 </script>
 
@@ -114,7 +98,6 @@ function focusname(){
                         </span>
                     </div>
 
-{{ dataClinet.customer }}
  
                    <div class="field col-12 md:col-6">
                         <span class="p-float-label ">
@@ -133,7 +116,6 @@ function focusname(){
                         </span>
                     </div>
 
-                    {{ state }}
 
                     <div class="field col-12 md:col-6">
                         <span class="p-float-label ">
@@ -150,15 +132,16 @@ function focusname(){
                     </div>
 
                 </div>
+                <toast/>
 
             </form>
         </div>
 
     <div v-if="!actEdit">
         <Button  @click="submitForm" icon="fa-solid fa-plus" label="تعديل" type="submit"  />
-
         <Button  @click="actEdit=!actEdit" icon="fa-solid fa-delete-left" label="إلغاء التعديل" class="p-button-danger" style="margin-right: .5em;" />
     </div>
+    <Toast position="bottom-left" />
 
 
         </div>
