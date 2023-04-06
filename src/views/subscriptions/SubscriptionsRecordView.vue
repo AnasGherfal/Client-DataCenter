@@ -8,7 +8,7 @@ import AddBotton from '@/components/AddBotton.vue';
 // optional
 
 const store = useCustomersStore();
-
+const sublist=ref();
 
 const filters = ref({
     'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -16,9 +16,9 @@ const filters = ref({
 
 const columns = ref([
 
-    { field: 'address', header: 'تاريخ بداية الاشتراك' },
-    { field: 'phoneNumber1', header: 'تاريخ انتهاء الاشتراك' },
-    { field: 'phoneNumber2', header: 'الباقه' }
+    { field: 'startDate', header: 'تاريخ بداية الاشتراك' },
+    { field: 'endDate', header: 'تاريخ انتهاء الاشتراك' },
+    { field: 'serviceName', header: 'الباقه' }
 
 ]);
 const selectedColumns = ref(columns.value);
@@ -34,17 +34,18 @@ const statuses = ref(['نشط', 'غير نشط', 'من',]);
 
 
 
-//  onMounted( () =>{
-//          axios.get("http://localhost:3000/users")
-//         .then(function(response) {
-//             users.value = response.data;
-//         console.log(users)
-//     })
-//     .catch(function(error){
-//         console.log(error)
-//       })
+ onMounted( async () =>{
+    await  axios.get("https://localhost:7003/api/Subscription?pagenum=1&pagesize=5")
+  .then(function (response) {
+    sublist.value = response.data.content
 
-//     })
+    console.log(sublist)
+  })
+  .catch(function (error) {
+    console.log(error)
+  })
+
+    })
 
 const getSeverity = (status: any) => {
     switch (status) {
@@ -75,8 +76,8 @@ const getSeverity = (status: any) => {
             <template #content>
 
 
-                <DataTable ref="dt" :value="store.users" dataKey="id" :paginator="true" :rows="5" v-model:filters="filters"
-                    :globalFilterFields="['name', 'status']"
+                <DataTable ref="dt" :value="sublist" dataKey="id" :paginator="true" :rows="5" v-model:filters="filters"
+                    :globalFilterFields="['serviceName', 'customerName']"
                     paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown"
                     :rowsPerPageOptions="[5, 10, 25]"
                     currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} عميل" responsiveLayout="scroll">
@@ -95,7 +96,7 @@ const getSeverity = (status: any) => {
                         </div>
 
                     </template>
-                    <Column field="name" header="الإسم" style="min-width:10rem;" class="font-bold"></Column>
+                    <Column field="customerName" header="اسم العميل" style="min-width:10rem;" class="font-bold"></Column>
                     <Column v-for="(col, index) of selectedColumns" :field="col.field" :header="col.header"
                         :key="col.field + '_' + index" style="min-width:10rem;  "></Column>
 

@@ -7,39 +7,40 @@ import BackButton from '@/components/BackButton.vue';
 import { useSubscriptionsStore } from '@/stores/subscriptions';
 import axios from 'axios';
 import router from '@/router';
+import { useCustomersStore } from '@/stores/customers';
+import type { Subscription } from './SubscriptionsModels';
+
 
 const store = useSubscriptionsStore();
+const storeCustomer = useCustomersStore();
+
 const loading = ref(false);
-const customer=ref();
+let customer=ref();
 const service=ref();
 const ServicesList=ref();
 
-const state = reactive({
-    nameCustomer: "",
-    startDate:"" ,
-    endtDate: "",
-    subscriptionType: "",
-    File: null,
+const state:Subscription = reactive({
+    serviceId:null,
+    customerId:null,
+    startDate:'',
+    endDate:'',
+    subscriptionFileId:null
 
 })
 
-onMounted(async () => {
-    await axios.get("https://localhost:7003/api/Customers/")
-      .then(function (response) {
-        customer.value = response.data.content.filter((users:{name:String}) => users.name === state.nameCustomer)[0].id;
-      })
-      .catch(function (error) {
-        console.log(error)
-      })
+const rules1 = computed(() => {
+state.customerId=customer.value
+})
 
-  })
-  console.log(customer)
+
+  
+
 
   onMounted(async () => {
     await axios.get("https://localhost:7003/api/Service")
       .then(function (response) {
         ServicesList.value= response.data.content;
-        service.value = response.data.content.filter((users:{name:String}) => users.name === state.subscriptionType)[0].id;
+        service.value = response.data.content.filter((users:{name:String}) => users.name === state.serviceId)[0].id;
       })
       .catch(function (error) {
         console.log(error)
@@ -53,40 +54,42 @@ console.log(state.startDate)
 
 const rules = computed(() => {
     return {
-        nameCustomer: { required: helpers.withMessage('الحقل مطلوب', required) },
+        customerId: { required: helpers.withMessage('الحقل مطلوب', required) },
         startDate: { required: helpers.withMessage('الحقل مطلوب', required) },
-        endtDate: { required: helpers.withMessage(' الحقل مطلوب', required), minValue: helpers.withMessage('تاريخ انتهاء الاشتراك يجب ان يكون بعد تاريخ البدايه', minValue(state.startDate)) },
-        subscriptionType: { required: helpers.withMessage('الحقل مطلوب', required) },
+        endDate: { required: helpers.withMessage(' الحقل مطلوب', required), minValue: helpers.withMessage('تاريخ انتهاء الاشتراك يجب ان يكون بعد تاريخ البدايه', minValue(state.startDate)) },
+        serviceId: { required: helpers.withMessage('الحقل مطلوب', required) },
     }
 })
 
-console.log(state.subscriptionType.id)
-
-const subrequest = reactive({
-    serviceId: state.subscriptionType.id,
-    customerId: customer,
-    startDate: state.startDate,
-    endDate: state.endtDate,
-    subscriptionFileId:null
-})
+console.log(state)
+const serId=ref();
 
 const toast = useToast();
 
 const v$ = useVuelidate(rules, state);
 
 const submitForm = async () => {
+    
     const result = await v$.value.$validate();
 
     if (result) {
         loading.value = true;
-
-            loading.value = false;
+        
+    const subrequest:Subscription = reactive({
+    serviceId: state.serviceId.id,
+    customerId: state.customerId.id,
+    startDate: state.startDate,
+    endDate: state.endDate,
+    
+           }) 
+           console.log(subrequest)
+        loading.value = false;
 
 
         await axios.post("https://localhost:7003/api/Subscription", subrequest)
                 .then(function (response) {
              
-                  console.log(subrequest)
+                  console.log(state)
                     console.log(response)
                     store.getSub();
                   })
@@ -100,17 +103,33 @@ const submitForm = async () => {
 }
 
 const resetForm = () => {
-        state.File = null,
-        state.endtDate = '',
-        state.startDate = '',
-        state.nameCustomer = '',
-        state.subscriptionType = ''
+
+    state.serviceId=null,
+    state.customerId=null,
+    state.startDate='',
+    state.endDate='',
+    state.subscriptionFileId=null
+
 }
 
 const minDate = ref(new Date());
 const invalidDates = ref();
 
+const selectedCustomer = ref();
+const filteredCountries = ref();
 
+
+const search = (event:any) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            filteredCountries.value = [...storeCustomer.customers];
+        } else {
+            filteredCountries.value = storeCustomer.customers.filter((users:{name:String}) => {
+                return users.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 250);
+}
 
 </script>
 
@@ -129,16 +148,18 @@ const invalidDates = ref();
 
             <template #content>
                 <form @submit.prevent="submitForm">
-{{ state }}
 
                     <div class="grid p-fluid ">
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label">
-                                <AutoComplete   v-model="state.nameCustomer" optionLabel="nameCustomer" />
-                                <label for="nameCustomer">اسم العميل </label>
-                                <error v-for="error in v$.nameCustomer.$errors" :key="error.$uid" class="p-error">{{
+                                <AutoComplete v-model="state.customerId"  optionLabel="name" :suggestions="filteredCountries" @complete="search" />
+                                <label for="customerName">العملاء</label>
+
+                                <error v-for="error in v$.customerId.$errors" :key="error.$uid" class="p-error">{{
                                     error.$message }}</error>
+
                             </span>
+
                         </div>
 
                         <div class="field col-12 md:col-6 lg:col-4">
@@ -151,40 +172,40 @@ const invalidDates = ref();
                                     error.$message }}</error>
                             </span>
                         </div>
-{{ state.subscriptionType.id }}
-{{ subrequest }}
+{{ state }}
+<br>
+{{ customer }}
 
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
-                                <Calendar inputId="endDate" v-model="state.endtDate" dateFormat="yy/mm/dd"
+                                <Calendar inputId="endDate" v-model="state.endDate" dateFormat="yy/mm/dd"
                                     selectionMode="single" :minDate="minDate" :showButtonBar="true" :manualInput="false"
                                     :disabledDates="invalidDates" />
                                 <label for="endtDate">تاريخ انتهاء الاشتراك</label>
-                                <error v-for="error in v$.endtDate.$errors" :key="error.$uid" class="p-error">{{
+                                <error v-for="error in v$.endDate.$errors" :key="error.$uid" class="p-error">{{
                                     error.$message }}</error>
 
                             </span>
                         </div>
-                        {{ subrequest.serviceId }}
+                        {{state.customerId}}
 
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
-                                <Dropdown id="subscriptionType" :options="ServicesList" optionLabel="name" v-model="state.subscriptionType" placeholder="اختر الباقه"
+                                <Dropdown id="subscriptionType" :options="ServicesList" optionLabel="name" v-model="state.serviceId" placeholder="اختر الباقه"
                                     emptyMessage="لايوجد باقات" />
                                 <label for="subscriptionType">الباقة</label>
-                                <error v-for="error in v$.subscriptionType.$errors" :key="error.$uid" class="p-error">{{
+                                <error v-for="error in v$.serviceId.$errors" :key="error.$uid" class="p-error">{{
                                     error.$message }}</error>
                             </span>
                         </div>
 
                         <div class="field col-12 md:col-6 lg:col-4" style="height: 1%;">
-                            <FileUpload v-model="state.File"
+                            <FileUpload v-model="state.subscriptionFileId"
                                 style="font-family: tajawal; width: 100%; height: 40px; border-radius: 10px; background-color: white; color:black; border-color: gray"
                                 mode="basic" name="File" url="./upload" chooseLabel=" ارفق ملف" cancelLabel="إلغاء"
                                 :showUploadButton="false" :showCancelButton="false" :maxFileSize="1000000"
                                 invalidFileSizeMessage="Exceeded the maximum file size" />
                         </div>
-
 
                     </div>
                     <Button @click="submitForm" class="p-button-primry" icon="fa-solid fa-plus" label="إضافة" type="submit" />
