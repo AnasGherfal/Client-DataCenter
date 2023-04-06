@@ -175,15 +175,15 @@ axios.delete('https://localhost:7003/api/Customers/'+rotName.value.id )
              
             <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"  @click="getid(slotProps.data)" />
 
-            <Dialog  v-model:visible="deleteCustomersDialog" :style="{width: '450px'}" header="Confirm" :modal="true">
+            <Dialog  v-model:visible="deleteCustomersDialog" :style="{width: '450px'}" header="تأكيد" :modal="true">
 
             <div  class="confirmation-content">
-                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-                <span v-if="rotName">هل انت متأكد من حدف <b>{{rotName.name}}</b> ؟</span>
+                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem; color: red;" />
+                <span v-if="rotName">هل انت متأكد من حذف <b>{{rotName.name}}</b> ؟</span>
             </div>
             <template #footer>
-                <Button label="No" icon="pi pi-times" text @click="deleteCustomersDialog = false"/>
-                <Button label="Yes" icon="pi pi-check" text @click="deleteCustomer" />
+                <Button label="لا" icon="pi pi-times" text @click="deleteCustomersDialog = false"/>
+                <Button label="نعم" icon="pi pi-check" text @click="deleteCustomer" />
             </template>
             
 
