@@ -68,13 +68,14 @@ const submitForm = async () => {
     <div>
         <Card >
             <template #title>
-                <i class="fa-solid fa-user"></i>
+                <!-- <i class="fa-solid fa-user"></i> -->
                    البيانات الشخصية  
 
                    <BackButton style="float: left;"/>
 
-                   <Button v-if="actEdit"  @click="actEdit=!actEdit"
+                   <Button v-if="actEdit"   @click="actEdit=!actEdit"
              icon=" fa-solid fa-pen"
+             
              style="width: 30px;height: 30px; margin-right: 10px;"
              class=" p-button-primary p-button-text"
              v-tooltip="{value:'تعديل البيانات الشخصية', fitContent:true}" />
