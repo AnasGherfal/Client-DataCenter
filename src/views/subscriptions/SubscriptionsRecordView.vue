@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { computed, inject, onMounted, ref } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
-import { useCustomersStore } from '@/stores/customers'
-import axios from 'axios';
 import Row from 'primevue/row';
 import AddBotton from '@/components/AddBotton.vue';
+import { useSubscriptionsStore } from '@/stores/subscriptions';
 // optional
 
-const store = useCustomersStore();
+const store = useSubscriptionsStore();
 const sublist=ref();
 
 const filters = ref({
@@ -34,18 +33,15 @@ const statuses = ref(['نشط', 'غير نشط', 'من',]);
 
 
 
- onMounted( async () =>{
-    await  axios.get("https://localhost:7003/api/Subscription?pagenum=1&pagesize=25")
-  .then(function (response) {
-    sublist.value = response.data.content
 
-    console.log(sublist)
-  })
-  .catch(function (error) {
-    console.log(error)
-  })
 
-    })
+
+
+const rotame=ref()
+function getid(index: {}) {
+    rotame.value = index;
+    console.log(rotame.value)
+}
 
 </script>
 
@@ -63,7 +59,7 @@ const statuses = ref(['نشط', 'غير نشط', 'من',]);
             <template #content>
 
 
-                <DataTable ref="dt" :value="sublist" dataKey="id" :paginator="true" :rows="5" v-model:filters="filters"
+                <DataTable ref="dt" :value="store.subscriptions" dataKey="id" :paginator="true" :rows="5" v-model:filters="filters"
                     :globalFilterFields="['serviceName', 'customerName']"
                     paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown"
                     :rowsPerPageOptions="[5, 10, 25]"
@@ -87,7 +83,16 @@ const statuses = ref(['نشط', 'غير نشط', 'من',]);
                     <Column v-for="(col, index) of selectedColumns" :field="col.field" :header="col.header"
                         :key="col.field + '_' + index" style="min-width:10rem;  "></Column>
 
-
+                        <Column style="min-width:8rem">
+                        <template #body="slotProps">
+                  <RouterLink :to="'/subscriptionsRecord/SubscriptionsDataView/' + slotProps.data.customerName + slotProps.data.serviceName" style="text-decoration: none">
+                   <Button icon="fa-solid fa-circle-info" severity="info" text rounded 
+                  v-tooltip="{ value: 'التفاصيل', fitContent: true }"  />
+                  </RouterLink>
+                  <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"  @click="getid(slotProps.data)" />
+                            
+                   </template>
+                   </Column>
 
 
 

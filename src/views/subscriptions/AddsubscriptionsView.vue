@@ -15,8 +15,6 @@ const store = useSubscriptionsStore();
 const storeCustomer = useCustomersStore();
 
 const loading = ref(false);
-let customer=ref();
-const service=ref();
 const ServicesList=ref();
 
 const state:Subscription = reactive({
@@ -69,7 +67,7 @@ const submitForm = async () => {
 
     if (result) {
         loading.value = true;
-        
+
     const subrequest:Subscription = reactive({
     serviceId: state.serviceId.id,
     customerId: state.customerId.id,
@@ -77,16 +75,16 @@ const submitForm = async () => {
     endDate: state.endDate,
     
            }) 
-           console.log(subrequest)
-        loading.value = false;
+
 
 
         await axios.post("https://localhost:7003/api/Subscription", subrequest)
                 .then(function (response) {
-             
-                  console.log(state)
+                toast.add({ severity: 'success', summary: 'تمت اضافة اشتراك', detail: response.data.msg, life: 3000 });
+
                     console.log(response)
                     store.getSub();
+                    router.go(-1)
                   })
                 .catch(function (error) {
                     console.log(error)
@@ -94,6 +92,7 @@ const submitForm = async () => {
               } else {
                         console.log("empty")
                     }
+                    loading.value = false;
 
 }
 
@@ -167,9 +166,7 @@ const search = (event:any) => {
                                     error.$message }}</error>
                             </span>
                         </div>
-{{ state }}
-<br>
-{{ customer }}
+
 
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
@@ -182,7 +179,6 @@ const search = (event:any) => {
 
                             </span>
                         </div>
-                        {{state.customerId}}
 
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
@@ -203,7 +199,7 @@ const search = (event:any) => {
                         </div>
 
                     </div>
-                    <Button @click="submitForm" class="p-button-primry" icon="fa-solid fa-plus" label="إضافة" type="submit" />
+                    <Button class="p-button-primry" icon="fa-solid fa-plus" label="إضافة" type="submit" />
                     <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger"
                         style="margin-right: .5em;" />
                     <Toast position="bottom-right" />

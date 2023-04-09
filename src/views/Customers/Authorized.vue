@@ -38,7 +38,7 @@ const submitForm = async () => {
         axios.post("https://localhost:7003/api/Service", authorized)
             .then(function (response) {
                 console.log(response.data.msg)        
-                emit('getList')
+                // emit('getList')
                 toast.add({ severity: 'success', summary: 'Success Message', detail: 'تمت إضافة باقة', life: 3000 });
             })
             .catch(function (error) {
@@ -60,9 +60,7 @@ const resetForm = () => {
     authorized.primaryPhone = '';
     authorized.secondaryPhone = '';
     authorized.address = '';
-    authorized.file = null;
-
-
+    authorized.file = ;
         }
 
         const displayModal = ref(false);
@@ -85,7 +83,7 @@ const openModal = () => {
                 <form @submit.prevent="submitForm">
 
                 <div class="grid p-fluid ">
-                    <div class="field col-12 md:col-4 ">
+                    <div class="field col-12 md:col-6 lg:col-4">
                         <span class="p-float-label" >
                             <InputText id="name" type="text" v-model="authorized.name"  />
                             <label  for="name">الاسم </label>
@@ -93,7 +91,7 @@ const openModal = () => {
                         </span>
 
                     </div>
-                    <div class="field col-12 md:col-4">
+                    <div class="field col-12 md:col-6 lg:col-4">
                         <span class="p-float-label ">
                             <InputText id="email" type="text" v-model="authorized.email"  />
                             <label for="email">البريد الإلكتروني</label>
@@ -101,7 +99,7 @@ const openModal = () => {
 
                         </span>
                     </div>
-                    <div class="field col-12 md:col-4">
+                    <div class="field col-12 md:col-6 lg:col-4">
                         <span class="p-float-label ">
                             <InputText id="inputtext" type="text" v-model="authorized.address" />
                             <label for="inputtext" >عنوان العميل</label>
@@ -109,7 +107,7 @@ const openModal = () => {
 
                         </span>
                     </div>
-                    <div class="field col-12 md:col-4">
+                    <div class="field col-12 md:col-6 lg:col-4">
                         <span class="p-float-label ">
                             <InputMask v-model="authorized.primaryPhone" mask="(999) 999-9999?" />
                             <label for="inputtext">رقم هاتف </label>
@@ -117,7 +115,7 @@ const openModal = () => {
 
                         </span>
                     </div>
-                    <div class="field col-12 md:col-4">
+                    <div class="field col-12 md:col-6 lg:col-4">
                         <span class="p-float-label ">
                             <InputMask id="inputtext" v-model="authorized.secondaryPhone" mask="(999) 999-9999?" />
                             <label for="inputtext"> 2 رقم هاتف </label>
@@ -125,7 +123,7 @@ const openModal = () => {
                         </span>
                     </div>
 
-                    <div class="field col-12 md:col-4" style="height: 1%;">
+                    <div class="field col-12 md:col-6 lg:col-4" style="height: 1%;">
                         <FileUpload class="field col-12 md:col-6 lg:col-4" 
                                 style="width: 100%; height: 40px; background-color: white; color:black; border-color: lightgray"
                                 mode="basic" name="file[]" url="./upload" chooseLabel=" ارفق ملف" cancelLabel="إلغاء"
