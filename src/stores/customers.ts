@@ -11,8 +11,8 @@ export const useCustomersStore = defineStore('customer', () => {
 
   onMounted(async () => {
     await getdata();
-
   })
+  
 function getdata(){
    axios.get("https://localhost:7003/api/Customers")
   .then(function (response) {

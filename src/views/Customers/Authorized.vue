@@ -45,8 +45,6 @@ const resetForm = () => {
     state.phoneNumber2 = '';
     state.address = '';
     state.File = '';
-
-
         }
 
         const displayModal = ref(false);
@@ -69,7 +67,7 @@ const openModal = () => {
                 <form @submit.prevent="submitForm">
 
                 <div class="grid p-fluid ">
-                    <div class="field col-12 md:col-4 ">
+                    <div class="field col-12 md:col-6 lg:col-4">
                         <span class="p-float-label" >
                             <InputText id="name" type="text" v-model="state.name"  />
                             <label  for="name">الاسم </label>
@@ -77,7 +75,7 @@ const openModal = () => {
                         </span>
 
                     </div>
-                    <div class="field col-12 md:col-4">
+                    <div class="field col-12 md:col-6 lg:col-4">
                         <span class="p-float-label ">
                             <InputText id="email" type="text" v-model="state.email"  />
                             <label for="email">البريد الإلكتروني</label>
@@ -85,7 +83,7 @@ const openModal = () => {
 
                         </span>
                     </div>
-                    <div class="field col-12 md:col-4">
+                    <div class="field col-12 md:col-6 lg:col-4">
                         <span class="p-float-label ">
                             <InputText id="inputtext" type="text" v-model="state.address" />
                             <label for="inputtext" >عنوان العميل</label>
@@ -93,7 +91,7 @@ const openModal = () => {
 
                         </span>
                     </div>
-                    <div class="field col-12 md:col-4">
+                    <div class="field col-12 md:col-6 lg:col-4">
                         <span class="p-float-label ">
                             <InputMask v-model="state.phoneNumber1" mask="(999) 999-9999?" />
                             <label for="inputtext">رقم هاتف </label>
@@ -101,7 +99,7 @@ const openModal = () => {
 
                         </span>
                     </div>
-                    <div class="field col-12 md:col-4">
+                    <div class="field col-12 md:col-6 lg:col-4">
                         <span class="p-float-label ">
                             <InputMask id="inputtext" v-model="state.phoneNumber2" mask="(999) 999-9999?" />
                             <label for="inputtext"> 2 رقم هاتف </label>
@@ -109,7 +107,7 @@ const openModal = () => {
                         </span>
                     </div>
 
-                    <div class="field col-12 md:col-4" style="height: 1%;">
+                    <div class="field col-12 md:col-6 lg:col-4" style="height: 1%;">
                         <FileUpload class="field col-12 md:col-6 lg:col-4" 
                                 style="width: 100%; height: 40px; background-color: white; color:black; border-color: lightgray"
                                 mode="basic" name="file[]" url="./upload" chooseLabel=" ارفق ملف" cancelLabel="إلغاء"

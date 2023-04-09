@@ -11,7 +11,7 @@ import router from '@/router';
 
 const emit=defineEmits(['getList'])
 // define opject
-const state = reactive({
+const state= reactive({
     name: '',
     amountOfPower: '',
     acpPort: '',
@@ -156,6 +156,7 @@ const openModal = () => {
 
 
 <style>
+
 error{
     font-size: 12px; 
     font-weight: bold;
