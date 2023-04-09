@@ -68,13 +68,14 @@ const submitForm = async () => {
     <div>
         <Card >
             <template #title>
-                <i class="fa-solid fa-user"></i>
+                <!-- <i class="fa-solid fa-user"></i> -->
                    البيانات الشخصية  
 
                    <BackButton style="float: left;"/>
 
-                   <Button v-if="actEdit"  @click="actEdit=!actEdit"
+                   <Button v-if="actEdit"   @click="actEdit=!actEdit"
              icon=" fa-solid fa-pen"
+             
              style="width: 30px;height: 30px; margin-right: 10px;"
              class=" p-button-primary p-button-text"
              v-tooltip="{value:'تعديل البيانات الشخصية', fitContent:true}" />
@@ -109,7 +110,7 @@ const submitForm = async () => {
                     </div>
                     <div class="field col-12 md:col-6">
                         <span class="p-float-label ">
-                            <InputText id="address" :value="address" type="text" v-model="state.address" :disabled="actEdit" />
+                            <InputText id="address"  type="text" v-model="state.address" :disabled="actEdit" />
                             <label style="color: black;top: -.75rem; font-size: 12px;" for="address" >العنوان</label>
                             <!-- <error  v-for="error in v$.address.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error> -->
 
@@ -126,7 +127,7 @@ const submitForm = async () => {
                     </div>
                     <div class="field col-12 md:col-6">
                         <span class="p-float-label ">
-                            <InputText id="phoneNum2" :value="secondaryPhone" v-model="state.secondaryPhone"  :disabled="actEdit" />
+                            <InputText id="phoneNum2"  v-model="state.secondaryPhone"  :disabled="actEdit" />
                             <label style="color: black;top: -.75rem; font-size: 12px;" for="phoneNum2">رقم هاتف 2</label>
                         </span>
                     </div>
