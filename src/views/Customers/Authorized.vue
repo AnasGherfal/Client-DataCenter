@@ -38,7 +38,7 @@ const submitForm = async () => {
         axios.post("https://localhost:7003/api/Service", authorized)
             .then(function (response) {
                 console.log(response.data.msg)        
-                emit('getList')
+                // emit('getList')
                 toast.add({ severity: 'success', summary: 'Success Message', detail: 'تمت إضافة باقة', life: 3000 });
             })
             .catch(function (error) {
