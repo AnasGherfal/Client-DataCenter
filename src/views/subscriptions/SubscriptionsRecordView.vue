@@ -28,24 +28,6 @@ const onToggle = (val: any) => {
 };
 
 
-
-const statuses = ref(['نشط', 'غير نشط', 'من',]);
-
-
-
-
-
-const getSeverity = (status: any) => {
-    switch (status) {
-        case 'نشط':
-            return 'success';
-
-        case 'غير نشط':
-            return 'danger';
-
-    }
-}
-
 const rotame=ref()
 function getid(index: {}) {
     rotame.value = index;

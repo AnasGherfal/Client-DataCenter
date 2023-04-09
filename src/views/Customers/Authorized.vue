@@ -4,14 +4,16 @@ import { email, minLength, required, helpers } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import Dialog from 'primevue/dialog';
+import type  {Customer}  from './CustomersModel';
+import axios from 'axios';
 
-const state = reactive({
+const authorized: Customer = reactive({
     name: "",
     email: "",
-    phoneNumber1: '',
-    phoneNumber2: '',
+    primaryPhone: '',
+    secondaryPhone: '',
     address: '',
-    File: '',
+    File: null,
 
 })
 
@@ -20,31 +22,47 @@ const rules = computed(() =>{
     name:{  required: helpers.withMessage('الاسم مطلوب',required)},
     email: {required: helpers.withMessage('الايميل مطلوب',required), email: helpers.withMessage(' ليس عنوان بريد إلكتروني صالح', email)},
     address: {required: helpers.withMessage('العنوان مطلوب',required)},
-    phoneNumber1: {required: helpers.withMessage('رقم الهاتف مطلوب',required)},
-    phoneNumber2: {required: helpers.withMessage('رقم الهاتف مطلوب',required)},
+    primaryPhone: {required: helpers.withMessage('رقم الهاتف مطلوب',required)},
     }
 })
 
 const toast = useToast();
 
-const v$ = useVuelidate(rules, state);
+const v$ = useVuelidate(rules, authorized);
 
 const submitForm = async () => {
     const result = await v$.value.$validate();
+    console.log(authorized)
 
-    if(result){
-        toast.add({severity:'success', summary: 'Success Message', detail:'تمت إضافة مخول', life: 3000});
+    if (result) {
+        axios.post("https://localhost:7003/api/Service", authorized)
+            .then(function (response) {
+                console.log(response.data.msg)        
+                emit('getList')
+                toast.add({ severity: 'success', summary: 'Success Message', detail: 'تمت إضافة باقة', life: 3000 });
+            })
+            .catch(function (error) {
+                console.log(error)
+                toast.add({ severity: 'warn', summary: 'Warn Message', detail: 'هناك مشكلة في عملية الادخال', life: 3000 });
+            })
+            displayModal.value = false;
+            resetForm();
+
+    } else {
+        console.log("empty")
     }
-
-        }
+} 
+    
 
 const resetForm = () => {
-    state.name = '';
-    state.email = '';
-    state.phoneNumber1 = '';
-    state.phoneNumber2 = '';
-    state.address = '';
-    state.File = '';
+    authorized.name = '';
+    authorized.email = '';
+    authorized.primaryPhone = '';
+    authorized.secondaryPhone = '';
+    authorized.address = '';
+    authorized.file = null;
+
+
         }
 
         const displayModal = ref(false);
@@ -69,7 +87,7 @@ const openModal = () => {
                 <div class="grid p-fluid ">
                     <div class="field col-12 md:col-6 lg:col-4">
                         <span class="p-float-label" >
-                            <InputText id="name" type="text" v-model="state.name"  />
+                            <InputText id="name" type="text" v-model="authorized.name"  />
                             <label  for="name">الاسم </label>
                             <error  v-for="error in v$.name.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
                         </span>
@@ -77,7 +95,7 @@ const openModal = () => {
                     </div>
                     <div class="field col-12 md:col-6 lg:col-4">
                         <span class="p-float-label ">
-                            <InputText id="email" type="text" v-model="state.email"  />
+                            <InputText id="email" type="text" v-model="authorized.email"  />
                             <label for="email">البريد الإلكتروني</label>
                             <error  v-for="error in v$.email.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
 
@@ -85,7 +103,7 @@ const openModal = () => {
                     </div>
                     <div class="field col-12 md:col-6 lg:col-4">
                         <span class="p-float-label ">
-                            <InputText id="inputtext" type="text" v-model="state.address" />
+                            <InputText id="inputtext" type="text" v-model="authorized.address" />
                             <label for="inputtext" >عنوان العميل</label>
                             <error  v-for="error in v$.address.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
 
@@ -93,17 +111,17 @@ const openModal = () => {
                     </div>
                     <div class="field col-12 md:col-6 lg:col-4">
                         <span class="p-float-label ">
-                            <InputMask v-model="state.phoneNumber1" mask="(999) 999-9999?" />
+                            <InputMask v-model="authorized.primaryPhone" mask="(999) 999-9999?" />
                             <label for="inputtext">رقم هاتف </label>
-                            <error  v-for="error in v$.phoneNumber1.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
+                            <error  v-for="error in v$.primaryPhone.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
 
                         </span>
                     </div>
                     <div class="field col-12 md:col-6 lg:col-4">
                         <span class="p-float-label ">
-                            <InputMask id="inputtext" v-model="state.phoneNumber2" mask="(999) 999-9999?" />
+                            <InputMask id="inputtext" v-model="authorized.secondaryPhone" mask="(999) 999-9999?" />
                             <label for="inputtext"> 2 رقم هاتف </label>
-                            <error  v-for="error in v$.phoneNumber2.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
+                            <error  v-for="error in v$.primaryPhone.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
                         </span>
                     </div>
 
