@@ -28,10 +28,6 @@ const state:Subscription = reactive({
 
 })
 
-const rules1 = computed(() => {
-state.customerId=customer.value
-})
-
 
   
 
@@ -40,7 +36,6 @@ state.customerId=customer.value
     await axios.get("https://localhost:7003/api/Service")
       .then(function (response) {
         ServicesList.value= response.data.content;
-        service.value = response.data.content.filter((users:{name:String}) => users.name === state.serviceId)[0].id;
       })
       .catch(function (error) {
         console.log(error)

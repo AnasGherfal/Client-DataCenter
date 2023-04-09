@@ -110,7 +110,7 @@ const submitForm = async () => {
                     </div>
                     <div class="field col-12 md:col-6">
                         <span class="p-float-label ">
-                            <InputText id="address" :value="address" type="text" v-model="state.address" :disabled="actEdit" />
+                            <InputText id="address"  type="text" v-model="state.address" :disabled="actEdit" />
                             <label style="color: black;top: -.75rem; font-size: 12px;" for="address" >العنوان</label>
                             <!-- <error  v-for="error in v$.address.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error> -->
 
@@ -127,7 +127,7 @@ const submitForm = async () => {
                     </div>
                     <div class="field col-12 md:col-6">
                         <span class="p-float-label ">
-                            <InputText id="phoneNum2" :value="secondaryPhone" v-model="state.secondaryPhone"  :disabled="actEdit" />
+                            <InputText id="phoneNum2"  v-model="state.secondaryPhone"  :disabled="actEdit" />
                             <label style="color: black;top: -.75rem; font-size: 12px;" for="phoneNum2">رقم هاتف 2</label>
                         </span>
                     </div>

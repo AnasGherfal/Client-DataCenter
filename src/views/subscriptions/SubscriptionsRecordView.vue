@@ -35,7 +35,7 @@ const statuses = ref(['نشط', 'غير نشط', 'من',]);
 
 
  onMounted( async () =>{
-    await  axios.get("https://localhost:7003/api/Subscription?pagenum=1&pagesize=5")
+    await  axios.get("https://localhost:7003/api/Subscription?pagenum=1&pagesize=25")
   .then(function (response) {
     sublist.value = response.data.content
 
