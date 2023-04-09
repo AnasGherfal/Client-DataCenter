@@ -137,7 +137,7 @@ const resetForm = () => {
                 <BackButton style="float: left;" />
 
                 <Divider />
-                {{ visit.customerName }}
+                {{ visit.authorizedName }}
 
             </template>
             <template #content>
@@ -147,7 +147,7 @@ const resetForm = () => {
 
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label">
-                                <MultiSelect v-model="visit.customerName" :options="store.visits" optionLabel="customerName"
+                                <MultiSelect v-model="visit.customerName" :options="store.visits" optionLabel="name"
                                     :filter="true" placeholder=" اختر عميل" :selectionLimit="1" />
                                 <label for="customerName">العملاء</label>
 

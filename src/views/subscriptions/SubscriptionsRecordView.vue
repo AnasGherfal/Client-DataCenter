@@ -28,12 +28,6 @@ const onToggle = (val: any) => {
     selectedColumns.value = columns.value.filter(col => val.includes(col));
 };
 
-
-
-const statuses = ref(['نشط', 'غير نشط', 'من',]);
-
-
-
 //  onMounted( () =>{
 //          axios.get("http://localhost:3000/users")
 //         .then(function(response) {
@@ -45,19 +39,6 @@ const statuses = ref(['نشط', 'غير نشط', 'من',]);
 //       })
 
 //     })
-
-const getSeverity = (status: any) => {
-    switch (status) {
-        case 'نشط':
-            return 'success';
-
-        case 'غير نشط':
-            return 'danger';
-
-    }
-}
-
-
 
 </script>
 
