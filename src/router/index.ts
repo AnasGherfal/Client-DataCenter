@@ -33,7 +33,7 @@ const router = createRouter({
         {
           path:'CustomerProfile/:nameId',
           props:true,
-          component: () => import('../views/Customers/CustomerProfile.vue')
+          component: () => import('../views/Customers/Profile Customer/CustomerProfile.vue')
         }
       ]
       
@@ -73,7 +73,7 @@ const router = createRouter({
         {
           path:'vistDetails/:id',
           props:true,
-          component: () => import('../views/Visits/VisitDetails.vue')
+          component: () => import('../views/Visits/VisitDetailsView.vue')
         }
       ]
     },

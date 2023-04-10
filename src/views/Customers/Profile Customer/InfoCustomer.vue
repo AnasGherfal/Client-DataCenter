@@ -12,9 +12,7 @@ import type { Customer } from '../CustomersModel';
 const actEdit=ref(true);
 const store = useCounterStore();
 
-const dataClinet= defineProps<{
-customer:any
-}>()
+const dataClinet= defineProps<{customer:any}>()
 
   const state:Customer =reactive({
     name: dataClinet.customer.name,
@@ -46,10 +44,8 @@ const submitForm = async () => {
 
     axios.put("https://localhost:7003/api/Customers/"+dataClinet.customer.id,state)
    .then(function(response) {
-    console.log(response.data.msg)
     toast.add({severity:'success', summary: 'Success Message', detail:response.data.msg, life: 3000});
     actEdit.value=true;
-    console.log(actEdit.value)
 })
 .catch(function(error){
    console.log(error)
@@ -139,8 +135,8 @@ const submitForm = async () => {
         </div>
 
     <div v-if="!actEdit">
-        <Button  @click="submitForm" icon="fa-solid fa-plus" label="تعديل" type="submit"  />
-        <Button  @click="actEdit=!actEdit" icon="fa-solid fa-delete-left" label="إلغاء التعديل" class="p-button-danger" style="margin-right: .5em;" />
+        <Button  @click="submitForm" icon="fa-solid fa-check" label="تعديل" type="submit"  />
+        <Button  @click="actEdit=!actEdit" icon="fa-solid fa-ban" label="إلغاء التعديل" class="p-button-danger" style="margin-right: .5em;" />
     </div>
     <Toast position="bottom-left" />
 
