@@ -85,7 +85,7 @@ const deleteVisit = () => {
                     </template>
                     <Column field="name" header="اسم العميل " style="min-width:12rem;"></Column>
                     <Column field="visitReason" header="سبب الزياره" style="min-width:12rem"></Column>
-                    <Column field="visitDuration" header=" المده" style="min-width:12rem"></Column>
+                    <Column field="visitDuration" header=" المده" style="min-width:5rem"></Column>
                     <Column field="visitPrice" header="السعر" style="min-width:5rem"></Column>
                     <Column style="min-width:8rem">
                         <template #body="slotProps">

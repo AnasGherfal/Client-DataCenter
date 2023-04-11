@@ -96,6 +96,12 @@ const submitForm = async () => {
 
         }, 1000);
 
+        // const subrequest: Visit = reactive({
+        //     customerName: visit.customerName.customerName,
+        //     authorizedName: visit.authorizedName.authorizedName
+
+        // })
+
         await axios.post("http://localhost:3000/visits", visit)
             .then(function (response) {
                 toast.add({ severity: 'success', summary: 'تمت الاضافه', detail: response.data.msg, life: 3000 });

@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import InfoCustomer from './Profile Customer/InfoCustomer.vue'
+import InfoCustomer from './InfoCustomer.vue'
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
-import Authorized from './Authorized.vue';
+import Authorized from '../Authorized.vue';
 import { computed, onMounted, reactive, ref } from 'vue';
 import router from '@/router';
 import { RouterLink, routerKey } from 'vue-router';
 import axios from "axios"
-import type { Customer } from './CustomersModel';
+import type { Customer } from '../CustomersModel';
 
 
 const num= defineProps<{
@@ -20,7 +20,6 @@ onMounted(async () => {
     await axios.get("https://localhost:7003/api/Customers/")
       .then(function (response) {
         tab.value = response.data.content.filter((users:{name:String}) => users.name === num.nameId)[0];
-        console.log(tab)
       })
       .catch(function (error) {
         console.log(error)
