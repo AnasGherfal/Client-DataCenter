@@ -31,7 +31,7 @@ const onToggle = (val: any) => {
 const rotame=ref()
 function getid(index: {}) {
     rotame.value = index;
-    console.log(rotame.value)
+    console.log(rotame.value.id)
 }
 
 </script>
@@ -76,7 +76,7 @@ function getid(index: {}) {
 
                         <Column style="min-width:8rem">
                         <template #body="slotProps">
-                  <RouterLink :to="'/subscriptionsRecord/SubscriptionsDataView/' + slotProps.data.customerName + slotProps.data.serviceName" style="text-decoration: none">
+                  <RouterLink  :to="'/subscriptionsRecord/SubscriptionsDetaView/' + slotProps.data.id" style="text-decoration: none">
                    <Button icon="fa-solid fa-circle-info" severity="info" text rounded 
                   v-tooltip="{ value: 'التفاصيل', fitContent: true }"  />
                   </RouterLink>

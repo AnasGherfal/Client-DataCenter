@@ -62,7 +62,8 @@ const toast = useToast();
 const v$ = useVuelidate(rules, state);
 
 const submitForm = async () => {
-    
+    console.log(typeof(state.endDate))
+
     const result = await v$.value.$validate();
 
     if (result) {
@@ -75,8 +76,8 @@ const submitForm = async () => {
     endDate: state.endDate,
     
            }) 
-
-
+    const deff= subrequest.endDate.valueOf() - subrequest.startDate.valueOf();
+    console.log(deff/24/60/60/1000)
 
         await axios.post("https://localhost:7003/api/Subscription", subrequest)
                 .then(function (response) {
