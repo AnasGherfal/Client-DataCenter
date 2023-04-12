@@ -17,7 +17,6 @@ function getdata(){
   .then(function (response) {
     customers.value = response.data.content
 
-    console.log(customers)
   })
   .catch(function (error) {
     console.log(error)

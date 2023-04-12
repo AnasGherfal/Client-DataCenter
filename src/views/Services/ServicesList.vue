@@ -20,7 +20,7 @@ onMounted( async () =>{
     function getList() {
         console.log("yes we dident")
       axios.get("https://localhost:7003/api/Service").then((resp) => {
-        packagesList.value = resp.data.content;;        
+        packagesList.value = resp.data.content;        
       });
     }
 
