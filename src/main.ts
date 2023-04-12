@@ -46,6 +46,7 @@ import Tag from 'primevue/tag';
 import ToggleButton from 'primevue/togglebutton';
 import ConfirmationService from 'primevue/confirmationservice';
 import Skeleton from 'primevue/skeleton';
+import Dialog from 'primevue/dialog';
 
 const app = createApp(App)
 
@@ -79,6 +80,7 @@ app.component('TabPanel', TabPanel);
 app.component('Tag', Tag);
 app.component('ToggleButton', ToggleButton);
 app.component('Skeleton', Skeleton);
+app.component('Dialog', Dialog);
 
 app.use(ConfirmationService);
 app.directive('tooltip', Tooltip);

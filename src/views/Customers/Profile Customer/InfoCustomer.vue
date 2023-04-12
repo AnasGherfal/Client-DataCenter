@@ -7,7 +7,7 @@ import {useCounterStore} from '@/stores/counter'
 import axios from 'axios';
 
 import BackButton from '@/components/BackButton.vue';
-import type { Customer } from '../CustomersModel';
+import type { Customer } from '../modules/Customers';
 
 const actEdit=ref(true);
 const store = useCounterStore();
@@ -44,7 +44,8 @@ const submitForm = async () => {
 
     axios.put("https://localhost:7003/api/Customers/"+dataClinet.customer.id,state)
    .then(function(response) {
-    toast.add({severity:'success', summary: 'Success Message', detail:response.data.msg, life: 3000});
+    console.log(response)
+    toast.add({severity:'success', summary: 'Message', detail:response.data, life: 3000});
     actEdit.value=true;
 })
 .catch(function(error){

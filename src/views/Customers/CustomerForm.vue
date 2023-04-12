@@ -8,7 +8,7 @@ import axios from 'axios';
 import router from '@/router';
 import InputText from 'primevue/inputtext';
 import BackButton from '@/components/BackButton.vue';
-import type  {Customer}  from './CustomersModel';
+import type  {Customer}  from './modules/Customers';
 
 const store = useCustomersStore();
 const loading = ref(false);
@@ -54,6 +54,7 @@ async function submitForm() {
 
         await axios.post("https://localhost:7003/api/Customers", customer)
             .then(function (response) {
+                console.log(response)
                 toast.add({ severity: 'success', summary: 'تمت الاضافه', detail: response.data.msg, life: 3000 });
 
                 console.log(customer)

@@ -31,7 +31,7 @@ const router = createRouter({
         component: () => import('../views/Customers/CustomerForm.vue')
         },
         {
-          path:'CustomerProfile/:nameId',
+          path:'CustomerProfile/:id',
           props:true,
           component: () => import('../views/Customers/Profile Customer/CustomerProfile.vue')
         }
