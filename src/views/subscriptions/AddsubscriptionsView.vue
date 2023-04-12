@@ -9,6 +9,7 @@ import axios from 'axios';
 import router from '@/router';
 import { useCustomersStore } from '@/stores/customers';
 import type { Subscription } from './SubscriptionsModels';
+import moment from 'moment';
 
 
 const store = useSubscriptionsStore();
@@ -63,21 +64,21 @@ const v$ = useVuelidate(rules, state);
 
 const submitForm = async () => {
     console.log(typeof(state.endDate))
+    console.log( moment(state.startDate).format('yy/M/d hh:mm a' ))
 
     const result = await v$.value.$validate();
 
     if (result) {
-        loading.value = true;
+
+     loading.value = true;
 
     const subrequest:Subscription = reactive({
     serviceId: state.serviceId.id,
     customerId: state.customerId.id,
     startDate: state.startDate,
-    endDate: state.endDate,
-    
+    endDate:state.endDate,
            }) 
-    const deff= subrequest.endDate.valueOf() - subrequest.startDate.valueOf();
-    console.log(deff/24/60/60/1000)
+
 
         await axios.post("https://localhost:7003/api/Subscription", subrequest)
                 .then(function (response) {
@@ -89,6 +90,7 @@ const submitForm = async () => {
                   })
                 .catch(function (error) {
                     console.log(error)
+
                 })
               } else {
                         console.log("empty")

@@ -3,5 +3,5 @@ export interface Subscription {
     customerId: number | null,
     startDate:string,
     endDate:string,
-    subscriptionFileId:null
+    subscriptionFileId: null | number
   }

@@ -8,24 +8,43 @@ import TabPanel from 'primevue/tabpanel';
 import axios, { toFormData } from 'axios';
 import type { Service } from '../Services/ServicesModel';
 import BackButton from '@/components/BackButton.vue';
+import moment from 'moment';
+import type { Subscription } from './SubscriptionsModels';
+import type { SubscriptionRespons } from './SubscriptionsRespons';
 
 const prop=defineProps<{
 nad:number
 }>()
 
-const tab=ref({})
-let date3:number 
+
+const tab:SubscriptionRespons=reactive({
+    id:null,
+    status:null,
+    serviceName:'' ,
+    customerName: '' ,
+    startDate:'',
+    endDate:'',
+    subscriptionFileId:null
+  
+})
+let date3:number ;
+
 onMounted(async () => {
-    await axios.get("https://localhost:7003/api/Subscription?pagenum=1&pagesize=20")
+    await axios.get("https://localhost:7003/api/Subscription?pagenum=1&pagesize=5")
       .then(function (response) {
         console.log(prop.nad)
-        tab.value  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0];
-        const date1 = new Date(tab.value.endDate);
-        const date2 = new Date(tab.value.startDate);
-        date3 =Math.trunc( (date1.valueOf()-date2.valueOf())/24/60/60/1000)
+        tab.id  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].id;
+        tab.status  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].status;
+        tab.customerName  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].customerName;
+        tab.endDate  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].endDate;
+        tab.startDate  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].startDate;
+        tab.serviceName  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].serviceName;
+        tab.subscriptionFileId  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].subscriptionFileId;
 
-        console.log(date3)
-
+        const date1 = new Date(tab.endDate);
+        const date2 = new Date();
+        console.log(date2)
+        date3 =Math.trunc( (date1.valueOf() - date2.valueOf())/24/60/60/1000)
 
       })
       .catch(function (error) {
@@ -37,27 +56,30 @@ onMounted(async () => {
 
   
 
-  let servobj:Service=reactive({
+  const servobj:Service=reactive({
+    id:null,
     name: '',
     amountOfPower: '',
     acpPort: '',
     dns: '',
-    monthlyVisits: 0,
-    price: 0,
+    monthlyVisits: null,
+    price: null,
   })
+  
   onMounted(async () => {
     await axios.get("https://localhost:7003/api/Service?PageNumber=1&PageSize=10")
       .then(function (response) {
 
-        console.log(tab.value.serviceName)
+        console.log(tab.serviceName)
         console.log(response.data)
-        
-        servobj.acpPort= response.data.content.filter((servic:{name:string}) => servic.name === tab.value.serviceName)[0].acpPort;
-        servobj.dns= response.data.content.filter((servic:{name:string}) => servic.name === tab.value.serviceName)[0].dns;
-        servobj.amountOfPower= response.data.content.filter((servic:{name:string}) => servic.name === tab.value.serviceName)[0].amountOfPower;
-        servobj.name= response.data.content.filter((servic:{name:string}) => servic.name === tab.value.serviceName)[0].name;
-        servobj.monthlyVisits= response.data.content.filter((servic:{name:string}) => servic.name === tab.value.serviceName)[0].monthlyVisits;
-        servobj.price= response.data.content.filter((servic:{name:string}) => servic.name === tab.value.serviceName)[0].price;
+
+        servobj.id= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].id;
+        servobj.acpPort= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].acpPort;
+        servobj.dns= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].dns;
+        servobj.amountOfPower= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].amountOfPower;
+        servobj.name= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].name;
+        servobj.monthlyVisits= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].monthlyVisits;
+        servobj.price= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].price;
 
         console.log(servobj)
 
@@ -67,19 +89,15 @@ onMounted(async () => {
       })
 
   })
-//   console.log(deff)
-  
-//   const value = ref(deff);
-const value=4.5
+
 </script>
 
 
 <template>
     <card>
        <template #title>
-       
-     رقم الاشتراك
-     /         {{ nad }}
+       بيانات الاشتراك
+ 
      <BackButton style="float: left;" />
 
          <Divider/>
@@ -89,7 +107,8 @@ const value=4.5
         <div class="flex flex-row">
             <div class="flex-1" style=" text-align: center;">
             <Knob :size="Knob" v-model="date3" readonly :max="365" />
-            <h3> الأيام المتبقية</h3>
+            <h3 v-if="date3"> الأيام المتبقية</h3>
+            <h3 v-else class="text-red-800"> انتهت صلاحية هذه الخدمة</h3>
             </div>
             <Divider class="p-divider-solid" layout="vertical" />
 

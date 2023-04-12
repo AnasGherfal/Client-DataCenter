@@ -61,13 +61,16 @@ const resetForm = () => {
             })
             .catch(function (error) {
                 console.log(error)
-                toast.add({ severity: 'warn', summary: 'Warn Message', detail: 'هناك مشكلة في عملية الادخال', life: 3000 });
+                toast.add({ severity: 'warn', summary:'هناك مشكلة في عملية الادخال', detail:error , life: 3000 });
             })
             displayModal.value = false;
             resetForm();
+            
 
     } else {
         console.log("empty")
+        toast.add({ severity: 'warn', summary:'هناك مشكلة في عملية الادخال' , life: 3000 });
+
     }
 } 
   
@@ -142,6 +145,8 @@ const openModal = () => {
 
 <Button  class="p-button-primry" icon="fa-solid fa-plus" label="إضافة" type="submit" />
 <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger" style="margin-right: .5em;" />
+<Toast position="bottom-left" />
+
 </form>
 <template #footer>
         
