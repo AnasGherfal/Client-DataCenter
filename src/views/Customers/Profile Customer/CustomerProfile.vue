@@ -11,6 +11,7 @@ import type { Customer } from '../modules/Customers';
 import type { Representatives } from '../modules/Representatives';
 import Representative from './Representatives.vue';
 import DeleteRepresentives from './DeleteRepresentatives.vue';
+import EditRepresentatives from './EditRepresentatives.vue';
 
 
 const num = defineProps<{
@@ -26,7 +27,6 @@ const userId = computed(() => {
         return null // or return a default value if id is not available
     }
 })
-
 const customerId = ref({
     id: '',
     name: '',
@@ -50,10 +50,8 @@ onMounted(async () => {
 
 function getRepresentatives() {
     axios.get("https://localhost:7003/api/Representives/").then((response) => {
-        const data = response.data
         representativeId.value = response.data.content.filter((users: { customerName: string }) => users.customerName == customerId.value.name);
         representatives.value = response.data.content
-        console.log(representativeId.value);
 
     });
 }
@@ -75,11 +73,17 @@ function getRepresentatives() {
                     </template>
                     <!-- المخولون الخاصون بالعميل -->
                     <Representative @getRepresentatives="getRepresentatives()" />
+
                     <div class="grid ">
                         <div class="col-12 md:col-6" v-for="representative in representativeId" :key="representative.id">
                             <Card class="w-3/5 mx-auto" style="background-color: #FFFFFF; color: #333333;">
                                 <template #header>
-                                    <DeleteRepresentives :name="representative" :key="representative.id" @getRepresentatives="getRepresentatives()" />
+                                    <DeleteRepresentives :name="representative" :key="representative.id"
+                                        @getRepresentatives="getRepresentatives()" />
+
+                                    <EditRepresentatives :name="representative" :key="representative.id"
+                                    @get-representatives="getRepresentatives">
+                                    </EditRepresentatives>
 
                                 </template>
                                 <template #content>
