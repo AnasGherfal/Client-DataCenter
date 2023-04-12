@@ -59,9 +59,8 @@ const deleteCustomer = () => {
     console.log(rotName.value)
     axios.delete('https://localhost:7003/api/Customers/' + rotName.value.id)
         .then(response => {
-            console.log(response)
             store.getdata();
-            toast.add({ severity: 'success', summary: 'تم الحذف', detail: response.data.msg, life: 3000 });
+            toast.add({ severity: 'success', summary: 'تم الحذف', detail: response.data, life: 3000 });
             customersDialog.value = false
 
         });
@@ -163,7 +162,7 @@ const deleteCustomer = () => {
 
                             <template #body="slotProps">
 
-                                <RouterLink :to="'customersRecord/CustomerProfile/' + slotProps.data.name">
+                                <RouterLink :to="'customersRecord/CustomerProfile/' + slotProps.data.id">
                                     <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel" />
                                 </RouterLink>
 

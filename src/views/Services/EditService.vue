@@ -12,7 +12,6 @@ pakge:string
 }>()
 const emit=defineEmits(['getList'])
 
-const componentKey= ref(0);
 
 const state = reactive({
     name: pakgeInfo.pakge.name,
@@ -69,7 +68,6 @@ const resetForm = () => {
             }) 
 
             displayModal.value = false;
-            componentKey.value=+1;
     } else {
         console.log("empty")
     }

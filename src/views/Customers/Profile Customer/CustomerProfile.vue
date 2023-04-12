@@ -2,72 +2,137 @@
 import InfoCustomer from './InfoCustomer.vue'
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
-import Authorized from '../Authorized.vue';
+import Authorized from './Representatives.vue';
 import { computed, onMounted, reactive, ref } from 'vue';
 import router from '@/router';
-import { RouterLink, routerKey } from 'vue-router';
+import { RouterLink, routerKey, useRoute } from 'vue-router';
 import axios from "axios"
-import type { Customer } from '../CustomersModel';
+import type { Customer } from '../modules/Customers';
+import type { Representatives } from '../modules/Representatives';
+import Representative from './Representatives.vue';
+import DeleteRepresentives from './DeleteRepresentatives.vue';
+import EditRepresentatives from './EditRepresentatives.vue';
 
 
-const num= defineProps<{
-    nameId: string
+const num = defineProps<{
+    nameId: String
 }>()
 
-const tab=ref({})
+const route = useRoute()
+
+const userId = computed(() => {
+    if (route && route.params && route.params.id) {
+        return route.params.id
+    } else {
+        return null // or return a default value if id is not available
+    }
+})
+const customerId = ref({
+    id: '',
+    name: '',
+}); // Make sure to include the 'id' property in the initial value
+const representativeId = ref()
+const representatives = ref();
+
 
 onMounted(async () => {
     await axios.get("https://localhost:7003/api/Customers/")
-      .then(function (response) {
-        tab.value = response.data.content.filter((users:{name:String}) => users.name === num.nameId)[0];
-      })
-      .catch(function (error) {
-        console.log(error)
-      })
+        .then(function (response) {
 
-  })
-  console.log(tab)
+            customerId.value = response.data.content.filter((users: { id: String }) => users.id == userId.value)[0];
+            getRepresentatives();
 
-  console.log(typeof(tab))
+        })
+        .catch(function (error) {
+            console.log(error)
+        })
+})
+
+function getRepresentatives() {
+    axios.get("https://localhost:7003/api/Representives/").then((response) => {
+        representativeId.value = response.data.content.filter((users: { customerName: string }) => users.customerName == customerId.value.name);
+        representatives.value = response.data.content
+
+    });
+}
+
 
 </script>
 
 <template>
-<InfoCustomer
-:customer="tab" :key="tab.id"/>
+    <InfoCustomer :customer="customerId" :key="customerId.id" />
 
-    
     <card class=" shadow-2 p-3 mt-3 border-round-2xl">
-        <template #content >
+        <template #content>
+
             <TabView class="tabview-custom" ref="tabview4">
                 <TabPanel>
                     <template #header>
                         <i class="ml-2 pi pi-user"></i>
                         <span>المخولين</span>
                     </template>
-                     <!-- المخولون الخاصون بالعميل -->
-                   <Authorized/>
+                    <!-- المخولون الخاصون بالعميل -->
+                    <Representative @getRepresentatives="getRepresentatives()" />
+
+                    <div class="grid ">
+                        <div class="col-12 md:col-6" v-for="representative in representativeId" :key="representative.id">
+                            <Card class="w-3/5 mx-auto" style="background-color: #FFFFFF; color: #333333;">
+                                <template #header>
+                                    <DeleteRepresentives :name="representative" :key="representative.id"
+                                        @getRepresentatives="getRepresentatives()" />
+
+                                    <EditRepresentatives :name="representative" :key="representative.id"
+                                    @get-representatives="getRepresentatives">
+                                    </EditRepresentatives>
+
+                                </template>
+                                <template #content>
+                                    <div class="min-h-450">
+                                        <div class="text-center font-bold text-lg mb-2">اسم المخول:</div>
+                                        <div class="text-center text-lg">{{ representative.firstName }}
+                                            {{ representative.lastName }}</div>
+                                        <div class="text-center font-bold mt-4 mb-2 text-lg">البريد الإلكتروني:</div>
+                                        <div class="text-center text-lg">{{ representative.email }}</div>
+                                        <div class="flex justify-center mt-4">
+                                            <div class="flex-1">
+                                                <div class="text-center font-bold mb-2 text-lg">رقم الإثبات:</div>
+                                                <div class="text-center text-lg">{{ representative.identityNo }}</div>
+                                            </div>
+                                            <div class="flex-1">
+                                                <div class="text-center font-bold mb-2 text-lg">نوع الإثبات:</div>
+                                                <div class="text-center text-lg">{{ representative.identityType }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="text-center mt-4">
+                                            <div class="font-bold mb-2 text-lg">رقم الهاتف:</div>
+                                            <div class="text-lg" style="direction: ltr;">{{ representative.phoneNo }}</div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </Card>
+                        </div>
+                    </div>
+
+
+
                 </TabPanel>
                 <TabPanel>
                     <template #header>
                         <i class="ml-2 pi pi-calendar"></i>
                         <span>جدول الزيارات</span>
                     </template>
-                                 <!-- الزيارات الخاصة بالعميل -->
-                    </TabPanel>
+                    <!-- الزيارات الخاصة بالعميل -->
+                </TabPanel>
                 <TabPanel>
                     <template #header>
                         <i class="ml-2 pi pi-cog"></i>
                         <span>جدول الخدمات</span>
                     </template>
-                   <!-- الخدمات الخاصة بالعميل -->
+                    <!-- الخدمات الخاصة بالعميل -->
                 </TabPanel>
             </TabView>
         </template>
     </card>
-    
 </template>
 
-<style>
-   span{ font-family: 'Tajawal', sans-serif;}
-</style>
+<style></style>
