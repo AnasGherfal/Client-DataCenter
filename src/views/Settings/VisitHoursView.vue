@@ -9,17 +9,6 @@ import moment from 'moment';
 import type { VisitHours } from './Models/VisitHoursModels'
 
 
-
-const visitHours = reactive<VisitHours>({
-    name: '',
-    startTime: '',
-    endTime: '',
-    priceForFirstHour: null,
-    priceForRemainingHour: null,
-
-})
-
-
 const getVisitsHours = ref();
 const selectedHours = ref();
 
@@ -35,7 +24,7 @@ const rules = computed(() => {
 })
 
 const toast = useToast();
-const v$ = useVuelidate(rules, visitHours);
+// const v$ = useVuelidate(rules, visitHours);
 
 
 
@@ -43,8 +32,8 @@ onMounted(async () => {
     await axios.get("https://localhost:7003/api/VisitTimeShift")
         .then((response) => {
             getVisitsHours.value = response.data.content;
-
-
+          
+            // console.log(visitHours.startTime)
 
         })
         .catch(function (error) {
@@ -54,12 +43,12 @@ onMounted(async () => {
 })
 
 const submitForm = async () => {
-    const result = await v$.value.$validate();
+    // const result = await v$.value.$validate();
     toast.add({ severity: 'error', summary: 'حدث خطأ', detail: 'لم يتم التعديل', life: 3000 });
     
     console.log(selectedHours.value.name)
     
-    const send = ref<VisitHours>({
+    const send = reactive<VisitHours>({
     name: selectedHours.value.name,
     startTime: moment(selectedHours.value.startTime).format('HH:mm:ss'),
     endTime: moment(selectedHours.value.endTime).format('HH:mm:ss'),
@@ -69,9 +58,7 @@ const submitForm = async () => {
 })
 
 console.log(send)
-    await axios.put(`https://localhost:7003/api/VisitTimeShift/${selected}`, send
-        // startTime: moment(state.startTime).format( 'hh:mm a'), 
-    )
+    await axios.put(`https://localhost:7003/api/VisitTimeShift/${selected}`, send)
         .then((response) => {
             console.log(response)
             // state.startTime = response.data.time;
@@ -97,7 +84,7 @@ const getIndex = (index: any) => {
 <template>
     <div>
 
-        <form @submit.prevent="submitForm">
+        <form @submit.prevent="submitForm">{{   }}
             <div class="grid p-fluid ">
                 <div class="field col-12 md:col-4 mt-2">
                     <span class="p-float-label ">
@@ -110,14 +97,14 @@ const getIndex = (index: any) => {
             </div>
 
             <div v-if="selectedHours">
-                <h3>{{ selectedHours.name }}</h3>
+                <h3>{{ selectedHours.name }}</h3>{{ selectedHours.startTime }}
                 <div class="grid p-fluid ">
                     <div class="field col-12 md:col-4 mt-2">
                         <span class="p-float-label ">
 
                             <Calendar id="startTime" v-model="selectedHours.startTime" :showTime="true" :timeOnly="true"
-                                hourFormat="24" selectionMode="single" :manualInput="true" :stepMinute="15"
-                                @click="formChanged = true" />
+                                hourFormat="24" selectionMode="single" :manualInput="true" :stepMinute="15" :show-seconds="true"
+                                @click="formChanged = true" :step-second="60" />
                             <label for="startTime">من </label>
 
                         </span>
