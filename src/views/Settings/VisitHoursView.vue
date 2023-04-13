@@ -8,7 +8,7 @@ import axios from 'axios';
 import moment from 'moment';
 import type { VisitHours } from './Models/VisitHoursModels'
 
-
+//Needs Validation
 const getVisitsHours = ref();
 const selectedHours = ref();
 
@@ -44,10 +44,7 @@ onMounted(async () => {
 
 const submitForm = async () => {
     // const result = await v$.value.$validate();
-    toast.add({ severity: 'error', summary: 'حدث خطأ', detail: 'لم يتم التعديل', life: 3000 });
-    
-    console.log(selectedHours.value.name)
-    
+        
     const send = reactive<VisitHours>({
     name: selectedHours.value.name,
     startTime: moment(selectedHours.value.startTime).format('HH:mm:ss'),
@@ -57,16 +54,15 @@ const submitForm = async () => {
 
 })
 
-console.log(send)
     await axios.put(`https://localhost:7003/api/VisitTimeShift/${selected}`, send)
         .then((response) => {
-            console.log(response)
-            // state.startTime = response.data.time;
-            // response.data[0].startTime=state.startTime 
+            toast.add({ severity: 'success', summary: 'نجاح العمليه', detail: `${response.data.msg}`, life: 3000 });
 
 
         })
         .catch(function (error) {
+            toast.add({ severity: 'error', summary: 'حدث خطأ', detail: 'لم يتم التعديل', life: 3000 });
+
             console.log(error)
         })
 
@@ -81,10 +77,10 @@ const getIndex = (index: any) => {
 
 </script>
 
-<template>
-    <div>
+<template>Needs Validation/ post
+    <div> 
 
-        <form @submit.prevent="submitForm">{{   }}
+        <form @submit.prevent="submitForm">
             <div class="grid p-fluid ">
                 <div class="field col-12 md:col-4 mt-2">
                     <span class="p-float-label ">
@@ -114,7 +110,7 @@ const getIndex = (index: any) => {
 
                             <Calendar inputId="endTime" v-model="selectedHours.endTime" :showTime="true" :timeOnly="true"
                                 selectionMode="single" :manualInput="true" :stepMinute="15" hourFormat="24"
-                                @input="formChanged = true" />
+                                @input="formChanged = true" :show-seconds="true"  :step-second="60" />
                             <!-- <error v-for="error in v$.endWorkTime.$errors" :key="error.$uid" class="p-error ">
                                                         {{ error.$message }}</error> -->
                             <label for="endTime">الى</label>
@@ -145,7 +141,7 @@ const getIndex = (index: any) => {
             <Button @click="submitForm" :disabled="!formChanged" icon="fa-solid fa-floppy-disk fa-flip fa-flip-hover"
                 style="--fa-animation-duration: 2s; --fa-animation-delay:5s; --fa-animation-iteration-count:5" label="تخزين"
                 class="" />
-            <!-- <Toast position="bottom-right" /> -->
+            <Toast position="bottom-left" />
 
         </form>
 
