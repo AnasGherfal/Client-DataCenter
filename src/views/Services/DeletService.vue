@@ -22,7 +22,6 @@ const delet = () => {
 
       axios.delete('https://localhost:7003/api/Service?id='+ props.pakge.id )
       .then(response => {
-       console.log(response)
        toast.add({ severity: 'success', summary: 'Confirmed', detail: response.data.msg, life: 3000 });
        deleteProductDialog.value = false
        emit('getList')

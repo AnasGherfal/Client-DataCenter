@@ -72,7 +72,7 @@ const openModal = () => {
             <template #default>
 
         <RepresentativeForm @form-submit="onFormSubmit" :representatives="representatives"
-         :submit-button-text="'Edit'">
+         :submit-button-text="'Edit'" value="تعديل">
 
         </RepresentativeForm>
         </template>

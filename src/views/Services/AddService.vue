@@ -55,7 +55,6 @@ const resetForm = () => {
     if (result) {
         axios.post("https://localhost:7003/api/Service", state)
             .then(function (response) {
-                console.log(response.data.msg)        
                 emit('getList')
                 toast.add({ severity: 'success', summary: 'Success Message', detail: 'تمت إضافة باقة', life: 3000 });
             })

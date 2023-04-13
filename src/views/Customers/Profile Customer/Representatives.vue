@@ -54,7 +54,6 @@ const onFormSubmit = async (representative: Representatives) => {
 const resetForm = () => {
     representatives.value.firstName = '';
     representatives.value.lastName = '';
-
     representatives.value.email = '';
     representatives.value.phoneNo = '';
     representatives.value.identityNo = '';
@@ -83,7 +82,7 @@ const openModal = () => {
 
 
                 <RepresentativeForm @form-submit="onFormSubmit" :representatives="representatives"
-                    :submitButtonText="'add'">
+                    :submitButtonText="'add'" value="اضافه">
 
                 </RepresentativeForm>
 

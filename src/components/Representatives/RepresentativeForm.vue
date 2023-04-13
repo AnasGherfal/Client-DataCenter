@@ -15,6 +15,7 @@ const props = defineProps({
         type: String,
         required: true
     },
+    value:String
     
 })
 
@@ -30,8 +31,6 @@ const submitForm = async () => {
             // You can access the form data via formData.value
             instance.emit('form-submit', representatives.value);
         }
-
-
     } else {
         console.log("empty")
     }
@@ -109,7 +108,7 @@ const v$ = useVuelidate(rules, representatives);
                 </span>
             </div>
         </div>
-        <Button type="submit" icon="pi pi-check" label="إضافة" />
+        <Button type="submit" icon="pi pi-check" :label="value" />
     
 
     </form>
