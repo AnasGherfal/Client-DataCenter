@@ -75,7 +75,7 @@ const openModal = () => {
         <Button @click="openModal" class=" p-button-primary mb-4">
             اضافة مُخول
         </Button>
-        <Dialog header="اضافة مُخول" contentStyle="max-height: 80vh; width: 75vw; padding: 20px;"
+        <Dialog header="اضافة مُخول" contentStyle="max-height: 80vh; max-width: 90vw; min-width:75vw; padding: 20px;"
             v-model:visible="displayModal" :breakpoints="{ '960px': '75vw', '640px': '90vw' }" :modal="true">
 
             <template #default>

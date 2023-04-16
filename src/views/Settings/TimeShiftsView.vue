@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import { useToast } from 'primevue/usetoast';
 import { computed, onMounted, reactive, ref } from 'vue';
-import AddNewHours from './AddNewHoursView.vue';
+import AddNewHours from './AddTimeShiftsView.vue';
 import { required, helpers, minValue, requiredIf, email } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import axios from 'axios';
 import moment from 'moment';
-import type { VisitHours } from './Models/VisitHoursModels'
+import type { VisitHours } from './Models/TimeShiftsModels'
 
-
+//Needs Validation
 const getVisitsHours = ref();
 const selectedHours = ref();
 
@@ -44,29 +44,28 @@ onMounted(async () => {
 
 const submitForm = async () => {
     // const result = await v$.value.$validate();
-    toast.add({ severity: 'error', summary: 'حدث خطأ', detail: 'لم يتم التعديل', life: 3000 });
-    
-    console.log(selectedHours.value.name)
-    
+    visible.value = true;
+
+        
     const send = reactive<VisitHours>({
     name: selectedHours.value.name,
     startTime: moment(selectedHours.value.startTime).format('HH:mm:ss'),
     endTime: moment(selectedHours.value.endTime).format('HH:mm:ss'),
     priceForFirstHour: selectedHours.value.priceForFirstHour,
     priceForRemainingHour: selectedHours.value.priceForRemainingHour
+    
 
 })
 
-console.log(send)
     await axios.put(`https://localhost:7003/api/VisitTimeShift/${selected}`, send)
         .then((response) => {
-            console.log(response)
-            // state.startTime = response.data.time;
-            // response.data[0].startTime=state.startTime 
+            toast.add({ severity: 'success', summary: 'نجاح العمليه', detail: `${response.data.msg}`, life: 3000 });
 
 
         })
         .catch(function (error) {
+            toast.add({ severity: 'error', summary: 'حدث خطأ', detail: 'لم يتم التعديل', life: 3000 });
+
             console.log(error)
         })
 
@@ -79,12 +78,21 @@ const getIndex = (index: any) => {
 
 }
 
+const position = ref('center');
+const visible = ref(false);
+
+const openSave = (pos:string) => {
+    position.value = pos;
+    visible.value = true;
+}
+
 </script>
 
-<template>
-    <div>
+<template>Needs Validation/ post
+    <div> 
+        <AddNewHours/>
 
-        <form @submit.prevent="submitForm">{{   }}
+        <form @submit.prevent="submitForm">
             <div class="grid p-fluid ">
                 <div class="field col-12 md:col-4 mt-2">
                     <span class="p-float-label ">
@@ -97,7 +105,7 @@ const getIndex = (index: any) => {
             </div>
 
             <div v-if="selectedHours">
-                <h3>{{ selectedHours.name }}</h3>{{ selectedHours.startTime }}
+                <h3>{{ selectedHours.name }}</h3>
                 <div class="grid p-fluid ">
                     <div class="field col-12 md:col-4 mt-2">
                         <span class="p-float-label ">
@@ -114,7 +122,7 @@ const getIndex = (index: any) => {
 
                             <Calendar inputId="endTime" v-model="selectedHours.endTime" :showTime="true" :timeOnly="true"
                                 selectionMode="single" :manualInput="true" :stepMinute="15" hourFormat="24"
-                                @input="formChanged = true" />
+                                @click="formChanged = true" :show-seconds="true"  :step-second="60" />
                             <!-- <error v-for="error in v$.endWorkTime.$errors" :key="error.$uid" class="p-error ">
                                                         {{ error.$message }}</error> -->
                             <label for="endTime">الى</label>
@@ -142,10 +150,26 @@ const getIndex = (index: any) => {
 
             <Divider />
 
-            <Button @click="submitForm" :disabled="!formChanged" icon="fa-solid fa-floppy-disk fa-flip fa-flip-hover"
+            <Button  @click="openSave('bottom')" :disabled="!formChanged" icon="fa-solid fa-floppy-disk fa-flip fa-flip-hover"
                 style="--fa-animation-duration: 2s; --fa-animation-delay:5s; --fa-animation-iteration-count:5" label="تخزين"
                 class="" />
-            <!-- <Toast position="bottom-right" /> -->
+
+                <Dialog v-model:visible="visible" :style="{ width: '450px' }" header="تأكيد"
+                                    :modal="true" :draggable="false">
+
+                                    <div class="confirmation-content">
+                                        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem; color: red;" />
+                                        <span>هل انت متأكد من تغيير وقت الساعات ؟</span>
+                                    </div>
+                                    <template #footer>
+                                        <Button label="نعم" icon="pi pi-check" text @click="submitForm" />
+
+                                        <Button label="لا" icon="pi pi-times" text @click="visible = false" />
+                                    </template>
+
+
+                                </Dialog>
+            <Toast position="bottom-left" />
 
         </form>
 
