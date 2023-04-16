@@ -4,6 +4,7 @@ import { ref, onMounted } from 'vue';
 import { useToast } from 'primevue/usetoast';
 
 import axios from 'axios';
+import { toNumber } from '@vue/shared';
 
  
 
@@ -27,12 +28,13 @@ import axios from 'axios';
             iconShape: string
         }>()
         const tab1=ref()
-
+console.log(stateTest.stateCheck)
+const test= toNumber(stateTest.stateCheck)
     onMounted(async () => {
-    await axios.get("http://localhost:3000/users")
+    await axios.get("https://localhost:7003/api/subscription?PageNumber=1&PageSize=20")
       .then(function (response) {
         console.log(response)
-        tab1.value = response.data.filter((users:{status: string;state:String}) => users.status === stateTest.stateCheck);
+        tab1.value = response.data.content.filter((users:{status: number}) => users.status === test);
       })
       .catch(function (error) {
         console.log(error)
@@ -51,12 +53,14 @@ import axios from 'axios';
 
         <OverlayPanel ref="op" appendTo="body" :showCloseIcon="true" id="overlay_panel" style="width: 450px" :breakpoints="{'800px':'50vw'}">
             <DataTable :value="tab1" v-model:selection="selectedProduct" selectionMode="single" :paginator="true" :rows="5" @rowSelect="onProductSelect" responsiveLayout="scroll" >
-                <Column field="name" header="Name" sortable style="width: 50%"></Column>
+                <Column field="id" header="id" sortable style="width: 50%"></Column>
+                <Column field="customerName" header="customer Name" sortable style="width: 50%"></Column>
+                <Column field="serviceName" header="service Name" sortable style="width: 50%"></Column>
                 <Column field="status" header="status" sortable style="width: 50%"></Column>
                 <Column style="min-width:8rem">
 
 <template #body="slotProps">
-<RouterLink :to="'customersRecord/CustomerProfile/'+slotProps.data.name">
+<RouterLink :to="'subscriptionsRecord/SubscriptionsDetaView/'+slotProps.data.id">
 <Button icon="fa-solid fa-user"  text rounded aria-label="Cancel"/>
 </RouterLink>
 </template>

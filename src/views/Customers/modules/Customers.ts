@@ -4,5 +4,5 @@ export interface Customer {
     address: string;
     primaryPhone: string;
     secondaryPhone: string;
-    file?: File | null;
+    file?: any | null;
   }

@@ -132,6 +132,7 @@ const deleteCustomer = () => {
                             </div>
 
                         </template>
+                        <Column field="id" header="ID" class="font-bold" frozen></Column>
 
                         <Column field="name" header="الإسم" style="min-width:10rem;" class="font-bold" frozen></Column>
 

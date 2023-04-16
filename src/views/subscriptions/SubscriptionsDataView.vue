@@ -89,7 +89,25 @@ onMounted(async () => {
       })
 
   })
+  const customersDialog=ref(false)
 
+//   function getId(index:SubscriptionRespons) {
+//     rotName = index;
+
+//     console.log(rotName.id)
+//     customersDialog.value = true
+// }
+
+const renewalSubscription= () => {
+    console.log(tab.id)
+    axios.put('https://localhost:7003/api/Subscription?id=' + tab.id)
+        .then(response => {
+            console.log(response)
+            toast.add({ severity: 'success', summary: 'تم التجديد', detail: response.data.msg, life: 3000 });
+            customersDialog.value = false
+        });
+        }
+   
 </script>
 
 
@@ -106,10 +124,25 @@ onMounted(async () => {
        <template #content>
         <div class="flex flex-row">
             <div class="flex-1" style=" text-align: center;">
-            <Knob :size="Knob" v-model="date3" readonly :max="365" />
+            <Knob v-if="date3!=0" :size="Knob" v-model="date3" readonly :max="365" />
             <h3 v-if="date3"> الأيام المتبقية</h3>
             <h3 v-else class="text-red-800"> انتهت صلاحية هذه الخدمة</h3>
             </div>
+            <Button icon="fa-solid fa-arrows-rotate" severity="warning" text rounded aria-label="Cancel"  @click="customersDialog=true" />
+                  <Dialog  v-model:visible="customersDialog" :style="{ width: '450px' }" header="تجديد الاشتراك"
+                                    :modal="true">
+
+                                    <div class="confirmation-content">
+                                        <i class="fa-solid fa-arrows-rotate mr-3" style="font-size: 2rem; color: green;" />
+                                        <span >هل انت متأكد من تجديد الاشتراك؟</span>
+                                    </div>
+                                    <template #footer>
+                                        <Button label="لا" icon="pi pi-times" text @click="customersDialog = false" />
+                                        <Button label="نعم" icon="pi pi-check" text @click="renewalSubscription" />
+                                    </template>
+
+
+                                </Dialog>     
             <Divider class="p-divider-solid" layout="vertical" />
 
             <div class="flex-1"> 

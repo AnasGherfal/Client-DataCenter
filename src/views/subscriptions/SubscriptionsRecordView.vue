@@ -6,7 +6,6 @@ import AddBotton from '@/components/AddBotton.vue';
 import { useSubscriptionsStore } from '@/stores/subscriptions';
 import moment from 'moment';
 import axios from 'axios';
-import Dialog from 'primevue/dialog';
 import { useToast } from 'primevue/usetoast';
 import type { SubscriptionRespons } from './SubscriptionsRespons';
 
@@ -53,35 +52,9 @@ if(value===1){
 
 const saw = new Date()
 console.log(saw)
-const customersDialog=ref(false)
-let rotName:SubscriptionRespons=reactive({
-    id:null,
-    status:null,
-    serviceName:'' ,
-    customerName: '' ,
-    startDate:'',
-    endDate:'',
-    subscriptionFileId:null 
-})
 
-function getId(index:SubscriptionRespons) {
-    rotName = index;
-    console.log(rotName.endDate.valueOf()-rotName.startDate.valueOf())
 
-    console.log(rotName.id)
-    customersDialog.value = true
-}
 
-const renewalSubscription= () => {
-    console.log(rotName)
-    axios.put('https://localhost:7003/api/Subscription?id=' + rotName.id)
-        .then(response => {
-            console.log(response)
-            toast.add({ severity: 'success', summary: 'تم التجديد', detail: response.data.msg, life: 3000 });
-            customersDialog.value = false
-        });
-        }
-   
 
 </script>
 
@@ -150,21 +123,7 @@ const renewalSubscription= () => {
                    <Button icon="fa-solid fa-circle-info" severity="info" text rounded 
                   v-tooltip="{ value: 'التفاصيل', fitContent: true }"  />
                   </RouterLink>
-                  <Button icon="fa-solid fa-arrows-rotate" severity="warning" text rounded aria-label="Cancel"  @click="getId(slotProps.data)" />
-                  <Dialog v-model:visible="customersDialog" :style="{ width: '450px' }" header="تجديد الاشتراك"
-                                    :modal="true">
-
-                                    <div class="confirmation-content">
-                                        <i class="fa-solid fa-arrows-rotate mr-3" style="font-size: 2rem; color: green;" />
-                                        <span >هل انت متأكد من تجديد الاشتراك؟</span>
-                                    </div>
-                                    <template #footer>
-                                        <Button label="لا" icon="pi pi-times" text @click="customersDialog = false" />
-                                        <Button label="نعم" icon="pi pi-check" text @click="renewalSubscription" />
-                                    </template>
-
-
-                                </Dialog>      
+ 
                    </template>
                    </Column>
 

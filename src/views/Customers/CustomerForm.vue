@@ -39,6 +39,8 @@ function isLibyanPhoneNumber(input: string): boolean {
 const v$ = useVuelidate(rules, customer);
 
 async function submitForm() {
+    console.log(customer.file)
+
     const result = await v$.value.$validate();
     if (result) {
 
@@ -81,7 +83,6 @@ const resetForm = () => {
     customer.address = '';
     customer.file = null;
 }
-
 
 </script>
 
@@ -149,11 +150,10 @@ const resetForm = () => {
                         <div class="field col-12 md:col-6 lg:col-4">
                             <FileUpload
                                 style="font-family: tajawal; width: 100%; height: 40px; border-radius: 10px; background-color: white; color:black; border-color: gray"
-                                mode="basic" name="File" url="./upload" chooseLabel=" ارفق ملف" cancelLabel="إلغاء"
+                                mode="basic" v-model="customer.file" name="File" url="./upload" chooseLabel=" ارفق ملف" cancelLabel="إلغاء"
                                 :showUploadButton="false" :showCancelButton="false" :maxFileSize="1000000"
                                 invalidFileSizeMessage="Exceeded the maximum file size" />
                         </div>
-
                     </div>
                     <Button @click="submitForm" icon="fa-solid fa-plus" label="إضافة" :loading="loading" />
                     <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger"
