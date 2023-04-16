@@ -11,18 +11,17 @@ const toast = useToast();
 const deleteProductDialog = ref(false)
 
 const props = defineProps<{
-    name: any
+    name: any;
 }>()
 
-const emit = defineEmits(['getRepresentatives'])
+const emit = defineEmits(['getTimeShifts'])
+const deleteTimeShift = () => {
 
-const deleteRepresentitive = () => {
-
-    axios.delete(`https://localhost:7003/api/Representives/${props.name.id}`)
+    axios.delete(`https://localhost:7003/api/VisitTimeShift/${props.name.id}`)
         .then(response => {
             toast.add({ severity: 'success', summary: 'Confirmed', detail: response.data.msg, life: 3000 });
             deleteProductDialog.value = false
-            emit('getRepresentatives')
+            emit('getTimeShifts')
         });
 
 
@@ -34,17 +33,17 @@ const deleteRepresentitive = () => {
 <template>
     <Dialog v-model:visible="deleteProductDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
         <div class="confirmation-content">
-            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-            <span v-if="name">هل انت متأكد من حذف <b>{{ name.firstName }} {{ name.lastName }}</b> ؟</span>
+            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem;" />
+            <span v-if="name">هل انت متأكد من حذف <b>{{ name.name }}</b> ؟</span>
         </div>
         <template #footer>
             <Button label="لا" icon="pi pi-times" text @click="deleteProductDialog = false" />
-            <Button label="نعم" icon="pi pi-check" text @click="deleteRepresentitive" />
+            <Button label="نعم" icon="pi pi-check" text @click="deleteTimeShift" />
         </template>
     </Dialog>
 
-    <Button @click="deleteProductDialog = true" style="height: 25px; width: 25px;float: left;" icon="fa-solid fa-trash"
-        class=" mt-2 ml-2  p-button-text p-button-danger" v-tooltip="{ value: 'حذف المخول', fitContent: true }" />
+    <Button @click="deleteProductDialog = true" style="height: 25px; width: 25px;" icon="fa-solid fa-trash"
+        class="  p-button-text p-button-danger" v-tooltip="{ value: 'حذف الساعه', fitContent: true }" />
 </template>
 
 <style>

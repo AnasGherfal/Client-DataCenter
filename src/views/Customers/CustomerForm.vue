@@ -56,11 +56,7 @@ async function submitForm() {
 
         await axios.post("https://localhost:7003/api/Customers", customer)
             .then(function (response) {
-                console.log(response)
                 toast.add({ severity: 'success', summary: 'تمت الاضافه', detail: response.data.msg, life: 3000 });
-
-                console.log(customer)
-                console.log(response)
                 store.getdata();
 
             })

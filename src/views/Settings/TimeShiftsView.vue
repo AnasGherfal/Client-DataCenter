@@ -7,7 +7,7 @@ import { useVuelidate } from "@vuelidate/core";
 import axios from 'axios';
 import moment from 'moment';
 import type { VisitHours } from './Models/TimeShiftsModels'
-
+import DeleteTimeShifts from './DeleteTimeShifts.vue';
 //Needs Validation
 const getVisitsHours = ref();
 const selectedHours = ref();
@@ -26,9 +26,11 @@ const rules = computed(() => {
 const toast = useToast();
 // const v$ = useVuelidate(rules, visitHours);
 
-
-
 onMounted(async () => {
+    getTimeShifts();
+
+})
+const getTimeShifts = (async () => {
     await axios.get("https://localhost:7003/api/VisitTimeShift")
         .then((response) => {
             getVisitsHours.value = response.data.content;
@@ -41,6 +43,9 @@ onMounted(async () => {
         })
 
 })
+
+
+
 
 const submitForm = async () => {
     // const result = await v$.value.$validate();
@@ -88,9 +93,10 @@ const openSave = (pos:string) => {
 
 </script>
 
-<template>Needs Validation/ post
+<template>Needs Validation
     <div> 
-        <AddNewHours/>
+
+        
 
         <form @submit.prevent="submitForm">
             <div class="grid p-fluid ">
@@ -105,7 +111,10 @@ const openSave = (pos:string) => {
             </div>
 
             <div v-if="selectedHours">
-                <h3>{{ selectedHours.name }}</h3>
+                <h3>{{ selectedHours.name }}
+                    <DeleteTimeShifts :name="selectedHours"  
+                 @getTimeShifts="getTimeShifts()"></DeleteTimeShifts></h3> 
+                
                 <div class="grid p-fluid ">
                     <div class="field col-12 md:col-4 mt-2">
                         <span class="p-float-label ">
@@ -152,7 +161,9 @@ const openSave = (pos:string) => {
 
             <Button  @click="openSave('bottom')" :disabled="!formChanged" icon="fa-solid fa-floppy-disk fa-flip fa-flip-hover"
                 style="--fa-animation-duration: 2s; --fa-animation-delay:5s; --fa-animation-iteration-count:5" label="تخزين"
-                class="" />
+                class="ml-2" />
+                <AddNewHours />
+
 
                 <Dialog v-model:visible="visible" :style="{ width: '450px' }" header="تأكيد"
                                     :modal="true" :draggable="false">

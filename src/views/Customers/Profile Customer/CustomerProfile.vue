@@ -7,16 +7,11 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import router from '@/router';
 import { RouterLink, routerKey, useRoute } from 'vue-router';
 import axios from "axios"
-import type { Customer } from '../modules/Customers';
-import type { Representatives } from '../modules/Representatives';
 import Representative from './Representatives.vue';
 import DeleteRepresentives from './DeleteRepresentatives.vue';
 import EditRepresentatives from './EditRepresentatives.vue';
 
 
-const num = defineProps<{
-    nameId: String
-}>()
 
 const route = useRoute()
 
@@ -126,7 +121,7 @@ function getRepresentatives() {
                 <TabPanel>
                     <template #header>
                         <i class="ml-2 pi pi-cog"></i>
-                        <span>جدول الخدمات</span>
+                        <span>جدول الاشتراكات</span>
                     </template>
                     <!-- الخدمات الخاصة بالعميل -->
                 </TabPanel>
