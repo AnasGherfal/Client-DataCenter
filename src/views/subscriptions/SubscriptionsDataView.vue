@@ -11,11 +11,15 @@ import BackButton from '@/components/BackButton.vue';
 import moment from 'moment';
 import type { Subscription } from './SubscriptionsModels';
 import type { SubscriptionRespons } from './SubscriptionsRespons';
+import { useToast } from "primevue/usetoast";
+import { useSubscriptionsStore } from '@/stores/subscriptions';
+
 
 const prop=defineProps<{
 nad:number
 }>()
 
+const store = useSubscriptionsStore();
 
 const tab:SubscriptionRespons=reactive({
     id:null,
@@ -30,7 +34,7 @@ const tab:SubscriptionRespons=reactive({
 let date3:number ;
 
 onMounted(async () => {
-    await axios.get("https://localhost:7003/api/Subscription?pagenum=1&pagesize=5")
+    await axios.get("https://localhost:7003/api/Subscription?pagenum=1&pagesize=10")
       .then(function (response) {
         console.log(prop.nad)
         tab.id  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].id;
@@ -45,7 +49,6 @@ onMounted(async () => {
         const date2 = new Date();
         console.log(date2)
         date3 =Math.trunc( (date1.valueOf() - date2.valueOf())/24/60/60/1000)
-
       })
       .catch(function (error) {
         console.log(error)
@@ -80,7 +83,6 @@ onMounted(async () => {
         servobj.name= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].name;
         servobj.monthlyVisits= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].monthlyVisits;
         servobj.price= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].price;
-
         console.log(servobj)
 
       })
@@ -97,6 +99,7 @@ onMounted(async () => {
 //     console.log(rotName.id)
 //     customersDialog.value = true
 // }
+const toast = useToast();
 
 const renewalSubscription= () => {
     console.log(tab.id)
@@ -105,6 +108,8 @@ const renewalSubscription= () => {
             console.log(response)
             toast.add({ severity: 'success', summary: 'تم التجديد', detail: response.data.msg, life: 3000 });
             customersDialog.value = false
+            store.getSub();
+
         });
         }
    
@@ -126,9 +131,10 @@ const renewalSubscription= () => {
             <div class="flex-1" style=" text-align: center;">
             <Knob v-if="date3!=0" :size="Knob" v-model="date3" readonly :max="365" />
             <h3 v-if="date3"> الأيام المتبقية</h3>
-            <h3 v-else class="text-red-800"> انتهت صلاحية هذه الخدمة</h3>
-            </div>
-            <Button icon="fa-solid fa-arrows-rotate" severity="warning" text rounded aria-label="Cancel"  @click="customersDialog=true" />
+            <h3 v-else class="text-red-800"> انتهت صلاحية هذه الخدمة هل تريد التجديد</h3>
+            <h3 v-if="date3<30 && date3!=0" class="text-orange-600">قاربت الصلاحية على انتهاء هل تريد تجديد هذه الخدمة</h3>
+
+            <Button v-if="date3<30" icon="fa-solid fa-arrows-rotate" severity="warning" text rounded aria-label="Cancel"  @click="customersDialog=true" />
                   <Dialog  v-model:visible="customersDialog" :style="{ width: '450px' }" header="تجديد الاشتراك"
                                     :modal="true">
 
@@ -143,6 +149,7 @@ const renewalSubscription= () => {
 
 
                                 </Dialog>     
+            </div>
             <Divider class="p-divider-solid" layout="vertical" />
 
             <div class="flex-1"> 
