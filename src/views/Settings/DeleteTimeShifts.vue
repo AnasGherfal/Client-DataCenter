@@ -33,7 +33,7 @@ const deleteTimeShift = () => {
 <template>
     <Dialog v-model:visible="deleteProductDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
         <div class="confirmation-content">
-            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem;" />
+            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem; color: red;" />
             <span v-if="name">هل انت متأكد من حذف <b>{{ name.name }}</b> ؟</span>
         </div>
         <template #footer>
