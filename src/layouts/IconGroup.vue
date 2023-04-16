@@ -50,7 +50,7 @@ const toggleThemeMode = () => {
         <Menu ref="menu" :model="items" :popup="true" >
           <template #start>
                 <button @click="" class="w-full p-link flex align-items-center p-2 pl-3 text-color hover:surface-200 border-noround">
-                    <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" class="mr-2" shape="circle" />
+                    <Avatar image="" class="mr-2" shape="circle" />
                     <div class="flex flex-column align">
                         <span class="font-bold">Admin</span>
                     </div>

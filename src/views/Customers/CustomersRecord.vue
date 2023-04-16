@@ -132,11 +132,11 @@ const deleteCustomer = () => {
                             </div>
 
                         </template>
-                        <Column field="id" header="ID" class="font-bold" frozen></Column>
+                        <!-- <Column field="id" header="ID" class="font-bold" frozen></Column> -->
 
                         <Column field="name" header="الإسم" style="min-width:10rem;" class="font-bold" frozen></Column>
 
-                        <Column field="status" header="  الحاله " filterField="status" style="width:4rem"
+                        <Column field="status" header="  الحاله " filterField="status" style="width:2rem"
                             :showFilterMenu="false" :filterMenuStyle="{ width: '4rem' }">
                             <template #body="{ data }">
 
@@ -163,12 +163,14 @@ const deleteCustomer = () => {
 
                             <template #body="slotProps">
 
-                                <RouterLink :to="'customersRecord/CustomerProfile/' + slotProps.data.id">
-                                    <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel" />
-                                </RouterLink>
+
 
                                 <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"
                                     @click="getId(slotProps.data)" />
+                                    
+                                    <RouterLink :to="'customersRecord/CustomerProfile/' + slotProps.data.id">
+                                    <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel" />
+                                </RouterLink>
 
                                 <Dialog v-model:visible="customersDialog" :style="{ width: '450px' }" header="تأكيد"
                                     :modal="true">
@@ -178,8 +180,8 @@ const deleteCustomer = () => {
                                         <span v-if="rotName">هل انت متأكد من حذف <b>{{ rotName.name }}</b> ؟</span>
                                     </div>
                                     <template #footer>
-                                        <Button label="لا" icon="pi pi-times" text @click="customersDialog = false" />
                                         <Button label="نعم" icon="pi pi-check" text @click="deleteCustomer" />
+                                        <Button label="لا" icon="pi pi-times" text @click="customersDialog = false" />
                                     </template>
 
 
