@@ -59,7 +59,6 @@ const resetForm = () => {
           price: state.price,
         })
         .then(response => { 
-            console.log(response.data.msg)
             emit('getList')
             toast.add({ severity: 'success', summary: 'Success Message', detail:response.data.msg, life: 3000 });
 })
