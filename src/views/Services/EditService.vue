@@ -6,9 +6,10 @@ import { useToast } from "primevue/usetoast";
 import Dialog from 'primevue/dialog';
 import axios from 'axios';
 import router from '@/router';
+import type { Service } from './ServicesModel';
 
 const pakgeInfo = defineProps<{
-pakge:string
+pakge:Service
 }>()
 const emit=defineEmits(['getList'])
 
@@ -43,8 +44,8 @@ const resetForm = () => {
     state.acpPort= '';
     state.amountOfPower = '';
     state.dns= '';
-    state.monthlyVisits='';
-    state.price= ''
+    state.monthlyVisits=null;
+    state.price= null
         }
 
     const submitForm = async () => {

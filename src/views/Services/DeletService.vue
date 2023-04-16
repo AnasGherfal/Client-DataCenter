@@ -6,6 +6,7 @@ import Toast from 'primevue/toast';
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import { ref } from 'vue';
+import type { Service } from './ServicesModel';
 
 const confirm = useConfirm();
 const toast = useToast();
@@ -13,7 +14,7 @@ const toast = useToast();
 const deleteProductDialog = ref(false)
 
 const props= defineProps<{
-    pakge:string
+    pakge:Service
 }>()
 
 const emit=defineEmits(['getList'])

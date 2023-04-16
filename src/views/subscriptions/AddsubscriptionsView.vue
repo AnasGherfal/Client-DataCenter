@@ -90,6 +90,8 @@ const submitForm = async () => {
                   })
                 .catch(function (error) {
                     console.log(error)
+                    toast.add({ severity: 'error', summary: 'هناك مشكلة', detail:'هنالك مشكلة في الوصول', life: 3000 });
+
 
                 })
               } else {

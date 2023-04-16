@@ -6,18 +6,19 @@ import { useToast } from "primevue/usetoast";
 import Dialog from 'primevue/dialog';
 import axios from 'axios';
 import router from '@/router';
+import type { Service } from './ServicesModel';
 
 
 
 const emit=defineEmits(['getList'])
 // define opject
-const state= reactive({
+const state:Service= reactive({
     name: '',
     amountOfPower: '',
     acpPort: '',
     dns: '',
-    monthlyVisits: '',
-    price: '',
+    monthlyVisits: null,
+    price: null,
 })
 
 // error msg for valid
@@ -42,8 +43,8 @@ const resetForm = () => {
     state.acpPort= '';
     state.amountOfPower = '';
     state.dns= '';
-    state.monthlyVisits='';
-    state.price='';
+    state.monthlyVisits=null;
+    state.price=null;
     }
 
 // submit form 
@@ -87,7 +88,7 @@ const openModal = () => {
 
 
 <template >
-    <Dialog  header="اضافة باقة" contentStyle="height: 250px; padding: 20px;"  v-model:visible="displayModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '60vw'}" :modal="true">
+    <Dialog  header="اضافة باقة" contentStyle="height: 263px; padding: 20px;"  v-model:visible="displayModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '60vw'}" :modal="true">
   <form @submit.prevent="submitForm">
 
    <div class="grid p-fluid ">

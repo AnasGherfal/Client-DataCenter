@@ -47,13 +47,13 @@ onMounted( async () =>{
                     <div class="justify-content-between ">
                          <div>
                         <span class="block text-center  text-3xl  font-bold">{{ servic.name }}</span>
-                        <div class="text-center mb-3">عدد الزيارات المتاحة في هده الباقة في الشهر : {{ servic.monthlyVisits }}</div>
+                        <div class="text-center mb-3">عدد الزيارات المتاحة في هذه الباقة في الشهر : {{ servic.monthlyVisits }}</div>
                         <div class=" text-center font-semibold text-4xl">{{ servic.price }}<span class="text-xs mr-1 text-blue-800">د.ل</span></div>
                     </div>
                     <Divider/>
                   
                 </div>
-                <p class="font-bold">خواص هده الباقة :</p>
+                <p class="font-bold">خواص هذه الباقة :</p>
 
                 <div style="direction:ltr;" class="text-center font-bold text-sm"> 
                 <i class="text-green-600 fa-solid fa-circle-check mr-2"></i>  
