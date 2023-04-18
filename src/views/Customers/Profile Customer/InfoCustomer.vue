@@ -45,7 +45,7 @@ const submitForm = async () => {
     axios.put("https://localhost:7003/api/Customers/"+dataClinet.customer.id,state)
    .then(function(response) {
     console.log(response)
-    toast.add({severity:'success', summary: 'Message', detail:response.data, life: 3000});
+    toast.add({ severity: 'success', summary: 'رسالة نجاح', detail: response.data, life: 3000 });
     actEdit.value=true;
 })
 .catch(function(error){

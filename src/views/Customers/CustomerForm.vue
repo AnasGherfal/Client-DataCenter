@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue';
-import { email, required, helpers } from "@vuelidate/validators";
+import { email, required, helpers, minLength } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import { useCustomersStore } from '@/stores/customers'
@@ -8,7 +8,8 @@ import axios from 'axios';
 import router from '@/router';
 import InputText from 'primevue/inputtext';
 import BackButton from '@/components/BackButton.vue';
-import type  {Customer}  from './modules/Customers';
+import type { Customer } from './modules/Customers';
+import { isLibyanPhoneNumber, validateText } from '@/assets/validations';
 
 const store = useCustomersStore();
 const loading = ref(false);
@@ -25,48 +26,47 @@ const customer: Customer = reactive({
 
 const rules = computed(() => {
     return {
-        name: { required: helpers.withMessage('الاسم مطلوب', required) },
-        email: { required: helpers.withMessage('الايميل مطلوب', required), email: helpers.withMessage(' ليس عنوان بريد إلكتروني صالح', email) },
-        address: { required: helpers.withMessage('العنوان مطلوب', required) },
-        primaryPhone: { required: helpers.withMessage('الحقل مطلوب', required), isLibyanPhoneNumber: helpers.withMessage(' , ليس رقم ليبي صالح', isLibyanPhoneNumber) },
+        name: {
+            required: helpers.withMessage('الحقل مطلوب', required),
+            validateText: helpers.withMessage(', حروف عربيه او انجليزيه فقط', validateText),
+            minLength: helpers.withMessage('يجب أن يحتوي على الأقل 3 أحرف', minLength(3)),
+
+        },
+        email: {
+            required: helpers.withMessage('الحقل مطلوب', required),
+            email: helpers.withMessage(' ليس عنوان بريد إلكتروني صالح', email)
+        },
+        address: { required: helpers.withMessage('الحقل مطلوب', required) },
+        primaryPhone: {
+            required: helpers.withMessage('الحقل مطلوب', required),
+            isLibyanPhoneNumber: helpers.withMessage(' , ليس رقم ليبي صالح', isLibyanPhoneNumber)
+        },
     }
 })
 
-function isLibyanPhoneNumber(input: string): boolean {
-    const phoneRegex = /^(?:\+?218)(?:(?:91|92|94|95)\d{7})$/;
-    return phoneRegex.test(input);
-}
+
 const v$ = useVuelidate(rules, customer);
 
 async function submitForm() {
-    console.log(customer.file)
+    try {
+        const result = await v$.value.$validate();
+        if (result) {
+            setTimeout(() => {
+                router.go(-1)
+                loading.value = false;
 
-    const result = await v$.value.$validate();
-    if (result) {
-
-        loading.value = true;
-
-        setTimeout(() => {
-            router.go(-1)
+            }, 1000);
+            loading.value = true;
+            const response = await axios.post("https://localhost:7003/api/Customers", customer);
+            toast.add({ severity: 'success', summary: 'رسالة نجاح', detail: response.data.msg, life: 3000 });
+            store.getdata();
             loading.value = false;
-
-        }, 1000);
-
-
-
-        await axios.post("https://localhost:7003/api/Customers", customer)
-            .then(function (response) {
-                toast.add({ severity: 'success', summary: 'تمت الاضافه', detail: response.data.msg, life: 3000 });
-                store.getdata();
-
-            })
-            .catch(function (error) {
-                console.log(error)
-            })
-    } else {
-        console.log("empty")
+        } else {
+            toast.add({ severity: 'error', summary: 'رسالة خطأ', detail:'يرجى تعبئة الحقول', life: 3000 })
+        }
+    } catch (error) {
+        console.log(error);
     }
-
 }
 
 const toast = useToast();
@@ -103,8 +103,11 @@ const resetForm = () => {
                         <div class=" field col-12 md:col-6 lg:col-4 ">
                             <span class="p-float-label">
                                 <InputText id="name" type="text" v-model="customer.name" />
-                                <error v-for="error in v$.name.$errors" :key="error.$uid" class="p-error ">
-                                    {{ error.$message }}</error>
+                                <div style="height: 10px;">
+                                    <error v-for="error in v$.name.$errors" :key="error.$uid" class="p-error ">
+                                        {{ error.$message }}</error>
+                                </div>
+
                                 <label for="name">اسم </label>
                             </span>
 
@@ -113,8 +116,10 @@ const resetForm = () => {
                             <span class="p-float-label ">{{ }}
                                 <InputText id="email" type="text" v-model="customer.email" />
                                 <label for="email">البريد الإلكتروني</label>
-                                <error v-for="error in v$.email.$errors" :key="error.$uid" class="p-error">
-                                    {{ error.$message }}</error>
+                                <div style="height: 10px;">
+                                    <error v-for="error in v$.email.$errors" :key="error.$uid" class="p-error">
+                                        {{ error.$message }}</error>
+                                </div>
 
                             </span>
                         </div>
@@ -122,8 +127,10 @@ const resetForm = () => {
                             <span class="p-float-label ">
                                 <InputText id="address" type="text" v-model="customer.address" />
                                 <label for="address">العنوان</label>
-                                <error v-for="error in v$.address.$errors" :key="error.$uid" class="p-error">
-                                    {{ error.$message }}</error>
+                                <div style="height: 10px;">
+                                    <error v-for="error in v$.address.$errors" :key="error.$uid" class="p-error">
+                                        {{ error.$message }}</error>
+                                </div>
 
                             </span>
                         </div>
@@ -131,8 +138,10 @@ const resetForm = () => {
                             <span class="p-float-label ">
                                 <InputMask id="phoneNum1" v-model="customer.primaryPhone" mask="+218999999999" />
                                 <label for="phoneNum1">رقم هاتف </label>
-                                <error v-for="error in v$.primaryPhone.$errors" :key="error.$uid" class="p-error">
-                                    {{ error.$message }}</error>
+                                <div style="height: 10px;">
+                                    <error v-for="error in v$.primaryPhone.$errors" :key="error.$uid" class="p-error">
+                                        {{ error.$message }}</error>
+                                </div>
                             </span>
                         </div>
                         <div class="field col-12 md:col-6 lg:col-4">
@@ -145,10 +154,10 @@ const resetForm = () => {
 
                         <div class="field col-12 md:col-6 lg:col-4">
                             <FileUpload
-                                style="font-family: tajawal; width: 100%; height: 40px; border-radius: 10px; background-color: white; color:black; border-color: gray"
-                                mode="basic" v-model="customer.file" name="File" url="./upload" chooseLabel=" ارفق ملف" cancelLabel="إلغاء"
-                                :showUploadButton="false" :showCancelButton="false" :maxFileSize="1000000"
-                                invalidFileSizeMessage="Exceeded the maximum file size" />
+                                style=" width: 100%; height: 40px; border-radius: 10px; background-color: white; color:black; border-color: gray"
+                                mode="basic" v-model="customer.file" name="File" url="./upload" chooseLabel=" ارفق ملف"
+                                cancelLabel="إلغاء" :showUploadButton="false" :showCancelButton="false"
+                                :maxFileSize="1000000" invalidFileSizeMessage="Exceeded the maximum file size" />
                         </div>
                     </div>
                     <Button @click="submitForm" icon="fa-solid fa-plus" label="إضافة" :loading="loading" />

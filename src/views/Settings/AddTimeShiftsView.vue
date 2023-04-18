@@ -7,7 +7,6 @@ import Dialog from 'primevue/dialog';
 import type { VisitHours } from './Models/TimeShiftsModels'
 import axios from 'axios';
 import moment from 'moment';
-
 const timeShifts: VisitHours = reactive({
     name: '',
     priceForFirstHour: null,
@@ -15,6 +14,7 @@ const timeShifts: VisitHours = reactive({
     startTime: '',
     endTime: ''
 })
+
 
 const emits = defineEmits(['getTimeShifts'])
 
@@ -46,11 +46,12 @@ const submitForm = async () => {
 
     if (result) {
         await axios.post("https://localhost:7003/api/VisitTimeShift", send)
-            .then(function () {
+            .then(function (response) {
+                console.log(response)
 
 
                 emits('getTimeShifts')
-                toast.add({ severity: 'success', summary: 'Success Message', detail: 'تمت إضافة باقة', life: 3000 });
+                toast.add({ severity: 'success', summary: 'Success Message', detail: `${response.data.msg}`, life: 3000 });
             })
             .catch(function (error) {
                 console.log(error)
@@ -61,6 +62,8 @@ const submitForm = async () => {
     }
 
 }
+
+console.log(emits('getTimeShifts') +'2')
 
 const resetForm = () => {
     timeShifts.name = '',
@@ -97,8 +100,10 @@ const closeModal = () => {
                     <span class="p-float-label">
                         <InputText id="name" type="text" v-model="timeShifts.name" />
                         <label for="name">اسم الساعه </label>
+                        <div style="height: 10px;"> 
                         <error v-for="error in v$.name.$errors" :key="error.$uid" class="p-error">{{ error.$message }}
                         </error>
+                        </div>
                     </span>
                 </div>
                 <div class="field col-12 md:col-4 lg:col-4">
@@ -107,8 +112,10 @@ const closeModal = () => {
                             hourFormat="24" selectionMode="single" :manualInput="true" :stepMinute="15" :show-seconds="true"
                             :step-second="60" />
                         <label for="startTime">وقت البداية </label>
+                        <div style="height: 10px;"> 
                         <error v-for="error in v$.startTime.$errors" :key="error.$uid" class="p-error">{{ error.$message }}
                         </error>
+                        </div>
                     </span>
                 </div>
                 <div class="field col-12 md:col-4 lg:col-4">
@@ -116,8 +123,10 @@ const closeModal = () => {
                         <Calendar inputId="endTime" v-model="timeShifts.endTime" :showTime="true" :timeOnly="true"
                             selectionMode="single" :manualInput="true" :stepMinute="15" hourFormat="24" :show-seconds="true"
                             :step-second="60" /> <label for="endTime">وقت النهاية </label>
+                            <div style="height: 10px;"> 
                         <error v-for="error in v$.endTime.$errors" :key="error.$uid" class="p-error">{{ error.$message }}
                         </error>
+                        </div>
                     </span>
                 </div>
             </div>
@@ -128,9 +137,11 @@ const closeModal = () => {
                             الساعه الاولى </label>
                         <InputNumber inputId="priceForFirstHour" v-model="timeShifts.priceForFirstHour" suffix=" دينار"
                             :step="0.25" :min="0" :allowEmpty="false" :highlightOnFocus="true" />
+                            <div style="height: 10px;"> 
                         <error v-for="error in v$.priceForFirstHour.$errors" :key="error.$uid" class="p-error">{{
                             error.$message }}
                         </error>
+                        </div>
                     </span>
                 </div>
                 <div class="field col-12 md:col-4 lg:col-4">
@@ -139,9 +150,11 @@ const closeModal = () => {
                             style="font-size: small; font-weight: 100; color:lightslategray;"> سعر باقي الساعات </label>
                         <InputNumber inputId="priceForRemainingHour" v-model="timeShifts.priceForRemainingHour"
                             suffix=" دينار" :step="0.25" :min="0" :allowEmpty="false" :highlightOnFocus="true" />
+                            <div style="height: 10px;"> 
                         <error v-for="error in v$.priceForFirstHour.$errors" :key="error.$uid" class="p-error">{{
                             error.$message }}
                         </error>
+                        </div>
                     </span>
                 </div>
             </div>

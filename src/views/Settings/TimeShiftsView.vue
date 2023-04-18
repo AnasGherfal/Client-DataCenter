@@ -44,7 +44,7 @@ const getTimeShifts = (async () => {
 
 })
 
-
+console.log(getTimeShifts )
 
 
 const submitForm = async () => {

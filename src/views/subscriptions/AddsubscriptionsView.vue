@@ -153,9 +153,10 @@ const search = (event:any) => {
                             <span class="p-float-label">
                                 <AutoComplete v-model="state.customerId"  optionLabel="name" :suggestions="filteredCountries" @complete="search" />
                                 <label for="customerName">العملاء</label>
-
+                                <div style="height: 10px;"> 
                                 <error v-for="error in v$.customerId.$errors" :key="error.$uid" class="p-error">{{
                                     error.$message }}</error>
+                                    </div>
 
                             </span>
 
@@ -167,8 +168,10 @@ const search = (event:any) => {
                                     selectionMode="single" :minDate="minDate" :showButtonBar="true" :manualInput="false"
                                     :disabledDates="invalidDates" />
                                 <label for="startDate">تاريخ بداية الاشتراك</label>
+                                <div style="height: 10px;"> 
                                 <error v-for="error in v$.startDate.$errors" :key="error.$uid" class="p-error">{{
                                     error.$message }}</error>
+                                    </div>
                             </span>
                         </div>
 
@@ -179,8 +182,10 @@ const search = (event:any) => {
                                     selectionMode="single" :minDate="minDate" :showButtonBar="true" :manualInput="false"
                                     :disabledDates="invalidDates" />
                                 <label for="endtDate">تاريخ انتهاء الاشتراك</label>
+                                <div style="height: 10px;"> 
                                 <error v-for="error in v$.endDate.$errors" :key="error.$uid" class="p-error">{{
                                     error.$message }}</error>
+                                    </div>
 
                             </span>
                         </div>
@@ -190,8 +195,10 @@ const search = (event:any) => {
                                 <Dropdown id="subscriptionType" :options="ServicesList" optionLabel="name" v-model="state.serviceId" placeholder="اختر الباقه"
                                     emptyMessage="لايوجد باقات" />
                                 <label for="subscriptionType">الباقة</label>
+                                <div style="height: 10px;"> 
                                 <error v-for="error in v$.serviceId.$errors" :key="error.$uid" class="p-error">{{
                                     error.$message }}</error>
+                                    </div>
                             </span>
                         </div>
 
