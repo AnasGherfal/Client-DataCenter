@@ -6,11 +6,11 @@ import TopBar from './layouts/TopBar.vue'
 import LoadingPage from './views/LoadingPage.vue';
 
 
-const loading = ref(true);
+const loading = ref(false);
 onMounted(() => {
       setTimeout(() => {
         loading.value = false;
-      }, 500); // Set the timeout to the amount of time you want the loading page to display
+      }, 0); // Set the timeout to the amount of time you want the loading page to display
     });
 
 

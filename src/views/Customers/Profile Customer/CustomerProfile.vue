@@ -3,20 +3,13 @@ import InfoCustomer from './InfoCustomer.vue'
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import Authorized from './Representatives.vue';
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, inject, onMounted, onUnmounted, reactive, ref } from 'vue';
 import router from '@/router';
 import { RouterLink, routerKey, useRoute } from 'vue-router';
 import axios from "axios"
-import type { Customer } from '../modules/Customers';
-import type { Representatives } from '../modules/Representatives';
 import Representative from './Representatives.vue';
 import DeleteRepresentives from './DeleteRepresentatives.vue';
 import EditRepresentatives from './EditRepresentatives.vue';
-
-
-const num = defineProps<{
-    nameId: String
-}>()
 
 const route = useRoute()
 
@@ -33,7 +26,7 @@ const customerId = ref({
 }); // Make sure to include the 'id' property in the initial value
 const representativeId = ref()
 const representatives = ref();
-
+const representativeLength = ref();
 
 onMounted(async () => {
     await axios.get("https://localhost:7003/api/Customers/")
@@ -52,9 +45,24 @@ function getRepresentatives() {
     axios.get("https://localhost:7003/api/Representives/").then((response) => {
         representativeId.value = response.data.content.filter((users: { customerName: string }) => users.customerName == customerId.value.name);
         representatives.value = response.data.content
+        representativeLength.value= representatives.value.length
 
     });
 }
+
+// Define a method to get the text based on the number
+const getIdentityTypeText = (type: number) => {
+    switch (type) {
+        case 1:
+            return 'اثبات هويه';
+        case 2:
+            return 'جواز سفر';
+        // Add more cases for other identity types
+        default:
+            return 'Unknown identity type';
+    }
+};
+
 
 
 </script>
@@ -72,17 +80,18 @@ function getRepresentatives() {
                         <span>المخولين</span>
                     </template>
                     <!-- المخولون الخاصون بالعميل -->
-                    <Representative @getRepresentatives="getRepresentatives()" />
+                    <Representative @getRepresentatives="getRepresentatives()"
+                    :representativeLength="representativeLength"/>
 
                     <div class="grid ">
                         <div class="col-12 md:col-6" v-for="representative in representativeId" :key="representative.id">
                             <Card class="w-3/5 mx-auto" style="background-color: #FFFFFF; color: #333333;">
                                 <template #header>
                                     <DeleteRepresentives :name="representative" :key="representative.id"
-                                        @getRepresentatives="getRepresentatives()" />
+                                        @getRepresentatives="getRepresentatives()" :representativeLength="representativeLength" />
 
                                     <EditRepresentatives :name="representative" :key="representative.id"
-                                    @get-representatives="getRepresentatives">
+                                        @get-representatives="getRepresentatives">
                                     </EditRepresentatives>
 
                                 </template>
@@ -100,7 +109,8 @@ function getRepresentatives() {
                                             </div>
                                             <div class="flex-1">
                                                 <div class="text-center font-bold mb-2 text-lg">نوع الإثبات:</div>
-                                                <div class="text-center text-lg">{{ representative.identityType }}</div>
+                                                <div class="text-center text-lg">{{
+                                                    getIdentityTypeText(representative.identityType) }}</div>
                                             </div>
                                         </div>
                                         <div class="text-center mt-4">
@@ -126,7 +136,7 @@ function getRepresentatives() {
                 <TabPanel>
                     <template #header>
                         <i class="ml-2 pi pi-cog"></i>
-                        <span>جدول الخدمات</span>
+                        <span>جدول الاشتراكات</span>
                     </template>
                     <!-- الخدمات الخاصة بالعميل -->
                 </TabPanel>

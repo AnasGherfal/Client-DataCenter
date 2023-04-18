@@ -97,7 +97,9 @@ const openModal = () => {
         <span class="p-float-label" >
             <InputText id="name" type="text" v-model="state.name"  />
             <label  for="name">اسم الباقة </label>
+            <div style="height: 10px;"> 
             <error  v-for="error in v$.name.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
+            </div>
         </span>
     </div>
 
@@ -105,7 +107,9 @@ const openModal = () => {
         <span class="p-float-label ">
             <InputText id="amountOfPower" type="text" v-model="state.amountOfPower" />
             <label for="amountOfPower" >Amount Of Power</label>
+            <div style="height: 10px;"> 
             <error  v-for="error in v$.amountOfPower.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
+            </div>
         </span>
     </div>
 
@@ -113,7 +117,9 @@ const openModal = () => {
         <span class="p-float-label ">
             <InputText id="acpPort" type="text" v-model="state.acpPort" />
             <label for="acpPort" >Acp Port</label>
+            <div style="height: 10px;"> 
             <error  v-for="error in v$.acpPort.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
+            </div>
         </span>
     </div>
 
@@ -121,7 +127,10 @@ const openModal = () => {
         <span class="p-float-label">
             <InputText id="monthlyVisits" type="text" v-model="state.monthlyVisits" />
             <label for="monthlyVisits" >عدد الزيارات في الشهر</label>
+            <div style="height: 10px;"> 
             <error  v-for="error in v$.monthlyVisits.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
+            </div>
+            
         </span>
     </div>
 
@@ -129,7 +138,9 @@ const openModal = () => {
         <span class="p-float-label ">
             <InputText id="Dns" type="text" v-model="state.dns" />
             <label for="Dns" >Dns</label>
+            <div style="height: 10px;"> 
             <error  v-for="error in v$.dns.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
+            </div>
         </span>
     </div>
 
@@ -137,7 +148,9 @@ const openModal = () => {
         <span class="p-float-label ">
             <InputText id="price" type="text" v-model="state.price" />
             <label for="price" > سعر الباقة بالدينار</label>
+            <div style="height: 10px;"> 
             <error  v-for="error in v$.price.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
+            </div>
         </span>
     </div>
 

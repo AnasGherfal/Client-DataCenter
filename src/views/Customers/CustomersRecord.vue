@@ -35,7 +35,6 @@ const onToggle = (val: any) => {
 
 
 const statuses = ref(['نشط', 'غير نشط', 'منتهي الصلاحيه']);
-const loading = ref(false);
 
 const getSeverity = (status: string) => {
     switch (status) {
@@ -83,8 +82,10 @@ const deleteCustomer = () => {
             </template>
             <template #content>
 
-            <div v-if="loading">
-                <div class="border-round border-1 surface-border p-4 surface-card">
+
+            <div>
+
+                    <div v-if="store.loading" class="border-round border-1 surface-border p-4 surface-card">
                         <div class="flex mb-3">
                             <div>
                                 <Skeleton width="10rem" class="mb-2"></Skeleton>
@@ -99,12 +100,7 @@ const deleteCustomer = () => {
                     </div>
 
 
-                </div>
-
-                <div v-else>
-
-
-                    <DataTable filterDisplay="row" ref="dt" :value="store.customers" dataKey="id" :paginator="true"
+                    <DataTable v-else filterDisplay="row" ref="dt" :value="store.customers" dataKey="id" :paginator="true"
                         :rows="5" v-model:filters="filters" :globalFilterFields="['name', 'status']"
                         paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown"
                         :rowsPerPageOptions="[5, 10, 25]"
@@ -156,9 +152,9 @@ const deleteCustomer = () => {
                         <Column v-for="(col, index) of selectedColumns" :field="col.field" :header="col.header"
                             :key="col.field + '_' + index" style="min-width:10rem;  "></Column>
                         <!-- <Column field="email" header="البريد الالكتروني"  style="min-width:12rem"></Column>
-                            <Column field="address" header=" العنوان"  style="min-width:12rem"></Column>
-                            <Column field="primaryPhone" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
-                            <Column field="secondaryPhone" header="  رقم الهاتف 2"  style="min-width:12rem"></Column> -->
+                                            <Column field="address" header=" العنوان"  style="min-width:12rem"></Column>
+                                            <Column field="primaryPhone" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
+                                            <Column field="secondaryPhone" header="  رقم الهاتف 2"  style="min-width:12rem"></Column> -->
                         <Column style="min-width:8rem">
 
                             <template #body="slotProps">
@@ -167,8 +163,8 @@ const deleteCustomer = () => {
 
                                 <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"
                                     @click="getId(slotProps.data)" />
-                                    
-                                    <RouterLink :to="'customersRecord/CustomerProfile/' + slotProps.data.id">
+
+                                <RouterLink :to="'customersRecord/CustomerProfile/' + slotProps.data.id">
                                     <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel" />
                                 </RouterLink>
 
