@@ -3,7 +3,7 @@ export function isLibyanPhoneNumber(input: string): boolean {
     return phoneRegex.test(input);
 }
 
-export function validateText(text) {
+export function validateText(text:string) {
     // Regular expression pattern to match English and Arabic letters
     const pattern = /^[\u0600-\u06FF\sA-Za-z]+$/;
   

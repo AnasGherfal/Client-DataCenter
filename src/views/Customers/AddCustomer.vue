@@ -84,22 +84,7 @@ const resetForm = () => {
     </div>
 </template>
 <style scoped>
-.p-button-icon {
-    padding-left: 0.5rem;
-}
 
-.p-inputmask .p-inputtext {
-    direction: rtl;
-}
-
-.p-float-label>label {
-    right: 0.5rem;
-    transition-duration: 0.3s
-}
-
-.p-fluid .p-inputtext {
-    width: 100%;
-}
 
 /* .menuitem-content:hover {
 

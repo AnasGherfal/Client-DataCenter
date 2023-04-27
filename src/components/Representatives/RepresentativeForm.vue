@@ -23,7 +23,7 @@ const toast = useToast();
 const representatives = ref(props.representatives)
 
 const instance = getCurrentInstance()
-const submitForm = async () => {
+const onSubmitForm  = async () => {
     const result = await v$.value.$validate();
     try {
         if (result) {
@@ -33,7 +33,10 @@ const submitForm = async () => {
                 instance.emit('form-submit', representatives.value);
             }
         } else {
-            toast.add({ severity: 'error', summary: 'رسالة خطأ', detail: 'يرجى تعبئة الحقول', life: 3000 })
+            toast.add({ severity: 'error', 
+            summary: 'رسالة خطأ', 
+            detail: 'يرجى تعبئة الحقول', 
+            life: 3000 })
         }
     } catch (error) {
         console.log(error)
@@ -99,7 +102,7 @@ const selectedIdentityTypeText = computed(() => {
 
 </script>
 <template>
-    <form @submit.prevent="submitForm">
+    <form @submit.prevent="onSubmitForm">
 
         <div class="grid p-fluid">
             <div class="field col-12 md:col-6 lg:col-4">
@@ -107,8 +110,10 @@ const selectedIdentityTypeText = computed(() => {
                     <InputText id="name" type="text" v-model="representatives.firstName" />
                     <label for="name">الاسم </label>
                     <div style="height: 10px;">
-                        <error v-for="error in v$.firstName.$errors" :key="error.$uid" class="p-error">{{ error.$message }}
-                        </error>
+                        <span v-for="error in v$.firstName.$errors" :key="error.$uid" 
+                        style="color: red; font-weight: bold; font-size: small;">
+                        {{ error.$message }}
+                        </span>
                     </div>
                 </span>
             </div>
@@ -117,8 +122,10 @@ const selectedIdentityTypeText = computed(() => {
                     <InputText id="name" type="text" v-model="representatives.lastName" />
                     <label for="name">اللقب </label>
                     <div style="height: 10px;">
-                        <error v-for="error in v$.lastName.$errors" :key="error.$uid" class="p-error">{{ error.$message }}
-                        </error>
+                        <span v-for="error in v$.lastName.$errors" :key="error.$uid" 
+                        style="color: red; font-weight: bold; font-size: small;">
+                        {{ error.$message }}
+                    </span>
                     </div>
                 </span>
             </div>
@@ -127,8 +134,10 @@ const selectedIdentityTypeText = computed(() => {
                     <InputText id="email" type="text" v-model="representatives.email" />
                     <label for="email">البريد الإلكتروني</label>
                     <div style="height: 10px;">
-                        <error v-for="error in v$.email.$errors" :key="error.$uid" class="p-error">{{ error.$message }}
-                        </error>
+                        <span v-for="error in v$.email.$errors" :key="error.$uid" 
+                        style="color: red; font-weight: bold; font-size: small;">
+                        {{ error.$message }}
+                    </span>
                     </div>
                 </span>
             </div>
@@ -137,8 +146,9 @@ const selectedIdentityTypeText = computed(() => {
                     <InputMask v-model="representatives.phoneNo" mask="+218999999999" />
                     <label for="inputtext">رقم هاتف </label>
                     <div style="height: 10px;">
-                        <error v-for="error in v$.phoneNo.$errors" :key="error.$uid" class="p-error">{{ error.$message }}
-                        </error>
+                        <span v-for="error in v$.phoneNo.$errors" :key="error.$uid" style="color: red; font-weight: bold; font-size: small;">
+                            {{ error.$message }}
+                        </span>
                     </div>
 
                 </span>
