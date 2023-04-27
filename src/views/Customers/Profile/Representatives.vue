@@ -37,8 +37,6 @@ const representatives = ref<Representatives>({
 const toast = useToast();
 
 const onFormSubmit = async (representative: Representatives) => {
-    console.log(props.representativeLength)
-    props.representativeLength+1;
     try {
 
         const response = await axios.post("https://localhost:7003/api/Representives", representative)

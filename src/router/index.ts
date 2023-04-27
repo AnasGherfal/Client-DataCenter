@@ -26,14 +26,14 @@ const router = createRouter({
       children:[
         
         {
-        path:'addCustomers',
+        path:'addCustomer',
         props:true,
-        component: () => import('../views/Customers/CustomerForm.vue')
+        component: () => import('../views/Customers/AddCustomer.vue')
         },
         {
           path:'CustomerProfile/:id',
           props:true,
-          component: () => import('../views/Customers/Profile Customer/CustomerProfile.vue')
+          component: () => import('../views/Customers/Profile/CustomerProfile.vue')
         }
       ]
       

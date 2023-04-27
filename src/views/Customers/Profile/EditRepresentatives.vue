@@ -35,18 +35,18 @@ const representatives: Representatives = reactive({
 const toast = useToast();
 
 const onFormSubmit = async (representative: Representatives) => {
-    console.log(props.name.id)
-    console.log(representative)
 
 
-    axios.put(`https://localhost:7003/api/Representives/${props.name.id}`, representative)
 
-        .then(response => {
+        try{
+            const response = await axios.put(`https://localhost:7003/api/Representives/${props.name.id}`, representative)
             emit('getRepresentatives')
             toast.add({ severity: 'success', summary: 'Success Message', detail: response.data.msg, life: 3000 });
             displayModal.value = false;
 
-        })
+        } catch(e) {
+            console.log(e)
+        }
 }
 const displayModal = ref(false);
 

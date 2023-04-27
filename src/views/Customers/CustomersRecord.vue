@@ -77,7 +77,7 @@ const deleteCustomer = () => {
 
             <template #title>
                 سجل العملاء
-                <AddBotton name-button="اضافة عميل" rout-name="/customersRecord/addCustomers" />
+                <AddBotton name-button="اضافة عميل" rout-name="/customersRecord/addCustomer" />
 
             </template>
             <template #content>
