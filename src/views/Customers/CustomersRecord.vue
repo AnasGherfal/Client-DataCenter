@@ -7,6 +7,7 @@ import axios from 'axios';
 import { useToast } from 'primevue/usetoast';
 import Dialog from 'primevue/dialog';
 import AddBotton from '@/components/AddBotton.vue';
+import LockButton from '@/components/LockButton.vue';
 
 const toast = useToast();
 const store = useCustomersStore();
@@ -159,19 +160,19 @@ const deleteCustomer = () => {
                             <Column field="address" header=" العنوان"  style="min-width:12rem"></Column>
                             <Column field="primaryPhone" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
                             <Column field="secondaryPhone" header="  رقم الهاتف 2"  style="min-width:12rem"></Column> -->
-                        <Column style="min-width:8rem">
+                        <Column style="min-width:13rem">
 
                             <template #body="slotProps">
 
-
-
+                                
                                 <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"
-                                    @click="getId(slotProps.data)" />
-                                    
-                                    <RouterLink :to="'customersRecord/CustomerProfile/' + slotProps.data.id">
+                                @click="getId(slotProps.data)" />
+                                
+                                <RouterLink :to="'customersRecord/CustomerProfile/' + slotProps.data.id">
                                     <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel" />
                                 </RouterLink>
-
+                                
+                                <LockButton typeLock="Customers" :id="slotProps.data.id" />
                                 <Dialog v-model:visible="customersDialog" :style="{ width: '450px' }" header="تأكيد"
                                     :modal="true">
 

@@ -77,6 +77,7 @@ const submitForm = async () => {
     customerId: state.customerId.id,
     startDate: state.startDate,
     endDate:state.endDate,
+    subscriptionFileId:null
            }) 
 
 
