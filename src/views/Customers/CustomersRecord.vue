@@ -35,15 +35,16 @@ const onToggle = (val: any) => {
 
 
 
-const statuses = ref(['نشط', 'غير نشط', 'منتهي الصلاحيه']);
+const statuses = ref(['نشط', 'غير نشط','مقفل']);
 
 const getSeverity = (status: string) => {
-    switch (status) {
+    switch (trans(status)) {
         case 'نشط':
             return 'success';
 
         case 'غير نشط':
             return 'danger';
+
     }
 }
 
@@ -67,6 +68,15 @@ const deleteCustomer = () => {
 
 }
 
+
+const trans = (value:string) => {
+    if(value=='1')
+    return 'نشط'
+    else if(value=='2')
+    return 'غير نشط'
+    else if(value=='5')
+    return 'مقفل';
+};
 
 </script>
 
@@ -137,7 +147,7 @@ const deleteCustomer = () => {
                             :showFilterMenu="false" :filterMenuStyle="{ width: '4rem' }">
                             <template #body="{ data }">
 
-                                <Tag :value="data.status" :severity="getSeverity(data.status)" />
+                                <Tag :value="trans(data.status)" :severity="getSeverity(data.status)" />
                             </template>
                             <template #filter="{ filterModel, filterCallback }">
                                 <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="statuses"
@@ -153,34 +163,22 @@ const deleteCustomer = () => {
                         <Column v-for="(col, index) of selectedColumns" :field="col.field" :header="col.header"
                             :key="col.field + '_' + index" style="min-width:10rem;  "></Column>
                         <!-- <Column field="email" header="البريد الالكتروني"  style="min-width:12rem"></Column>
-<<<<<<< HEAD
-                            <Column field="address" header=" العنوان"  style="min-width:12rem"></Column>
-                            <Column field="primaryPhone" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
-                            <Column field="secondaryPhone" header="  رقم الهاتف 2"  style="min-width:12rem"></Column> -->
-                        <Column style="min-width:13rem">
-=======
                                             <Column field="address" header=" العنوان"  style="min-width:12rem"></Column>
                                             <Column field="primaryPhone" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
                                             <Column field="secondaryPhone" header="  رقم الهاتف 2"  style="min-width:12rem"></Column> -->
-                        <Column style="min-width:8rem">
->>>>>>> d2d6a2dc64c70df13aaab938d0a795b5193b1613
+                        <Column style="min-width:13rem">
 
                             <template #body="slotProps">
 
                                 
                                 <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"
-<<<<<<< HEAD
-                                @click="getId(slotProps.data)" />
-                                
-=======
                                     @click="getId(slotProps.data)" />
 
->>>>>>> d2d6a2dc64c70df13aaab938d0a795b5193b1613
                                 <RouterLink :to="'customersRecord/CustomerProfile/' + slotProps.data.id">
                                     <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel" />
                                 </RouterLink>
                                 
-                                <LockButton typeLock="Customers" :id="slotProps.data.id" />
+                                <LockButton typeLock="Customers" :id="slotProps.data.id" :name="slotProps.data.id" />
                                 <Dialog v-model:visible="customersDialog" :style="{ width: '450px' }" header="تأكيد"
                                     :modal="true">
 

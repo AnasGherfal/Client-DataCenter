@@ -31,7 +31,7 @@ const onFormSubmit = async () => {
         if (result) {
 
         const response = await axios.put("https://localhost:7003/api/Customers/" + dataClinet.customer.id, customers)
-        toast.add({ severity: 'success', summary: 'رسالة نجاح', detail: response.data, life: 3000 });
+        toast.add({ severity: 'success', summary: 'رسالة نجاح', detail: response.data.msg, life: 3000 });
         actEdit.value = true;
     } else {
             toast.add({ severity: 'error', summary: 'رسالة خطأ', detail: 'يرجى تعبئة الحقول', life: 3000 })
