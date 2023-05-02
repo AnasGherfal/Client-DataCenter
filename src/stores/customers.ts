@@ -7,15 +7,18 @@ import axios from "axios"
 export const useCustomersStore = defineStore('customer', () => {
 
   const customers = ref();
+  const loading = ref(true);
+  const data = ref(null);
 
   onMounted(async () => {
-    await getdata();
+  getdata();
   })
   
 function getdata(){
    axios.get("https://localhost:7003/api/Customers")
   .then(function (response) {
     customers.value = response.data.content
+    loading.value=false;
 
   })
   .catch(function (error) {
@@ -23,6 +26,6 @@ function getdata(){
   })
   
  }
-  return {  customers, getdata }
+  return {  customers, getdata, loading, data }
 
 })

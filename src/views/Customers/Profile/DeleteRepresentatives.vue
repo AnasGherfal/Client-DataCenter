@@ -6,13 +6,14 @@ import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import { ref } from 'vue';
 
-const confirm = useConfirm();
 const toast = useToast();
 
 const deleteProductDialog = ref(false)
 
 const props = defineProps<{
     name: any
+    representativeLength: number
+
 }>()
 
 const emit = defineEmits(['getRepresentatives'])
@@ -21,6 +22,8 @@ const deleteRepresentitive = () => {
 
     axios.delete(`https://localhost:7003/api/Representives/${props.name.id}`)
         .then(response => {
+            props.representativeLength-1;
+
             toast.add({ severity: 'success', summary: 'Confirmed', detail: response.data.msg, life: 3000 });
             deleteProductDialog.value = false
             emit('getRepresentatives')

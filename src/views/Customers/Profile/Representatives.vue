@@ -11,7 +11,9 @@ import RepresentativeForm from '@/components/Representatives/RepresentativeForm.
 
 
 const route = useRoute()
-
+const props = defineProps<{
+    representativeLength: number
+}>()
 const userId = computed(() => {
     if (route && route.params && route.params.id) {
         return route.params.id
@@ -34,21 +36,26 @@ const representatives = ref<Representatives>({
 
 const toast = useToast();
 
-
 const onFormSubmit = async (representative: Representatives) => {
+    try {
 
-    axios.post("https://localhost:7003/api/Representives", representative)
-        .then(function (response) {
+        const response = await axios.post("https://localhost:7003/api/Representives", representative)
 
-            emit('getRepresentatives')
-            toast.add({ severity: 'success', summary: 'Success Message', detail: 'تمت إضافة باقة', life: 3000 });
-        })
-        .catch(function (error) {
-            console.log(error)
-            toast.add({ severity: 'warn', summary: 'Warn Message', detail: 'هناك مشكلة في عملية الادخال', life: 3000 });
-        })
-    displayModal.value = false;
-    resetForm();
+        emit('getRepresentatives')
+        toast.add({ severity: 'success', summary: 'رسالة نجاح', detail: response.data.msg, life: 3000 });
+
+
+        displayModal.value = false;
+        resetForm();
+
+    } catch (error) {
+        console.log(error)
+
+
+    }
+
+
+
 }
 
 const resetForm = () => {
@@ -62,6 +69,7 @@ const resetForm = () => {
 }
 const displayModal = ref(false);
 const openModal = () => {
+
     displayModal.value = true;
 
 };
@@ -81,8 +89,8 @@ const openModal = () => {
             <template #default>
 
 
-                <RepresentativeForm @form-submit="onFormSubmit" :representatives="representatives"
-                    :submitButtonText="'add'" value="اضافه">
+                <RepresentativeForm @form-submit="onFormSubmit" :representatives="representatives" :submitButtonText="'add'"
+                    value="اضافه">
 
                 </RepresentativeForm>
 

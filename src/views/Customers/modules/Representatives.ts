@@ -1,10 +1,9 @@
 export interface Representatives {
-[x: string]: any;
     firstName: string;
     lastName: string;
     identityNo: string;
     email: string;
     phoneNo: string;
-    identityType: null;
+    identityType: number|null;
     customerId:number |null;
   }
