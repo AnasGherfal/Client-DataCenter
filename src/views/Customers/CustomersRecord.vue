@@ -35,15 +35,16 @@ const onToggle = (val: any) => {
 
 
 
-const statuses = ref(['نشط', 'غير نشط', 'منتهي الصلاحيه']);
+const statuses = ref(['نشط', 'غير نشط','مقفل']);
 
 const getSeverity = (status: string) => {
-    switch (status) {
+    switch (trans(status)) {
         case 'نشط':
             return 'success';
 
         case 'غير نشط':
             return 'danger';
+
     }
 }
 
@@ -67,6 +68,15 @@ const deleteCustomer = () => {
 
 }
 
+
+const trans = (value:string) => {
+    if(value=='1')
+    return 'نشط'
+    else if(value=='2')
+    return 'غير نشط'
+    else if(value=='5')
+    return 'مقفل';
+};
 
 </script>
 
@@ -137,7 +147,7 @@ const deleteCustomer = () => {
                             :showFilterMenu="false" :filterMenuStyle="{ width: '4rem' }">
                             <template #body="{ data }">
 
-                                <Tag :value="data.status" :severity="getSeverity(data.status)" />
+                                <Tag :value="trans(data.status)" :severity="getSeverity(data.status)" />
                             </template>
                             <template #filter="{ filterModel, filterCallback }">
                                 <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="statuses"
@@ -168,7 +178,7 @@ const deleteCustomer = () => {
                                     <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel" />
                                 </RouterLink>
                                 
-                                <LockButton typeLock="Customers" :id="slotProps.data.id" />
+                                <LockButton typeLock="Customers" :id="slotProps.data.id" :name="slotProps.data.id" />
                                 <Dialog v-model:visible="customersDialog" :style="{ width: '450px' }" header="تأكيد"
                                     :modal="true">
 
