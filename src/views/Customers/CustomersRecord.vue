@@ -163,17 +163,17 @@ const trans = (value:string) => {
                         <Column v-for="(col, index) of selectedColumns" :field="col.field" :header="col.header"
                             :key="col.field + '_' + index" style="min-width:10rem;  "></Column>
                         <!-- <Column field="email" header="البريد الالكتروني"  style="min-width:12rem"></Column>
-                                            <Column field="address" header=" العنوان"  style="min-width:12rem"></Column>
-                                            <Column field="primaryPhone" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
-                                            <Column field="secondaryPhone" header="  رقم الهاتف 2"  style="min-width:12rem"></Column> -->
+                            <Column field="address" header=" العنوان"  style="min-width:12rem"></Column>
+                            <Column field="primaryPhone" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
+                            <Column field="secondaryPhone" header="  رقم الهاتف 2"  style="min-width:12rem"></Column> -->
                         <Column style="min-width:13rem">
 
                             <template #body="slotProps">
 
                                 
                                 <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"
-                                    @click="getId(slotProps.data)" />
-
+                                @click="getId(slotProps.data)" />
+                                
                                 <RouterLink :to="'customersRecord/CustomerProfile/' + slotProps.data.id">
                                     <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel" />
                                 </RouterLink>

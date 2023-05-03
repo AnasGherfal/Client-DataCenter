@@ -11,9 +11,7 @@ import RepresentativeForm from '@/components/Representatives/RepresentativeForm.
 
 
 const route = useRoute()
-const props = defineProps<{
-    representativeLength: number
-}>()
+
 const userId = computed(() => {
     if (route && route.params && route.params.id) {
         return route.params.id
