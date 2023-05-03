@@ -91,9 +91,6 @@ if(value===1){
  
                    </template>
                    </Column>
-
-
-
                 </DataTable>
 
 </template>
