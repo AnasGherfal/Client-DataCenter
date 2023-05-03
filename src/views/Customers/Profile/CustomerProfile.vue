@@ -11,6 +11,7 @@ import Representative from './Representatives.vue';
 import DeleteRepresentives from './DeleteRepresentatives.vue';
 import EditRepresentatives from './EditRepresentatives.vue';
 import { useCustomersStore } from '@/stores/customers'
+import SubscriptionRecord from '@/components/Subscriptions/subscriptionRecordCompunent.vue';
 
 const route = useRoute()
 const store = useCustomersStore();
@@ -137,6 +138,7 @@ const getIdentityTypeText = (type: number) => {
                         <i class="ml-2 pi pi-cog"></i>
                         <span>جدول الاشتراكات</span>
                     </template>
+                    <SubscriptionRecord :key="customerId.id" :customerId="customerId" />
                     <!-- الخدمات الخاصة بالعميل -->
                 </TabPanel>
             </TabView>

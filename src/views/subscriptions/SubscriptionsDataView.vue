@@ -8,7 +8,6 @@ import TabPanel from 'primevue/tabpanel';
 import axios, { toFormData } from 'axios';
 import type { Service } from '../Services/ServicesModel';
 import BackButton from '@/components/BackButton.vue';
-import moment from 'moment';
 import type { Subscription } from './SubscriptionsModels';
 import type { SubscriptionRespons } from './SubscriptionsRespons';
 import { useToast } from "primevue/usetoast";
@@ -18,6 +17,7 @@ import { useSubscriptionsStore } from '@/stores/subscriptions';
 const prop=defineProps<{
 nad:number
 }>()
+
 
 const store = useSubscriptionsStore();
 
@@ -31,6 +31,17 @@ const tab:SubscriptionRespons=reactive({
     subscriptionFileId:null
   
 })
+
+const servobj:Service=reactive({
+    id:null,
+    name: '',
+    amountOfPower: '',
+    acpPort: '',
+    dns: '',
+    monthlyVisits: null,
+    price: null,
+  })
+
 let date3:number ;
 
 onMounted(async () => {
@@ -40,14 +51,13 @@ onMounted(async () => {
         tab.id  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].id;
         tab.status  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].status;
         tab.customerName  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].customerName;
-        tab.endDate  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].endDate;
+        tab.endDate = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].endDate;
         tab.startDate  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].startDate;
         tab.serviceName  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].serviceName;
         tab.subscriptionFileId  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].subscriptionFileId;
 
         const date1 = new Date(tab.endDate);
         const date2 = new Date();
-        console.log(date2)
         date3 =Math.trunc( (date1.valueOf() - date2.valueOf())/24/60/60/1000)
       })
       .catch(function (error) {
@@ -56,26 +66,11 @@ onMounted(async () => {
 
   })
 
-
-  
-
-  const servobj:Service=reactive({
-    id:null,
-    name: '',
-    amountOfPower: '',
-    acpPort: '',
-    dns: '',
-    monthlyVisits: null,
-    price: null,
-  })
-  
   onMounted(async () => {
-    await axios.get("https://localhost:7003/api/Service?PageNumber=1&PageSize=10")
+    await axios.get("https://localhost:7003/api/Service?PageNumber=1&PageSize=20")
       .then(function (response) {
 
         console.log(tab.serviceName)
-        console.log(response.data)
-
         servobj.id= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].id;
         servobj.acpPort= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].acpPort;
         servobj.dns= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].dns;
@@ -91,6 +86,7 @@ onMounted(async () => {
       })
 
   })
+
   const customersDialog=ref(false)
 
 //   function getId(index:SubscriptionRespons) {
@@ -103,16 +99,22 @@ const toast = useToast();
 
 const renewalSubscription= () => {
     console.log(tab.id)
-    axios.put('https://localhost:7003/api/Subscription?id=' + tab.id)
+    axios.put('https://localhost:7003/api/Subscription/Renew?id=' + tab.id)
         .then(response => {
             console.log(response)
             toast.add({ severity: 'success', summary: 'تم التجديد', detail: response.data.msg, life: 3000 });
             customersDialog.value = false
             store.getSub();
 
+          })
+      .catch(function (error) {
+        console.log(error)
+      
         });
         }
-   
+
+        
+
 </script>
 
 
