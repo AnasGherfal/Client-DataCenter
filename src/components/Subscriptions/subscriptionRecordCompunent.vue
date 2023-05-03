@@ -51,8 +51,6 @@ if(value===1){
 </script>
 
 <template>
-
-
                 <DataTable ref="dt" :value="subDeta" dataKey="id" :paginator="true" :rows="5" v-model:filters="filters"
                     :globalFilterFields="['serviceName', 'customerName']"
                     paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown"
@@ -68,22 +66,22 @@ if(value===1){
                     </Column>
 
                     <Column v-for="(col, index) of selectedColumns" :field="col.field" :header="col.header"
-                        :key="col.field + '_' + index" style="min-width:10rem;  "></Column>
+                        :key="col.field + '_' + index" style="min-width:5rem;  "></Column>
                         
 
-                        <Column field="startDate" header="تاريخ بداية الاشتراك"  dataType="date" style="min-width:10rem;" >
+                        <Column field="startDate" header="تاريخ بداية الاشتراك"  dataType="date" style="min-width:11rem;" >
                             <template #body="{ data }">
                              {{ formatDate(data.startDate) }}
                           </template>
                         </Column>
 
-                        <Column field="endDate" header="تاريخ نهاية الاشتراك"  dataType="date" style="min-width:10rem;" >
+                        <Column field="endDate" header="تاريخ نهاية الاشتراك"  dataType="date" style="min-width:11rem;" >
                             <template #body="{ data }">
                              {{ formatDate(data.endDate) }}
                           </template>
                         </Column>
 
-                        <Column style="min-width:8rem">
+                        <Column style="min-width:3rem">
                         <template #body="slotProps">
 
                   <RouterLink :key="slotProps.data.id"  :to="'/subscriptionsRecord/SubscriptionsDetaView/' + slotProps.data.id" style="text-decoration: none">

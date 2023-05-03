@@ -10,7 +10,7 @@ import axios from "axios"
 import Representative from './Representatives.vue';
 import DeleteRepresentives from './DeleteRepresentatives.vue';
 import EditRepresentatives from './EditRepresentatives.vue';
-import SubscriptionRecord from '@/components/Subscriptions/subscriptionRecord.vue';
+import SubscriptionRecord from '@/components/Subscriptions/subscriptionRecordCompunent.vue';
 
 const route = useRoute()
 
