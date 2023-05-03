@@ -85,6 +85,8 @@ function invalidDate() {
 }
 
 const submitForm = async () => {
+    console.log(visit.startVisit)
+
     const result = await v$.value.$validate();
     if (result) {
 
@@ -130,7 +132,6 @@ const resetForm = () => {
         visit.visitDuration = "",
         visit.price = ""
 }
-
 
 
 </script>

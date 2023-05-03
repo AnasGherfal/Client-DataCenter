@@ -89,7 +89,7 @@ const closeModal = () => {
 </script>
 
 <template>
-        <Button @click="openModal" icon="fa-solid fa-plus" class=" p-button-primary p-button" label="إضافة ساعه جديده"> 
+        <Button @click="openModal" icon="fa-solid fa-plus" class=" p-button-primary p-button" label="إضافة ساعة جديده"> 
     </Button>
     <Dialog header="اضافة ساعه جديده" contentStyle="max-height: 80vh; max-width: 90vw; min-width:75vw; padding: 20px;"
         v-model:visible="displayModal" :breakpoints="{ '960px': '75vw', '640px': '90vw' }" :modal="true">

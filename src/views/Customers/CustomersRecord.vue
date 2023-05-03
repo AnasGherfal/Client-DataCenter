@@ -12,7 +12,7 @@ import LockButton from '@/components/LockButton.vue';
 const toast = useToast();
 const store = useCustomersStore();
 const customersDialog = ref(false);
-
+const isLocked = ref()
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     status: { value: null, matchMode: FilterMatchMode.EQUALS },
@@ -35,18 +35,30 @@ const onToggle = (val: any) => {
 
 
 
-const statuses = ref(['نشط', 'غير نشط','مقفل']);
+const statuses = ref([   
+     'نشط' ,
+     'مقفل' ]);
 
-const getSeverity = (status: string) => {
+const getSeverity = (status: any) => {
     switch (trans(status)) {
         case 'نشط':
             return 'success';
 
         case 'غير نشط':
             return 'danger';
+        case 'مقفل':
+            return 'warning';
 
     }
 }
+const trans = (value: string) => {
+    if (value == '1')
+        return 'نشط'
+    else if (value == '2')
+        return 'غير نشط'
+    else if (value == '5')
+        return 'مقفل';
+};
 
 const rotName = ref()
 
@@ -69,19 +81,14 @@ const deleteCustomer = () => {
 }
 
 
-const trans = (value:string) => {
-    if(value=='1')
-    return 'نشط'
-    else if(value=='2')
-    return 'غير نشط'
-    else if(value=='5')
-    return 'مقفل';
-};
+
 
 </script>
 
 <template>
     <RouterView></RouterView>
+
+
 
     <div v-if="($route.path === '/customersRecord')">
         <Card>
@@ -94,7 +101,7 @@ const trans = (value:string) => {
             <template #content>
 
 
-            <div>
+                <div>
 
                     <div v-if="store.loading" class="border-round border-1 surface-border p-4 surface-card">
                         <div class="flex mb-3">
@@ -147,10 +154,11 @@ const trans = (value:string) => {
                             :showFilterMenu="false" :filterMenuStyle="{ width: '4rem' }">
                             <template #body="{ data }">
 
+
                                 <Tag :value="trans(data.status)" :severity="getSeverity(data.status)" />
                             </template>
                             <template #filter="{ filterModel, filterCallback }">
-                                <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="statuses"
+                                <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="statuses" 
                                     placeholder="Select One" class="p-column-filter" style="min-width: 12rem"
                                     :showClear="true">
                                     <template #option="slotProps">
@@ -163,22 +171,23 @@ const trans = (value:string) => {
                         <Column v-for="(col, index) of selectedColumns" :field="col.field" :header="col.header"
                             :key="col.field + '_' + index" style="min-width:10rem;  "></Column>
                         <!-- <Column field="email" header="البريد الالكتروني"  style="min-width:12rem"></Column>
-                            <Column field="address" header=" العنوان"  style="min-width:12rem"></Column>
-                            <Column field="primaryPhone" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
-                            <Column field="secondaryPhone" header="  رقم الهاتف 2"  style="min-width:12rem"></Column> -->
+                                <Column field="address" header=" العنوان"  style="min-width:12rem"></Column>
+                                <Column field="primaryPhone" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
+                                <Column field="secondaryPhone" header="  رقم الهاتف 2"  style="min-width:12rem"></Column> -->
                         <Column style="min-width:13rem">
 
                             <template #body="slotProps">
 
-                                
+
                                 <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"
-                                @click="getId(slotProps.data)" />
-                                
+                                    @click="getId(slotProps.data)" />
+
                                 <RouterLink :to="'customersRecord/CustomerProfile/' + slotProps.data.id">
                                     <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel" />
                                 </RouterLink>
-                                
-                                <LockButton typeLock="Customers" :id="slotProps.data.id" :name="slotProps.data.id" />
+
+                                <LockButton typeLock="Customers" :id="slotProps.data.id" :name="slotProps.data.name"
+                                    :status="slotProps.data.status" @getdata="store.getdata" />
                                 <Dialog v-model:visible="customersDialog" :style="{ width: '450px' }" header="تأكيد"
                                     :modal="true">
 

@@ -10,9 +10,10 @@ import axios from "axios"
 import Representative from './Representatives.vue';
 import DeleteRepresentives from './DeleteRepresentatives.vue';
 import EditRepresentatives from './EditRepresentatives.vue';
+import { useCustomersStore } from '@/stores/customers'
 
 const route = useRoute()
-
+const store = useCustomersStore();
 const userId = computed(() => {
     if (route && route.params && route.params.id) {
         return route.params.id
@@ -23,10 +24,9 @@ const userId = computed(() => {
 const customerId = ref({
     id: '',
     name: '',
-}); // Make sure to include the 'id' property in the initial value
+}); 
 const representativeId = ref()
 const representatives = ref();
-const representativeLength = ref();
 
 onMounted(async () => {
     await axios.get("https://localhost:7003/api/Customers/")
@@ -45,7 +45,6 @@ function getRepresentatives() {
     axios.get("https://localhost:7003/api/Representives/").then((response) => {
         representativeId.value = response.data.content.filter((users: { customerName: string }) => users.customerName == customerId.value.name);
         representatives.value = response.data.content
-        representativeLength.value= representatives.value.length
 
     });
 }
@@ -68,7 +67,7 @@ const getIdentityTypeText = (type: number) => {
 </script>
 
 <template>
-    <InfoCustomer :customer="customerId" :key="customerId.id" />
+    <InfoCustomer :customer="customerId" :key="customerId.id" @getCustomers="store.getdata" />
 
     <card class=" shadow-2 p-3 mt-3 border-round-2xl">
         <template #content>
@@ -81,14 +80,14 @@ const getIdentityTypeText = (type: number) => {
                     </template>
                     <!-- المخولون الخاصون بالعميل -->
                     <Representative @getRepresentatives="getRepresentatives()"
-                    :representativeLength="representativeLength"/>
+                    />
 
                     <div class="grid ">
                         <div class="col-12 md:col-6" v-for="representative in representativeId" :key="representative.id">
                             <Card class="w-3/5 mx-auto" style="background-color: #FFFFFF; color: #333333;">
                                 <template #header>
                                     <DeleteRepresentives :name="representative" :key="representative.id"
-                                        @getRepresentatives="getRepresentatives()" :representativeLength="representativeLength" />
+                                        @getRepresentatives="getRepresentatives()" />
 
                                     <EditRepresentatives :name="representative" :key="representative.id"
                                         @get-representatives="getRepresentatives">

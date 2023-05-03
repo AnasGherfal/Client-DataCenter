@@ -8,10 +8,13 @@ import CustomerForm from '@/components/Customers/CustomerForm.vue';
 import { email, helpers, minLength, required } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';
 import { isLibyanPhoneNumber, validateText } from '@/assets/validations';
+import { useCustomersStore } from '@/stores/customers'
 
 const actEdit = ref(true);
 
+
 const dataClinet = defineProps<{ customer: any }>()
+const emit = defineEmits(['getCustomers'])
 
 const customers: Customer = reactive({
     name: dataClinet.customer.name,
@@ -19,6 +22,7 @@ const customers: Customer = reactive({
     primaryPhone: dataClinet.customer.primaryPhone,
     secondaryPhone: dataClinet.customer.secondaryPhone,
     address: dataClinet.customer.address,
+    status: dataClinet.customer.status,
 
 })
 
@@ -30,10 +34,11 @@ const onFormSubmit = async () => {
     try {
         if (result) {
 
-        const response = await axios.put("https://localhost:7003/api/Customers/" + dataClinet.customer.id, customers)
-        toast.add({ severity: 'success', summary: 'رسالة نجاح', detail: response.data.msg, life: 3000 });
-        actEdit.value = true;
-    } else {
+            const response = await axios.put("https://localhost:7003/api/Customers/" + dataClinet.customer.id, customers)
+            toast.add({ severity: 'success', summary: 'رسالة تأكيد', detail: response.data.msg, life: 3000 });
+            actEdit.value = true;
+            emit('getCustomers')
+        } else {
             toast.add({ severity: 'error', summary: 'رسالة خطأ', detail: 'يرجى تعبئة الحقول', life: 3000 })
         }
     } catch (error) {
@@ -70,13 +75,25 @@ const v$ = useVuelidate(rules, customers);
 
 <template >
     <div>
+
         <Card>
+
             <template #title>
                 البيانات الشخصية
 
                 <BackButton style="float: left;" />
 
-                <Button v-if="actEdit" @click="actEdit = !actEdit" icon=" fa-solid fa-pen"
+                <div v-if="customer.status === 5">
+                    <div class="warning-message">
+
+                        <div class="warning-message-icon"></div>
+                        <div class="warning-message-text">هاذا العميل في حالة قفل لا يمكن التعديل</div>
+
+                    </div>
+
+                </div>
+
+                <Button v-if="customer.status !== 5" @click="actEdit = !actEdit" icon=" fa-solid fa-pen"
                     style="width: 30px;height: 30px; margin-right: 10px;" class=" p-button-primary p-button-text"
                     v-tooltip="{ value: 'تعديل البيانات الشخصية', fitContent: true }" />
 
@@ -91,72 +108,74 @@ const v$ = useVuelidate(rules, customers);
                         <form @submit.prevent="onFormSubmit" :disabled="actEdit">
 
                             <div class="grid p-fluid ">
-                <div class=" field col-12 md:col-6 lg:col-4 ">
-                    <span class="p-float-label">
-                        <InputText id="name" type="text" v-model="customers.name " :disabled="actEdit"  />
-                        <div style="height: 10px;">
-                            <span  v-for="error in v$.name.$errors" :key="error.$uid"
-                            style="color: red; font-weight: bold; font-size: small;" >
-                                {{ error.$message }}</span>
-                        </div>
+                                <div class=" field col-12 md:col-6 lg:col-4 ">
+                                    <span class="p-float-label">
+                                        <InputText id="name" type="text" v-model="customers.name" :disabled="actEdit" />
+                                        <div style="height: 10px;">
+                                            <span v-for="error in v$.name.$errors" :key="error.$uid"
+                                                style="color: red; font-weight: bold; font-size: small;">
+                                                {{ error.$message }}</span>
+                                        </div>
 
-                        <label for="name">اسم </label>
-                    </span>
+                                        <label for="name">اسم </label>
+                                    </span>
 
-                </div>
-                <div class="field col-12 md:col-6 lg:col-4">
-                    <span class="p-float-label ">
-                        <InputText id="email" type="text" v-model="customers.email" :disabled="actEdit"/>
-                        <label for="email">البريد الإلكتروني</label>
-                        <div style="height: 10px;">
-                            <span v-for="error in v$.email.$errors" :key="error.$uid" 
-                            style="color: red; font-weight: bold; font-size: small;">
-                                {{ error.$message }}</span>
-                        </div>
+                                </div>
+                                <div class="field col-12 md:col-6 lg:col-4">
+                                    <span class="p-float-label ">
+                                        <InputText id="email" type="text" v-model="customers.email" :disabled="actEdit" />
+                                        <label for="email">البريد الإلكتروني</label>
+                                        <div style="height: 10px;">
+                                            <span v-for="error in v$.email.$errors" :key="error.$uid"
+                                                style="color: red; font-weight: bold; font-size: small;">
+                                                {{ error.$message }}</span>
+                                        </div>
 
-                    </span>
-                </div>
-                <div class="field col-12 md:col-6 lg:col-4">
-                    <span class="p-float-label ">
-                        <InputText id="address" type="text" v-model="customers.address" :disabled="actEdit"/>
-                        <label for="address">العنوان</label>
-                        <div style="height: 10px;">
-                            <span v-for="error in v$.address.$errors" :key="error.$uid" 
-                            style="color: red; font-weight: bold; font-size: small;">
-                                {{ error.$message }}</span>
-                        </div>
+                                    </span>
+                                </div>
+                                <div class="field col-12 md:col-6 lg:col-4">
+                                    <span class="p-float-label ">
+                                        <InputText id="address" type="text" v-model="customers.address"
+                                            :disabled="actEdit" />
+                                        <label for="address">العنوان</label>
+                                        <div style="height: 10px;">
+                                            <span v-for="error in v$.address.$errors" :key="error.$uid"
+                                                style="color: red; font-weight: bold; font-size: small;">
+                                                {{ error.$message }}</span>
+                                        </div>
 
-                    </span>
-                </div>
-                <div class="field col-12 md:col-6 lg:col-4">
-                    <span class="p-float-label ">
-                        <InputMask id="phoneNum1" v-model="customers.primaryPhone" mask="+218999999999"
-                            style="direction: ltr; text-align: end;" :disabled="actEdit"/>
-                        <label for="phoneNum1">رقم هاتف </label>
-                        <div style="height: 10px;">
-                            <span v-for="error in v$.primaryPhone.$errors" :key="error.$uid"
-                            style="color: red; font-weight: bold; font-size: small;">
-                                {{ error.$message }}</span>
-                        </div>
-                    </span>
-                </div>
-                <div class="field col-12 md:col-6 lg:col-4">
-                    <span class="p-float-label ">
-                        <InputMask id="secondaryPhone" v-model="customers.secondaryPhone" mask="+218999999999"
-                        :disabled="actEdit"/>
-                        <label for="secondaryPhone">رقم هاتف 2</label>
-                    </span>
-                </div>
+                                    </span>
+                                </div>
+                                <div class="field col-12 md:col-6 lg:col-4">
+                                    <span class="p-float-label ">
+                                        <InputMask id="phoneNum1" v-model="customers.primaryPhone" mask="+218999999999"
+                                            style="direction: ltr; text-align: end;" :disabled="actEdit" />
+                                        <label for="phoneNum1">رقم هاتف </label>
+                                        <div style="height: 10px;">
+                                            <span v-for="error in v$.primaryPhone.$errors" :key="error.$uid"
+                                                style="color: red; font-weight: bold; font-size: small;">
+                                                {{ error.$message }}</span>
+                                        </div>
+                                    </span>
+                                </div>
+                                <div class="field col-12 md:col-6 lg:col-4">
+                                    <span class="p-float-label ">
+                                        <InputMask id="secondaryPhone" v-model="customers.secondaryPhone"
+                                            mask="+218999999999" :disabled="actEdit" />
+                                        <label for="secondaryPhone">رقم هاتف 2</label>
+                                    </span>
+                                </div>
 
 
-                <div class="field col-12 md:col-6 lg:col-4">
-                    <FileUpload
-                        style=" width: 100%; height: 40px; border-radius: 10px; background-color: white; color:black; border-color: gray"
-                        mode="basic" v-model="customer.file" name="File" url="./upload" chooseLabel=" ارفق ملف"
-                        cancelLabel="إلغاء" :showUploadButton="false" :showCancelButton="false" :maxFileSize="1000000"
-                        invalidFileSizeMessage="Exceeded the maximum file size" />
-                </div>
-            </div>
+                                <div class="field col-12 md:col-6 lg:col-4">
+                                    <FileUpload
+                                        style=" width: 100%; height: 40px; border-radius: 10px; background-color: white; color:black; border-color: gray"
+                                        mode="basic" v-model="customer.file" name="File" url="./upload"
+                                        chooseLabel=" ارفق ملف" cancelLabel="إلغاء" :showUploadButton="false"
+                                        :showCancelButton="false" :maxFileSize="1000000"
+                                        invalidFileSizeMessage="Exceeded the maximum file size" />
+                                </div>
+                            </div>
 
                         </form>
 
@@ -201,4 +220,40 @@ error {
     color: #ffffff;
     border-color: #0d89ec;
 }
+
+.warning-message {
+  display: flex;
+  align-items: center;
+  background-color: #ffeeba;
+  color: #856404;
+  padding: 8px;
+  border: 1px solid #ffeeba;
+  border-radius: 10px;
+  width: 50%;
+}
+
+.warning-message-icon {
+  width: 24px;
+  height: 24px;
+  background-color: #ffc107;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 5px;
+}
+
+.warning-message-icon:before {
+  content: "!";
+  font-size: 16px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.warning-message-text {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
 </style>
