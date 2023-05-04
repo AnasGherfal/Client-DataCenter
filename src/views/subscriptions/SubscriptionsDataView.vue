@@ -115,6 +115,15 @@ const renewalSubscription= () => {
        </template> 
        
        <template #content>
+
+        <div v-if=" 5">
+                    <div class="warning-message">
+
+                        <div class="warning-message-icon"></div>
+                        <div class="warning-message-text">هذه الخدمة مقفلة لا يمكن تجديدها او اضافة شيء عليها</div>
+                    </div>
+                </div>
+
         <div class="flex flex-row">
             <div class="flex-1" style=" text-align: center;">
             <Knob v-if="date3!=0" :size="Knob" v-model="date3" readonly :max="365" />
@@ -202,5 +211,39 @@ const renewalSubscription= () => {
 .mr-2 {
   margin-left: 0.5rem !important;
 }
+.warning-message {
+  display: flex;
+  align-items: center;
+  background-color: #ffeeba;
+  color: #856404;
+  padding: 8px;
+  border: 1px solid #ffeeba;
+  border-radius: 10px;
+  width: 100%;
+  margin-bottom: 10px;
+}
 
+.warning-message-icon {
+  width: 24px;
+  height: 24px;
+  background-color: #ffc107;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 5px;
+}
+
+.warning-message-icon:before {
+  content: "!";
+  font-size: 16px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.warning-message-text {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+}
 </style>

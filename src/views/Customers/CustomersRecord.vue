@@ -174,7 +174,7 @@ const deleteCustomer = () => {
                                     <Column field="address" header=" العنوان"  style="min-width:12rem"></Column>
                                     <Column field="primaryPhone" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
                                     <Column field="secondaryPhone" header="  رقم الهاتف 2"  style="min-width:12rem"></Column> -->
-                        <Column style="min-width:13rem">
+                        <Column style="min-width:11rem">
 
                             <template #body="slotProps">
 

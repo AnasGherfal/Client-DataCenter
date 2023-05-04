@@ -6,7 +6,8 @@ import { useToast } from "primevue/usetoast";
 import Dialog from 'primevue/dialog';
 import axios from 'axios';
 import router from '@/router';
-import type { Service } from './Models/ServicesModelesModel';
+import type { Service } from './Models/ServicesModel';
+import ServiceForm from '@/components/Service/serviceForm.vue';
 
 
 
@@ -49,29 +50,26 @@ const resetForm = () => {
 
 // submit form 
 
-    const submitForm = async () => {
-    const result = await v$.value.$validate();
-    console.log(state)
+const onFormSubmit = async (state: Service) => {
+    try {
 
-    if (result) {
-        axios.post("https://localhost:7003/api/Service", state)
-            .then(function (response) {
-                emit('getList')
-                toast.add({ severity: 'success', summary: 'Success Message', detail: 'تمت إضافة باقة', life: 3000 });
-            })
-            .catch(function (error) {
-                console.log(error)
-                toast.add({ severity: 'warn', summary:'هناك مشكلة في عملية الادخال', detail:error , life: 3000 });
-            })
-            displayModal.value = false;
-            resetForm();
-            
+        const response = await axios.post("https://localhost:7003/api/Service", state)
 
-    } else {
-        console.log("empty")
-        toast.add({ severity: 'warn', summary:'هناك مشكلة في عملية الادخال' , life: 3000 });
+        emit('getList')
+        toast.add({ severity: 'success', summary: 'رسالة نجاح', detail: response.data.msg, life: 3000 });
+
+
+        displayModal.value = false;
+        resetForm();
+
+    } catch (error) {
+        console.log(error)
+
 
     }
+
+
+
 } 
   
 // funcation for dialog  
@@ -89,85 +87,16 @@ const openModal = () => {
 
 <template >
     <Dialog  header="اضافة باقة" contentStyle="height: 263px; padding: 20px;"  v-model:visible="displayModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '60vw'}" :modal="true">
-  <form @submit.prevent="submitForm">
 
-   <div class="grid p-fluid ">
-    
-    <div class="field col-12 md:col-4">
-        <span class="p-float-label" >
-            <InputText id="name" type="text" v-model="state.name"  />
-            <label  for="name">اسم الباقة </label>
-            <div style="height: 10px;"> 
-            <error  v-for="error in v$.name.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
-            </div>
-        </span>
-    </div>
+        <template #default>
 
-    <div class="field col-12 md:col-4">
-        <span class="p-float-label ">
-            <InputText id="amountOfPower" type="text" v-model="state.amountOfPower" />
-            <label for="amountOfPower" >Amount Of Power</label>
-            <div style="height: 10px;"> 
-            <error  v-for="error in v$.amountOfPower.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
-            </div>
-        </span>
-    </div>
+<ServiceForm @form-submit="onFormSubmit" :service="state" :submitButtonText="'add'"
+    value="اضافه"/>
 
-    <div class="field col-12 md:col-4">
-        <span class="p-float-label ">
-            <InputText id="acpPort" type="text" v-model="state.acpPort" />
-            <label for="acpPort" >Acp Port</label>
-            <div style="height: 10px;"> 
-            <error  v-for="error in v$.acpPort.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
-            </div>
-        </span>
-    </div>
 
-    <div class="field col-12 md:col-4">
-        <span class="p-float-label">
-            <InputText id="monthlyVisits" type="text" v-model="state.monthlyVisits" />
-            <label for="monthlyVisits" >عدد الزيارات في الشهر</label>
-            <div style="height: 10px;"> 
-            <error  v-for="error in v$.monthlyVisits.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
-            </div>
-            
-        </span>
-    </div>
-
-    <div class="field col-12 md:col-4">
-        <span class="p-float-label ">
-            <InputText id="Dns" type="text" v-model="state.dns" />
-            <label for="Dns" >Dns</label>
-            <div style="height: 10px;"> 
-            <error  v-for="error in v$.dns.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
-            </div>
-        </span>
-    </div>
-
-    <div class="field col-12 md:col-4">
-        <span class="p-float-label ">
-            <InputText id="price" type="text" v-model="state.price" />
-            <label for="price" > سعر الباقة بالدينار</label>
-            <div style="height: 10px;"> 
-            <error  v-for="error in v$.price.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
-            </div>
-        </span>
-    </div>
-
-</div>
-
-<Button  class="p-button-primry" icon="fa-solid fa-plus" label="إضافة" type="submit" />
-<Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger" style="margin-right: .5em;" />
-<Toast position="bottom-left" />
-
-</form>
-<template #footer>
-        
-<!-- <Toast position="bottom-right" /> -->
-
-            </template>
+</template>
         </Dialog>
-        <Button @click="openModal" style="" label="اضافة باقه"  icon="fa-solid fa-plus " class=" mb-4 ml-4 p-button-primry " ></Button>
+        <Button @click="openModal" style="" label="اضافة باقه"  icon="fa-solid fa-plus " class=" mb-4 ml-4 p-button-primry " />
 
 </template>
 
