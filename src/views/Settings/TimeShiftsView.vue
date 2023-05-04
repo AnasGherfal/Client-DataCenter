@@ -175,7 +175,7 @@ const openSave = (pos: string) => {
                     <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem; color: red;" />
                     <span>هل انت متأكد من تغيير وقت الساعات ؟</span>
                 </div>
-                <template #footer></template>
+                <template #footer>
                     <Button label="نعم" icon="pi pi-check" text @click="submitForm" />
 
                     <Button label="لا" icon="pi pi-times" text @click="visible = false" />
