@@ -3,11 +3,12 @@ import { computed, inject, onMounted, reactive, ref } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
 import Row from 'primevue/row';
 import AddBotton from '@/components/AddBotton.vue';
+import LockButton from '@/components/LockButton.vue';
 import { useSubscriptionsStore } from '@/stores/subscriptions';
 import moment from 'moment';
 import axios from 'axios';
 import { useToast } from 'primevue/usetoast';
-import type { SubscriptionRespons } from './SubscriptionsRespons';
+import type { SubscriptionRespons } from './Models/SubscriptionsResponsRespons';
 
 // optional
 
@@ -118,10 +119,14 @@ console.log(saw)
                           </template>
                         </Column>
 
-                        <Column style="min-width:5rem">
+                        <Column style="min-width:8rem">
                         <template #body="slotProps">
+                            <LockButton typeLock="Subscription" :id="slotProps.data.id" :name="slotProps.data.id"
+                                    :status="slotProps.data.status" @getdata="store.getSub" />
 
                   <RouterLink :key="slotProps.data.id"  :to="'/subscriptionsRecord/SubscriptionsDetaView/' + slotProps.data.id" style="text-decoration: none">
+                    
+
                    <Button icon="fa-solid fa-circle-info" severity="info" text rounded 
                   v-tooltip="{ value: 'التفاصيل', fitContent: true }"  />
                   

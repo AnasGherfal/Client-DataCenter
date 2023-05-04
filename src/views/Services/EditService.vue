@@ -6,7 +6,7 @@ import { useToast } from "primevue/usetoast";
 import Dialog from 'primevue/dialog';
 import axios from 'axios';
 import router from '@/router';
-import type { Service } from './ServicesModel';
+import type { Service } from './Models/ServicesModel';
 
 const pakgeInfo = defineProps<{
 pakge:Service
@@ -148,7 +148,6 @@ const openModal = () => {
         </Dialog>
 
         <Button  @click="openModal"
-             style="height: 25px; width: 25px;"
              icon=" fa-solid fa-pen"
              class=" mt-2 mr-2 p-button-primary p-button-text" 
              v-tooltip="{value:'تعديل الباقة', fitContent:true}" />
