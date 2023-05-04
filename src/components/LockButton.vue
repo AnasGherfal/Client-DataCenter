@@ -28,7 +28,9 @@ const lockedIcon = computed(() =>
 const buttonColor = computed(() =>
     status.value === 5 ? 'green' : 'info'
 );
-
+const tooltipValue = computed(() =>
+    status.value === 5 ? 'الغاء التقيد' : 'قيد '
+);
 function lockButton() {
     axios
         .put(`https://localhost:7003/api/${prop.typeLock}/${prop.id}/lock`)
@@ -62,20 +64,30 @@ function unlockButton() {
 
         });
 }
+
+console.log('id '+prop.id)
+console.log('name '+prop.name)
+console.log('name '+prop.status)
+console.log('name '+prop.typeLock)
+
+
+
+
+
 </script>
 
-<template>
+<template> 
     <Dialog v-model:visible="dialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
         <div class="confirmation-content">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-            <span v-if="prop.id">هل انت متأكد من قفل العميل <b>{{ prop.name }}</b> ؟</span>
+            <span v-if="prop.id">هل انت متأكد من   <b> {{`${tooltipValue} ${prop.name}` }}</b> ؟</span>
         </div>
         <template #footer>
-            <Button label="No" icon="pi pi-times" text @click="dialog = false" />
+            <Button  label="No" icon="pi pi-times" text @click="dialog = false" />
             <Button label="Yes" icon="pi pi-check" text @click="status.value === 5 ? unlockButton() : lockButton()" />
         </template>
     </Dialog>
-    <Button @click="dialog = true" :icon="lockedIcon" :class="buttonColor" text rounded aria-label="Cancel" />
+    <Button v-tooltip="{value:tooltipValue, fitContent:true}" @click="dialog = true" :icon="lockedIcon" :class="buttonColor" text rounded aria-label="Cancel" />
 
 </template>
 <style>

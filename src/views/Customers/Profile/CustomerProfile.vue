@@ -12,6 +12,7 @@ import DeleteRepresentives from './DeleteRepresentatives.vue';
 import EditRepresentatives from './EditRepresentatives.vue';
 import { useCustomersStore } from '@/stores/customers'
 import SubscriptionRecord from '@/components/Subscriptions/subscriptionRecordCompunent.vue';
+import LockButton from '@/components/LockButton.vue';
 
 const route = useRoute()
 const store = useCustomersStore();
@@ -90,9 +91,14 @@ const getIdentityTypeText = (type: number) => {
                                     <DeleteRepresentives :name="representative" :key="representative.id"
                                         @getRepresentatives="getRepresentatives()" />
 
+                                        <div v-if="representative.status !==5">
                                     <EditRepresentatives :name="representative" :key="representative.id"
                                         @get-representatives="getRepresentatives">
                                     </EditRepresentatives>
+                                </div>
+
+                                    <LockButton typeLock="Representives" :id="representative.id" :name="representative.firstName +' '+ representative.lastName"
+                                    :status="representative.status" @getdata="getRepresentatives()" />
 
                                 </template>
                                 <template #content>
