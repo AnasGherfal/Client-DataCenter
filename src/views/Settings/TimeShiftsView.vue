@@ -135,7 +135,7 @@ const openSave = (pos: string) => {
                                 selectionMode="single" :manualInput="true" :stepMinute="15" hourFormat="24"
                                 @click="formChanged = true" :show-seconds="true" :step-second="60" />
                             <!-- <error v-for="error in v$.endWorkTime.$errors" :key="error.$uid" class="p-error ">
-                                                            {{ error.$message }}</error> -->
+                                                                {{ error.$message }}</error> -->
                             <label for="endTime">الى</label>
 
                         </span>
@@ -165,9 +165,9 @@ const openSave = (pos: string) => {
                 icon="fa-solid fa-floppy-disk fa-flip fa-flip-hover"
                 style="--fa-animation-duration: 2s; --fa-animation-delay:5s; --fa-animation-iteration-count:5" label="تخزين"
                 class="ml-2" />
-                <AddTimeShifts @getTimeShifts="getTimeShifts">
+            <AddTimeShifts @getTimeShifts="getTimeShifts">
 
-</AddTimeShifts>
+            </AddTimeShifts>
 
             <Dialog v-model:visible="visible" :style="{ width: '450px' }" header="تأكيد" :modal="true" :draggable="false">
 
@@ -175,7 +175,7 @@ const openSave = (pos: string) => {
                     <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem; color: red;" />
                     <span>هل انت متأكد من تغيير وقت الساعات ؟</span>
                 </div>
-                <template #footer>
+                <template #footer></template>
                     <Button label="نعم" icon="pi pi-check" text @click="submitForm" />
 
                     <Button label="لا" icon="pi pi-times" text @click="visible = false" />
