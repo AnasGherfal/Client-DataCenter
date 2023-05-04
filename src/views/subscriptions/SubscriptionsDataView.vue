@@ -2,9 +2,9 @@
 import { onMounted, reactive, ref } from 'vue';
 import Knob from 'primevue/knob';
 import axios, { toFormData } from 'axios';
-import type { Service } from '../Services/ServicesModel';
+import type { Service } from '../Services/Models/ServicesModelesModel';
 import BackButton from '@/components/BackButton.vue';
-import type { SubscriptionRespons } from './SubscriptionsRespons';
+import type { SubscriptionRespons } from './Models/SubscriptionsRespons';
 import { useToast } from "primevue/usetoast";
 import { useSubscriptionsStore } from '@/stores/subscriptions';
 
@@ -54,15 +54,10 @@ onMounted(async () => {
         const date1 = new Date(tab.endDate);
         const date2 = new Date();
         date3 =Math.trunc( (date1.valueOf() - date2.valueOf())/24/60/60/1000)
-      })
-      .catch(function (error) {
-        console.log(error)
-      })
-
-  })
-
-  onMounted(async () => {
-    await axios.get("https://localhost:7003/api/Service?PageNumber=1&PageSize=20")
+        
+      }).then(function() {  
+        
+        axios.get("https://localhost:7003/api/Service?PageNumber=1&PageSize=20")
       .then(function (response) {
         
         servobj.id= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].id;
@@ -75,6 +70,9 @@ onMounted(async () => {
         console.log(servobj)
 
       })
+      .catch(function (error) {
+        console.log(error)
+      })})
       .catch(function (error) {
         console.log(error)
       })

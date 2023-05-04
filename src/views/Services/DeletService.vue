@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import router from '@/router';
 import axios from 'axios';
 import Dialog from 'primevue/dialog';
 import Toast from 'primevue/toast';
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import { ref } from 'vue';
-import type { Service } from './ServicesModel';
+import type { Service } from './Models/ServicesModel';
 
 const confirm = useConfirm();
 const toast = useToast();
@@ -48,7 +47,7 @@ const delet = () => {
 
         <Button  
              @click="deleteProductDialog = true"
-             style="height: 25px; width: 25px;float: left;"
+             style="float: left;"
              icon="fa-solid fa-trash"
              class=" mt-2 ml-2  p-button-text p-button-danger" 
              v-tooltip="{value:'حدف الباقة', fitContent:true}" />

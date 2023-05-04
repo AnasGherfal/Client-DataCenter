@@ -6,7 +6,7 @@ import { useToast } from "primevue/usetoast";
 import Dialog from 'primevue/dialog';
 import axios from 'axios';
 import router from '@/router';
-import type { Service } from './ServicesModel';
+import type { Service } from './Models/ServicesModelesModel';
 
 
 

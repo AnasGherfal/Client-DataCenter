@@ -4,7 +4,7 @@ import { onMounted, ref } from 'vue';
 import editservice from './EditService.vue';
 import DeletService from './DeletService.vue';
 import AddService from './AddService.vue';
-
+import LockButton from '@/components/LockButton.vue';
 
 const packagesList=ref()
 onMounted( async () =>{ 
@@ -35,10 +35,13 @@ onMounted( async () =>{
         <div  v-for="servic in packagesList"
         :key="servic.id" class="col-12 md:col-6 lg:col-4" >
         <card>
-        <template  #header>
-            <editservice :pakge="servic" @getList="getList" />
-
-            <DeletService :pakge="servic" :key="servic.id" @getList="getList" />
+        <template  #header>            
+            
+            <editservice v-if="servic.status!== 5" :pakge="servic" @getList="getList" />
+            
+            <LockButton typeLock="Service" :id="servic.id" :name="servic.name"
+                                    :status="servic.status" @getdata="getList" />
+            <DeletService v-if="servic.status!== 5" :pakge="servic" :key="servic.id" @getList="getList" />
         </template>
             <template #content>
 
