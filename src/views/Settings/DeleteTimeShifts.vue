@@ -42,7 +42,7 @@ const deleteTimeShift = () => {
         </template>
     </Dialog>
 
-    <Button @click="deleteProductDialog = true" style="height: 25px; width: 25px;" icon="fa-solid fa-trash"
+    <Button @click="deleteProductDialog = true" style="" icon="fa-solid fa-trash"
         class="  p-button-text p-button-danger" v-tooltip="{ value: 'حذف الساعه', fitContent: true }" />
 </template>
 

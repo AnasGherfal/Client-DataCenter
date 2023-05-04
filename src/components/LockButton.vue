@@ -13,6 +13,8 @@ const prop = defineProps<{
 
 const store = useCustomersStore();
 
+const loading = ref(false)
+
 const dialog = ref(false);
 
 const emit = defineEmits(['getdata']);
@@ -32,6 +34,8 @@ const tooltipValue = computed(() =>
     status.value === 5 ? 'الغاء التقيد' : 'قيد '
 );
 function lockButton() {
+    loading.value = true
+
     axios
         .put(`https://localhost:7003/api/${prop.typeLock}/${prop.id}/lock`)
         .then(response => {
@@ -44,14 +48,16 @@ function lockButton() {
             status.value = 5;
             emit('getdata');
             dialog.value = false;
+            loading.value = false
         });
 }
 
 function unlockButton() {
+    loading.value = true
+
     axios
         .put(`https://localhost:7003/api/${prop.typeLock}/${prop.id}/unlock`)
         .then(response => {
-            console.log(response);
             toast.add({
                 severity: 'success',
                 summary: 'رسالة تأكيد',
@@ -61,48 +67,43 @@ function unlockButton() {
             status.value = 1;
             emit('getdata');
             dialog.value = false;
+            loading.value = false
+
 
         });
 }
 
-console.log('id '+prop.id)
-console.log('name '+prop.name)
-console.log('name '+prop.status)
-console.log('name '+prop.typeLock)
-
-
-
-
-
 </script>
 
-<template> 
+<template>
     <Dialog v-model:visible="dialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
         <div class="confirmation-content">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-            <span v-if="prop.id">هل انت متأكد من   <b> {{`${tooltipValue} ${prop.name}` }}</b> ؟</span>
+            <span v-if="prop.id">هل انت متأكد من <b> {{ `${tooltipValue} ${prop.name}` }}</b> ؟</span>
         </div>
         <template #footer>
-            <Button  label="No" icon="pi pi-times" text @click="dialog = false" />
-            <Button label="Yes" icon="pi pi-check" text @click="status.value === 5 ? unlockButton() : lockButton()" />
+            <Button label="No" icon="pi pi-times" text @click="dialog = false" />
+            <Button label="Yes" icon="pi pi-check" text  :loading="loading" @click="status.value === 5 ? unlockButton() : lockButton()"
+                />
         </template>
     </Dialog>
-    <Button v-tooltip="{value:tooltipValue, fitContent:true}" @click="dialog = true" :icon="lockedIcon" :class="buttonColor" text rounded aria-label="Cancel" />
-
+    <Button v-tooltip="{ value: tooltipValue, fitContent: true }" @click="dialog = true" :icon="lockedIcon"
+        :class="buttonColor" text rounded aria-label="Cancel" />
 </template>
 <style>
 .fa-solid.fa-lock {
-  color: gray;
+    color: gray;
 }
 
 .fa-solid.fa-lock-open {
-  color: green;
+    color: green;
 }
 
 .p-button.primary .fa-solid.fa-lock {
-  color: red;
+    color: red;
 }
 
 .p-button.info .fa-solid.fa-lock-open {
-  color: rgb(80, 183, 80);
-}</style>
+    color: rgb(80, 183, 80);
+}
+</style>

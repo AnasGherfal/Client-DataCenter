@@ -9,9 +9,9 @@ import type { Customer } from './modules/Customers';
 import CustomerForm from '@/components/Customers/CustomerForm.vue';
 
 const store = useCustomersStore();
-const loading = ref(false);
 
 const editable =ref(false);
+const loading = ref(false);
 
 const customer= ref<Customer>({
     name: '',
@@ -24,19 +24,23 @@ const customer= ref<Customer>({
 
 const onFormSubmit = async (customer: Customer) => {
     try {
+
+        store.loading=true
+            const response = await axios.post("https://localhost:7003/api/Customers", customer);
+            store.getdata();
+
+            toast.add({ severity: 'success', summary: 'رسالة نجاح', detail: response.data.msg, life: 3000 });
             setTimeout(() => {
                 router.go(-1)
-                loading.value = false;
 
-            }, 1000);
-            loading.value = true;
-            const response = await axios.post("https://localhost:7003/api/Customers", customer);
-            console.log(response)
-            toast.add({ severity: 'success', summary: 'رسالة نجاح', detail: response.data.msg, life: 3000 });
-            store.getdata();
+
+            }, 500);
         
-    } catch (error) {
+    } catch (error:any) {
         console.log(error);
+        store.loading=false
+        toast.add({ severity: 'error', summary: 'خطأ', detail: error.response.data, life: 3000 });
+
     }
 }
 
@@ -70,8 +74,8 @@ const resetForm = () => {
             </template>
             <template #content>
 
-                <CustomerForm @form-submit="onFormSubmit" 
-                :customers="customer" :submitButtonText="'add'" >
+                <CustomerForm @form-submit="onFormSubmit " 
+                :customers="customer" :submitButtonText="'add'" :loading="store.loading">
                 <Toast position="bottom-left" />
 
                 </CustomerForm>
