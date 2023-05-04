@@ -92,6 +92,8 @@ console.log(saw)
                         </div>
 
                     </template>
+                    <Column field="id" header="ID" style="min-width:1rem;" class="font-bold"></Column>
+
                     <Column field="customerName" header="اسم العميل" style="min-width:10rem;" class="font-bold"></Column>
 
                     <Column field="status" header="الحالة"  dataType="date" style="min-width:10rem;" >
@@ -101,27 +103,28 @@ console.log(saw)
                     </Column>
 
                     <Column v-for="(col, index) of selectedColumns" :field="col.field" :header="col.header"
-                        :key="col.field + '_' + index" style="min-width:10rem;  "></Column>
+                        :key="col.field + '_' + index" style="min-width:9rem;  "></Column>
                         
 
-                        <Column field="startDate" header="تاريخ بداية الاشتراك"  dataType="date" style="min-width:10rem;" >
+                        <Column field="startDate" header="تاريخ بداية الاشتراك"  dataType="date" style="min-width:12rem;" >
                             <template #body="{ data }">
                              {{ formatDate(data.startDate) }}
                           </template>
                         </Column>
 
-                        <Column field="endDate" header="تاريخ نهاية الاشتراك"  dataType="date" style="min-width:10rem;" >
+                        <Column field="endDate" header="تاريخ نهاية الاشتراك"  dataType="date" style="min-width:12rem;" >
                             <template #body="{ data }">
                              {{ formatDate(data.endDate) }}
                           </template>
                         </Column>
 
-                        <Column style="min-width:8rem">
+                        <Column style="min-width:5rem">
                         <template #body="slotProps">
 
                   <RouterLink :key="slotProps.data.id"  :to="'/subscriptionsRecord/SubscriptionsDetaView/' + slotProps.data.id" style="text-decoration: none">
                    <Button icon="fa-solid fa-circle-info" severity="info" text rounded 
                   v-tooltip="{ value: 'التفاصيل', fitContent: true }"  />
+                  
                   </RouterLink>
  
                    </template>
@@ -137,10 +140,5 @@ console.log(saw)
 </template>
 
 <style>
-/* .p-datatable .p-datatable-tbody>tr>td {
-    text-align: right;
-    border: 1px solid #e9ecef;
-    border-width: 0 0 1px 0;
-    padding: 1rem 1rem;
-} */
+
 </style>

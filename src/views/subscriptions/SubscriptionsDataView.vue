@@ -1,14 +1,9 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue';
 import Knob from 'primevue/knob';
-import Divider from 'primevue/divider';
-import Card from 'primevue/card';
-import TabView from 'primevue/tabview';
-import TabPanel from 'primevue/tabpanel';
 import axios, { toFormData } from 'axios';
 import type { Service } from '../Services/ServicesModel';
 import BackButton from '@/components/BackButton.vue';
-import type { Subscription } from './SubscriptionsModels';
 import type { SubscriptionRespons } from './SubscriptionsRespons';
 import { useToast } from "primevue/usetoast";
 import { useSubscriptionsStore } from '@/stores/subscriptions';
@@ -69,8 +64,7 @@ onMounted(async () => {
   onMounted(async () => {
     await axios.get("https://localhost:7003/api/Service?PageNumber=1&PageSize=20")
       .then(function (response) {
-
-        console.log(tab.serviceName)
+        
         servobj.id= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].id;
         servobj.acpPort= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].acpPort;
         servobj.dns= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].dns;
@@ -89,12 +83,6 @@ onMounted(async () => {
 
   const customersDialog=ref(false)
 
-//   function getId(index:SubscriptionRespons) {
-//     rotName = index;
-
-//     console.log(rotName.id)
-//     customersDialog.value = true
-// }
 const toast = useToast();
 
 const renewalSubscription= () => {
@@ -102,8 +90,8 @@ const renewalSubscription= () => {
     axios.put('https://localhost:7003/api/Subscription/Renew?id=' + tab.id)
         .then(response => {
             console.log(response)
-            toast.add({ severity: 'success', summary: 'تم التجديد', detail: response.data.msg, life: 3000 });
             customersDialog.value = false
+            toast.add({ severity: 'success', summary: 'تم التجديد', detail: response.data.msg, life: 3000 });
             store.getSub();
 
           })
