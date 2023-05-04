@@ -8,7 +8,7 @@ import { ref } from 'vue';
 
 const toast = useToast();
 
-const deleteProductDialog = ref(false)
+const deleteRepresentative = ref(false)
 
 const props = defineProps<{
     name: any
@@ -23,7 +23,7 @@ const deleteRepresentitive = () => {
         .then(response => {
 
             toast.add({ severity: 'success', summary: 'Confirmed', detail: response.data.msg, life: 3000 });
-            deleteProductDialog.value = false
+            deleteRepresentative.value = false
             emit('getRepresentatives')
         });
 
@@ -34,18 +34,18 @@ const deleteRepresentitive = () => {
 </script>
 
 <template>
-    <Dialog v-model:visible="deleteProductDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
+    <Dialog v-model:visible="deleteRepresentative" :style="{ width: '450px' }" header="Confirm" :modal="true">
         <div class="confirmation-content">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
             <span v-if="name">هل انت متأكد من حذف <b>{{ name.firstName }} {{ name.lastName }}</b> ؟</span>
         </div>
         <template #footer>
-            <Button label="لا" icon="pi pi-times" text @click="deleteProductDialog = false" />
+            <Button label="لا" icon="pi pi-times" text @click="deleteRepresentative = false" />
             <Button label="نعم" icon="pi pi-check" text @click="deleteRepresentitive" />
         </template>
     </Dialog>
 
-    <Button @click="deleteProductDialog = true" style="height: 25px; width: 25px;float: left;" icon="fa-solid fa-trash"
+    <Button @click="deleteRepresentative = true" style="height: 25px; width: 25px;float: left;" icon="fa-solid fa-trash"
         class=" mt-2 ml-2  p-button-text p-button-danger" v-tooltip="{ value: 'حذف المخول', fitContent: true }" />
 </template>
 

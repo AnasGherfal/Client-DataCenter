@@ -26,7 +26,10 @@ const userId = computed(() => {
 const customerId = ref({
     id: '',
     name: '',
-}); 
+});
+const customerStatus = ref({
+
+})
 const representativeId = ref()
 const representatives = ref();
 
@@ -35,6 +38,8 @@ onMounted(async () => {
         .then(function (response) {
 
             customerId.value = response.data.content.filter((users: { id: String }) => users.id == userId.value)[0];
+             
+
             getRepresentatives();
 
         })
@@ -79,10 +84,11 @@ const getIdentityTypeText = (type: number) => {
                     <template #header>
                         <i class="ml-2 pi pi-user"></i>
                         <span>المخولين</span>
+
                     </template>
                     <!-- المخولون الخاصون بالعميل -->
-                    <Representative @getRepresentatives="getRepresentatives()"
-                    />
+                    <Representative @getRepresentatives="getRepresentatives()" :customerStatus="customerId.status" />
+
 
                     <div class="grid ">
                         <div class="col-12 md:col-6" v-for="representative in representativeId" :key="representative.id">
@@ -91,14 +97,17 @@ const getIdentityTypeText = (type: number) => {
                                     <DeleteRepresentives :name="representative" :key="representative.id"
                                         @getRepresentatives="getRepresentatives()" />
 
-                                        <div v-if="representative.status !==5">
-                                    <EditRepresentatives :name="representative" :key="representative.id"
-                                        @get-representatives="getRepresentatives">
-                                    </EditRepresentatives>
-                                </div>
+                                        <LockButton typeLock="Representives" :id="representative.id"
+                                        :name="representative.firstName + ' ' + representative.lastName"
+                                        :status="representative.status" @getdata="getRepresentatives()" />
 
-                                    <LockButton typeLock="Representives" :id="representative.id" :name="representative.firstName +' '+ representative.lastName"
-                                    :status="representative.status" @getdata="getRepresentatives()" />
+                                    <div v-if="representative.status !== 5">
+                                        <EditRepresentatives :name="representative" :key="representative.id"
+                                            @get-representatives="getRepresentatives">
+                                        </EditRepresentatives>
+                                    </div>
+
+                                    
 
                                 </template>
                                 <template #content>

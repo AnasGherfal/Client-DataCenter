@@ -129,7 +129,7 @@ const isDisabled = ref(true);
                         <label for="phoneNum1">رقم هاتف </label>
                         <div style="height: 10px;">
                             <span v-for="error in v$.primaryPhone.$errors" :key="error.$uid"
-                            style="color: red; font-weight: bold; font-size: small;">
+                            style="color: red; direction: ltr; font-weight: bold; font-size: small;">
                                 {{ error.$message }}</span>
                         </div>
                     </span>

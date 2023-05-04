@@ -87,13 +87,13 @@ const v$ = useVuelidate(rules, customers);
                     <div class="warning-message">
 
                         <div class="warning-message-icon"></div>
-                        <div class="warning-message-text">هاذا العميل في حالة قفل لا يمكن التعديل</div>
+                        <div class="warning-message-text">هاذا العميل في حالة قفل لا يمكن التعديل او اضافة مخوليين</div>
 
                     </div>
 
                 </div>
 
-                <Button v-if="customer.status !== 5" @click="actEdit = !actEdit" icon=" fa-solid fa-pen"
+                <Button v-else="customer.status !== 5" @click="actEdit = !actEdit" icon=" fa-solid fa-pen"
                     style="width: 30px;height: 30px; margin-right: 10px;" class=" p-button-primary p-button-text"
                     v-tooltip="{ value: 'تعديل البيانات الشخصية', fitContent: true }" />
 
@@ -199,7 +199,7 @@ const v$ = useVuelidate(rules, customers);
 </template>
 
 
-<style>
+<style scoped>
 error {
     font-size: 12px;
     font-weight: bold;
@@ -229,7 +229,7 @@ error {
   padding: 8px;
   border: 1px solid #ffeeba;
   border-radius: 10px;
-  width: 50%;
+  width: 60%;
 }
 
 .warning-message-icon {

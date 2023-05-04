@@ -11,7 +11,9 @@ import RepresentativeForm from '@/components/Representatives/RepresentativeForm.
 
 
 const route = useRoute()
-
+const prop = defineProps<{
+    customerStatus: number;
+}>();
 const userId = computed(() => {
     if (route && route.params && route.params.id) {
         return route.params.id
@@ -76,7 +78,8 @@ const openModal = () => {
 
 
 <template >
-    <div>
+
+    <div v-if="prop.customerStatus !== 5">
 
         <Button @click="openModal" class=" p-button-primary mb-4">
             اضافة مُخول
