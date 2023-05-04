@@ -8,6 +8,8 @@ import moment from 'moment';
 import type { VisitHours } from './Models/TimeShiftsModels'
 import DeleteTimeShifts from './DeleteTimeShifts.vue';
 import AddTimeShifts from './AddTimeShiftsView.vue';
+import LockButton from '@/components/LockButton.vue';
+
 //Needs Validation
 const getVisitsHours = ref();
 const selectedHours = ref();
@@ -44,7 +46,6 @@ const getTimeShifts = (async () => {
 
 })
 
-console.log(getTimeShifts)
 
 
 const submitForm = async () => {
@@ -113,8 +114,16 @@ const openSave = (pos: string) => {
 
 
             <div v-if="selectedHours">
-                <h3>{{ selectedHours.name }}
-                    <DeleteTimeShifts :name="selectedHours" @getTimeShifts="getTimeShifts()"></DeleteTimeShifts>
+                <!-- <LockButton @getdata="getTimeShifts()" :name="selectedHours.name" :id="selectedHours.id"
+                    :status="selectedHours.status" type-lock="VisitTimeShift"></LockButton> -->
+
+                <DeleteTimeShifts v-if="selectedHours.status !== 5" :name="selectedHours" @getTimeShifts="getTimeShifts()">
+                </DeleteTimeShifts>
+
+                <h3>
+                    {{ selectedHours.name }}
+
+
                 </h3>
 
                 <div class="grid p-fluid ">
@@ -135,7 +144,7 @@ const openSave = (pos: string) => {
                                 selectionMode="single" :manualInput="true" :stepMinute="15" hourFormat="24"
                                 @click="formChanged = true" :show-seconds="true" :step-second="60" />
                             <!-- <error v-for="error in v$.endWorkTime.$errors" :key="error.$uid" class="p-error ">
-                                                                {{ error.$message }}</error> -->
+                                                                            {{ error.$message }}</error> -->
                             <label for="endTime">الى</label>
 
                         </span>
@@ -161,7 +170,7 @@ const openSave = (pos: string) => {
 
             <Divider />
 
-            <Button @click="openSave('bottom')" :disabled="!formChanged"
+            <Button  @click="openSave('bottom')" :disabled="!formChanged"
                 icon="fa-solid fa-floppy-disk fa-flip fa-flip-hover"
                 style="--fa-animation-duration: 2s; --fa-animation-delay:5s; --fa-animation-iteration-count:5" label="تخزين"
                 class="ml-2" />

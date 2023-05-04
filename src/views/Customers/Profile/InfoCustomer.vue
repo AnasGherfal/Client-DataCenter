@@ -11,7 +11,8 @@ import { isLibyanPhoneNumber, validateText } from '@/assets/validations';
 import { useCustomersStore } from '@/stores/customers'
 
 const actEdit = ref(true);
-
+const loading = ref(true);
+const store = useCustomersStore();
 
 const dataClinet = defineProps<{ customer: any }>()
 const emit = defineEmits(['getCustomers'])
@@ -83,6 +84,8 @@ const v$ = useVuelidate(rules, customers);
 
                 <BackButton style="float: left;" />
 
+
+
                 <div v-if="customer.status === 5">
                     <div class="warning-message">
 
@@ -101,7 +104,39 @@ const v$ = useVuelidate(rules, customers);
 
             </template>
             <template #content>
-                <div>
+                <div v-if="store.loading" >
+                    <div class="grid p-fluid">
+                        <div class="field col-12 md:col-6 lg:col-4">
+                            <span class="p-float-label">
+                                <Skeleton :loading="loading" width="100%" height="2rem"></Skeleton>
+                            </span>
+                        </div>
+                        <div class="field col-12 md:col-6 lg:col-4">
+                            <span class="p-float-label">
+                                <Skeleton :loading="loading" width="100%" height="2rem"></Skeleton>
+                            </span>
+                        </div>
+                        <div class="field col-12 md:col-6 lg:col-4">
+                            <span class="p-float-label">
+                                <Skeleton :loading="loading" width="100%" height="2rem"></Skeleton>
+                            </span>
+                        </div>
+                        <div class="field col-12 md:col-6 lg:col-4">
+                            <span class="p-float-label">
+                                <Skeleton :loading="loading" width="100%" height="2rem"></Skeleton>
+                            </span>
+                        </div>
+                        <div class="field col-12 md:col-6 lg:col-4">
+                            <span class="p-float-label">
+                                <Skeleton :loading="loading" width="100%" height="2rem"></Skeleton>
+                            </span>
+                        </div>
+                        <div class="field col-12 md:col-6 lg:col-4">
+                            <Skeleton :loading="loading" width="100%" height="2rem"></Skeleton>
+                        </div>
+                    </div>
+                </div>
+                <div v-else>
 
 
                     <div>
@@ -199,7 +234,7 @@ const v$ = useVuelidate(rules, customers);
 </template>
 
 
-<style scoped>
+<style >
 error {
     font-size: 12px;
     font-weight: bold;
@@ -209,10 +244,7 @@ error {
     border-radius: 10px;
 }
 
-.p-float-label>label {
-    right: 0.5rem;
-    transition-duration: 0.3s
-}
+
 
 
 .p-button:enabled:hover {
@@ -222,38 +254,37 @@ error {
 }
 
 .warning-message {
-  display: flex;
-  align-items: center;
-  background-color: #ffeeba;
-  color: #856404;
-  padding: 8px;
-  border: 1px solid #ffeeba;
-  border-radius: 10px;
-  width: 60%;
+    display: flex;
+    align-items: center;
+    background-color: #ffeeba;
+    color: #856404;
+    padding: 8px;
+    border: 1px solid #ffeeba;
+    border-radius: 10px;
+    width: 60%;
 }
 
 .warning-message-icon {
-  width: 24px;
-  height: 24px;
-  background-color: #ffc107;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 5px;
+    width: 24px;
+    height: 24px;
+    background-color: #ffc107;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 5px;
 }
 
 .warning-message-icon:before {
-  content: "!";
-  font-size: 16px;
-  color: #fff;
-  font-weight: bold;
+    content: "!";
+    font-size: 16px;
+    color: #fff;
+    font-weight: bold;
 }
 
 .warning-message-text {
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.5;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
 }
-
 </style>

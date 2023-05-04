@@ -12,6 +12,7 @@ import LockButton from '@/components/LockButton.vue';
 const toast = useToast();
 const store = useCustomersStore();
 const customersDialog = ref(false);
+const loading = ref(false);
 const isLocked = ref()
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -64,23 +65,20 @@ const rotName = ref()
 
 function getId(index: {}) {
     rotName.value = index;
-    console.log(rotName.value.name)
     customersDialog.value = true
 }
 
 const deleteCustomer = () => {
-    console.log(rotName.value)
+    loading.value = true
     axios.delete('https://localhost:7003/api/Customers/' + rotName.value.id)
         .then(response => {
             store.getdata();
             toast.add({ severity: 'success', summary: 'تم الحذف', detail: response.data, life: 3000 });
             customersDialog.value = false
+            loading.value = false
 
         });
-
 }
-
-
 
 
 </script>
@@ -97,24 +95,27 @@ const deleteCustomer = () => {
                 سجل العملاء
                 <AddBotton name-button="اضافة عميل" rout-name="/customersRecord/addCustomer" />
 
-            </template>
-            <template #content>
+        </template>
+        <template #content>
 
 
                 <div>
 
                     <div v-if="store.loading" class="border-round border-1 surface-border p-4 surface-card">
-                        <div class="flex mb-3">
-                            <div>
-                                <Skeleton width="10rem" class="mb-2"></Skeleton>
-                                <Skeleton width="5rem" class="mb-2"></Skeleton>
-                                <Skeleton height=".5rem"></Skeleton>
+
+
+                            <div class="grid p-fluid">
+                            <div v-for="n in 9" class="field col-12 md:col-6 lg:col-4">
+                                <span class="p-float-label">
+                                    <Skeleton  width="100%" height="2rem"></Skeleton>
+                                </span>
                             </div>
-                        </div>
-                        <Skeleton width="100%" height="150px"></Skeleton>
-                        <div class="flex justify-content-between mt-3">
-                            <Skeleton width="100%" height="2rem"></Skeleton>
-                        </div>
+                            </div>
+
+                            <Skeleton width="100%" height="100px"></Skeleton>
+                            <div class="flex justify-content-between mt-3">
+                                <Skeleton width="100%" height="2rem"></Skeleton>
+                            </div>
                     </div>
 
 
@@ -171,23 +172,23 @@ const deleteCustomer = () => {
                         <Column v-for="(col, index) of selectedColumns" :field="col.field" :header="col.header"
                             :key="col.field + '_' + index" style="min-width:10rem;  "></Column>
                         <!-- <Column field="email" header="البريد الالكتروني"  style="min-width:12rem"></Column>
-                                    <Column field="address" header=" العنوان"  style="min-width:12rem"></Column>
-                                    <Column field="primaryPhone" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
-                                    <Column field="secondaryPhone" header="  رقم الهاتف 2"  style="min-width:12rem"></Column> -->
+                                        <Column field="address" header=" العنوان"  style="min-width:12rem"></Column>
+                                        <Column field="primaryPhone" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
+                                        <Column field="secondaryPhone" header="  رقم الهاتف 2"  style="min-width:12rem"></Column> -->
                         <Column style="min-width:13rem">
 
                             <template #body="slotProps">
 
-                                <span v-if="slotProps.data.status !==5">
+                                <span v-if="slotProps.data.status !== 5">
 
-                                
-                                <Button v-tooltip="{ value: 'حذف', fitContent: true }" icon="fa-solid fa-trash-can"
-                                    severity="danger" text rounded aria-label="Cancel" @click="getId(slotProps.data)" />
+
+                                    <Button v-tooltip="{ value: 'حذف', fitContent: true }" icon="fa-solid fa-trash-can"
+                                        severity="danger" text rounded aria-label="Cancel" @click="getId(slotProps.data)" />
                                 </span>
 
                                 <RouterLink :to="'customersRecord/CustomerProfile/' + slotProps.data.id">
-                                    <Button v-tooltip="{ value: 'البيانات الشخصية', fitContent: true }" icon="fa-solid fa-user"
-                                        severity="info" text rounded aria-label="Cancel" />
+                                    <Button v-tooltip="{ value: 'البيانات الشخصية', fitContent: true }"
+                                        icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel" />
                                 </RouterLink>
 
                                 <LockButton typeLock="Customers" :id="slotProps.data.id" :name="slotProps.data.name"
@@ -200,7 +201,8 @@ const deleteCustomer = () => {
                                         <span v-if="rotName">هل انت متأكد من حذف <b>{{ rotName.name }}</b> ؟</span>
                                     </div>
                                     <template #footer>
-                                        <Button label="نعم" icon="pi pi-check" text @click="deleteCustomer" />
+                                        <Button label="نعم" icon="pi pi-check" text @click="deleteCustomer"
+                                            :loading="loading" />
                                         <Button label="لا" icon="pi pi-times" text @click="customersDialog = false" />
                                     </template>
 

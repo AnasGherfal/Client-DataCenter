@@ -16,6 +16,7 @@ import LockButton from '@/components/LockButton.vue';
 
 const route = useRoute()
 const store = useCustomersStore();
+const loading = ref(false);
 const userId = computed(() => {
     if (route && route.params && route.params.id) {
         return route.params.id
@@ -37,6 +38,7 @@ onMounted(async () => {
     await axios.get("https://localhost:7003/api/Customers/")
         .then(function (response) {
 
+
             customerId.value = response.data.content.filter((users: { id: String }) => users.id == userId.value)[0];
              
 
@@ -49,9 +51,12 @@ onMounted(async () => {
 })
 
 function getRepresentatives() {
+    loading.value=true
+
     axios.get("https://localhost:7003/api/Representives/").then((response) => {
         representativeId.value = response.data.content.filter((users: { customerName: string }) => users.customerName == customerId.value.name);
         representatives.value = response.data.content
+        loading.value=false
 
     });
 }
@@ -79,6 +84,8 @@ const getIdentityTypeText = (type: number) => {
     <card class=" shadow-2 p-3 mt-3 border-round-2xl">
         <template #content>
 
+            
+
             <TabView class="tabview-custom" ref="tabview4">
                 <TabPanel>
                     <template #header>
@@ -86,11 +93,21 @@ const getIdentityTypeText = (type: number) => {
                         <span>المخولين</span>
 
                     </template>
+
+
                     <!-- المخولون الخاصون بالعميل -->
                     <Representative @getRepresentatives="getRepresentatives()" :customerStatus="customerId.status" />
+                    <div v-if="loading" >
+                        <div class="grid p-fluid">
+                            <div v-for="n in 2" class=" ml-3 mb-2">
+                                <span >
+                                    <Skeleton width="20rem" height="25rem"></Skeleton>
+                                </span>
+                            </div>
+                            </div>
+                    </div>
 
-
-                    <div class="grid ">
+                    <div v-else class="grid ">
                         <div class="col-12 md:col-6" v-for="representative in representativeId" :key="representative.id">
                             <Card class="w-3/5 mx-auto" style="background-color: #FFFFFF; color: #333333;">
                                 <template #header>
@@ -106,8 +123,6 @@ const getIdentityTypeText = (type: number) => {
                                             @get-representatives="getRepresentatives">
                                         </EditRepresentatives>
                                     </div>
-
-                                    
 
                                 </template>
                                 <template #content>

@@ -10,7 +10,9 @@ import { isLibyanPhoneNumber, validateText } from '@/assets/validations';
 import AddCustomer from '@/views/Customers/AddCustomer.vue';
 import InfoCustomer from '@/views/Customers/Profile/InfoCustomer.vue';
 import ErrorMessage from '../ErrorMessage.vue'
-const loading = ref(false);
+import { useCustomersStore } from '@/stores/customers'
+
+const store = useCustomersStore();
 
 const props = defineProps({
     customers: {
@@ -21,6 +23,7 @@ const props = defineProps({
         type: String,
     },
     value: String,
+    loading: Boolean,
 
 
 
@@ -57,20 +60,35 @@ const instance = getCurrentInstance()
 
 const submitForm = async () => {
     const result = await v$.value.$validate();
+
     try {
+
         if (result) {
+
+
             if (instance) {
                 // Form submission logic here
 
                 instance.emit('form-submit', customers.value);
+                
             }
+
+
         } else {
+
             toast.add({ severity: 'error', summary: 'رسالة خطأ', detail: 'يرجى تعبئة الحقول', life: 3000 })
         }
-    } catch (error) {
+        
+    } catch (error:any) {
         console.log(error)
+        console.log("error in form-submit")
+
+        toast.add({ severity: 'error', summary: 'رسالة خطأ', detail: error.response.data, life: 3000 })
+
+
 
     }
+    
 }
 
 const isDisabled = ref(true);
@@ -151,7 +169,7 @@ const isDisabled = ref(true);
                         invalidFileSizeMessage="Exceeded the maximum file size" />
                 </div>
             </div>
-            <Button @click="submitForm" icon="fa-solid fa-plus" label="إضافة" :loading="loading" />
+            <Button @click="submitForm" icon="fa-solid fa-plus" label="إضافة" :loading="store.loading" />
             <!-- <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger" -->
             <!-- style="margin-right: .5em;" /> -->
             <Toast position="bottom-left" />
