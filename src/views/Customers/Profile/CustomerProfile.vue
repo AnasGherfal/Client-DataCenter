@@ -35,6 +35,7 @@ const representativeId = ref()
 const representatives = ref();
 
 onMounted(async () => {
+    store.loading=true
     await axios.get("https://localhost:7003/api/Customers/")
         .then(function (response) {
 
@@ -43,6 +44,7 @@ onMounted(async () => {
              
 
             getRepresentatives();
+            store.loading=false;
 
         })
         .catch(function (error) {
