@@ -2,7 +2,7 @@
 import { onMounted, reactive, ref } from 'vue';
 import Knob from 'primevue/knob';
 import axios, { toFormData } from 'axios';
-import type { Service } from '../Services/Models/ServicesModelesModel';
+import type { Service } from '../Services/Models/ServicesModel';
 import BackButton from '@/components/BackButton.vue';
 import type { SubscriptionRespons } from './Models/SubscriptionsRespons';
 import { useToast } from "primevue/usetoast";
@@ -54,7 +54,7 @@ onMounted(async () => {
         const date1 = new Date(tab.endDate);
         const date2 = new Date();
         date3 =Math.trunc( (date1.valueOf() - date2.valueOf())/24/60/60/1000)
-        
+
       }).then(function() {  
         
         axios.get("https://localhost:7003/api/Service?PageNumber=1&PageSize=20")
@@ -132,7 +132,7 @@ const renewalSubscription= () => {
                                     </div>
                                     <template #footer>
                                         <Button label="لا" icon="pi pi-times" text @click="customersDialog = false" />
-                                        <Button label="نعم" icon="pi pi-check" text @click="renewalSubscription" />
+                                        <Button label="نعم" icon="pi pi-check"  text @click="renewalSubscription" />
                                     </template>
 
 
