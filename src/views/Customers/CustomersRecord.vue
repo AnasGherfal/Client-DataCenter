@@ -46,7 +46,7 @@ const getSeverity = (status: any) => {
 
         case 'غير نشط':
             return 'danger';
-        case 'مقفل':
+        case 'مقيد':
             return 'warning';
 
     }
@@ -57,7 +57,7 @@ const trans = (value: string) => {
     else if (value == '2')
         return 'غير نشط'
     else if (value == '5')
-        return 'مقفل';
+        return 'مقيد';
 };
 
 const rotName = ref()
@@ -179,11 +179,11 @@ const deleteCustomer = () => {
                             <template #body="slotProps">
 
 
-                                <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"
+                                <Button v-tooltip="{value:'حذف', fitContent:true}" icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"
                                     @click="getId(slotProps.data)" />
 
                                 <RouterLink :to="'customersRecord/CustomerProfile/' + slotProps.data.id">
-                                    <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel" />
+                                    <Button v-tooltip="{value:'البيانات الشخصية', fitContent:true}" icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel" />
                                 </RouterLink>
 
                                 <LockButton typeLock="Customers" :id="slotProps.data.id" :name="slotProps.data.name"
