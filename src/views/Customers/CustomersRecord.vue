@@ -35,9 +35,9 @@ const onToggle = (val: any) => {
 
 
 
-const statuses = ref([   
-     'نشط' ,
-     'مقفل' ]);
+const statuses = ref([
+    'نشط',
+    'مقفل']);
 
 const getSeverity = (status: any) => {
     switch (trans(status)) {
@@ -158,7 +158,7 @@ const deleteCustomer = () => {
                                 <Tag :value="trans(data.status)" :severity="getSeverity(data.status)" />
                             </template>
                             <template #filter="{ filterModel, filterCallback }">
-                                <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="statuses" 
+                                <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="statuses"
                                     placeholder="Select One" class="p-column-filter" style="min-width: 12rem"
                                     :showClear="true">
                                     <template #option="slotProps">
@@ -171,19 +171,23 @@ const deleteCustomer = () => {
                         <Column v-for="(col, index) of selectedColumns" :field="col.field" :header="col.header"
                             :key="col.field + '_' + index" style="min-width:10rem;  "></Column>
                         <!-- <Column field="email" header="البريد الالكتروني"  style="min-width:12rem"></Column>
-                                <Column field="address" header=" العنوان"  style="min-width:12rem"></Column>
-                                <Column field="primaryPhone" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
-                                <Column field="secondaryPhone" header="  رقم الهاتف 2"  style="min-width:12rem"></Column> -->
+                                    <Column field="address" header=" العنوان"  style="min-width:12rem"></Column>
+                                    <Column field="primaryPhone" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
+                                    <Column field="secondaryPhone" header="  رقم الهاتف 2"  style="min-width:12rem"></Column> -->
                         <Column style="min-width:13rem">
 
                             <template #body="slotProps">
 
+                                <span v-if="slotProps.data.status !==5">
 
-                                <Button v-tooltip="{value:'حذف', fitContent:true}" icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"
-                                    @click="getId(slotProps.data)" />
+                                
+                                <Button v-tooltip="{ value: 'حذف', fitContent: true }" icon="fa-solid fa-trash-can"
+                                    severity="danger" text rounded aria-label="Cancel" @click="getId(slotProps.data)" />
+                                </span>
 
                                 <RouterLink :to="'customersRecord/CustomerProfile/' + slotProps.data.id">
-                                    <Button v-tooltip="{value:'البيانات الشخصية', fitContent:true}" icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel" />
+                                    <Button v-tooltip="{ value: 'البيانات الشخصية', fitContent: true }" icon="fa-solid fa-user"
+                                        severity="info" text rounded aria-label="Cancel" />
                                 </RouterLink>
 
                                 <LockButton typeLock="Customers" :id="slotProps.data.id" :name="slotProps.data.name"

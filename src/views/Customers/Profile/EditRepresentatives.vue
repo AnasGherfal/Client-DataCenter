@@ -60,7 +60,7 @@ const closeModal = () => {
 
 <template>
     <div>
-        <Button @click="openModal" style="height: 25px; width: 25px;" icon=" fa-solid fa-pen"
+        <Button @click="openModal" style="height: 25px; width: 25px; " icon=" fa-solid fa-pen"
             class=" mt-2 mr-2 p-button-primary p-button-text" v-tooltip="{ value: 'تعديل الباقة', fitContent: true }" />
 
         <Dialog header="تعديل المخول" contentStyle="max-height: 80vh; width: 75vw; padding: 20px;"
