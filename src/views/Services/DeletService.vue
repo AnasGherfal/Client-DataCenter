@@ -9,6 +9,7 @@ import type { Service } from './Models/ServicesModel';
 
 const confirm = useConfirm();
 const toast = useToast();
+const loading = ref(false)
 
 const deleteProductDialog = ref(false)
 
@@ -19,9 +20,10 @@ const props= defineProps<{
 const emit=defineEmits(['getList'])
 
 const delet = () => {
-
+loading.value=true
       axios.delete('https://localhost:7003/api/Service?id='+ props.pakge.id )
       .then(response => {
+       loading.value=false
        toast.add({ severity: 'success', summary: 'Confirmed', detail: response.data.msg, life: 3000 });
        deleteProductDialog.value = false
        emit('getList')
@@ -41,7 +43,7 @@ const delet = () => {
             </div>
             <template #footer>
                 <Button label="No" icon="pi pi-times" text @click="deleteProductDialog = false"/>
-                <Button label="Yes" icon="pi pi-check" text @click="delet" />
+                <Button label="Yes" icon="pi pi-check" :loading="loading" text @click="delet" />
             </template>
         </Dialog>
 
@@ -57,6 +59,4 @@ const delet = () => {
 .p-dialog.p-confirm-dialog .p-confirm-dialog-message:not(:first-child) {
   margin-right: 1rem;
 }
-
-
 </style>

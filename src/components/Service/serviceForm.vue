@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import { computed, getCurrentInstance, reactive, ref } from 'vue';
-import { email, minLength, required, helpers, integer } from "@vuelidate/validators";
+import { computed, getCurrentInstance, ref } from 'vue';
+import { required, helpers } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
-import Dialog from 'primevue/dialog';
-import axios from 'axios';
 import router from '@/router';
 import type { Service } from './Models/ServicesModel';
 
 
-
+const loading=ref(false)
 const props = defineProps({
     service: {
         type: Object as () => Service,
@@ -19,7 +17,8 @@ const props = defineProps({
         type: String,
         required: true
     },
-    value: String
+    value: String,
+    loading: Boolean
 
 })// define opject
 const instance = getCurrentInstance()
@@ -27,6 +26,7 @@ const instance = getCurrentInstance()
 const service:Service= ref(props.service)
 
 const onSubmitForm  = async () => {
+    loading.value = true
     const result = await v$.value.$validate();
     try {
         if (result) {
@@ -147,7 +147,7 @@ const resetForm = () => {
 
 </div>
 
-<Button  class="p-button-primry" icon="fa-solid fa-plus" label="إضافة" type="submit" />
+<Button  class="p-button-primry" icon="fa-solid fa-plus" :label="value" type="submit" :loading="loading"/>
 <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger" style="margin-right: .5em;" />
 <Toast position="bottom-left" />
 

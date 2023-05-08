@@ -66,8 +66,9 @@ const openModal = () => {
 <template >
 <Dialog  header="اضافة باقة" contentStyle="height: 250px; padding: 20px;"  v-model:visible="displayModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '60vw'}" :modal="true">
 
-    <ServiceForm @form-submit="onFormSubmit" :service="state" :submitButtonText="'add'"
-    value="اضافه"/>        </Dialog>
+    <ServiceForm @form-submit="onFormSubmit" :service="state" :submitButtonText="'تعديل'"
+    value="تعديل"/>
+        </Dialog>
 
         <Button  @click="openModal"
              icon=" fa-solid fa-pen"

@@ -6,20 +6,26 @@ import DeletService from './DeletService.vue';
 import AddService from './AddService.vue';
 import LockButton from '@/components/LockButton.vue';
 
+
+const loading = ref(true);
 const packagesList=ref()
 onMounted( async () =>{ 
     await axios.get("https://localhost:7003/api/Service")
         .then((response) =>{
             packagesList.value = response.data.content;
+            loading.value = false       
+
     })
     .catch(function(error){
         console.log(error)
+        loading.value = false       
+
       })
     })
 
     function getList() {
       axios.get("https://localhost:7003/api/Service").then((resp) => {
-        packagesList.value = resp.data.content;        
+        packagesList.value = resp.data.content; 
       });
     }
 
@@ -32,6 +38,17 @@ onMounted( async () =>{
 
 </div>
     <div class="grid" >
+        
+        <div v-if="loading" >
+                        <div class="grid p-fluid">
+                            <div v-for="n in 2" class=" ml-3 mb-2">
+                                <span >
+                                    <Skeleton width="15rem" height="25rem"></Skeleton>
+                                </span>
+                            </div>
+                            </div>
+                    </div>
+
         <div  v-for="servic in packagesList"
         :key="servic.id" class="col-12 md:col-6 lg:col-4" >
         <card>
@@ -44,6 +61,7 @@ onMounted( async () =>{
             <DeletService v-if="servic.status!== 5" :pakge="servic" :key="servic.id" @getList="getList" />
         </template>
             <template #content>
+
 
             <div style="height-min: 450px;">  
     

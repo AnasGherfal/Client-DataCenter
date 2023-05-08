@@ -43,16 +43,14 @@ const formatDate = (value:Date) => {
 
 const status = (value:number) => {
 if(value===1){
-    return "الخدمة مفعلة"
+    return "الاشتراك مفعل"
 }else if(value===2){ 
-    return "الخدمة غير مفعلة" 
-}
+    return "الاشتراك غير مفعل" 
+}else if(value===5)
+return "الاشتراك مقفل"
 };
 
-const saw = new Date()
-console.log(saw)
-
-
+console.log(store.loading)
 
 
 </script>
@@ -93,12 +91,10 @@ console.log(saw)
                     </template>
                     <Column field="id" header="ID" style="min-width:1rem;" class="font-bold"></Column>
 
-                    <Column field="customerName" header="اسم العميل" style="min-width:10rem;" class="font-bold"></Column>
-                        <Column field="status" header="  الحاله " filterField="status" style="width:2rem"
-                            :showFilterMenu="false" :filterMenuStyle="{ width: '4rem' }">
+                    <Column field="customerName" header="اسم العميل" style="min-width:8rem;" class="font-bold"></Column>
+                        <Column field="status" header="  الحاله " filterField="status" style="width:12rem"
+                            :showFilterMenu="false" :filterMenuStyle="{ width: '12rem' }">
                             <template #body="{ data }">
-
-
                                 <Tag :value="status(data.status)" :severity="(data.status)" />
                             </template>
                             <template #filter="{ filterModel, filterCallback }">
@@ -114,23 +110,27 @@ console.log(saw)
                         </Column>
 
                     <Column v-for="(col, index) of selectedColumns" :field="col.field" :header="col.header"
-                        :key="col.field + '_' + index" style="min-width:9rem;  "></Column>
+                        :key="col.field + '_' + index" style="min-width:3rem;">
+                    </Column>
                         
 
                         <Column field="startDate" header="تاريخ بداية الاشتراك"  dataType="date" style="min-width:12rem;" >
-                            <template #body="{ data }">
+
+                               <template  #body="{ data }">
                              {{ formatDate(data.startDate) }}
                           </template>
                         </Column>
 
                         <Column field="endDate" header="تاريخ نهاية الاشتراك"  dataType="date" style="min-width:12rem;" >
+
                             <template #body="{ data }">
                              {{ formatDate(data.endDate) }}
                           </template>
                         </Column>
 
                         <Column style="min-width:8rem">
-                        <template #body="slotProps">
+
+                        <template  #body="slotProps">
                             <LockButton typeLock="Subscription" :id="slotProps.data.id" :name="slotProps.data.id"
                                     :status="slotProps.data.status" @getdata="store.getSub" />
 

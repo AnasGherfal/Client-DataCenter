@@ -4,6 +4,7 @@ import { onMounted, ref } from 'vue';
 import SideBar from './layouts/SideBar.vue'
 import TopBar from './layouts/TopBar.vue'
 import LoadingPage from './views/LoadingPage.vue';
+import LoginPage from './views/LoginPage.vue';
 
 
 const loading = ref(false);
@@ -18,8 +19,8 @@ onMounted(() => {
 
 <template>
 
-<LoadingPage v-if="loading"  />
-  
+<LoginPage v-if="($route.path === '/Login')"/>
+
 
   <main v-else>
 

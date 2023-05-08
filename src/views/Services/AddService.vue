@@ -10,7 +10,7 @@ import type { Service } from './Models/ServicesModel';
 import ServiceForm from '@/components/Service/serviceForm.vue';
 
 
-
+const loading=ref(false)
 const emit=defineEmits(['getList'])
 // define opject
 const state:Service= reactive({
@@ -54,7 +54,7 @@ const onFormSubmit = async (state: Service) => {
     try {
 
         const response = await axios.post("https://localhost:7003/api/Service", state)
-
+        loading.value=false
         emit('getList')
         toast.add({ severity: 'success', summary: 'رسالة نجاح', detail: response.data.msg, life: 3000 });
 
@@ -91,7 +91,7 @@ const openModal = () => {
         <template #default>
 
 <ServiceForm @form-submit="onFormSubmit" :service="state" :submitButtonText="'add'"
-    value="اضافه"/>
+    value="اضافه" :loading="loading"/>
 
 
 </template>

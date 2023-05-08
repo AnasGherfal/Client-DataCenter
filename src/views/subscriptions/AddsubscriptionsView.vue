@@ -85,10 +85,11 @@ const submitForm = async () => {
         await axios.post("https://localhost:7003/api/Subscription", subrequest)
                 .then(function (response) {
                 toast.add({ severity: 'success', summary: 'تمت اضافة اشتراك', detail: response.data.msg, life: 3000 });
-
                     console.log(response)
+                    loading.value = false;
                     store.getSub();
                     router.go(-1)
+
                   })
                 .catch(function (error) {
                     console.log(error)
@@ -213,7 +214,7 @@ const search = (event:any) => {
                         </div>
 
                     </div>
-                    <Button class="p-button-primry" icon="fa-solid fa-plus" label="إضافة" type="submit" />
+                    <Button class="p-button-primry" icon="fa-solid fa-plus" label="إضافة" type="submit" :loading="loading"/>
                     <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger"
                         style="margin-right: .5em;" />
                     <Toast position="bottom-right" />
