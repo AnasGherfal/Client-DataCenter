@@ -1,17 +1,37 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/MainPage/HomeView.vue'
-import LoadingPageVue from '@/views/LoadingPage.vue'
 import LoginPage from '@/views/LoginPage.vue'
+import UserRecordsVue from '@/views/Users Mangment/UserRecords.vue'
 
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/UsersRecord',
+      name: 'UsersRecord',
+      component: () => import('../views/Users Mangment/UserRecords.vue'),
+      children:[
+        
+        {
+        path:'AddUser',
+        props:true,
+        component: () => import('../views/Users Mangment/AddUser.vue')
+        },
+        {
+          path:'UsersProfile/:id',
+          props:true,
+          component: () => import('../views/Users Mangment/Profile.vue')
+          },
+      ]
+    },
+    {
       path: '/Login',
       name: 'loginPage',
-      component: LoginPage
+      component: () => import('../views/LoginPage.vue'),
+
     },
+
     {
       path: '/',
       name: 'home',

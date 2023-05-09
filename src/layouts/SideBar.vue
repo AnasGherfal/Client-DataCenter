@@ -2,6 +2,14 @@
 import { ref } from 'vue';
 
         const items = ref([
+        {
+                label: 'لوحة ادارة المستخدمين',
+                items: [{
+                    label: 'سجل المستخدمين',
+                    icon: 'fa-solid fa-users-gear',
+                    to: '/UsersRecord'
+                },
+                ]},
             {
                 label: 'لوحة المعلومات',
                 items: [{

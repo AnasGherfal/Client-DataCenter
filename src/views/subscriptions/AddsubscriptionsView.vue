@@ -8,7 +8,7 @@ import { useSubscriptionsStore } from '@/stores/subscriptions';
 import axios from 'axios';
 import router from '@/router';
 import { useCustomersStore } from '@/stores/customers';
-import type { Subscription } from './Models/SubscriptionsModelssModels';
+import type { Subscription } from './Models/SubscriptionsModels';
 import moment from 'moment';
 
 
