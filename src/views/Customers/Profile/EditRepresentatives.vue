@@ -3,7 +3,7 @@
 import RepresentativeForm from '@/components/Representatives/RepresentativeForm.vue';
 import { toNumber } from '@vue/shared';
 import { computed, inject, provide, reactive, ref } from 'vue';
-import type { Representatives } from '../modules/Representatives';
+import type { Representatives } from '../../../Models/CustomerModel/RepresentativesModel/Representatives';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 import { useToast } from 'primevue/usetoast';

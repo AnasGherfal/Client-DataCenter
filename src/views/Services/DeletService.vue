@@ -5,7 +5,7 @@ import Toast from 'primevue/toast';
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import { ref } from 'vue';
-import type { Service } from './Models/ServicesModel';
+import type { Service } from '../../Models/ServicesModel/ServicesModel';
 
 const confirm = useConfirm();
 const toast = useToast();

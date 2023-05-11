@@ -6,7 +6,7 @@ import { useToast } from "primevue/usetoast";
 import { useCustomersStore } from '@/stores/customers';
 import VisitDetails from './VisitDetails.vue';
 import router from '@/router';
-import type { Visit } from './modules/VisitModule'
+import type { Visit } from '../../Models/VistModel/VisitModule'
 import axios from 'axios';
 
 const store = useCustomersStore();

@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
-import { computed, inject, onMounted, onUnmounted, reactive, ref } from 'vue';
-import router from '@/router';
-import { RouterLink, routerKey, useRoute } from 'vue-router';
+import { computed, onMounted, ref } from 'vue';
+import {  useRoute } from 'vue-router';
 import axios from "axios"
-import InfoCustomer from '../Customers/Profile/InfoCustomer.vue';
 import InfoUser from './InfoUser.vue';
 
 const route = useRoute()

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Representatives } from '@/views/Customers/modules/Representatives';
+import type { Representatives } from '../../Models/CustomerModel/RepresentativesModel/Representatives';
 import useVuelidate from '@vuelidate/core';
 import { helpers, required, email, minLength } from '@vuelidate/validators';
-import { computed, reactive, ref, defineEmits, getCurrentInstance, watch, provide } from 'vue';
+import { computed, ref, getCurrentInstance } from 'vue';
 import { isLibyanPhoneNumber, validateText } from '@/assets/validations';
 import { useToast } from "primevue/usetoast";
 

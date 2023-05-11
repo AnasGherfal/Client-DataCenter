@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue';
-import { email, minLength, required, helpers, integer } from "@vuelidate/validators";
+import { required, helpers } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
-import Divider from 'primevue/divider';
 import Dialog from 'primevue/dialog';
 
 const props= (['compList'])

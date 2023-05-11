@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
-import type { ResponsUserModel } from './Models/ResponsUserModel'
+import type { ResponsUserModel } from '../../Models/UserModel/ResponsUserModel'
 import AddBotton from '@/components/AddBotton.vue';
 
 const state:ResponsUserModel = reactive({

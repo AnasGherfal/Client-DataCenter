@@ -2,9 +2,9 @@
 import { onMounted, reactive, ref } from 'vue';
 import Knob from 'primevue/knob';
 import axios, { toFormData } from 'axios';
-import type { Service } from '../Services/Models/ServicesModel';
+import type { Service } from '../../Models/ServicesModel/ServicesModel';
 import BackButton from '@/components/BackButton.vue';
-import type { SubscriptionRespons } from './Models/SubscriptionsRespons';
+import type { SubscriptionRespons } from '../../Models/SubscriptionModel/SubscriptionsRespons';
 import { useToast } from "primevue/usetoast";
 import { useSubscriptionsStore } from '@/stores/subscriptions';
 

@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import { computed, getCurrentInstance, reactive, ref } from 'vue';
+import { computed, getCurrentInstance, ref } from 'vue';
 import { email, required, helpers, minLength } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import InputText from 'primevue/inputtext';
-import BackButton from '@/components/BackButton.vue';
-import type { Customer } from '@/views/Customers/modules/Customers';
+import type { Customer } from '../../Models/CustomerModel/Customers'
 import { isLibyanPhoneNumber, validateText } from '@/assets/validations';
-import AddCustomer from '@/views/Customers/AddCustomer.vue';
-import InfoCustomer from '@/views/Customers/Profile/InfoCustomer.vue';
-import ErrorMessage from '../ErrorMessage.vue'
 import { useCustomersStore } from '@/stores/customers'
 
 const store = useCustomersStore();
@@ -106,7 +102,7 @@ const isDisabled = ref(true);
                 <div class=" field col-12 md:col-6 lg:col-4 ">
                     <span class="p-float-label">
                         <InputText id="name" type="text" v-model="customers.name "  />
-                        <div style="height: 10px;">
+                        <div style="height: 2px;">
                             <span  v-for="error in v$.name.$errors" :key="error.$uid"
                             style="color: red; font-weight: bold; font-size: small;" >
                                 {{ error.$message }}</span>
@@ -120,7 +116,7 @@ const isDisabled = ref(true);
                     <span class="p-float-label ">
                         <InputText id="email" type="text" v-model="customers.email" />
                         <label for="email">البريد الإلكتروني</label>
-                        <div style="height: 10px;">
+                        <div style="height: 2px;">
                             <span v-for="error in v$.email.$errors" :key="error.$uid" 
                             style="color: red; font-weight: bold; font-size: small;">
                                 {{ error.$message }}</span>
@@ -132,7 +128,7 @@ const isDisabled = ref(true);
                     <span class="p-float-label ">
                         <InputText id="address" type="text" v-model="customers.address" />
                         <label for="address">العنوان</label>
-                        <div style="height: 10px;">
+                        <div style="height: 2px;">
                             <span v-for="error in v$.address.$errors" :key="error.$uid" 
                             style="color: red; font-weight: bold; font-size: small;">
                                 {{ error.$message }}</span>
@@ -145,7 +141,7 @@ const isDisabled = ref(true);
                         <InputMask id="phoneNum1" v-model="customers.primaryPhone" mask="+218999999999"
                             style="direction: ltr; text-align: end;" />
                         <label for="phoneNum1">رقم هاتف </label>
-                        <div style="height: 10px;">
+                        <div style="height: 2px;">
                             <span v-for="error in v$.primaryPhone.$errors" :key="error.$uid"
                             style="color: red; direction: ltr; font-weight: bold; font-size: small;">
                                 {{ error.$message }}</span>

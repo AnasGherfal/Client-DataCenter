@@ -10,7 +10,7 @@ import router from '@/router';
 import Password from 'primevue/password';
 import { useCustomersStore } from '@/stores/customers';
 import moment from 'moment';
-import type { RequestUserModel } from './Models/RequestUserModel';
+import type { RequestUserModel } from '../../Models/UserModel/RequestUserModel';
 import { validateText } from '@/assets/validations';
 
 

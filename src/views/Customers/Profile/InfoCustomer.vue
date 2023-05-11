@@ -3,7 +3,7 @@ import { computed, reactive, ref, type PropType } from 'vue';
 import { useToast } from "primevue/usetoast";
 import axios from 'axios';
 import BackButton from '@/components/BackButton.vue';
-import type { Customer } from '../modules/Customers';
+import type { Customer } from '../../../Models/CustomerModel/Customers';
 import CustomerForm from '@/components/Customers/CustomerForm.vue';
 import { email, helpers, minLength, required } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';

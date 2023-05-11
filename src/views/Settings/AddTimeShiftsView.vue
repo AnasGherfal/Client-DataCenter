@@ -4,7 +4,7 @@ import { email, minLength, required, helpers, integer } from "@vuelidate/validat
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import Dialog from 'primevue/dialog';
-import type { VisitHours } from './Models/TimeShiftsModels'
+import type { VisitHours } from '../../Models/TimeShifts/TimeShiftsModels'
 import axios from 'axios';
 import moment from 'moment';
 const timeShifts: VisitHours = reactive({

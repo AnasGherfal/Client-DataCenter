@@ -5,7 +5,7 @@ import { required, helpers, minValue, requiredIf, email } from "@vuelidate/valid
 import { useVuelidate } from "@vuelidate/core";
 import axios from 'axios';
 import moment from 'moment';
-import type { VisitHours } from './Models/TimeShiftsModels'
+import type { VisitHours } from '../../Models/TimeShifts/TimeShiftsModels'
 import DeleteTimeShifts from './DeleteTimeShifts.vue';
 import AddTimeShifts from './AddTimeShiftsView.vue';
 import LockButton from '@/components/LockButton.vue';

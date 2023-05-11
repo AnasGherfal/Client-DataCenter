@@ -9,8 +9,7 @@ import axios from 'axios';
 import moment from 'moment';
 import { useToast } from 'primevue/usetoast';
 import { computed, onMounted, reactive, ref } from 'vue';
-import type { RequestUserModel } from './Models/RequestUserModel';
-import Password from 'primevue/password';
+import type { RequestUserModel } from '../../Models/UserModel/RequestUserModel';
 import BackButton from '@/components/BackButton.vue';
 import ChangePasswordUser from '@/components/User/ChangePasswordUser.vue';
 

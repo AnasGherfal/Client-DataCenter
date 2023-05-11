@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue';
-import { email, minLength, required, helpers, integer } from "@vuelidate/validators";
+import { computed, reactive, ref } from 'vue';
+import { required, helpers } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import Dialog from 'primevue/dialog';
 import axios from 'axios';
-import router from '@/router';
-import type { Service } from './Models/ServicesModel';
+import type { Service } from '../../Models/ServicesModel/ServicesModel';
 import ServiceForm from '@/components/Service/serviceForm.vue';
 
 const pakgeInfo = defineProps<{

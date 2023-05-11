@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, getCurrentInstance, ref } from 'vue';
+import { computed, getCurrentInstance, reactive, ref } from 'vue';
 import { required, helpers } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
-import type { Service } from './Models/ServicesModel';
+import type { Service } from '../../Models/ServicesModel/ServicesModel';
 
 
 const loading=ref(false)
@@ -22,7 +22,7 @@ const props = defineProps({
 })// define opject
 const instance = getCurrentInstance()
 
-const service:Service= ref(props.service)
+const service:Service= reactive(props.service)
 
 const onSubmitForm  = async () => {
     loading.value = true
@@ -32,7 +32,7 @@ const onSubmitForm  = async () => {
             if (instance) {
                 // Form submission logic here
 
-                instance.emit('form-submit', service.value);
+                instance.emit('form-submit', service);
             }
         } else {
             toast.add({ severity: 'error', 
