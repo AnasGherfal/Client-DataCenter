@@ -10,7 +10,7 @@ import { useSubscriptionsStore } from '@/stores/subscriptions';
 
 const loading=ref(false)
 const loading2=ref(false)
-
+const cardVis=ref(false)
 const prop=defineProps<{
 nad:number
 }>()
@@ -150,8 +150,10 @@ const renewalSubscription= () => {
         });
         }
 
-        
-
+        function car(){
+          cardVis.value = (!cardVis.value)
+        console.log(cardVis.value)
+        }
 </script>
 
 
@@ -185,9 +187,9 @@ const renewalSubscription= () => {
                             </div>
                             </div>
                     </div>
-            <div v-else class="flex-1" style=" text-align: center;">
+            <div v-else class="flex-1" style=" text-align: center;width:50%;">
             <Knob v-if="date3!=0" :size="Knob" v-model="date3" readonly :max="365" />
-            <h3 v-if="date3"> الأيام المتبقية</h3>
+            <h2 v-if="date3"> الأيام المتبقية</h2>
             <h3 v-else class="text-red-800"> انتهت صلاحية هذه الخدمة هل تريد التجديد</h3>
             <h3 v-if="date3<30 && date3!=0" class="text-orange-600">قاربت الصلاحية على انتهاء هل تريد تجديد هذه الخدمة</h3>
 
@@ -211,33 +213,75 @@ const renewalSubscription= () => {
 
             <div class="flex-1"> 
 
-           <h4 style="margin: 0;">اسم العميل</h4>
+           <h3 style="margin: 0;">اسم العميل</h3>
             <Skeleton v-if="loading" width="100%" height="1rem"></Skeleton>
-            <p v-else="loading" style="margin: 0;">{{ tab.customerName }}</p>
-            <Divider class="p-divider-solid" layout="horizontal" />
 
-            <h4 style="margin: 0;">Amount Of Power</h4>
-            <Skeleton v-if="loading" width="70%" height="1rem"></Skeleton>
-            <p v-else style="margin: 0;">{{ servobj.amountOfPower }}</p>
-            <Divider class="p-divider-solid" layout="horizontal" />
+            <span v-else="loading">
+           <p  style="margin: 0; display: inline;">{{ tab.customerName }}</p>
+            <RouterLink :key="tab.customerName"  :to="'/subscriptionsRecord/SubscriptionsDetaView/' + '1'" style="text-decoration: none">       
+                    <Button  icon="fa-solid fa-circle-info" severity="info" text rounded 
+                   v-tooltip="{ value: 'التفاصيل', fitContent: true }"  style=" display: flex; float: left;width: 2rem;height: 1rem;"/>
+                   </RouterLink>
+                  </span>
+                  <Divider class="p-divider-solid" layout="horizontal" />
 
-            <h4 style="margin: 0;">Acp Port</h4>
-            <Skeleton v-if="loading" width="70%" height="1rem"></Skeleton>
-            <p v-else style="margin: 0;">{{ servobj.acpPort }}</p>
+          <h3 style="margin: 0;">اسم الباقة</h3>
+          <Skeleton v-if="loading" width="50%" height="1rem"></Skeleton>
 
+           <span v-else="loading">
+           <p  style="margin: 0; display: inline;">{{ tab.serviceName }}</p>
+
+                    <Button @click="car()"
+                      icon="fa-solid fa-circle-info" 
+                    severity="info" text rounded 
+                   v-tooltip="{ value: 'التفاصيل', fitContent: true }"  
+                   style=" display: flex; float: left;width: 2rem;height: 1rem;"/>
+
+                   <Dialog v-model:visible="cardVis" :modal="true" >
+                 
+
+
+<div style="height-min: 450px;">  
+
+        <div class="justify-content-between ">
+             <div>
+            <span class="block text-center  text-3xl  font-bold">{{ servobj.name }}</span>
+            <div class="text-center mb-3">عدد الزيارات المتاحة في هذه الباقة في الشهر : {{ servobj.monthlyVisits }}</div>
+            <div class=" text-center font-semibold text-4xl">{{ servobj.price }}<span class="text-xs mr-1 text-blue-800">د.ل</span></div>
         </div>
-        <Divider class="p-divider-solid" layout="vertical" />
+        <Divider/>
+    </div>
+    <p class="font-bold">خواص هذه الباقة :</p>
 
-        <div class="flex-1">
-          
-            <h4 style="margin: 0;">Dns</h4>
-            <Skeleton v-if="loading" width="50%" height="1rem"></Skeleton>
-            <p style="margin: 0;">{{ servobj.dns }}</p>
+    <div style="direction:ltr;" class="text-center font-bold text-sm"> 
+    <i class="text-green-600 fa-solid fa-circle-check mr-2"></i>  
+    <span>(Acp Port): {{ servobj.acpPort }}</span>
+    <span class=" font-medium"></span>
+    </div>
+
+    <div class="text-center font-semibold text-sm">   
+    <span>DNS : {{ servobj.dns }}</span>
+    <i class="text-green-600 fa-solid fa-circle-check mr-2"></i>
+    <span class=" font-medium"></span>
+    </div>
+
+
+    <div style="direction:ltr;" class="text-center font-bold text-sm">   
+        <i class="text-green-600 fa-solid fa-circle-check mr-1"></i>
+    <span> (Amount Of Power) : {{servobj.amountOfPower}} </span>
+    <span class="text-green-500 font-medium"></span>
+    </div>
+</div>
+
+</Dialog>
+
+                  </span>     
+
             <Divider class="p-divider-solid" layout="horizontal" />
 
-            <h4 style="margin: 0;">عدد الزيارات المتبقية في الشهر</h4>
+            <h4 style="margin: 0;">عدد الزيارات المتبقية بالساعة</h4>
             <Skeleton v-if="loading" width="50%" height="1rem"></Skeleton>
-            <p v-else style="margin: 0;">30/{{ servobj.monthlyVisits }} ساعة</p>
+            <ProgressBar class="mt-2" v-else :value="servobj.monthlyVisits"> {{ servobj.monthlyVisits }}  </ProgressBar>
         </div>
     </div>
 

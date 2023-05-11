@@ -1,4 +1,7 @@
-<script setup lang="ts">import { reactive } from 'vue';
+<script setup lang="ts">
+import BackButton from '@/components/BackButton.vue';
+import ChangePasswordUser from '@/components/User/ChangePasswordUser.vue';
+import { reactive } from 'vue';
 
 
 const state = reactive({
@@ -7,6 +10,7 @@ const state = reactive({
     phoneNumber1: '',
     phoneNumber2: '',
     address: '',
+    EmpId:17005
 
 })
 </script>
@@ -15,12 +19,22 @@ const state = reactive({
 <div>
     <card>
         <template #title>
-            بيانات {name}
+       بيانات الموظف
+       <BackButton style="float: left;"/>
             <Divider/>
 
         </template>
         <template #content>
             <div class="grid p-fluid " >
+
+                <div class="field col-12 md:col-6">
+                        <span class="p-float-label ">
+                            <InputMask id="address" mask="99999" value="الرقم الوظيفي" type="text" v-model="state.EmpId" :disabled="true" />
+                            <label style="color: black;top: -.75rem; font-size: 12px;" for="address" >الرقم الوظيفي</label>
+
+                        </span>
+                    </div>
+
                     <div class="field col-12 md:col-6 ">
                         <span class="p-float-label" >
                             <InputText id="name" type="text"  value="اشرف" disabled="true" />
@@ -39,11 +53,9 @@ const state = reactive({
                         <span class="p-float-label ">
                             <InputText id="address" value="هون" type="text" v-model="state.address" disabled="true" />
                             <label style="color: black;top: -.75rem; font-size: 12px;" for="address" >العنوان</label>
-
                         </span>
                     </div>
-
-
+                <ChangePasswordUser/>
                 </div>
         </template>
 

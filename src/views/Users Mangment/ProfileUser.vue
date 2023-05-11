@@ -67,33 +67,33 @@ const getIdentityTypeText = (type: number) => {
     }
 };
 
-
-
 </script>
 
 <template>
     <InfoUser />
-    <Card>
+    <card class=" shadow-2 p-3 mt-3 border-round-2xl">
         <template #content>
-        <TabPanel>
+
+            <TabView class="tabview-custom" ref="tabview4">
+                <TabPanel>
+                    <template #header>
+                        <i class="fa-solid fa-key ml-2"></i>
+                        <span>الصلاحيات</span>
+
+                    </template>
+                    <!-- المخولون الخاصون بالعميل -->
                 </TabPanel>
                 <TabPanel>
                     <template #header>
-                        <i class="ml-2 pi pi-calendar"></i>
-                        <span>جدول الزيارات</span>
+                        <i class="fa-solid fa-bars ml-2"></i>
+                        <span>سجل الحركات</span>
                     </template>
-                    <!-- الزيارات الخاصة بالعميل -->
-                </TabPanel>
-                <TabPanel>
-                    <template #header>
-                        <i class="ml-2 pi pi-cog"></i>
-                        <span>جدول الاشتراكات</span>
-                    </template>
-                    <SubscriptionRecord :key="customerId.id" :customerId="customerId" />
                     <!-- الخدمات الخاصة بالعميل -->
                 </TabPanel>
+            </TabView>
         </template>
     </card>
 </template>
 
-<style></style>
+<style>
+</style>

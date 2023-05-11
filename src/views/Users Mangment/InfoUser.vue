@@ -10,10 +10,13 @@ import moment from 'moment';
 import { useToast } from 'primevue/usetoast';
 import { computed, onMounted, reactive, ref } from 'vue';
 import type { RequestUserModel } from './Models/RequestUserModel';
+import Password from 'primevue/password';
+import BackButton from '@/components/BackButton.vue';
+import ChangePasswordUser from '@/components/User/ChangePasswordUser.vue';
+
 
 const store = useSubscriptionsStore();
-const storeCustomer = useCustomersStore();
-const actEdit=ref(false)
+const actEdit=ref(true)
 
 const loading = ref(false);
 const ServicesList=ref();
@@ -133,7 +136,7 @@ const resetForm = () => {
 
 
 
-                <div v-if="5">
+                <div v-if="0">
                     <div class="warning-message">
 
                         <div class="warning-message-icon"></div>
@@ -143,7 +146,7 @@ const resetForm = () => {
 
                 </div>
 
-                <Button v-else="customer.status !== 5" @click="actEdit = !actEdit" icon=" fa-solid fa-pen"
+                <Button v-else-if="actEdit" @click="actEdit = !actEdit" icon=" fa-solid fa-pen"
                     style="width: 30px;height: 30px; margin-right: 10px;" class=" p-button-primary p-button-text"
                     v-tooltip="{ value: 'تعديل البيانات الشخصية', fitContent: true }" />
 
@@ -172,20 +175,12 @@ const resetForm = () => {
                             <span class="p-float-label">
                                 <Skeleton :loading="loading" width="100%" height="2rem"></Skeleton>
                             </span>
-                        </div>
-                        <div class="field col-12 md:col-6 lg:col-4">
-                            <span class="p-float-label">
-                                <Skeleton :loading="loading" width="100%" height="2rem"></Skeleton>
-                            </span>
-                        </div>
-                        <div class="field col-12 md:col-6 lg:col-4">
-                            <Skeleton :loading="loading" width="100%" height="2rem"></Skeleton>
-                        </div>
+                        </div> 
                     </div>
                 </div>
 
 
-                        <form @submit.prevent="submitForm">
+                <form @submit.prevent="submitForm">
 
 <div class="grid p-fluid ">
     
@@ -229,19 +224,6 @@ const resetForm = () => {
     </div>
 
     <div class="field col-12 md:col-6 lg:col-4">
-        <span class="p-float-label ">
-           
-
-        <Password v-model="state.Password" toggle-mask dir="ltr"/>  
-            <label style="right:40px;" for="subscriptionType">كلمة المرور</label>
-            <div style="height: 2px;"> 
-            <error v-for="error in v$.Password.$errors" :key="error.$uid" class="p-error">{{
-                error.$message }}</error>
-                </div>
-        </span>
-    </div>
-
-    <div class="field col-12 md:col-6 lg:col-4">
         <span class="p-float-label">
             <div class="card flex justify-content-center">
 <MultiSelect  v-model="selectedCities" display="chip" :options="cities" optionLabel="name" placeholder="Select Cities"
@@ -260,9 +242,16 @@ const resetForm = () => {
 
 
 </div>
-<Button class="p-button-primry" icon="fa-solid fa-plus" label="إضافة" type="submit" :loading="loading"/>
-<Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger"
-    style="margin-right: .5em;" />
+<div v-if="!actEdit">
+                        <Button @click="submitForm" icon="fa-solid fa-check" label="تعديل" />
+
+                        <ChangePasswordUser />
+
+                        <Button @click="actEdit = !actEdit" icon="fa-solid fa-ban" label="إلغاء التعديل"
+                            class="p-button-danger" style="margin-right: .5em;" />
+                            
+
+                    </div>
 <Toast position="bottom-right" />
 
 </form>

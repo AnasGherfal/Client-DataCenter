@@ -5,24 +5,18 @@ import { useToast } from 'primevue/usetoast';
 
 import axios from 'axios';
 import { toNumber } from '@vue/shared';
+import moment from 'moment';
+import { FilterMatchMode } from 'primevue/api';
 
  
 
         const toast = useToast();
-        const op = ref();
-        const productService = ref();
-        const products = ref();
+        const op = ref(false);
+
         const selectedProduct = ref();
-        const toggle = () => {
-            op.value.toggle(event);
-        };
-        const formatCurrency = () => {
-            return ;
-        };
-        const onProductSelect = () => {
-            op.value.hide();
-            
-        };
+
+
+ 
         const stateTest =defineProps<{
             stateCheck: string
             iconShape: string
@@ -30,6 +24,7 @@ import { toNumber } from '@vue/shared';
         const tab1=ref()
 console.log(stateTest.stateCheck)
 const test= toNumber(stateTest.stateCheck)
+
     onMounted(async () => {
     await axios.get("https://localhost:7003/api/subscription?PageNumber=1&PageSize=20")
       .then(function (response) {
@@ -42,6 +37,45 @@ const test= toNumber(stateTest.stateCheck)
     })
     console.log(tab1)
 
+const sublist=ref();
+
+const filters = ref({
+    'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
+});
+
+const columns = ref([
+
+    { field: 'serviceName', header: 'الباقه' }
+
+]);
+const selectedColumns = ref(columns.value);
+const loading = ref(true);
+
+const onToggle = (val: any) => {
+    selectedColumns.value = columns.value.filter(col => val.includes(col));
+};
+
+
+const rotame=ref()
+function getid(index: {}) {
+    rotame.value = index;
+    console.log(rotame.value.id)
+}
+
+const formatDate = (value:Date) => {
+    return moment(value).format('yy/M/D  hh:mm a' );
+};
+
+const status = (value:number) => {
+if(value===1){
+    return "الاشتراك مفعل"
+}else if(value===2){ 
+    return "الاشتراك غير مفعل" 
+}else if(value===5)
+return "الاشتراك مقفل"
+};
+
+
 </script>
 
 <template>
@@ -49,24 +83,85 @@ const test= toNumber(stateTest.stateCheck)
     <div>
         <Toast />
 
-        <Button type="button" :icon="iconShape"  @click="toggle" aria-haspopup="true" aria-controls="overlay_panel" />
+        <Button type="button" :icon="iconShape"  @click="op= !op"  />
+        <Dialog :modal="true" v-model:visible="op"  style="width: 650px" :breakpoints="{'800px':'500vw'}">
+            <DataTable ref="dt" :value="tab1" dataKey="id" :paginator="true" :rows="5" v-model:filters="filters"
+                    :globalFilterFields="['serviceName', 'customerName']"
+                    paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown"
+                    :rowsPerPageOptions="[5, 10, 25]"
+                    currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} عميل" responsiveLayout="scroll">
+                    <template #header>
+                        <div class="grid p-fluid">
 
-        <OverlayPanel ref="op" appendTo="body" :showCloseIcon="true" id="overlay_panel" style="width: 450px" :breakpoints="{'800px':'50vw'}">
-            <DataTable :value="tab1" v-model:selection="selectedProduct" selectionMode="single" :paginator="true" :rows="5" @rowSelect="onProductSelect" responsiveLayout="scroll" >
-                <Column field="id" header="id" sortable style="width: 50%"></Column>
-                <Column field="customerName" header="customer Name" sortable style="width: 50%"></Column>
-                <Column field="serviceName" header="service Name" sortable style="width: 50%"></Column>
-                <Column field="status" header="status" sortable style="width: 50%"></Column>
-                <Column style="min-width:8rem">
+                            <div class=" field col-12 md:col-6 lg:col-4 ">
+                                <span class="p-input-icon-left p-float-label ">
+                                    <i class="fa-solid fa-magnifying-glass" />
+                                    <InputText v-model="filters['global'].value" placeholder="" />
+                                    <label for="phoneNum1"> البحث </label>
+                                </span>
+                            </div>
 
-<template #body="slotProps">
-<RouterLink :to="'subscriptionsRecord/SubscriptionsDetaView/'+slotProps.data.id">
-<Button icon="fa-solid fa-user"  text rounded aria-label="Cancel"/>
-</RouterLink>
-</template>
-</Column>
-            </DataTable>
-        </OverlayPanel>
+
+                        </div>
+
+                    </template>
+                    <Column field="id" header="ID" style="min-width:1rem;" class="font-bold"></Column>
+
+                    <Column field="customerName" header="اسم العميل" style="min-width:8rem;" class="font-bold"></Column>
+                        <Column field="status" header="  الحاله " filterField="status" style="width:12rem"
+                            :showFilterMenu="false" :filterMenuStyle="{ width: '12rem' }">
+                            <template #body="{ data }">
+                                <Tag :value="status(data.status)" :severity="(data.status)" />
+                            </template>
+                            <template #filter="{ filterModel, filterCallback }">
+                                <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="['','']"
+                                    placeholder="Select One" class="p-column-filter" style="min-width: 12rem"
+                                    :showClear="true">
+                                    <template #option="slotProps">
+                                        <Tag :value="slotProps.option" :severity="(slotProps.option)" />
+                                    </template>
+                                </Dropdown>
+                            </template>
+
+                        </Column>
+
+                    <Column v-for="(col, index) of selectedColumns" :field="col.field" :header="col.header"
+                        :key="col.field + '_' + index" style="min-width:3rem;">
+                    </Column>
+                        
+
+                        <Column field="startDate" header="تاريخ بداية الاشتراك"  dataType="date" style="min-width:12rem;" >
+
+                               <template  #body="{ data }">
+                             {{ formatDate(data.startDate) }}
+                          </template>
+                        </Column>
+
+                        <Column field="endDate" header="تاريخ نهاية الاشتراك"  dataType="date" style="min-width:12rem;" >
+
+                            <template #body="{ data }">
+                             {{ formatDate(data.endDate) }}
+                          </template>
+                        </Column>
+
+                        <Column style="min-width:8rem">
+
+                        <template  #body="slotProps">
+                            <LockButton typeLock="Subscription" :id="slotProps.data.id" :name="slotProps.data.id"
+                                    :status="slotProps.data.status" @getdata="" />
+
+                  <RouterLink :key="slotProps.data.id"  :to="'/subscriptionsRecord/SubscriptionsDetaView/' + slotProps.data.id" style="text-decoration: none">
+                    
+
+                   <Button icon="fa-solid fa-circle-info" severity="info" text rounded 
+                  v-tooltip="{ value: 'التفاصيل', fitContent: true }"  />
+                  
+                  </RouterLink>
+ 
+                   </template>
+                   </Column>
+                </DataTable>
+        </Dialog>
     </div>
 </template>
 

@@ -3,7 +3,7 @@ import { ref } from 'vue';
 
         const items = ref([
         {
-                label: 'لوحة ادارة المستخدمين',
+                label: 'ادارة المستخدمين',
                 items: [{
                     label: 'سجل المستخدمين',
                     icon: 'fa-solid fa-users-gear',

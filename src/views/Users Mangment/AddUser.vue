@@ -12,7 +12,6 @@ import { useCustomersStore } from '@/stores/customers';
 import moment from 'moment';
 import type { RequestUserModel } from './Models/RequestUserModel';
 import { validateText } from '@/assets/validations';
-import type { Subscription } from '../subscriptions/Models/SubscriptionsModels';
 
 
 const store = useSubscriptionsStore();

@@ -215,7 +215,6 @@ const v$ = useVuelidate(rules, customers);
                         </form>
 
                     </div>
-
                     <div v-if="!actEdit">
                         <Button @click="onFormSubmit" icon="fa-solid fa-check" label="تعديل" />
                         <Button @click="actEdit = !actEdit" icon="fa-solid fa-ban" label="إلغاء التعديل"
