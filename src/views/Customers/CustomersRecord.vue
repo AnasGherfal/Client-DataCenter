@@ -76,7 +76,6 @@ const deleteCustomer = () => {
             toast.add({ severity: 'success', summary: 'تم الحذف', detail: response.data, life: 3000 });
             customersDialog.value = false
             loading.value = false
-
         });
 }
 
@@ -154,8 +153,6 @@ const deleteCustomer = () => {
                         <Column field="status" header="  الحاله " filterField="status" style="width:2rem"
                             :showFilterMenu="false" :filterMenuStyle="{ width: '4rem' }">
                             <template #body="{ data }">
-
-
                                 <Tag :value="trans(data.status)" :severity="getSeverity(data.status)" />
                             </template>
                             <template #filter="{ filterModel, filterCallback }">

@@ -106,7 +106,7 @@ const getIdentityTypeText = (type: number) => {
                         <div class="grid p-fluid">
                             <div v-for="n in 2" class=" ml-3 mb-2">
                                 <span >
-                                    <Skeleton width="20rem" height="25rem"></Skeleton>
+                                    <Skeleton width="15rem" height="25rem"></Skeleton>
                                 </span>
                             </div>
                             </div>

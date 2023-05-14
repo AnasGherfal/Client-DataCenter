@@ -48,7 +48,7 @@ import ConfirmationService from 'primevue/confirmationservice';
 import Skeleton from 'primevue/skeleton';
 import Dialog from 'primevue/dialog';
 import Checkbox from 'primevue/checkbox';
-
+import ProgressBar from 'primevue/progressbar';
 const app = createApp(App)
 
 app.use(createPinia())
@@ -61,6 +61,7 @@ app.provide('axios', app.config.globalProperties.axios)  // provide 'axios'
 
 app.use(ToastService);
 
+app.component('ProgressBar', ProgressBar)
 app.component('Sidebar', Sidebar);
 app.component('Button', Button);
 app.component('Menu', Menu);

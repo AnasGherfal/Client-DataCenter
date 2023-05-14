@@ -2,7 +2,7 @@
 import { computed, provide, reactive, ref, type Ref } from 'vue';
 import { useToast } from "primevue/usetoast";
 import Dialog from 'primevue/dialog';
-import type { Representatives } from '../modules/Representatives';
+import type { Representatives } from '../../../Models/CustomerModel/RepresentativesModel/Representatives';
 import axios from 'axios';
 import { useRoute } from 'vue-router';
 import { toNumber } from '@vue/shared';

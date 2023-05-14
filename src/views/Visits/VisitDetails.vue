@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue';
-import { email, minLength, required, helpers } from "@vuelidate/validators";
+import { computed, reactive, ref } from 'vue';
+import {required, helpers } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import { useVistisStore } from '@/stores/visits';
-import addCompanion from './addCompanion.vue';
 import router from '@/router';
-import type { Visit } from './modules/VisitModule'
-import axios from 'axios';
+import type { Visit } from '../../Models/VistModel/VisitModule'
 import BackButton from '@/components/BackButton.vue';
 
 const store = useVistisStore();

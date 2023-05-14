@@ -2,13 +2,15 @@
 import { onMounted, reactive, ref } from 'vue';
 import Knob from 'primevue/knob';
 import axios, { toFormData } from 'axios';
-import type { Service } from '../Services/Models/ServicesModel';
+import type { Service } from '../../Models/ServicesModel/ServicesModel';
 import BackButton from '@/components/BackButton.vue';
-import type { SubscriptionRespons } from './Models/SubscriptionsRespons';
+import type { SubscriptionRespons } from '../../Models/SubscriptionModel/SubscriptionsRespons';
 import { useToast } from "primevue/usetoast";
 import { useSubscriptionsStore } from '@/stores/subscriptions';
 
-
+const loading=ref(false)
+const loading2=ref(false)
+const cardVis=ref(false)
 const prop=defineProps<{
 nad:number
 }>()
@@ -40,6 +42,7 @@ const servobj:Service=reactive({
 let date3:number ;
 
 onMounted(async () => {
+  loading.value=true
     await axios.get("https://localhost:7003/api/Subscription?pagenum=1&pagesize=10")
       .then(function (response) {
         console.log(prop.nad)
@@ -68,6 +71,8 @@ onMounted(async () => {
         servobj.monthlyVisits= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].monthlyVisits;
         servobj.price= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].price;
         console.log(servobj)
+        getdata()
+        loading.value=false
 
       })
       .catch(function (error) {
@@ -75,19 +80,65 @@ onMounted(async () => {
       })})
       .catch(function (error) {
         console.log(error)
+        loading.value=false
       })
 
   })
+function getdata(){
+onMounted(async () => {
+  loading.value=true
+    await axios.get("https://localhost:7003/api/Subscription?pagenum=1&pagesize=10")
+      .then(function (response) {
+        console.log(prop.nad)
+        tab.id  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].id;
+        tab.status  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].status;
+        tab.customerName  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].customerName;
+        tab.endDate = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].endDate;
+        tab.startDate  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].startDate;
+        tab.serviceName  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].serviceName;
+        tab.subscriptionFileId  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].subscriptionFileId;
 
+        const date1 = new Date(tab.endDate);
+        const date2 = new Date();
+        date3 =Math.trunc( (date1.valueOf() - date2.valueOf())/24/60/60/1000)
+
+      }).then(function() {  
+        
+        axios.get("https://localhost:7003/api/Service?PageNumber=1&PageSize=20")
+      .then(function (response) {
+        
+        servobj.id= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].id;
+        servobj.acpPort= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].acpPort;
+        servobj.dns= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].dns;
+        servobj.amountOfPower= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].amountOfPower;
+        servobj.name= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].name;
+        servobj.monthlyVisits= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].monthlyVisits;
+        servobj.price= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].price;
+        console.log(servobj)
+        loading.value=false
+
+      })
+      .catch(function (error) {
+        console.log(error)
+      })})
+      .catch(function (error) {
+        console.log(error)
+        loading.value=false
+      })
+
+  })
+}
   const customersDialog=ref(false)
 
 const toast = useToast();
 
 const renewalSubscription= () => {
+  loading2.value=true
     console.log(tab.id)
     axios.put('https://localhost:7003/api/Subscription/Renew?id=' + tab.id)
         .then(response => {
             console.log(response)
+            loading2.value=false
             customersDialog.value = false
             toast.add({ severity: 'success', summary: 'تم التجديد', detail: response.data.msg, life: 3000 });
             store.getSub();
@@ -95,12 +146,14 @@ const renewalSubscription= () => {
           })
       .catch(function (error) {
         console.log(error)
-      
+        loading2.value=false
         });
         }
 
-        
-
+        function car(){
+          cardVis.value = (!cardVis.value)
+        console.log(cardVis.value)
+        }
 </script>
 
 
@@ -115,10 +168,28 @@ const renewalSubscription= () => {
        </template> 
        
        <template #content>
+
+        <div v-if="tab.status==5">
+                    <div class="warning-message">
+
+                        <div class="warning-message-icon"></div>
+                        <div class="warning-message-text">هذه الخدمة مقفلة لا يمكن تجديدها او اضافة شيء عليها</div>
+                    </div>
+                </div>
+
         <div class="flex flex-row">
-            <div class="flex-1" style=" text-align: center;">
+          <div v-if="loading" >
+                        <div class="grid p-fluid">
+                            <div v-for="n in 1" class=" ml-3 mb-2">
+                                <span >
+                                    <Skeleton width="15rem" height="20rem"></Skeleton>
+                                </span>
+                            </div>
+                            </div>
+                    </div>
+            <div v-else class="flex-1" style=" text-align: center;width:50%;">
             <Knob v-if="date3!=0" :size="Knob" v-model="date3" readonly :max="365" />
-            <h3 v-if="date3"> الأيام المتبقية</h3>
+            <h2 v-if="date3"> الأيام المتبقية</h2>
             <h3 v-else class="text-red-800"> انتهت صلاحية هذه الخدمة هل تريد التجديد</h3>
             <h3 v-if="date3<30 && date3!=0" class="text-orange-600">قاربت الصلاحية على انتهاء هل تريد تجديد هذه الخدمة</h3>
 
@@ -132,7 +203,7 @@ const renewalSubscription= () => {
                                     </div>
                                     <template #footer>
                                         <Button label="لا" icon="pi pi-times" text @click="customersDialog = false" />
-                                        <Button label="نعم" icon="pi pi-check"  text @click="renewalSubscription" />
+                                        <Button label="نعم" icon="pi pi-check" :loading="loading2" text @click="renewalSubscription" />
                                     </template>
 
 
@@ -142,27 +213,75 @@ const renewalSubscription= () => {
 
             <div class="flex-1"> 
 
-           <h4 style="margin: 0;">اسم العميل</h4>
-            <p style="margin: 0;">{{ tab.customerName }}</p>
+           <h3 style="margin: 0;">اسم العميل</h3>
+            <Skeleton v-if="loading" width="100%" height="1rem"></Skeleton>
 
-            <Divider class="p-divider-solid" layout="horizontal" />
-            <h4 style="margin: 0;">Amount Of Power</h4>
-            <p style="margin: 0;">{{ servobj.amountOfPower }}</p>
-            <Divider class="p-divider-solid" layout="horizontal" />
-            <h4 style="margin: 0;">Acp Port</h4>
-            <p style="margin: 0;">{{ servobj.acpPort }}</p>
+            <span v-else="loading">
+           <p  style="margin: 0; display: inline;">{{ tab.customerName }}</p>
+            <RouterLink :key="tab.customerName"  :to="'/subscriptionsRecord/SubscriptionsDetaView/' + '1'" style="text-decoration: none">       
+                    <Button  icon="fa-solid fa-circle-info" severity="info" text rounded 
+                   v-tooltip="{ value: 'التفاصيل', fitContent: true }"  style=" display: flex; float: left;width: 2rem;height: 1rem;"/>
+                   </RouterLink>
+                  </span>
+                  <Divider class="p-divider-solid" layout="horizontal" />
 
+          <h3 style="margin: 0;">اسم الباقة</h3>
+          <Skeleton v-if="loading" width="50%" height="1rem"></Skeleton>
+
+           <span v-else="loading">
+           <p  style="margin: 0; display: inline;">{{ tab.serviceName }}</p>
+
+                    <Button @click="car()"
+                      icon="fa-solid fa-circle-info" 
+                    severity="info" text rounded 
+                   v-tooltip="{ value: 'التفاصيل', fitContent: true }"  
+                   style=" display: flex; float: left;width: 2rem;height: 1rem;"/>
+
+                   <Dialog v-model:visible="cardVis" :modal="true" >
+                 
+
+
+<div style="height-min: 450px;">  
+
+        <div class="justify-content-between ">
+             <div>
+            <span class="block text-center  text-3xl  font-bold">{{ servobj.name }}</span>
+            <div class="text-center mb-3">عدد الزيارات المتاحة في هذه الباقة في الشهر : {{ servobj.monthlyVisits }}</div>
+            <div class=" text-center font-semibold text-4xl">{{ servobj.price }}<span class="text-xs mr-1 text-blue-800">د.ل</span></div>
         </div>
-        <Divider class="p-divider-solid" layout="vertical" />
+        <Divider/>
+    </div>
+    <p class="font-bold">خواص هذه الباقة :</p>
 
-        <div class="flex-1">
-          
-            <h4 style="margin: 0;">Dns</h4>
-            <p style="margin: 0;">{{ servobj.dns }}</p>
+    <div style="direction:ltr;" class="text-center font-bold text-sm"> 
+    <i class="text-green-600 fa-solid fa-circle-check mr-2"></i>  
+    <span>(Acp Port): {{ servobj.acpPort }}</span>
+    <span class=" font-medium"></span>
+    </div>
+
+    <div class="text-center font-semibold text-sm">   
+    <span>DNS : {{ servobj.dns }}</span>
+    <i class="text-green-600 fa-solid fa-circle-check mr-2"></i>
+    <span class=" font-medium"></span>
+    </div>
+
+
+    <div style="direction:ltr;" class="text-center font-bold text-sm">   
+        <i class="text-green-600 fa-solid fa-circle-check mr-1"></i>
+    <span> (Amount Of Power) : {{servobj.amountOfPower}} </span>
+    <span class="text-green-500 font-medium"></span>
+    </div>
+</div>
+
+</Dialog>
+
+                  </span>     
 
             <Divider class="p-divider-solid" layout="horizontal" />
-            <h4 style="margin: 0;">عدد الزيارات المتبقية في الشهر</h4>
-            <p style="margin: 0;">30/{{ servobj.monthlyVisits }} ساعة</p>
+
+            <h4 style="margin: 0;">عدد الزيارات المتبقية بالساعة</h4>
+            <Skeleton v-if="loading" width="50%" height="1rem"></Skeleton>
+            <ProgressBar class="mt-2" v-else :value="servobj.monthlyVisits"> {{ servobj.monthlyVisits }}  </ProgressBar>
         </div>
     </div>
 
@@ -202,5 +321,44 @@ const renewalSubscription= () => {
 .mr-2 {
   margin-left: 0.5rem !important;
 }
+.warning-message {
+  display: flex;
+  align-items: center;
+  background-color: #ffeeba;
+  color: #856404;
+  padding: 8px;
+  border: 1px solid #ffeeba;
+  border-radius: 10px;
+  width: 100%;
+  margin-bottom: 10px;
+}
 
+.warning-message-icon {
+  width: 24px;
+  height: 24px;
+  background-color: #ffc107;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 5px;
+}
+
+.warning-message-icon:before {
+  content: "!";
+  font-size: 16px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.warning-message-text {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.p-card .p-card-content {
+    padding-top:0;
+    padding-bottom: 1.25rem;
+}
 </style>
