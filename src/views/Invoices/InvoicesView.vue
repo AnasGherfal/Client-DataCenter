@@ -1,85 +1,140 @@
-<script lang="ts" setup>
-import { computed, reactive, ref } from 'vue';
+<template>
+    <Card>
+        <template #title>
+            سجل الفواتير
+        </template>
+        <template #content>
+    <div class="p-grid">
+          <p v-if="isLoading">Loading bills record...</p>
+          <p v-else-if="bills.length === 0">No bills found.</p>
+          <div v-else>
+            <div class="p-d-flex p-ai-center p-mb-2">
+              <div class="p-field">
+                <label for="customer">Customer:</label>
+                <div class="p-inputgroup">
+                  <Dropdown :options="customers" v-model="selectedCustomer" optionLabel="name" optionValue="id" @change="loadBills"></Dropdown>
+                </div>
+              </div>
+              <div class="p-field p-ml-3">
+                <label for="dateRange">Date Range:</label>
+                <div class="p-inputgroup">
+                  <Calendar v-model="startDate" input-style-class="p-mr-2"></Calendar>
+                  <Calendar v-model="endDate" input-style-class="p-ml-2"></Calendar>
+                </div>
+              </div>
+            </div>
+            <DataTable :value="bills" :paginator="true" :rows="10" :totalRecords="totalBills" :loading="isLoading" >
+              <Column field="id" header="ID" sortable></Column>
+              <Column field="date" header="Date" sortable></Column>
+              <Column field="amount" header="Amount" sortable></Column>
+              <Column field="status" header="Status" sortable></Column>
+            </DataTable>
+          </div>
+        </div>
+
+</template>
+    </Card>
+  </template>
+  
+  <script setup lang="ts">
+  import { ref, watch, onMounted } from 'vue';
+  
+  interface Customer {
+    id: number;
+    name: string;
+  }
+  
+  interface Bill {
+    id: number;
+    customerId: number;
+    date: Date;
+    amount: number;
+    status: string;
+  }
+  
+  const selectedCustomer = ref<Customer | null>(null);
+  const startDate = ref<Date | null>(null);
+  const endDate = ref<Date | null>(null);
+  const bills = ref<Bill[]>([]);
+  const totalBills = ref<number>(0);
+  const isLoading = ref<boolean>(false);
+  const customers = ref<Customer[]>([]);
+  
+  const dummyData: Bill[] = [
+    {
+      id: 1,
+      customerId: 1,
+      date: new Date(2022, 1, 1),
+      amount: 1000,
+      status: 'مدفوع'
+    },
+    {
+      id: 2,
+      customerId: 1,
+      date: new Date(2022, 2, 15),
+      amount: 500,
+      status: 'قيد الانتظار'
+    },
+    {
+      id: 3,
+      customerId: 2,
+      date: new Date(2022, 3, 10),
+      amount: 750,
+      status: 'مدفوع'
+    },
+    {
+      id: 4,
+      customerId: 3,
+      date: new Date(2022, 4, 5),
+      amount: 2000,
+      status: 'غير مدفوع'
+    },
+    {
+      id: 5,
+      customerId: 4,
+      date: new Date(2022, 5, 20),
+      amount:  212,
+      status: 'مدفوع'
+    },  
+]
+
+    const loadBills = () => {
+isLoading.value = true;
+    }
+
+const filteredBills = dummyData.filter((bill) => {
+if (!selectedCustomer.value) {
+return true;
+}
+
+if (bill.customerId !== selectedCustomer.value.id) {
+  return false;
+}
+
+if (startDate.value && bill.date.getTime() < startDate.value.getTime()) {
+      return false;
+    }
+
+    if (endDate.value && bill.date.getTime() > endDate.value.getTime()) {
+      return false;
+    }
+
+return true;
 
 
-import { FilterMatchMode } from 'primevue/api';
-
-const state = reactive({
-
-})
-const invoices = ref()
-const filters = ref({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
 
 });
+bills.value = filteredBills;
+totalBills.value = filteredBills.length;
+isLoading.value = false;
 
-
-
+watch([selectedCustomer, startDate, endDate], loadBills);
+onMounted(() => {
+customers.value = [
+{ id: 1, name: 'Customer 1' },
+{ id: 2, name: 'Customer 2' },
+{ id: 3, name: 'Customer 3' },
+{ id: 4, name: 'Customer 4' },
+];
+});
 </script>
-
-<template>
-            <RouterView></RouterView>
-
-    <div v-if="$route.path === '/invoices'">
-
-        <Card>
-            <template #title> سجل الفواتير</template>
-            <template #content>
-                   
-                            
-
-
-                        <DataTable  filterDisplay="row"  ref="dt" :value="invoices" dataKey="id" 
-                :paginator="true" :rows="5" v-model:filters="filters" 
-                :globalFilterFields="['name', 'status']"
-                paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]"
-                currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} عميل" responsiveLayout="scroll">
-                <template #header>
-                    <div class="grid p-fluid">
-                        
-                        <div class=" field col-12 md:col-6 lg:col-4 ">
-						<span class="p-input-icon-left p-float-label ">
-                            <i class="fa-solid fa-magnifying-glass" />
-                            <InputText v-model="filters['global'].value" placeholder="" />
-                            <label for="phoneNum1"> البحث </label>
-                        </span>
-					</div>
-
-                    </div>
-                   
-                </template>
-                <Column field="name" header="الإسم"  style="min-width:10rem;"  class="font-bold"></Column>
-
-                
-                <Column field="status" header="   " filterField="status" style="min-width:8rem" :showFilterMenu="false" :filterMenuStyle="{ width: '14rem' }">
- 
-                
-                </Column>
- 
-                <!-- <Column field="email" header="البريد الالكتروني"  style="min-width:12rem"></Column>
-                <Column field="address" header=" العنوان"  style="min-width:12rem"></Column>
-                <Column field="phoneNumber1" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
-                <Column field="phoneNumber2" header="  رقم الهاتف 2"  style="min-width:12rem"></Column> -->
-                <Column style="min-width:8rem">
-
-                    <template #body="slotProps">
-
-            <RouterLink to="/customersRecord/CustomerProfile">
-            <Button icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel"  />
-            </RouterLink>
-            <Button icon="fa-solid fa-trash-can" severity="danger" text rounded aria-label="Cancel"   />
-           </template>
-        </Column>
-
-
-    
-</DataTable>
-
-            </template>
-
-        </Card>
-    </div>
-</template>
-
-<style ></style>

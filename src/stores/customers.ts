@@ -11,10 +11,10 @@ export const useCustomersStore = defineStore('customer', () => {
   const data = ref(null);
 
   onMounted(async () => {
-  getdata();
+  getCustomers();
   })
   
-function getdata(){
+function getCustomers(){
    axios.get("https://localhost:7003/api/Customers")
   .then(function (response) {
     customers.value = response.data.content
@@ -26,6 +26,6 @@ function getdata(){
   })
   
  }
-  return {  customers, getdata, loading, data }
+  return {  customers,  getCustomers, loading, data }
 
 })
