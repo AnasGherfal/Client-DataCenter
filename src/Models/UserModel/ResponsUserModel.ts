@@ -1,4 +1,4 @@
-export interface ResponsUserModel {
+export interface ResponseUserModel {
     FullName :string | null,
     Status : number | null,
     startDate:string,
