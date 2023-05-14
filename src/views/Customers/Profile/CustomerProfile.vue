@@ -36,15 +36,18 @@ const representatives = ref();
 
 onMounted(async () => {
     store.loading=true
+    loading.value=true
+
     await axios.get("https://localhost:7003/api/Customers/")
         .then(function (response) {
 
 
             customerId.value = response.data.content.filter((users: { id: String }) => users.id == userId.value)[0];
-             
-
+            
             getRepresentatives();
             store.loading=false;
+            loading.value=false
+
 
         })
         .catch(function (error) {
