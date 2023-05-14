@@ -35,8 +35,8 @@ const toggleThemeMode = () => {
      
      <template>
     <div class="inline-flex fadeinleft animation-duration-1000" style=" height:30px; margin-top: -18px; margin-right:12px;">
-        <Button @click="toggleThemeMode"   style="height: 40px; width: 40px; --fa-animation-iteration-count: 2;"  class="m-1 p-button-text" 
-        icon="fa-solid fa-moon fa-fade" />
+        <!-- <Button @click="toggleThemeMode"   style="height: 40px; width: 40px; --fa-animation-iteration-count: 2;"  class="m-1 p-button-text" 
+        icon="fa-solid fa-moon fa-fade" /> -->
 
         
         <RouterLink to="/SettingsView" style="text-decoration: none">
