@@ -3,7 +3,7 @@ import DialogCard from './CardInfo/DialogCard.vue';
 </script>
 <template>
     <div class="pp grid-container" style="display: grid; gap: 1rem;   grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
-    ">
+" > 
         <Card style="height: 140px; width: auto;" class=" grid-item col-12 mr-1  lg:col-4 mb-3 p-3">
                 <template #header>
             <div class="  border-round-2xl">
@@ -11,6 +11,7 @@ import DialogCard from './CardInfo/DialogCard.vue';
                     <div>
                         <span class="block text-green-600 font-medium font-semibold">الاشتراكات المفعلة</span>
                     </div>
+                       <DialogCard iconShape="fa-solid fa-bolt" stateCheck="1"/>
                 </div>
             </div>
        
@@ -21,17 +22,14 @@ import DialogCard from './CardInfo/DialogCard.vue';
         </template>
         </Card>
         <Card style="height: 140px; width: auto;" class=" grid-item col-12 mr-1  lg:col-4 mb-3 p-3">
-            <template #header>
-                <div class="  border-round-2xl">
-                    <div class="flex justify-content-between mb-3">
-                        <div>
-                            <span class="block text-orange-600 font-medium font-semibold">اقتراب انتهاء الصلاحية</span>
-                        </div>
-                        <DialogCard iconShape="fa-solid fa-bell" stateCheck="2" />
+                <template #header>
+            <div class="  border-round-2xl">
+                <div class="flex justify-content-between mb-3">
+                    <div>
+                        <span class="block text-orange-600 font-medium font-semibold">اقتراب انتهاء الصلاحية</span>
                     </div>
+                       <DialogCard iconShape="fa-solid fa-bell" stateCheck="2"/>
                 </div>
-                </template>
-                </Card>
             </div>
        
             <div class="text-orange-600 font-medium text-xl">5 اشتراك</div>
@@ -62,13 +60,14 @@ import DialogCard from './CardInfo/DialogCard.vue';
 </template>
 
 <style>
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 600px){
 
-    .pp {
-        display: block !important;
+    .pp{
+        display:block !important;
+        
 
-
-    }
 }
+}
+
 </style>
 
