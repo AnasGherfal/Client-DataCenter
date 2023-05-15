@@ -1,4 +1,9 @@
 <template>
+      <RouterView></RouterView>
+
+
+
+<div v-if="($route.path === '/invoices')">
     <Card>
         <template #title>
             سجل الفواتير
@@ -25,7 +30,11 @@
             </div>
             <DataTable :value="bills" :paginator="true" :rows="10" :totalRecords="totalBills" :loading="isLoading" >
               <Column field="id" header="ID" sortable></Column>
-              <Column field="date" header="Date" sortable></Column>
+              <Column field="date" header="Date" sortable>
+                <template #body="{ data }">
+                             {{ formatDate(data.data) }}
+                          </template>
+              </Column>
               <Column field="amount" header="Amount" sortable></Column>
               <Column field="status" header="Status" sortable></Column>
             </DataTable>
@@ -34,15 +43,20 @@
 
 </template>
     </Card>
+    </div>
   </template>
   
   <script setup lang="ts">
-  import { ref, watch, onMounted } from 'vue';
+  import moment from 'moment';
+import { ref, watch, onMounted } from 'vue';
   
   interface Customer {
     id: number;
     name: string;
   }
+  const formatDate = (value:Date) => {
+    return moment(value).format('yy/M/D  hh:mm a' );
+};
   
   interface Bill {
     id: number;

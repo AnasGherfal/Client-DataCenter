@@ -3,7 +3,6 @@ import { RouterLink, RouterView } from 'vue-router'
 import { onMounted, ref } from 'vue';
 import SideBar from './layouts/SideBar.vue'
 import TopBar from './layouts/TopBar.vue'
-import LoadingPage from './views/LoadingPage.vue';
 import LoginPage from './views/LoginPage.vue';
 
 
@@ -19,10 +18,7 @@ onMounted(() => {
 
 <template>
 
-<LoginPage v-if="($route.path === '/login')" />
-
-
-
+<LoginPage v-if="($route.path === '/login')"/>
 
   <main v-else>
 
@@ -36,13 +32,7 @@ onMounted(() => {
 
     <div class="content" style="transition: all 0.5s ease; width: 73%; margin-right: 26%; padding: 25px;">
       <!-- main -->
-
       <RouterView/>
-
-      <!-- <ServiceInfo/> -->
-  <!-- <CustomerProfile/> -->
-  <!-- <VistProfile/> -->
-  
     </div>
     
     </div>

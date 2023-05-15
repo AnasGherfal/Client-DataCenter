@@ -33,24 +33,23 @@ const onToggle = (val: any) => {
 };
 
 const statuses = ref([
-  { value: "1", label: "نشط" },
-  { value: "2", label: "غير نشط" },
+    { value: 1, label: 'نشط'},
+    { value: 5, label: 'مقفل'}
 ]);
 
-const getSeverity = (status: string) => {
-  const translatedStatus = trans(status.toString());
+const getSeverity = (status: any) => {
 
-  switch (translatedStatus) {
+  switch (trans(status)) {
     case "نشط":
       return "success";
     case "غير نشط":
       return "danger";
     case "مقيد":
       return "warning";
-    default:
-      return "info"; // Return a default severity value when status is not recognized
-  }
-};
+      }
+    }
+
+
 
 const trans = (value: string) => {
   if (value == "1") return "نشط";
@@ -192,6 +191,7 @@ const deleteCustomer = () => {
                   @change="filterCallback()"
                   :options="statuses"
                   optionLabel="label"
+                  option-value="value"
                   placeholder="اختر الحالة"
                   class="p-column-filter"
                   style="min-width: 12rem"

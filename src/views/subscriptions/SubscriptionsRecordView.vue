@@ -98,7 +98,7 @@ console.log(store.loading)
                                 <Tag :value="status(data.status)" :severity="(data.status)" />
                             </template>
                             <template #filter="{ filterModel, filterCallback }">
-                                <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="['','']"
+                                <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="['warning','']"
                                     placeholder="Select One" class="p-column-filter" style="min-width: 12rem"
                                     :showClear="true">
                                     <template #option="slotProps">
