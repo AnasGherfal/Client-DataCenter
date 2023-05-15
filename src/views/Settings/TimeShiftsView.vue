@@ -42,12 +42,12 @@ const getTimeShifts = (async () => {
             getVisitsHours.value = response.data.content;
 
             // console.log(visitHours.startTime)
-            loading.value= false;
+            loading.value = false;
 
 
         })
         .catch(function (error) {
-            
+
             console.log(error)
         })
 
@@ -75,7 +75,7 @@ const submitForm = async () => {
     await axios.put(`https://localhost:7003/api/VisitTimeShift/${selected}`, send)
         .then((response) => {
             toast.add({ severity: 'success', summary: 'نجاح العمليه', detail: `${response.data.msg}`, life: 3000 });
-            loading.value= false;
+            loading.value = false;
 
 
         })
@@ -83,7 +83,7 @@ const submitForm = async () => {
             toast.add({ severity: 'error', summary: 'حدث خطأ', detail: 'لم يتم التعديل', life: 3000 });
 
             console.log(error)
-            loading.value= false;
+            loading.value = false;
 
         })
 
@@ -116,8 +116,9 @@ const openSave = (pos: string) => {
                 <div class="field col-12 md:col-4 mt-2">
                     <span class="p-float-label ">
                         <Skeleton width="85%" height="3rem" v-if="loading"></Skeleton>
-                        <Dropdown v-else @change="getIndex(selectedHours.id)" v-model="selectedHours" :options="getVisitsHours"
-                            optionLabel="name" placeholder="اختر ساعات للتعديل" class="w-full md:w-14rem" emptyMessage="لاتوجد ساعات, قم بإضافة ساعة" />
+                        <Dropdown v-else @change="getIndex(selectedHours.id)" v-model="selectedHours"
+                            :options="getVisitsHours" optionLabel="name" placeholder="اختر ساعات للتعديل"
+                            class="w-full md:w-14rem" emptyMessage="لاتوجد ساعات, قم بإضافة ساعة" />
                         <label for="hoursName">الساعات</label>
 
                     </span>
@@ -128,7 +129,7 @@ const openSave = (pos: string) => {
 
             <div v-if="selectedHours">
                 <!-- <LockButton @getdata="getTimeShifts()" :name="selectedHours.name" :id="selectedHours.id"
-                        :status="selectedHours.status" type-lock="VisitTimeShift"></LockButton> -->
+                            :status="selectedHours.status" type-lock="VisitTimeShift"></LockButton> -->
 
                 <DeleteTimeShifts v-if="selectedHours.status !== 5" :name="selectedHours" @getTimeShifts="getTimeShifts()">
                 </DeleteTimeShifts>
@@ -157,7 +158,7 @@ const openSave = (pos: string) => {
                                 selectionMode="single" :manualInput="true" :stepMinute="15" hourFormat="24"
                                 @click="formChanged = true" :show-seconds="true" :step-second="60" />
                             <!-- <error v-for="error in v$.endWorkTime.$errors" :key="error.$uid" class="p-error ">
-                                                                                {{ error.$message }}</error> -->
+                                                                                    {{ error.$message }}</error> -->
                             <label for="endTime">الى</label>
 
                         </span>

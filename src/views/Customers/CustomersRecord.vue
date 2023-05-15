@@ -1,40 +1,36 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue';
-import { FilterMatchMode } from 'primevue/api';
-import { useCustomersStore } from '@/stores/customers'
-import router from '@/router';
-import axios from 'axios';
-import { useToast } from 'primevue/usetoast';
-import Dialog from 'primevue/dialog';
-import AddBotton from '@/components/AddBotton.vue';
-import LockButton from '@/components/LockButton.vue';
+import { ref, reactive, onMounted, computed } from "vue";
+import { FilterMatchMode } from "primevue/api";
+import { useCustomersStore } from "@/stores/customers";
+import axios from "axios";
+import { useToast } from "primevue/usetoast";
+import Dialog from "primevue/dialog";
+import AddBotton from "@/components/AddBotton.vue";
+import LockButton from "@/components/LockButton.vue";
+import { customersService } from "@/api/customers";
 
 const toast = useToast();
 const store = useCustomersStore();
 const customersDialog = ref(false);
 const loading = ref(false);
-const isLocked = ref()
 const filters = ref({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    status: { value: null, matchMode: FilterMatchMode.EQUALS },
+  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  status: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
 
 const columns = ref([
-    // {field: 'status', header: 'الحاله'},
-    { field: 'email', header: 'البريد الإكتروني' },
+  // {field: 'status', header: 'الحاله'},
+  { field: "email", header: "البريد الإكتروني" },
 
-    { field: 'address', header: 'العنوان' },
-    { field: 'primaryPhone', header: 'رقم الهاتف (1)' },
-    { field: 'secondaryPhone', header: 'رقم الهاتف (2)' }
-
+  { field: "address", header: "العنوان" },
+  { field: "primaryPhone", header: "رقم الهاتف (1)" },
+  { field: "secondaryPhone", header: "رقم الهاتف (2)" },
 ]);
 const selectedColumns = ref(columns.value);
 
 const onToggle = (val: any) => {
-    selectedColumns.value = columns.value.filter(col => val.includes(col));
+  selectedColumns.value = columns.value.filter((col) => val.includes(col));
 };
-
-
 
 const statuses = ref([
     { value: 1, label: 'نشط'},
@@ -42,184 +38,258 @@ const statuses = ref([
 ]);
 
 const getSeverity = (status: any) => {
-    switch (trans(status)) {
-        case 'نشط':
-            return 'success';
 
-        case 'غير نشط':
-            return 'danger';
-
-        case 'مقيد':
-            return 'warning';
-
+  switch (trans(status)) {
+    case "نشط":
+      return "success";
+    case "غير نشط":
+      return "danger";
+    case "مقيد":
+      return "warning";
+      }
     }
-}
+
+
+
 const trans = (value: string) => {
-    if (value == '1')
-        return 'نشط'
-    else if (value == '2')
-        return 'غير نشط'
-    else if (value == '5')
-        return 'مقيد';
+  if (value == "1") return "نشط";
+  else if (value == "2") return "غير نشط";
+  else if (value == "5") return "مقيد";
 };
 
-const rotName = ref()
+const rotName = ref();
 
 function getId(index: {}) {
-    rotName.value = index;
-    customersDialog.value = true
+  rotName.value = index;
+  customersDialog.value = true;
 }
 
 const deleteCustomer = () => {
-    loading.value = true
-    axios.delete('https://localhost:7003/api/Customers/' + rotName.value.id)
-        .then(response => {
-            store.getCustomers();
-            toast.add({ severity: 'success', summary: 'تم الحذف', detail: response.data, life: 3000 });
-            customersDialog.value = false
-            loading.value = false
-        });
-}
+  loading.value = true;
 
-
+  customersService
+    .remove(rotName.value.id)
+    .then((response) => {
+      store.getCustomers();
+      toast.add({
+        severity: "success",
+        summary: "تم الحذف",
+        detail: response.data,
+        life: 3000,
+      });
+      customersDialog.value = false;
+    })
+    .catch(() => {})
+    .finally(() => {
+      loading.value = false;
+    });
+};
 </script>
 
 <template>
-    <RouterView></RouterView>
+  <RouterView></RouterView>
 
+  <div v-if="$route.path === '/customersRecord'">
+    <Card>
+      <template #title>
+        سجل العملاء
+        <AddBotton
+          name-button="اضافة عميل"
+          rout-name="/customersRecord/addCustomer"
+        />
+      </template>
+      <template #content>
+        <div>
+          <div
+            v-if="store.loading"
+            class="border-round border-1 surface-border p-4 surface-card"
+          >
+            <div class="grid p-fluid">
+              <div v-for="n in 9" class="field col-12 md:col-6 lg:col-4">
+                <span class="p-float-label">
+                  <Skeleton width="100%" height="2rem"></Skeleton>
+                </span>
+              </div>
+            </div>
 
+            <Skeleton width="100%" height="100px"></Skeleton>
+            <div class="flex justify-content-between mt-3">
+              <Skeleton width="100%" height="2rem"></Skeleton>
+            </div>
+          </div>
 
-    <div v-if="($route.path === '/customersRecord')">
-        <Card>
+          <DataTable
+            v-else
+            filterDisplay="row"
+            ref="dt"
+            :value="store.customers"
+            dataKey="id"
+            :paginator="true"
+            :rows="5"
+            v-model:filters="filters"
+            :globalFilterFields="['name', 'status']"
+            paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown"
+            :rowsPerPageOptions="[5, 10, 25]"
+            currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} عميل"
+            responsiveLayout="scroll"
+          >
+            <template #header>
+              <div class="grid p-fluid">
+                <div class="field col-12 md:col-6 lg:col-4">
+                  <div
+                    class="table-header flex flex-column md:flex-row justiify-content-between"
+                  >
+                    <span class="p-input-icon-left p-float-label">
+                      <i class="fa-solid fa-magnifying-glass" />
+                      <InputText
+                        v-model="filters['global'].value"
+                        placeholder=""
+                      />
+                      <label for="search"> البحث </label>
+                    </span>
+                  </div>
+                </div>
 
-            <template #title>
-                سجل العملاء
-                <AddBotton name-button="اضافة عميل" rout-name="/customersRecord/addCustomer" />
+                <div class="field col-12 md:col-6 lg:col-4">
+                  <MultiSelect
+                    :modelValue="selectedColumns"
+                    :options="columns"
+                    optionLabel="header"
+                    @update:modelValue="onToggle"
+                    placeholder="حدد الأعمدة"
+                  />
+                </div>
+              </div>
+            </template>
+            <!-- <Column field="id" header="ID" class="font-bold" frozen></Column> -->
 
-        </template>
-        <template #content>
+            <Column
+              field="name"
+              header="الإسم"
+              style="min-width: 10rem"
+              class="font-bold"
+              frozen
+            ></Column>
 
-
-                <div>
-
-                    <div v-if="store.loading" class="border-round border-1 surface-border p-4 surface-card">
-
-
-                            <div class="grid p-fluid">
-                            <div v-for="n in 9" class="field col-12 md:col-6 lg:col-4">
-                                <span class="p-float-label">
-                                    <Skeleton  width="100%" height="2rem"></Skeleton>
-                                </span>
-                            </div>
-                            </div>
-
-                            <Skeleton width="100%" height="100px"></Skeleton>
-                            <div class="flex justify-content-between mt-3">
-                                <Skeleton width="100%" height="2rem"></Skeleton>
-                            </div>
-                    </div>
-
-
-                    <DataTable v-else filterDisplay="row" ref="dt" :value="store.customers" dataKey="id" :paginator="true"
-                        :rows="5" v-model:filters="filters" :globalFilterFields="['name', 'status']"
-                        paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown"
-                        :rowsPerPageOptions="[5, 10, 25]"
-                        currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} عميل" responsiveLayout="scroll">
-                        <template #header>
-
-                            <div class="grid p-fluid">
-
-                                <div class=" field col-12 md:col-6 lg:col-4 ">
-
-                                    <div class="table-header flex flex-column md:flex-row justiify-content-between ">
-                                        <span class="p-input-icon-left p-float-label ">
-                                            <i class="fa-solid fa-magnifying-glass" />
-                                            <InputText v-model="filters['global'].value" placeholder="" />
-                                            <label for="search"> البحث </label>
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div class=" field col-12 md:col-6 lg:col-4 ">
-                                    <MultiSelect :modelValue="selectedColumns" :options="columns" optionLabel="header"
-                                        @update:modelValue="onToggle" placeholder="حدد الأعمدة" />
-                                </div>
-
-                            </div>
-
-                        </template>
-                        <!-- <Column field="id" header="ID" class="font-bold" frozen></Column> -->
-
-                        <Column field="name" header="الإسم" style="min-width:10rem;" class="font-bold" frozen></Column>
-
-                        <Column field="status" header="  الحاله " filterField="status" style="width:2rem"
-                            :showFilterMenu="false" :filterMenuStyle="{ width: '4rem' }">
-                            <template #body="{ data }">
-                                <Tag :value="trans(data.status)" :severity="getSeverity(data.status)" />
-                            </template>
-                            <template #filter="{ filterModel, filterCallback }">
-                                <Dropdown v-model="filterModel.value" @change="filterCallback()" optionLabel="label" optionValue="value" :options="statuses"
-                                    placeholder="Select One" class="p-column-filter" style="min-width: 12rem"
-                                    :showClear="true">
-                                    <template #option="slotProps">
-                                        <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" />
-                                    </template>
-                                </Dropdown>
-                            </template>
-
-                        </Column>
-                        <Column v-for="(col, index) of selectedColumns" :field="col.field" :header="col.header"
-                            :key="col.field + '_' + index" style="min-width:10rem;  "></Column>
-                        <!-- <Column field="email" header="البريد الالكتروني"  style="min-width:12rem"></Column>
+            <Column
+              field="status"
+              header="  الحاله "
+              filterField="status"
+              style="width: 2rem"
+              :showFilterMenu="false"
+              :filterMenuStyle="{ width: '4rem' }"
+            >
+              <template #body="{ data }">
+                <Tag
+                  :value="trans(data.status)"
+                  :severity="getSeverity(data.status)"
+                />
+              </template>
+              <template #filter="{ filterModel, filterCallback }">
+                <Dropdown
+                  v-model="filterModel.value"
+                  @change="filterCallback()"
+                  :options="statuses"
+                  optionLabel="label"
+                  option-value="value"
+                  placeholder="اختر الحالة"
+                  class="p-column-filter"
+                  style="min-width: 12rem"
+                  :showClear="true"
+                >
+                  <template #option="slotProps">
+                    <Tag
+                      :value="slotProps.option"
+                      :severity="getSeverity(slotProps.option)"
+                    />
+                  </template>
+                </Dropdown>
+              </template>
+            </Column>
+            <Column
+              v-for="(col, index) of selectedColumns"
+              :field="col.field"
+              :header="col.header"
+              :key="col.field + '_' + index"
+              style="min-width: 10rem"
+            ></Column>
+            <!-- <Column field="email" header="البريد الالكتروني"  style="min-width:12rem"></Column>
                                         <Column field="address" header=" العنوان"  style="min-width:12rem"></Column>
                                         <Column field="primaryPhone" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
                                         <Column field="secondaryPhone" header="  رقم الهاتف 2"  style="min-width:12rem"></Column> -->
-                        <Column style="min-width:13rem">
+            <Column style="min-width: 13rem">
+              <template #body="slotProps">
+                <span v-if="slotProps.data.status !== 5">
+                  <Button
+                    v-tooltip="{ value: 'حذف', fitContent: true }"
+                    icon="fa-solid fa-trash-can"
+                    severity="danger"
+                    text
+                    rounded
+                    aria-label="Cancel"
+                    @click="getId(slotProps.data)"
+                  />
+                </span>
 
-                            <template #body="slotProps">
+                <RouterLink
+                  :to="'customersRecord/CustomerProfile/' + slotProps.data.id"
+                >
+                  <Button
+                    v-tooltip="{ value: 'البيانات الشخصية', fitContent: true }"
+                    icon="fa-solid fa-user"
+                    severity="info"
+                    text
+                    rounded
+                    aria-label="Cancel"
+                  />
+                </RouterLink>
 
-                                <span v-if="slotProps.data.status !== 5">
-
-
-                                    <Button v-tooltip="{ value: 'حذف', fitContent: true }" icon="fa-solid fa-trash-can"
-                                        severity="danger" text rounded aria-label="Cancel" @click="getId(slotProps.data)" />
-                                </span>
-
-                                <RouterLink :to="'customersRecord/CustomerProfile/' + slotProps.data.id">
-                                    <Button v-tooltip="{ value: 'البيانات الشخصية', fitContent: true }"
-                                        icon="fa-solid fa-user" severity="info" text rounded aria-label="Cancel" />
-                                </RouterLink>
-
-                                <LockButton typeLock="Customers" :id="slotProps.data.id" :name="slotProps.data.name"
-                                    :status="slotProps.data.status" @getdata="store.getCustomers" />
-                                <Dialog v-model:visible="customersDialog" :style="{ width: '450px' }" header="تأكيد"
-                                    :modal="true">
-
-                                    <div class="confirmation-content">
-                                        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem; color: red;" />
-                                        <span v-if="rotName">هل انت متأكد من حذف <b>{{ rotName.name }}</b> ؟</span>
-                                    </div>
-                                    <template #footer>
-                                        <Button label="نعم" icon="pi pi-check" text @click="deleteCustomer"
-                                            :loading="loading" />
-                                        <Button label="لا" icon="pi pi-times" text @click="customersDialog = false" />
-                                    </template>
-
-
-                                </Dialog>
-
-                            </template>
-
-                        </Column>
-                        <Toast position="bottom-left" />
-
-
-                    </DataTable>
-                </div>
-            </template>
-        </Card>
-
-    </div>
+                <LockButton
+                  typeLock="Customers"
+                  :id="slotProps.data.id"
+                  :name="slotProps.data.name"
+                  :status="slotProps.data.status"
+                  @getdata="store.getCustomers"
+                />
+                <Dialog
+                  v-model:visible="customersDialog"
+                  :style="{ width: '450px' }"
+                  header="تأكيد"
+                  :modal="true"
+                >
+                  <div class="confirmation-content">
+                    <i
+                      class="pi pi-exclamation-triangle mr-3"
+                      style="font-size: 2rem; color: red"
+                    />
+                    <span v-if="rotName"
+                      >هل انت متأكد من حذف <b>{{ rotName.name }}</b> ؟</span
+                    >
+                  </div>
+                  <template #footer>
+                    <Button
+                      label="نعم"
+                      icon="pi pi-check"
+                      text
+                      @click="deleteCustomer"
+                      :loading="loading"
+                    />
+                    <Button
+                      label="لا"
+                      icon="pi pi-times"
+                      text
+                      @click="customersDialog = false"
+                    />
+                  </template>
+                </Dialog>
+              </template>
+            </Column>
+            <Toast position="bottom-left" />
+          </DataTable>
+        </div>
+      </template>
+    </Card>
+  </div>
 </template>
 
 <style></style>

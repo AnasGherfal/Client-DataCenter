@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { validateText } from '@/assets/validations';
+import { validateText } from '@/tools/validations.js';
 import useVuelidate from '@vuelidate/core';
 import { helpers, required, minLength, email } from '@vuelidate/validators';
 import { computed, reactive, ref } from 'vue';
