@@ -26,7 +26,7 @@ const onFormSubmit = async (customer: Customer) => {
 
         store.loading=true
             const response = await axios.post("https://localhost:7003/api/Customers", customer);
-            store.getdata();
+            store.getCustomers();
 
             toast.add({ severity: 'success', summary: 'رسالة نجاح', detail: response.data.msg, life: 3000 });
             setTimeout(() => {
