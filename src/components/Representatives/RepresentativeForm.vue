@@ -3,7 +3,7 @@ import type { Representatives } from '../../Models/CustomerModel/Representatives
 import useVuelidate from '@vuelidate/core';
 import { helpers, required, email, minLength } from '@vuelidate/validators';
 import { computed, ref, getCurrentInstance } from 'vue';
-import { isLibyanPhoneNumber, validateText } from '@/assets/validations';
+import { isLibyanPhoneNumber, validateText } from '@/tools/validations';
 import { useToast } from "primevue/usetoast";
 
 const props = defineProps({

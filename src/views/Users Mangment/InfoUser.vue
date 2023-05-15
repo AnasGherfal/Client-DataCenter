@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { validateText, isLibyanPhoneNumber } from '@/assets/validations';
+import { validateText, isLibyanPhoneNumber } from '@/tools/validations';
 import router from '@/router';
 import { useCustomersStore } from '@/stores/customers';
 import { useSubscriptionsStore } from '@/stores/subscriptions';

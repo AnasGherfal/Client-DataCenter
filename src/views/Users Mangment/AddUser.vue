@@ -11,7 +11,7 @@ import Password from 'primevue/password';
 import { useCustomersStore } from '@/stores/customers';
 import moment from 'moment';
 import type { RequestUserModel } from '../../Models/UserModel/RequestUserModel';
-import { validateText } from '@/assets/validations';
+import { validateText } from '@/tools/validations';
 
 
 const storeCustomer = useCustomersStore();
