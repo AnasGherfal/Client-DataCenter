@@ -15,6 +15,7 @@ import LockButton from '@/components/LockButton.vue';
 const route = useRoute()
 const store = useCustomersStore();
 const loading = ref(false);
+
 const userId = computed(() => {
     if (route && route.params && route.params.id) {
         return route.params.id
@@ -34,15 +35,18 @@ const representatives = ref();
 
 onMounted(async () => {
     store.loading=true
+    loading.value=true
+
     await axios.get("https://localhost:7003/api/Customers/")
         .then(function (response) {
 
 
             customerId.value = response.data.content.filter((users: { id: String }) => users.id == userId.value)[0];
-             
-
+            
             getRepresentatives();
             store.loading=false;
+            loading.value=false
+
 
         })
         .catch(function (error) {
@@ -51,12 +55,10 @@ onMounted(async () => {
 })
 
 function getRepresentatives() {
-    loading.value=true
 
     axios.get("https://localhost:7003/api/Representives/").then((response) => {
         representativeId.value = response.data.content.filter((users: { customerName: string }) => users.customerName == customerId.value.name);
         representatives.value = response.data.content
-        loading.value=false
 
     });
 }

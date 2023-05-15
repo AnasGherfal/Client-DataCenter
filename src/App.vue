@@ -19,7 +19,9 @@ onMounted(() => {
 
 <template>
 
-<LoginPage v-if="($route.path === '/Login'&&'/login')"/>
+<LoginPage v-if="($route.path === '/login')" />
+
+
 
 
   <main v-else>

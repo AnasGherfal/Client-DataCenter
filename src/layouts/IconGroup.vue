@@ -7,49 +7,53 @@ import { onMounted, ref } from 'vue';
 const checked = ref<boolean>(false);
 const menu = ref();
 const items = ref([
-{ separator: true },
-    { label: 'حساب تعريفي', icon:"fa-solid fa-user", to:'/adminProfile' },
+    { separator: true },
+    { label: 'حساب تعريفي', icon: "fa-solid fa-user", to: '/adminProfile' },
     { separator: true }
 
 ]);
 
 
-const toggle = (event:any) => {
+const toggle = (event: any) => {
     menu.value.toggle(event);
 };
 
 const isDarkTheme = ref(false);
 
 const toggleThemeMode = () => {
-  isDarkTheme.value = !isDarkTheme.value;
-  const theme = isDarkTheme.value ? 'dark' : 'light';
-  document.body.classList.remove('light', 'dark');
-  document.body.classList.add(theme);
+    isDarkTheme.value = !isDarkTheme.value;
+    const theme = isDarkTheme.value ? 'dark' : 'light';
+    document.body.classList.remove('light', 'dark');
+    document.body.classList.add(theme);
 };
 
 
 
 
-        
+
 </script>
      
-     <template>
+<template>
     <div class="inline-flex fadeinleft animation-duration-1000" style=" height:30px; margin-top: -18px; margin-right:12px;">
-        <Button @click="toggleThemeMode"   style="height: 40px; width: 40px; --fa-animation-iteration-count: 2;"  class="m-1 p-button-text" 
-        icon="fa-solid fa-moon fa-fade" />
+        <!-- <Button @click="toggleThemeMode"   style="height: 40px; width: 40px; --fa-animation-iteration-count: 2;"  class="m-1 p-button-text" 
+            icon="fa-solid fa-moon fa-fade" /> -->
 
-        
+
         <RouterLink to="/SettingsView" style="text-decoration: none">
 
-        <Button  style="height: 40px; width: 40px; --fa-animation-iteration-count: 1;" icon="fa-solid fa-gear fa-spin fa-spin-hover" class="m-1 p-button-text transition-colors transition-duration-500" 
-        v-tooltip="{value:'اعدادات النظام', fitContent:true}" />
+            <Button style="height: 40px; width: 40px; --fa-animation-iteration-count: 1;"
+                icon="fa-solid fa-gear fa-spin fa-spin-hover"
+                class="m-1 p-button-text transition-colors transition-duration-500"
+                v-tooltip="{ value: 'اعدادات النظام', fitContent: true }" />
         </RouterLink>
 
-        <Button  @click="toggle"  style="height: 40px; width: 40px; --fa-animation-iteration-count: 2;" icon="fa-solid fa-ellipsis-vertical" class="m-1  p-button-text fa-bounce-hover"
-         aria-haspopup="true" aria-controls="overlay_menu" v-tooltip="{value:'قائمه', fitContent:true}" />
-        <Menu ref="menu" :model="items" :popup="true" >
-          <template #start>
-                <button @click="" class="w-full p-link flex align-items-center p-2 pl-3 text-color hover:surface-200 border-noround">
+        <Button @click="toggle" style="height: 40px; width: 40px; --fa-animation-iteration-count: 2;"
+            icon="fa-solid fa-ellipsis-vertical" class="m-1  p-button-text fa-bounce-hover" aria-haspopup="true"
+            aria-controls="overlay_menu" v-tooltip="{ value: 'قائمه', fitContent: true }" />
+        <Menu ref="menu" :model="items" :popup="true">
+            <template #start>
+                <button @click=""
+                    class="w-full p-link flex align-items-center p-2 pl-3 text-color hover:surface-200 border-noround">
                     <Avatar image="" class="mr-2" shape="circle" />
                     <div class="flex flex-column align">
                         <span class="font-bold">Admin</span>
@@ -65,13 +69,12 @@ const toggleThemeMode = () => {
         </Menu>
 
     </div>
-     </template>  
+</template>  
 
-     <style scoped>
+<style scoped>
 .ml-2 {
-  margin-right: 0.5rem !important;
+    margin-right: 0.5rem !important;
 }
-
-    </style>
+</style>
      
     

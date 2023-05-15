@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
-import { required, helpers, minValue, email, minLength } from "@vuelidate/validators";
+import { required, helpers, minValue, email, minLength, sameAs } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import BackButton from '@/components/BackButton.vue';
@@ -14,7 +14,6 @@ import type { RequestUserModel } from '../../Models/UserModel/RequestUserModel';
 import { validateText } from '@/assets/validations';
 
 
-const store = useSubscriptionsStore();
 const storeCustomer = useCustomersStore();
 
 const loading = ref(false);
@@ -25,7 +24,8 @@ FullName:'',
 StartDate:'',
 Email:'',
 EmpId:null,
-Password:''
+Password:'',
+PasswordConfirmation:''
 })
 
 
@@ -65,6 +65,7 @@ const rules = computed(() => {
             email: helpers.withMessage(' ليس عنوان بريد إلكتروني صالح', email)
         },
         Password: { required: helpers.withMessage(' الحقل مطلوب', required)},
+        PasswordConfirmation: { sameAs: helpers.withMessage('كلمة المرور غير متطابقة ',sameAs(state.Password))},
         StartDate: { required: helpers.withMessage('الحقل مطلوب', required) },
         EmpId: { required: helpers.withMessage('الحقل مطلوب', required) }
 
@@ -92,21 +93,20 @@ const submitForm = async () => {
 
         await axios.post("https://localhost:7003/api/Subscription", state)
                 .then(function (response) {
-                toast.add({ severity: 'success', summary: 'تمت اضافة اشتراك', detail: response.data.msg, life: 3000 });
+                toast.add({ severity: 'success', summary: 'رسالة نجاح', detail: response.data.msg, life: 3000 });
                     console.log(response)
                     loading.value = false;
-                    store.getSub();
                     router.go(-1)
 
                   })
                 .catch(function (error) {
                     console.log(error)
-                    toast.add({ severity: 'error', summary: 'هناك مشكلة', detail:'هنالك مشكلة في الوصول', life: 3000 });
+                    toast.add({ severity: 'error', summary: 'رسالة فشل', detail:'هنالك مشكلة في الوصول', life: 3000 });
 
 
                 })
               } else {
-                        console.log("empty")
+                toast.add({ severity: 'error', summary: 'رسالة فشل', detail:'قم بتعبئة الحقول', life: 3000 });
                     }
                     loading.value = false;
 
@@ -161,8 +161,8 @@ const resetForm = () => {
                         <InputText id="Email" type="text" v-model="state.Email" />
                         <label for="Email">البريد الإلكتروني</label>
                         <div style="height: 2px;">
-                            <span v-for="error in v$.Email.$errors" :key="error.$uid" class="p-error">
-                                {{ error.$message }}</span>
+                            <error v-for="error in v$.Email.$errors" :key="error.$uid" class="p-error">
+                                {{ error.$message }}</error>
                         </div>
 
                     </span>
@@ -173,35 +173,13 @@ const resetForm = () => {
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
                                 <InputNumber id="EmpId" v-model="state.EmpId" 
-                            style="direction: ltr; text-align: end;" />
+                            style=" text-align: end;" />
                                 <label for="EmpId">الرقم الوظيفي</label>
                                 <div style="height: 2px;"> 
                                 <error v-for="error in v$.EmpId.$errors" :key="error.$uid" class="p-error">{{
                                     error.$message }}</error>
                                     </div>
 
-                            </span>
-                        </div>
-
-                        <div class="field col-12 md:col-6 lg:col-4">
-                            <span class="p-float-label ">
-                            <Password v-model="state.Password" toggle-mask dir="ltr"/>  
-                                <label style="right:40px;" for="subscriptionType">كلمة المرور</label>
-                                <div style="height: 2px;"> 
-                                <error v-for="error in v$.Password.$errors" :key="error.$uid" class="p-error">{{
-                                    error.$message }}</error>
-                                    </div>
-                            </span>
-                        </div>
-
-                        <div class="field col-12 md:col-6 lg:col-4">
-                            <span class="p-float-label ">
-                            <Password v-model="state.Password" toggle-mask dir="ltr"/>  
-                                <label style="right:40px;" for="subscriptionType">تأكيد كلمة المرور</label>
-                                <div style="height: 2px;"> 
-                                <error v-for="error in v$.Password.$errors" :key="error.$uid" class="p-error">{{
-                                    error.$message }}</error>
-                                    </div>
                             </span>
                         </div>
 
@@ -221,13 +199,37 @@ const resetForm = () => {
 
                         </div>
 
+                        <div class="field col-12 md:col-6 lg:col-4">
+                            <span class="p-float-label ">
+                            <Password v-model="state.Password" toggle-mask dir="ltr"/>  
+                                <label style="right:40px;" for="subscriptionType">كلمة المرور</label>
+                                <div style="height: 2px;"> 
+                                <error v-for="error in v$.Password.$errors" :key="error.$uid" class="p-error">{{
+                                    error.$message }}</error>
+                                    </div>
+                            </span>
+                        </div>
+
+                        <div class="field col-12 md:col-6 lg:col-4">
+                            <span class="p-float-label ">
+                            <Password v-model="state.PasswordConfirmation" toggle-mask dir="ltr"/>  
+                                <label style="right:40px;" for="subscriptionType">تأكيد كلمة المرور</label>
+                                <div style="height: 2px;"> 
+                                <error v-for="error in v$.PasswordConfirmation.$errors" :key="error.$uid" class="p-error">{{
+                                    error.$message }}</error>
+                                    </div>
+                            </span>
+                        </div>
+
+
+
 
 
                     </div>
                     <Button class="p-button-primry" icon="fa-solid fa-plus" label="إضافة" type="submit" :loading="loading"/>
                     <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger"
                         style="margin-right: .5em;" />
-                    <Toast position="bottom-right" />
+                    <Toast position="bottom-left" />
 
                 </form>
             </template>

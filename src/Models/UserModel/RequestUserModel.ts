@@ -3,5 +3,6 @@ export interface RequestUserModel {
     StartDate:string,
     EmpId :number | null,
     Email : string,
-    Password:string 
+    Password:string,
+    PasswordConfirmation: String
   }

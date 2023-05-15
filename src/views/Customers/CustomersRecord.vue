@@ -74,7 +74,7 @@ const deleteCustomer = () => {
     loading.value = true
     axios.delete('https://localhost:7003/api/Customers/' + rotName.value.id)
         .then(response => {
-            store.getdata();
+            store.getCustomers();
             toast.add({ severity: 'success', summary: 'تم الحذف', detail: response.data, life: 3000 });
             customersDialog.value = false
             loading.value = false
@@ -191,7 +191,7 @@ const deleteCustomer = () => {
                                 </RouterLink>
 
                                 <LockButton typeLock="Customers" :id="slotProps.data.id" :name="slotProps.data.name"
-                                    :status="slotProps.data.status" @getdata="store.getdata" />
+                                    :status="slotProps.data.status" @getdata="store.getCustomers" />
                                 <Dialog v-model:visible="customersDialog" :style="{ width: '450px' }" header="تأكيد"
                                     :modal="true">
 

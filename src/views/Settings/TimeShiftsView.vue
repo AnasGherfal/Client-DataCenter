@@ -13,7 +13,7 @@ import LockButton from '@/components/LockButton.vue';
 //Needs Validation
 const getVisitsHours = ref();
 const selectedHours = ref();
-
+const loading = ref(false);
 
 
 const formChanged = ref(false);
@@ -29,18 +29,25 @@ const toast = useToast();
 // const v$ = useVuelidate(rules, visitHours);
 
 onMounted(async () => {
+
     getTimeShifts();
+
 
 })
 const getTimeShifts = (async () => {
+    loading.value = true;
+
     await axios.get("https://localhost:7003/api/VisitTimeShift")
         .then((response) => {
             getVisitsHours.value = response.data.content;
 
             // console.log(visitHours.startTime)
+            loading.value= false;
+
 
         })
         .catch(function (error) {
+            
             console.log(error)
         })
 
@@ -51,6 +58,8 @@ const getTimeShifts = (async () => {
 const submitForm = async () => {
     // const result = await v$.value.$validate();
     visible.value = true;
+    loading.value = true;
+
 
 
     const send = reactive<VisitHours>({
@@ -66,6 +75,7 @@ const submitForm = async () => {
     await axios.put(`https://localhost:7003/api/VisitTimeShift/${selected}`, send)
         .then((response) => {
             toast.add({ severity: 'success', summary: 'نجاح العمليه', detail: `${response.data.msg}`, life: 3000 });
+            loading.value= false;
 
 
         })
@@ -73,6 +83,8 @@ const submitForm = async () => {
             toast.add({ severity: 'error', summary: 'حدث خطأ', detail: 'لم يتم التعديل', life: 3000 });
 
             console.log(error)
+            loading.value= false;
+
         })
 
 
@@ -103,8 +115,9 @@ const openSave = (pos: string) => {
             <div class="grid p-fluid ">
                 <div class="field col-12 md:col-4 mt-2">
                     <span class="p-float-label ">
-                        <Dropdown @change="getIndex(selectedHours.id)" v-model="selectedHours" :options="getVisitsHours"
-                            optionLabel="name" placeholder="اختر ساعات للتعديل" class="w-full md:w-14rem" />
+                        <Skeleton width="85%" height="3rem" v-if="loading"></Skeleton>
+                        <Dropdown v-else @change="getIndex(selectedHours.id)" v-model="selectedHours" :options="getVisitsHours"
+                            optionLabel="name" placeholder="اختر ساعات للتعديل" class="w-full md:w-14rem" emptyMessage="لاتوجد ساعات, قم بإضافة ساعة" />
                         <label for="hoursName">الساعات</label>
 
                     </span>
@@ -115,7 +128,7 @@ const openSave = (pos: string) => {
 
             <div v-if="selectedHours">
                 <!-- <LockButton @getdata="getTimeShifts()" :name="selectedHours.name" :id="selectedHours.id"
-                    :status="selectedHours.status" type-lock="VisitTimeShift"></LockButton> -->
+                        :status="selectedHours.status" type-lock="VisitTimeShift"></LockButton> -->
 
                 <DeleteTimeShifts v-if="selectedHours.status !== 5" :name="selectedHours" @getTimeShifts="getTimeShifts()">
                 </DeleteTimeShifts>
@@ -144,7 +157,7 @@ const openSave = (pos: string) => {
                                 selectionMode="single" :manualInput="true" :stepMinute="15" hourFormat="24"
                                 @click="formChanged = true" :show-seconds="true" :step-second="60" />
                             <!-- <error v-for="error in v$.endWorkTime.$errors" :key="error.$uid" class="p-error ">
-                                                                            {{ error.$message }}</error> -->
+                                                                                {{ error.$message }}</error> -->
                             <label for="endTime">الى</label>
 
                         </span>
@@ -170,7 +183,7 @@ const openSave = (pos: string) => {
 
             <Divider />
 
-            <Button  @click="openSave('bottom')" :disabled="!formChanged"
+            <Button @click="openSave('bottom')" :disabled="!formChanged"
                 icon="fa-solid fa-floppy-disk fa-flip fa-flip-hover"
                 style="--fa-animation-duration: 2s; --fa-animation-delay:5s; --fa-animation-iteration-count:5" label="تخزين"
                 class="ml-2" />
@@ -185,7 +198,7 @@ const openSave = (pos: string) => {
                     <span>هل انت متأكد من تغيير وقت الساعات ؟</span>
                 </div>
                 <template #footer>
-                    <Button label="نعم" icon="pi pi-check" text @click="submitForm" />
+                    <Button label="نعم" icon="pi pi-check" text @click="submitForm" :loading="loading" />
 
                     <Button label="لا" icon="pi pi-times" text @click="visible = false" />
                 </template>

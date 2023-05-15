@@ -15,6 +15,7 @@ const timeShifts: VisitHours = reactive({
     endTime: ''
 })
 
+const loading = ref(false)
 
 const emits = defineEmits(['getTimeShifts'])
 
@@ -34,6 +35,8 @@ const v$ = useVuelidate(rules, timeShifts);
 
 const submitForm = async () => {
     const result = await v$.value.$validate();
+
+    loading.value=true;
 
     const send = reactive<VisitHours>({
         name: timeShifts.name,
@@ -57,13 +60,14 @@ const submitForm = async () => {
                 console.log(error)
                 toast.add({ severity: 'warn', summary: 'Warn Message', detail: 'هناك مشكلة في عملية الادخال', life: 3000 });
             })
+            loading.value = false
         displayModal.value = false;
+
         resetForm();
     }
 
 }
 
-console.log(emits('getTimeShifts') +'2')
 
 const resetForm = () => {
     timeShifts.name = '',
@@ -162,7 +166,7 @@ const closeModal = () => {
 
         </form>
         <template #footer>
-            <Button @click="submitForm" class="p-button-primry" icon="fa-solid fa-plus" label="إضافة" />
+            <Button @click="submitForm" class="p-button-primry" icon="fa-solid fa-plus" label="إضافة" :loading="loading" />
             <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger"
                 style="margin-right: .5em;" />
             <Toast position="bottom-right" />
