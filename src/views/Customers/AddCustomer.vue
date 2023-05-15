@@ -19,7 +19,6 @@ const customer= ref<Customer>({
     primaryPhone: '',
     secondaryPhone: '',
     address: '',
-    file: null
 });
 
 const onFormSubmit = async (customer: Customer) => {

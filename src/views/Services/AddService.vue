@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue';
-import { email, minLength, required, helpers, integer } from "@vuelidate/validators";
+import {required, helpers} from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import Dialog from 'primevue/dialog';
 import axios from 'axios';
-import router from '@/router';
 import type { Service } from '../../Models/ServicesModel/ServicesModel';
 import ServiceForm from '@/components/Service/serviceForm.vue';
 
@@ -14,6 +13,7 @@ const loading=ref(false)
 const emit=defineEmits(['getList'])
 // define opject
 const state:Service= reactive({
+    id:null,
     name: '',
     amountOfPower: '',
     acpPort: '',

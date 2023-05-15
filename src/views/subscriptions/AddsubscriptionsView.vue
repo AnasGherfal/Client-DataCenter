@@ -23,7 +23,7 @@ const state:Subscription = reactive({
     customerId:null,
     startDate:'',
     endDate:'',
-    subscriptionFileId:null
+    subscriptionFileId:"3fa85f64-5717-4562-b3fc-2c963f66afa6"
 
 })
 
@@ -73,13 +73,30 @@ const submitForm = async () => {
      loading.value = true;
 
     const subrequest:Subscription = reactive({
-    serviceId: state.serviceId.id,
+    ServiceId: state.serviceId.id,
     customerId: state.customerId.id,
     startDate: state.startDate,
     endDate:state.endDate,
     subscriptionFileId:"3fa85f64-5717-4562-b3fc-2c963f66afa6",
     totalPrice:0
            }) 
+
+
+    const  subdata= new FormData()
+    subdata.append('serviceId', subrequest.ServiceId)
+    subdata.append('customerId', subrequest.customerId)
+    subdata.append('startDate', subrequest.startDate)
+    subdata.append('endDate', subrequest.endDate)
+    subdata.append('subscriptionFileId', subrequest.subscriptionFileId)
+    subdata.append('totalPrice', subrequest.totalPrice)
+
+
+
+
+
+
+
+
 
 
         await axios.post("https://localhost:7003/api/Subscription", subrequest)

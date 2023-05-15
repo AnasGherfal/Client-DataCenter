@@ -87,7 +87,7 @@ const resetForm = () => {
         <span class="p-float-label" >
             <InputText id="name" type="text" v-model="service.name"  />
             <label  for="name">اسم الباقة </label>
-            <div style="height: 10px;"> 
+            <div style="height: 2px;"> 
             <error  v-for="error in v$.name.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
             </div>
         </span>
@@ -97,7 +97,7 @@ const resetForm = () => {
         <span class="p-float-label ">
             <InputText id="amountOfPower" type="text" v-model="service.amountOfPower" />
             <label for="amountOfPower" >Amount Of Power</label>
-            <div style="height: 10px;"> 
+            <div style="height: 2px;"> 
             <error  v-for="error in v$.amountOfPower.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
             </div>
         </span>
@@ -107,7 +107,7 @@ const resetForm = () => {
         <span class="p-float-label ">
             <InputText id="acpPort" type="text" v-model="service.acpPort" />
             <label for="acpPort" >Acp Port</label>
-            <div style="height: 10px;"> 
+            <div style="height: 2px;"> 
             <error  v-for="error in v$.acpPort.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
             </div>
         </span>
@@ -117,7 +117,7 @@ const resetForm = () => {
         <span class="p-float-label">
             <InputText id="monthlyVisits" type="text" v-model="service.monthlyVisits" />
             <label for="monthlyVisits" >عدد الزيارات في الشهر</label>
-            <div style="height: 10px;"> 
+            <div style="height: 2px;"> 
             <error  v-for="error in v$.monthlyVisits.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
             </div>
             
@@ -128,7 +128,7 @@ const resetForm = () => {
         <span class="p-float-label ">
             <InputText id="Dns" type="text" v-model="service.dns" />
             <label for="Dns" >Dns</label>
-            <div style="height: 10px;"> 
+            <div style="height: 2px;"> 
             <error  v-for="error in v$.dns.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
             </div>
         </span>
@@ -138,7 +138,7 @@ const resetForm = () => {
         <span class="p-float-label ">
             <InputText id="price" type="text" v-model="service.price" />
             <label for="price" > سعر الباقة بالدينار</label>
-            <div style="height: 10px;"> 
+            <div style="height: 2px;"> 
             <error  v-for="error in v$.price.$errors" :key="error.$uid" class="p-error" >{{ error.$message }}</error>
             </div>
         </span>

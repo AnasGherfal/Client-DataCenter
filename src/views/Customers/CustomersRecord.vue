@@ -37,9 +37,9 @@ const onToggle = (val: any) => {
 
 
 const statuses = ref([
-    '1',
-    '5',
-'غير نشط']);
+    { value: 1, label: 'نشط'},
+    { value: 5, label: 'مقفل'}
+]);
 
 const getSeverity = (status: any) => {
     switch (trans(status)) {
@@ -158,7 +158,7 @@ const deleteCustomer = () => {
                                 <Tag :value="trans(data.status)" :severity="getSeverity(data.status)" />
                             </template>
                             <template #filter="{ filterModel, filterCallback }">
-                                <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="statuses"
+                                <Dropdown v-model="filterModel.value" @change="filterCallback()" optionLabel="label" optionValue="value" :options="statuses"
                                     placeholder="Select One" class="p-column-filter" style="min-width: 12rem"
                                     :showClear="true">
                                     <template #option="slotProps">

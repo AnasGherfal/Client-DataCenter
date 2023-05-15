@@ -7,7 +7,6 @@ import BackButton from '@/components/BackButton.vue';
 import type { SubscriptionRespons } from '../../Models/SubscriptionModel/SubscriptionsRespons';
 import { useToast } from "primevue/usetoast";
 import { useSubscriptionsStore } from '@/stores/subscriptions';
-import LockButton from '@/components/LockButton.vue';
 
 const loading=ref(false)
 const loading2=ref(false)
@@ -18,6 +17,7 @@ nad:number
 
 
 const store = useSubscriptionsStore();
+const toast = useToast();
 
 const tab:SubscriptionRespons=reactive({
     id:null,
@@ -46,7 +46,6 @@ onMounted(async () => {
   loading.value=true
     await axios.get("https://localhost:7003/api/Subscription?pagenum=1&pagesize=10")
       .then(function (response) {
-        console.log(prop.nad)
         tab.id  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].id;
         tab.status  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].status;
         tab.customerName  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].customerName;
@@ -63,7 +62,6 @@ onMounted(async () => {
         
         axios.get("https://localhost:7003/api/Service?PageNumber=1&PageSize=20")
       .then(function (response) {
-        
         servobj.id= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].id;
         servobj.acpPort= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].acpPort;
         servobj.dns= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].dns;
@@ -71,7 +69,6 @@ onMounted(async () => {
         servobj.name= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].name;
         servobj.monthlyVisits= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].monthlyVisits;
         servobj.price= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].price;
-        console.log(servobj)
         getdata()
         loading.value=false
 
@@ -85,12 +82,10 @@ onMounted(async () => {
       })
 
   })
-function getdata(){
-onMounted(async () => {
+function getdata(){   
   loading.value=true
-    await axios.get("https://localhost:7003/api/Subscription?pagenum=1&pagesize=10")
+     axios.get("https://localhost:7003/api/Subscription?pagenum=1&pagesize=10")
       .then(function (response) {
-        console.log(prop.nad)
         tab.id  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].id;
         tab.status  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].status;
         tab.customerName  = response.data.content.filter((id:{id:number}) => id.id == prop.nad)[0].customerName;
@@ -115,7 +110,6 @@ onMounted(async () => {
         servobj.name= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].name;
         servobj.monthlyVisits= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].monthlyVisits;
         servobj.price= response.data.content.filter((servic:{name:string}) => servic.name === tab.serviceName)[0].price;
-        console.log(servobj)
         loading.value=false
 
       })
@@ -127,33 +121,31 @@ onMounted(async () => {
         loading.value=false
       })
 
-  })
 }
   const customersDialog=ref(false)
 
-const toast = useToast();
 
 const renewalSubscription= () => {
   loading2.value=true
-    console.log(tab.id)
     axios.put('https://localhost:7003/api/Subscription/Renew?id=' + tab.id)
         .then(response => {
             console.log(response)
             loading2.value=false
-            customersDialog.value = false
             toast.add({ severity: 'success', summary: 'تم التجديد', detail: response.data.msg, life: 3000 });
-            store.getSub();
+            customersDialog.value = false
+            getdata();
 
           })
       .catch(function (error) {
         console.log(error)
+        toast.add({ severity: 'error', summary: 'حدثة مشكلة', detail: error.data.msg, life: 3000 });
         loading2.value=false
+
         });
         }
 
         function car(){
           cardVis.value = (!cardVis.value)
-        console.log(cardVis.value)
         }
 </script>
 

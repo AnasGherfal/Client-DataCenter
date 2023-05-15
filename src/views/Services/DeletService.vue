@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import axios from 'axios';
 import Dialog from 'primevue/dialog';
-import Toast from 'primevue/toast';
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import { ref } from 'vue';
