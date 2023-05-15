@@ -7,6 +7,7 @@ import BackButton from '@/components/BackButton.vue';
 import type { SubscriptionRespons } from '../../Models/SubscriptionModel/SubscriptionsRespons';
 import { useToast } from "primevue/usetoast";
 import { useSubscriptionsStore } from '@/stores/subscriptions';
+import LockButton from '@/components/LockButton.vue';
 
 const loading=ref(false)
 const loading2=ref(false)
@@ -180,14 +181,14 @@ const renewalSubscription= () => {
         <div class="flex flex-row">
           <div v-if="loading" >
                         <div class="grid p-fluid">
-                            <div v-for="n in 1" class=" ml-3 mb-2">
+                            <div v-for="n in 1" class="ml-3 mb-2">
                                 <span >
                                     <Skeleton width="15rem" height="20rem"></Skeleton>
                                 </span>
                             </div>
                             </div>
                     </div>
-            <div v-else class="flex-1" style=" text-align: center;width:50%;">
+            <div v-else class="flex-1" style=" text-align:center;width: 20rem;">
             <Knob v-if="date3!=0" :size="Knob" v-model="date3" readonly :max="365" />
             <h2 v-if="date3"> الأيام المتبقية</h2>
             <h3 v-else class="text-red-800"> انتهت صلاحية هذه الخدمة هل تريد التجديد</h3>
@@ -297,6 +298,15 @@ const renewalSubscription= () => {
                 </template>
     <!-- سجل زيارات هذه الخدمة -->
             </TabPanel>
+
+            <TabPanel>
+                <template #header>
+                  <i class="fa-solid fa-toolbox mr-2"></i>
+                    <span> معدات هذا الاشتراك</span>
+                </template>
+    <!-- سجل زيارات هذه الخدمة -->
+            </TabPanel>
+            
             <TabPanel>
                 <template #header>
                     <i class="fa-solid fa-circle-plus ml-2"></i>

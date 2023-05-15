@@ -2,10 +2,8 @@
 import InfoCustomer from './InfoCustomer.vue'
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
-import Authorized from './Representatives.vue';
-import { computed, inject, onMounted, onUnmounted, reactive, ref } from 'vue';
-import router from '@/router';
-import { RouterLink, routerKey, useRoute } from 'vue-router';
+import { computed, inject, onMounted,ref } from 'vue';
+import { useRoute } from 'vue-router';
 import axios from "axios"
 import Representative from './Representatives.vue';
 import DeleteRepresentives from './DeleteRepresentatives.vue';

@@ -31,7 +31,7 @@ const buttonColor = computed(() =>
     status.value === 5 ? 'green' : 'info'
 );
 const tooltipValue = computed(() =>
-    status.value === 5 ? 'الغاء التقيد' : 'قيد '
+    status.value === 5 ? 'الغاء التقييد' : 'تقييد '
 );
 function lockButton() {
     loading.value = true

@@ -37,8 +37,9 @@ const onToggle = (val: any) => {
 
 
 const statuses = ref([
-    'نشط',
-    'مقفل']);
+    '1',
+    '5',
+'غير نشط']);
 
 const getSeverity = (status: any) => {
     switch (trans(status)) {
@@ -47,6 +48,7 @@ const getSeverity = (status: any) => {
 
         case 'غير نشط':
             return 'danger';
+
         case 'مقيد':
             return 'warning';
 

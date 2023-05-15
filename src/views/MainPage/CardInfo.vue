@@ -9,13 +9,13 @@ import DialogCard from './CardInfo/DialogCard.vue';
             <div class="  border-round-2xl">
                 <div class="flex justify-content-between mb-3">
                     <div>
-                        <span class="block text-green-600 font-medium font-semibold">خدمات حالياً مفعلة</span>
+                        <span class="block text-green-600 font-medium font-semibold">الاشتراكات المفعلة</span>
                     </div>
                        <DialogCard iconShape="fa-solid fa-bolt" stateCheck="1"/>
                 </div>
             </div>
        
-            <div class="text-green-600 font-medium text-xl">47 خدمة</div>
+            <div class="text-green-600 font-medium text-xl">47 اشتراك</div>
       
             <span class="text-green-500 font-medium">.....</span>
             <span class="text-500">......</span>
@@ -32,7 +32,7 @@ import DialogCard from './CardInfo/DialogCard.vue';
                 </div>
             </div>
        
-            <div class="text-orange-600 font-medium text-xl">5 خدمات</div>
+            <div class="text-orange-600 font-medium text-xl">5 اشتراك</div>
       
             <span class="text-orange-500 font-medium">.....</span>
             <span class="text-500">......</span>
@@ -43,13 +43,13 @@ import DialogCard from './CardInfo/DialogCard.vue';
             <div class="  border-round-2xl">
                 <div class="flex justify-content-between mb-3">
                     <div>
-                        <span class="block text-red-600 font-medium font-semibold">خدمات غير مفعلة</span>
+                        <span class="block text-red-600 font-medium font-semibold">الاشتراكات غير المفعلة</span>
                     </div>
-                       <DialogCard iconShape="fa-solid fa-circle-xmark" stateCheck="1"/>
+                       <DialogCard iconShape="fa-solid fa-circle-xmark" stateCheck="2"/>
                 </div>
             </div>
        
-            <div class="text-red-600 font-medium text-xl">47 خدمة</div>
+            <div class="text-red-600 font-medium text-xl">47 اشتراك</div>
       
             <span class="text-red-500 font-medium">.....</span>
             <span class="text-500">......</span>

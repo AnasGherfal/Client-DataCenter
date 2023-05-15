@@ -7,6 +7,7 @@ import axios from 'axios';
 import { toNumber } from '@vue/shared';
 import moment from 'moment';
 import { FilterMatchMode } from 'primevue/api';
+import LockButton from '@/components/LockButton.vue';
 
  
 
@@ -84,7 +85,7 @@ return "الاشتراك مقفل"
         <Toast />
 
         <Button type="button" :icon="iconShape"  @click="op= !op"  />
-        <Dialog :modal="true" v-model:visible="op"  style="width: 650px" :breakpoints="{'800px':'500vw'}">
+        <Dialog :modal="true" v-model:visible="op"  style="width: 50rem" :breakpoints="{'600px':'100vw'}">
             <DataTable ref="dt" :value="tab1" dataKey="id" :paginator="true" :rows="5" v-model:filters="filters"
                     :globalFilterFields="['serviceName', 'customerName']"
                     paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown"
