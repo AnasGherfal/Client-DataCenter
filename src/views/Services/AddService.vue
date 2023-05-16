@@ -7,6 +7,7 @@ import Dialog from 'primevue/dialog';
 import axios from 'axios';
 import type { Service } from '../../Models/ServicesModel/ServicesModel';
 import ServiceForm from '@/components/Service/serviceForm.vue';
+import { service } from "@/api/service";
 
 
 const loading=ref(false)
@@ -50,26 +51,18 @@ const resetForm = () => {
 
 // submit form 
 
-const onFormSubmit = async (state: Service) => {
-    try {
-
-        const response = await axios.post("https://localhost:7003/api/Service", state)
+const onFormSubmit =  (state: Service) => {
+    service
+    .create(state)
+    .then((Response)=>{
         loading.value=false
         emit('getList')
-        toast.add({ severity: 'success', summary: 'رسالة نجاح', detail: response.data.msg, life: 3000 });
-
-
+        toast.add({ severity: 'success', summary: 'رسالة نجاح', detail: Response.data.msg, life: 3000 });
         displayModal.value = false;
         resetForm();
-
-    } catch (error) {
-        console.log(error)
-
-
-    }
-
-
-
+    }) .catch (Response=> {
+        toast.add({ severity: 'error', summary: 'رسالة فشل', detail: Response.data.msg, life: 3000 });
+    })
 } 
   
 // funcation for dialog  

@@ -7,7 +7,7 @@ import { useToast } from "primevue/usetoast";
 import Dialog from "primevue/dialog";
 import AddBotton from "@/components/AddBotton.vue";
 import LockButton from "@/components/LockButton.vue";
-import { customersService } from "@/api/customers";
+import { customers } from "@/api/customers";
 
 const toast = useToast();
 const store = useCustomersStore();
@@ -67,7 +67,7 @@ function getId(index: {}) {
 const deleteCustomer = () => {
   loading.value = true;
 
-  customersService
+  customers
     .remove(rotName.value.id)
     .then((response) => {
       store.getCustomers();

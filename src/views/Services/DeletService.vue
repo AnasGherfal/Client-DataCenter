@@ -5,6 +5,7 @@ import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import { ref } from 'vue';
 import type { Service } from '../../Models/ServicesModel/ServicesModel';
+import { service } from '@/api/service';
 
 const confirm = useConfirm();
 const toast = useToast();
@@ -20,13 +21,16 @@ const emit=defineEmits(['getList'])
 
 const delet = () => {
 loading.value=true
-      axios.delete('https://localhost:7003/api/Service?id='+ props.pakge.id )
+service
+.remove(props.pakge.id)
       .then(response => {
        loading.value=false
        toast.add({ severity: 'success', summary: 'Confirmed', detail: response.data.msg, life: 3000 });
        deleteProductDialog.value = false
        emit('getList')
-      });
+      }).catch (Response=> {
+        toast.add({ severity: 'error', summary: 'رسالة فشل', detail: Response.data.msg, life: 3000 });
+    });
 
     
 };
