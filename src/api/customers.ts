@@ -1,12 +1,12 @@
 import httpClient from ".";
 
-export const customersService = {
+export const customersApi = {
     create: async function (customer: any) {
-        const response = await httpClient.post('/customers', customer);
+        const response = await httpClient.post('/Customers', customer);
         return response;
     },
     remove: async function (id: number) {
-        const response = await httpClient.delete(`/customers/${id}`);
+        const response = await httpClient.delete(`/Customers/${id}`);
         return response;
     }
 };
