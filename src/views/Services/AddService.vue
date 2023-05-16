@@ -6,7 +6,7 @@ import { useToast } from "primevue/usetoast";
 import Dialog from 'primevue/dialog';
 import axios from 'axios';
 import type { Service } from '../../Models/ServicesModel/ServicesModel';
-import ServiceForm from '@/components/Service/serviceForm.vue';
+import ServiceForm from '@/views/Services/serviceForm.vue';
 
 
 const loading=ref(false)

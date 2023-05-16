@@ -6,7 +6,7 @@ import axios from 'axios';
 import router from '@/router';
 import BackButton from '@/components/BackButton.vue';
 import type { Customer } from '../../Models/CustomerModel/Customers';
-import CustomerForm from '@/components/Customers/CustomerForm.vue';
+import CustomerForm from '@/views/Customers/CustomerForm.vue';
 
 const store = useCustomersStore();
 
