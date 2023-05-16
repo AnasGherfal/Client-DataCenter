@@ -6,7 +6,7 @@ import type { Representatives } from '../../../Models/CustomerModel/Representati
 import axios from 'axios';
 import { useRoute } from 'vue-router';
 import { toNumber } from '@vue/shared';
-import RepresentativeForm from '@/components/Representatives/RepresentativeForm.vue';
+import RepresentativeForm from '@/views/Customers/Profile/RepresentativeForm.vue';
 
 
 

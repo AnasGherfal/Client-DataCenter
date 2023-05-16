@@ -1,6 +1,6 @@
 
 <script setup lang="ts">
-import RepresentativeForm from '@/components/Representatives/RepresentativeForm.vue';
+import RepresentativeForm from '@/views/Customers/Profile/RepresentativeForm.vue';
 import { toNumber } from '@vue/shared';
 import { computed, inject, provide, reactive, ref } from 'vue';
 import type { Representatives } from '../../../Models/CustomerModel/RepresentativesModel/Representatives';
