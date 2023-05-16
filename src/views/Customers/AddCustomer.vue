@@ -1,94 +1,110 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive, ref } from "vue";
 import { useToast } from "primevue/usetoast";
-import { useCustomersStore } from '@/stores/customers'
-import axios from 'axios';
-import router from '@/router';
-import BackButton from '@/components/BackButton.vue';
-import type { Customer } from '../../Models/CustomerModel/Customers';
-import CustomerForm from '@/views/Customers/CustomerForm.vue';
+import { useCustomersStore } from "@/stores/customers";
+import axios from "axios";
+import router from "@/router";
+import BackButton from "@/components/BackButton.vue";
+import type { Customer } from "../../Models/CustomerModel/Customers";
+import CustomerForm from "@/components/Customers/CustomerForm.vue";
+import { customers } from "@/api/customers";
 
 const store = useCustomersStore();
 
-const editable =ref(false);
+const editable = ref(false);
 const loading = ref(false);
 
-const customer= ref<Customer>({
-    name: '',
-    email: '',
-    primaryPhone: '',
-    secondaryPhone: '',
-    address: '',
+const customer = ref<Customer>({
+  name: "",
+  email: "",
+  primaryPhone: "",
+  secondaryPhone: "",
+  address: "",
 });
 
-const onFormSubmit = async (customer: Customer) => {
-    try {
+const onFormSubmit = () => {
+  store.loading = true;
 
-        store.loading=true
-            const response = await axios.post("https://localhost:7003/api/Customers", customer);
-            store.getCustomers();
+  customers
+    .create(customer.value)
+    .then((response) => {
+      store.getCustomers();
+      toast.add({
+        severity: "success",
+        summary: "رسالة نجاح",
+        detail: response.data.msg,
+        life: 3000,
+      });
+      setTimeout(() => {
+        router.go(-1);
+      }, 500);
+    })
+    .catch(() => {
+      store.loading = false;
+      toast.add({ severity: "error", summary: "خطأ", detail: "", life: 3000 });
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+};
 
-            toast.add({ severity: 'success', summary: 'رسالة نجاح', detail: response.data.msg, life: 3000 });
-            setTimeout(() => {
-                router.go(-1)
+// async (customer: Customer) => {
+//     try {
 
+//         store.loading=true
+//             const response = await axios.post("https://localhost:7003/api/Customers", customer);
+//             store.getCustomers();
 
-            }, 500);
-        
-    } catch (error:any) {
-        console.log(error);
-        store.loading=false
-        toast.add({ severity: 'error', summary: 'خطأ', detail: error.response.data, life: 3000 });
+//             toast.add({ severity: 'success', summary: 'رسالة نجاح', detail: response.data.msg, life: 3000 });
+//             setTimeout(() => {
+//                 router.go(-1)
 
-    }
-}
+//             }, 500);
+
+//     } catch (error:any) {
+//         console.log(error);
+//         store.loading=false
+//         toast.add({ severity: 'error', summary: 'خطأ', detail: error.response.data, life: 3000 });
+
+//     }
+// }
 
 const toast = useToast();
 
 const resetForm = () => {
-    customer.value.name = '';
-    customer.value.email = '';
-    customer.value.primaryPhone = '';
-    customer.value.secondaryPhone = '';
-    customer.value.address = '';
-    customer.value.file = null;
-}
-
-
+  customer.value.name = "";
+  customer.value.email = "";
+  customer.value.primaryPhone = "";
+  customer.value.secondaryPhone = "";
+  customer.value.address = "";
+  customer.value.file = null;
+};
 </script>
 
+<template>
+  <div>
+    <Card>
+      <template #title>
+        إضافة عميل
 
-<template >
-    <div>
-        <Card>
+        <BackButton style="float: left" />
 
-            <template #title>
-
-                إضافة عميل
-
-                <BackButton style="float: left;" />
-
-                <Divider />
-
-            </template>
-            <template #content>
-
-                <CustomerForm @form-submit="onFormSubmit " 
-                :customers="customer" :submitButtonText="'add'" :loading="store.loading">
-                <Toast position="bottom-left" />
-
-                </CustomerForm>
-
-            </template>
-
-
-        </Card>
-
-    </div>
+        <Divider />
+      </template>
+      <template #content>
+        <CustomerForm
+          @form-submit="onFormSubmit"
+          :customers="customer"
+          :submitButtonText="'add'"
+          :loading="store.loading"
+        >
+          <Toast position="bottom-left" />
+        </CustomerForm>
+      </template>
+    </Card>
+  </div>
 </template>
 <style scoped>
-
-
 /* .menuitem-content:hover {
 
 } */
