@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from "vue";
+import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
 import { useCustomersStore } from "@/stores/customers";
-import axios from "axios";
 import router from "@/router";
 import BackButton from "@/components/BackButton.vue";
 import type { Customer } from "../../Models/CustomerModel/Customers";
-import CustomerForm from "@/components/Customers/CustomerForm.vue";
+import CustomerForm from '../Customers/CustomerForm.vue'
 import { customers } from "@/api/customers";
 
 const store = useCustomersStore();
@@ -14,7 +13,7 @@ const store = useCustomersStore();
 const editable = ref(false);
 const loading = ref(false);
 
-const customer = ref<Customer>({
+const customer:Customer = ref({
   name: "",
   email: "",
   primaryPhone: "",
@@ -22,11 +21,11 @@ const customer = ref<Customer>({
   address: "",
 });
 
-const onFormSubmit = () => {
+const onFormSubmit = async (customer: Customer) =>{
   store.loading = true;
 
   customers
-    .create(customer.value)
+    .create(customer)
     .then((response) => {
       store.getCustomers();
       toast.add({
@@ -72,12 +71,12 @@ const onFormSubmit = () => {
 const toast = useToast();
 
 const resetForm = () => {
-  customer.value.name = "";
-  customer.value.email = "";
-  customer.value.primaryPhone = "";
-  customer.value.secondaryPhone = "";
-  customer.value.address = "";
-  customer.value.file = null;
+  customer.name = "";
+  customer.email = "";
+  customer.primaryPhone = "";
+  customer.secondaryPhone = "";
+  customer.address = "";
+  customer.file = null;
 };
 </script>
 

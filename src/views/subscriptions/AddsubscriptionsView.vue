@@ -5,24 +5,25 @@ import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import BackButton from "@/components/BackButton.vue";
 import { useSubscriptionsStore } from "@/stores/subscriptions";
-import axios from "axios";
+import axios, { toFormData } from "axios";
 import router from "@/router";
 import { useCustomersStore } from "@/stores/customers";
 import type { Subscription } from "../../Models/SubscriptionModel/SubscriptionsModels";
 import moment from "moment";
+import { subscription } from "@/api/subscriptions";
 
 const store = useSubscriptionsStore();
 const storeCustomer = useCustomersStore();
 
 const loading = ref(false);
 const ServicesList = ref();
-
+console.log(new Date)
 const state: Subscription = reactive({
   serviceId: null,
   customerId: null,
   startDate: "",
   endDate: "",
-  subscriptionFileId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  file: "",
 });
 
 onMounted(async () => {
@@ -60,8 +61,12 @@ const toast = useToast();
 
 const v$ = useVuelidate(rules, state);
 
+const onFileUpload=  (event:any)=> {
+          state.file = event.target.files[0]
+          console.log(state.file)
+        }
+
 const submitForm = async () => {
-  console.log(typeof state.endDate);
   console.log(moment(state.startDate).format("yy/M/d hh:mm a"));
 
   const result = await v$.value.$validate();
@@ -69,38 +74,39 @@ const submitForm = async () => {
   if (result) {
     loading.value = true;
 
-    const subrequest: Subscription = reactive({
-      ServiceId: state.serviceId.id,
+     const subrequest: Subscription = reactive({
+      serviceId: state.serviceId.id,
       customerId: state.customerId.id,
-      startDate: state.startDate,
-      endDate: state.endDate,
-      subscriptionFileId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      totalPrice: 0,
+      startDate: moment(state.startDate).format("YYYY/MM/DD"),
+      endDate: moment(state.endDate).format("YYYY/MM/DD"),
+      file: state.file,
+      totalPrice: 5,
     });
 
     const subdata = new FormData();
-    subdata.append("serviceId", subrequest.ServiceId);
+    subdata.append("serviceId",  subrequest.serviceId);
     subdata.append("customerId", subrequest.customerId);
     subdata.append("startDate", subrequest.startDate);
     subdata.append("endDate", subrequest.endDate);
-    subdata.append("subscriptionFileId", subrequest.subscriptionFileId);
+    subdata.append("file", state.file, state.file.name);
     subdata.append("totalPrice", subrequest.totalPrice);
 
-    await axios
-      .post("https://localhost:7003/api/Subscription", subrequest)
-      .then(function (response) {
-        toast.add({
+    console.log(subdata)
+
+    subscription
+    .create(subdata)
+    .then((Response)=>{
+      toast.add({
           severity: "success",
           summary: "تمت اضافة اشتراك",
-          detail: response.data.msg,
+          detail: Response.data.msg,
           life: 3000,
         });
-        console.log(response);
+        console.log(Response);
         loading.value = false;
         store.getSub();
         router.go(-1);
-      })
-      .catch(function (error) {
+    }).catch(function (error) {
         console.log(error);
         toast.add({
           severity: "error",
@@ -120,7 +126,7 @@ const resetForm = () => {
     (state.customerId = null),
     (state.startDate = ""),
     (state.endDate = ""),
-    (state.subscriptionFileId = null);
+    (state.file = null);
 };
 
 const minDate = ref(new Date());
@@ -142,6 +148,7 @@ const search = (event: any) => {
     }
   }, 250);
 };
+
 </script>
 
 <template>
@@ -182,9 +189,9 @@ const search = (event: any) => {
                 <Calendar
                   inputId="startDate"
                   v-model="state.startDate"
+                  :minDate="minDate"
                   dateFormat="yy/mm/dd"
                   selectionMode="single"
-                  :minDate="minDate"
                   :showButtonBar="true"
                   :manualInput="false"
                   :disabledDates="invalidDates"
@@ -246,10 +253,11 @@ const search = (event: any) => {
                 </div>
               </span>
             </div>
-
+            <div class="form-group">
+                <input type="file" @change="onFileUpload">
+            </div>
             <div class="field col-12 md:col-6 lg:col-4" style="height: 1%">
               <FileUpload
-                v-model="state.subscriptionFileId"
                 style="
                   font-family: tajawal;
                   width: 100%;
@@ -259,14 +267,15 @@ const search = (event: any) => {
                   color: black;
                   border-color: gray;
                 "
+                
                 mode="basic"
-                name="File"
-                url="./upload"
+                name="file"
+                @change="onFileUpload"
                 chooseLabel=" ارفق ملف"
                 cancelLabel="إلغاء"
                 :showUploadButton="false"
                 :showCancelButton="false"
-                :maxFileSize="1000000"
+                :maxFileSize="5000000"
                 invalidFileSizeMessage="Exceeded the maximum file size"
               />
             </div>
