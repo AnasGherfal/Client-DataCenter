@@ -67,11 +67,7 @@ function getId(index: {}) {
 const deleteCustomer = () => {
   loading.value = true;
 
-<<<<<<< HEAD
   customersApi
-=======
-  customers
->>>>>>> 7572c0a597b0cd2ad4e66f3bbbaa952700a5664d
     .remove(rotName.value.id)
     .then((response) => {
       store.getCustomers();
