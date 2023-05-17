@@ -1,6 +1,7 @@
 import { ref, computed, reactive, onMounted, onBeforeMount } from "vue";
 import { defineStore } from "pinia";
 import axios from "axios";
+import { customersApi } from "@/api/customers";
 
 export const useCustomersStore = defineStore("customer", () => {
   const customers = ref();
@@ -12,8 +13,8 @@ export const useCustomersStore = defineStore("customer", () => {
   });
 
   function getCustomers() {
-    axios
-      .get("https://localhost:7003/api/Customers")
+ customersApi
+ .get()
       .then(function (response) {
         customers.value = response.data.content;
         loading.value = false;

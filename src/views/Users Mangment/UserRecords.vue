@@ -1,78 +1,90 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
-import type { ResponsUserModel } from '../../Models/UserModel/ResponsUserModel'
-import AddBotton from '@/components/AddBotton.vue';
+import { onMounted, reactive, ref } from "vue";
+import AddBotton from "@/components/AddBotton.vue";
+import type { RequestUserModel } from "@/Models/UserModel/RequestUserModel";
+import { user } from "@/api/user";
 
-const state:ResponsUserModel = reactive({
-     Email:"",
-     FullName:"",
-     EmpId:null,
-     startDate:"",
-     Status:null,
-})
+const userDate = ref();
 
+// const state:RequestUserModel = reactive({
+//      Email:"",
+//      FullName:"",
+//      EmpId:null,
+//      Status:null,
+//      Password:'',
+//      PasswordConfirmation:'',
+//      StartDate:''
+// })
 
-
+onMounted(async () => {
+  user
+    .get()
+    .then((Response) => {
+      console.log(Response.data.content);
+      userDate.value = Response.data.content;
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+});
 </script>
 
 <template>
-   <RouterView></RouterView>
+  <RouterView></RouterView>
 
-<div v-if="$route.path === '/UsersRecord'">
-<card>
-        <template #title>
-سجل المستخدمين
-<AddBotton name-button="اضافة عميل" rout-name="/UsersRecord/AddUser" />
+  <div v-if="$route.path === '/UsersRecord'">
+    <card>
+      <template #title>
+        سجل المستخدمين
+        <AddBotton name-button="اضافة عميل" rout-name="/UsersRecord/AddUser" />
 
-            <Divider/>
+        <Divider />
+      </template>
+      <template #content>
+        <DataTable
+          ref="dt"
+          :value="userDate"
+          dataKey="id"
+          :paginator="true"
+          :rows="5"
+          paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown"
+          :rowsPerPageOptions="[5, 10, 25]"
+          currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} عميل"
+          responsiveLayout="scroll"
+        >
+          <Column
+            field="fullName"
+            header="اسم الموظف"
+            style="min-width: 10rem"
+            class="font-bold"
+          ></Column>
 
-        </template>
-        <template #content>
-            <DataTable ref="dt" :value="subDeta" dataKey="id" :paginator="true" :rows="5" v-model:filters="filters"
-                    :globalFilterFields="['serviceName', 'customerName']"
-                    paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown"
-                    :rowsPerPageOptions="[5, 10, 25]"
-                    currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} عميل" responsiveLayout="scroll">
+          <Column
+            field="empId"
+            header="الرقم الوظيفي"
+            style="min-width: 10rem"
+          ></Column>
 
-                    
-                    <Column field="customerName" header="اسم الموظف" style="min-width:10rem;" class="font-bold"></Column>
-                    
-                    <Column field="customerName" header="الرقم الوظيفي" style="min-width:10rem;" class="font-bold"></Column>
+          <Column
+            field="email"
+            header="البريد الإلكتروني"
+            style="min-width: 10rem"
+          ></Column>
 
-                    <Column field="status" header="حالة الحساب"  dataType="date" style="min-width:10rem;" >
-                            <template #body="{ data }">
-                                {{ status(data.status) }}
-                            </template>
-                    </Column>
-
-                    <Column v-for="(col, index) of selectedColumns" :field="col.field" :header="col.header"
-                        :key="col.field + '_' + index" style="min-width:5rem;  "></Column>
-                        
-
-                        <Column field="startDate" header="تاريخ انشاء الحساب"  dataType="date" style="min-width:11rem;" >
-                            <template #body="{ data }">
-                             {{ formatDate(data.startDate) }}
-                          </template>
-                        </Column>
-
-
-                        <Column style="min-width:3rem">
+          <Column style="min-width:3rem">
                         <template #body="slotProps">
 
-                  <RouterLink :key="slotProps.data.id"  :to="'/subscriptionsRecord/SubscriptionsDetaView/' + slotProps.data.id" style="text-decoration: none">
+                  <RouterLink :key="slotProps.data.id"  :to="'/UsersRecord/UsersProfile/' + slotProps.data.id" style="text-decoration: none">
                    <Button icon="fa-solid fa-circle-info" severity="info" text rounded 
                   v-tooltip="{ value: 'التفاصيل', fitContent: true }"  />
                   </RouterLink>
  
                    </template>
                    </Column>
-                </DataTable>
-        </template>
-
-        
+        </DataTable>
+      </template>
     </card>
-    </div>
+  </div>
 </template>
 
-<style>
-</style>
+<style></style>

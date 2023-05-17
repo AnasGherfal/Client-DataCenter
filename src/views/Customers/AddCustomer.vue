@@ -6,7 +6,7 @@ import router from "@/router";
 import BackButton from "@/components/BackButton.vue";
 import type { Customer } from "../../Models/CustomerModel/Customers";
 import CustomerForm from '../Customers/CustomerForm.vue'
-import { customersApi } from "@/api/customers";
+import {  customersApi } from "@/api/customers";
 
 const store = useCustomersStore();
 

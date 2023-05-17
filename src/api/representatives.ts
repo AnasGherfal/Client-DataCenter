@@ -1,7 +1,12 @@
+import type { Representatives } from "@/Models/CustomerModel/RepresentativesModel/Representatives";
 import httpClient from ".";
 
 export const representativesApi = {
-    create: async function (representives: any) {
+    get: async function () {
+        const response = await httpClient.get(`/Representives`);
+        return response;
+    },
+    create: async function (representives: Representatives) {
         const response = await httpClient.post('/Representives', representives);
         return response;
     },
