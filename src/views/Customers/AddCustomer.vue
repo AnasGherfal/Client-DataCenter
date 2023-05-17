@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 import { useCustomersStore } from "@/stores/customers";
 import router from "@/router";
@@ -13,7 +13,7 @@ const store = useCustomersStore();
 const editable = ref(false);
 const loading = ref(false);
 
-const customer:Customer = ref({
+const customer:Customer =  reactive({
   name: "",
   email: "",
   primaryPhone: "",
