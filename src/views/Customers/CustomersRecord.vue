@@ -32,28 +32,25 @@ const onToggle = (val: any) => {
 };
 
 const statuses = ref([
-    { value: 1, label: 'نشط'},
-    { value: 5, label: 'مقفل'}
+  { value: 1, label: "نشط" },
+  { value: 5, label: "مقفل" },
 ]);
 
 const getSeverity = (status: any) => {
-
   switch (trans(status)) {
     case "نشط":
       return "success";
     case "غير نشط":
       return "danger";
-    case "مقيد":
-      return "warning";
-      }
-    }
-
-
+    case "مقفل":
+      return "danger";
+  }
+};
 
 const trans = (value: string) => {
   if (value == "1") return "نشط";
   else if (value == "2") return "غير نشط";
-  else if (value == "5") return "مقيد";
+  else if (value == "5") return "مقفل";
 };
 
 const rotName = ref();
@@ -82,6 +79,11 @@ const deleteCustomer = () => {
     .finally(() => {
       loading.value = false;
     });
+};
+
+const getSelectedStatusLabel = (value:any) => {
+  const status = statuses.value.find((s) => s.value === value);
+  return status ? status.label : '';
 };
 </script>
 
@@ -180,7 +182,7 @@ const deleteCustomer = () => {
             >
               <template #body="{ data }">
                 <Tag
-                  :value="trans(data.status)"
+                  :value="getSelectedStatusLabel(data.status)"
                   :severity="getSeverity(data.status)"
                 />
               </template>
@@ -198,8 +200,8 @@ const deleteCustomer = () => {
                 >
                   <template #option="slotProps">
                     <Tag
-                      :value="slotProps.option"
-                      :severity="getSeverity(slotProps.option)"
+                      :value="slotProps.option.label"
+                      :severity="getSeverity(slotProps.option.value)"
                     />
                   </template>
                 </Dropdown>

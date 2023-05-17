@@ -6,19 +6,15 @@ import moment from "moment";
 import type { VisitHours } from "../../Models/TimeShifts/TimeShiftsModels";
 import DeleteTimeShifts from "./DeleteTimeShifts.vue";
 import AddTimeShifts from "./AddTimeShiftsView.vue";
-import { provide } from "vue";
 import { timeShiftsApi } from "@/api/timeShifts";
 
-//Needs Validation
 const getVisitsHours = ref();
 const selectedHours = ref();
 const loading = ref(false);
-provide("loading", loading);
 
 const formChanged = ref(false);
 
 const toast = useToast();
-// const v$ = useVuelidate(rules, visitHours);
 
 onMounted(async () => {
   getTimeShifts();
@@ -31,20 +27,14 @@ const getTimeShifts = async () => {
     .get()
     .then((response) => {
       getVisitsHours.value = response.data.content;
-      const startTimeString = response.data.content[0].startTime;
-      const currentDate = new Date(); // Get the current date
-      const [hours, minutes, seconds] = startTimeString.split(":"); // Split the time string
-
-      // Set the time values to the current date
-      currentDate.setHours(Number(hours));
-      currentDate.setMinutes(Number(minutes));
-      currentDate.setSeconds(Number(seconds));
-
-      send.startTime = currentDate;
-      console.log(typeof send.startTime);
     })
     .catch(function (error) {
-      console.log(error);
+      toast.add({
+        severity: "error",
+        summary: "حدث خطأ",
+        detail: "لم يتم جلب البيانات",
+        life: 3000,
+      });
     })
     .finally(() => {
       loading.value = false;
@@ -59,16 +49,25 @@ const send = reactive<VisitHours>({
   priceForRemainingHour: 0,
 });
 const submitForm = async () => {
-  visible.value = true;
+  dialog.value = true;
   loading.value = true;
 
+  if (formChanged) {
+    send.startTime = moment(selectedHours.value.startTime, "HH:mm").format(
+      "HH:mm:ss"
+    );
+    send.endTime = moment(selectedHours.value.endTime, "HH:mm").format(
+      "HH:mm:ss"
+    );
+  } else {
+    send.startTime = selectedHours.value.startTime;
+    send.endTime = selectedHours.value.endTime;
+  }
   (send.name = selectedHours.value.name),
-    (send.startTime = moment(selectedHours.value.startTime).format("HH:mm:ss")),
-    (send.endTime = moment(selectedHours.value.endTime).format("HH:mm:ss")),
     (send.priceForFirstHour = selectedHours.value.priceForFirstHour),
     (send.priceForRemainingHour = selectedHours.value.priceForRemainingHour),
-    await axios
-      .put(`https://localhost:7003/api/VisitTimeShift/${selected}`, send)
+    timeShiftsApi
+      .edit(selected, send)
       .then((response) => {
         toast.add({
           severity: "success",
@@ -76,19 +75,18 @@ const submitForm = async () => {
           detail: `${response.data.msg}`,
           life: 3000,
         });
-        loading.value = false;
       })
       .catch(function (error) {
-        console.log(send);
         toast.add({
           severity: "error",
           summary: "حدث خطأ",
           detail: "لم يتم التعديل",
           life: 3000,
         });
-
-        console.log(error);
+      })
+      .finally(() => {
         loading.value = false;
+        dialog.value = false;
       });
 };
 let selected = 1;
@@ -97,11 +95,15 @@ const getIndex = (index: any) => {
 };
 
 const position = ref("center");
-const visible = ref(false);
+const dialog = ref(false);
 
 const openSave = (pos: string) => {
   position.value = pos;
-  visible.value = true;
+  dialog.value = true;
+};
+
+const onCalendarClick = () => {
+  formChanged.value = true;
 };
 </script>
 
@@ -111,7 +113,7 @@ const openSave = (pos: string) => {
       <div class="grid p-fluid">
         <div class="field col-12 md:col-4 mt-2">
           <span class="p-float-label">
-            <Skeleton width="85%" height="3rem" v-if="loading"></Skeleton>
+            <Skeleton width="15rem" height="3rem" v-if="loading"></Skeleton>
             <Dropdown
               v-else
               @change="getIndex(selectedHours.id)"
@@ -129,7 +131,11 @@ const openSave = (pos: string) => {
 
       <div v-if="selectedHours">
         <!-- <LockButton @getdata="getTimeShifts()" :name="selectedHours.name" :id="selectedHours.id"
-                            :status="selectedHours.status" type-lock="VisitTimeShift"></LockButton> -->
+                                :status="selectedHours.status" type-lock="VisitTimeShift"></LockButton> -->
+
+        <h3 style="display: inline-block">
+          {{ selectedHours.name }}
+        </h3>
 
         <DeleteTimeShifts
           v-if="selectedHours.status !== 5"
@@ -137,10 +143,6 @@ const openSave = (pos: string) => {
           @getTimeShifts="getTimeShifts()"
         >
         </DeleteTimeShifts>
-
-        <h3>
-          {{ selectedHours.name }}
-        </h3>
 
         <div class="grid p-fluid">
           <div class="field col-12 md:col-4 mt-2">
@@ -155,7 +157,7 @@ const openSave = (pos: string) => {
                 :manualInput="true"
                 :stepMinute="15"
                 :show-seconds="true"
-                @click="formChanged = true"
+                @click="onCalendarClick"
                 :step-second="60"
               />
               <label for="startTime">من </label>
@@ -172,12 +174,12 @@ const openSave = (pos: string) => {
                 :manualInput="true"
                 :stepMinute="15"
                 hourFormat="24"
-                @click="formChanged = true"
+                @click="onCalendarClick"
                 :show-seconds="true"
                 :step-second="60"
               />
               <!-- <error v-for="error in v$.endWorkTime.$errors" :key="error.$uid" class="p-error ">
-                                                                                    {{ error.$message }}</error> -->
+                                                                                        {{ error.$message }}</error> -->
               <label for="endTime">الى</label>
             </span>
           </div>
@@ -206,6 +208,7 @@ const openSave = (pos: string) => {
               :min="0"
               :allowEmpty="false"
               :highlightOnFocus="true"
+              @input="formChanged = true"
             />
           </div>
         </div>
@@ -228,7 +231,7 @@ const openSave = (pos: string) => {
       <AddTimeShifts @getTimeShifts="getTimeShifts"> </AddTimeShifts>
 
       <Dialog
-        v-model:visible="visible"
+        v-model:visible="dialog"
         :style="{ width: '450px' }"
         header="تأكيد"
         :modal="true"
@@ -250,7 +253,7 @@ const openSave = (pos: string) => {
             :loading="loading"
           />
 
-          <Button label="لا" icon="pi pi-times" text @click="visible = false" />
+          <Button label="لا" icon="pi pi-times" text @click="dialog = false" />
         </template>
       </Dialog>
       <Toast position="bottom-left" />
