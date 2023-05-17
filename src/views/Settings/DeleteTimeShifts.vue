@@ -1,8 +1,4 @@
 <script setup lang="ts">
-import router from "@/router";
-import axios from "axios";
-import Toast from "primevue/toast";
-import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import { ref } from "vue";
 import { timeShiftsApi } from "@/api/timeShifts";

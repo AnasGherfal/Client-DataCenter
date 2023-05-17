@@ -208,6 +208,7 @@ const onCalendarClick = () => {
               :min="0"
               :allowEmpty="false"
               :highlightOnFocus="true"
+              @input="formChanged = true"
             />
           </div>
         </div>

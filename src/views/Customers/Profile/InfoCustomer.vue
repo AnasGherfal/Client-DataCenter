@@ -9,7 +9,7 @@ import { email, helpers, minLength, required } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
 import { isLibyanPhoneNumber, validateText } from "@/tools/validations";
 import { useCustomersStore } from "@/stores/customers";
-import { customers } from "@/api/customers";
+import { customersApi } from "@/api/customers";
 
 const actEdit = ref(true);
 const loading = ref(true);
@@ -33,7 +33,7 @@ const onFormSubmit = async () => {
   const result = await v$.value.$validate();
 
   if (result) {
-    customers
+    customersApi
     .edit(dataClinet.customer.id, customer)
     .then((response) => {
       toast.add({
