@@ -41,9 +41,9 @@ const getSeverity = (status: any) => {
     case "نشط":
       return "success";
     case "غير نشط":
-      return "yellow-300";
+      return "danger";
     case "مقفل":
-      return "yellow-300";
+      return "danger";
   }
 };
 
