@@ -1,11 +1,29 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/MainPage/HomeView.vue";
-import LoginPage from "@/views/LoginPage.vue";
+import LoginPage from "../views/LoginPage.vue";
 import UserRecordsVue from "@/views/Users Mangment/UserRecords.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+
+    {
+      path: "/Login",
+      name: "loginPage",
+      component: LoginPage,
+    },
+
+    {
+      path: "/",
+      name: "home",
+      component: HomeView,
+    },
+  
+    {
+      path: "/:pathMatch(.*)*",
+      name: "NotFound",
+      component: () => import("../views/NotFound.vue"),
+    },
     {
       path: "/UsersRecord",
       name: "UsersRecord",
@@ -22,22 +40,6 @@ const router = createRouter({
           component: () => import("../views/Users Mangment/ProfileUser.vue"),
         },
       ],
-    },
-    {
-      path: "/Login",
-      name: "loginPage",
-      component: () => import("../views/LoginPage.vue"),
-    },
-
-    {
-      path: "/",
-      name: "home",
-      component: HomeView,
-    },
-    {
-      path: "/:pathMatch(.*)*",
-      name: "NotFound",
-      component: () => import("../views/NotFound.vue"),
     },
 
     {

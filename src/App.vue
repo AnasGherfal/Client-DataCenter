@@ -20,6 +20,7 @@ onMounted(() => {
 
 <LoginPage v-if="($route.path === '/login')"/>
 
+
   <main v-else>
 
       <TopBar/>
