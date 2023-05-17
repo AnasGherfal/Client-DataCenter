@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { computed, provide, reactive, ref, type Ref } from "vue";
+import { computed, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 import Dialog from "primevue/dialog";
 import type { Representatives } from "../../../Models/CustomerModel/RepresentativesModel/Representatives";
-import axios from "axios";
 import { useRoute } from "vue-router";
 import { toNumber } from "@vue/shared";
 import RepresentativeForm from "@/views/Customers/Profile/RepresentativeForm.vue";
@@ -11,7 +10,7 @@ import { representativesApi } from "@/api/representatives";
 
 const route = useRoute();
 const prop = defineProps<{
-  customerStatus: number;
+  customerStatus: number | undefined;
 }>();
 const userId = computed(() => {
   if (route && route.params && route.params.id) {
@@ -35,29 +34,24 @@ const representatives = ref<Representatives>({
 const toast = useToast();
 
 const onFormSubmit = async (representative: Representatives) => {
-  
-    representativesApi
+  representativesApi
     .create(representative)
     .then((response) => {
-
-    
-    emit("getRepresentatives");
-    toast.add({
-      severity: "success",
-      summary: "رسالة نجاح",
-      detail: response.data.msg,
-      life: 3000,
+      emit("getRepresentatives");
+      toast.add({
+        severity: "success",
+        summary: "رسالة نجاح",
+        detail: response.data.msg,
+        life: 3000,
+      });
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+    .finally(() => {
+      displayModal.value = false;
+      resetForm();
     });
-
-})
-   .catch ((error) => {
-    console.log(error);
-  }) 
-  .finally(() => {
-    displayModal.value = false;
-    resetForm();
-
-  })
 };
 
 const resetForm = () => {

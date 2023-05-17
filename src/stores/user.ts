@@ -12,8 +12,8 @@ export const useUserStor = defineStore("user", () => {
   });
 
   function getUser() {
- user
- .get()
+    user
+      .get()
       .then(function (response) {
         userData.value = response.data.content;
         loading.value = false;

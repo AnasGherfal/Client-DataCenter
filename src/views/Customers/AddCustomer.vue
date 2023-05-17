@@ -5,23 +5,23 @@ import { useCustomersStore } from "@/stores/customers";
 import router from "@/router";
 import BackButton from "@/components/BackButton.vue";
 import type { Customer } from "../../Models/CustomerModel/Customers";
-import CustomerForm from '../Customers/CustomerForm.vue'
-import {  customersApi } from "@/api/customers";
+import CustomerForm from "../Customers/CustomerForm.vue";
+import { customersApi } from "@/api/customers";
 
 const store = useCustomersStore();
 
 const loading = ref(false);
 
-const customer:Customer =  reactive({
+const customer: Customer = reactive({
   name: "",
   email: "",
   primaryPhone: "",
   secondaryPhone: "",
   address: "",
-  file:null
+  file: null,
 });
 
-const onFormSubmit = async (customer: Customer) =>{
+const onFormSubmit = async (customer: Customer) => {
   store.loading = true;
 
   customersApi
@@ -37,7 +37,7 @@ const onFormSubmit = async (customer: Customer) =>{
       setTimeout(() => {
         router.go(-1);
       }, 500);
-      resetForm()
+      resetForm();
     })
     .catch(() => {
       store.loading = false;
@@ -45,7 +45,6 @@ const onFormSubmit = async (customer: Customer) =>{
     })
     .finally(() => {
       loading.value = false;
-      
     });
 };
 const toast = useToast();
@@ -58,7 +57,6 @@ const resetForm = () => {
   customer.address = "";
   customer.file = null;
 };
-
 </script>
 
 <template>

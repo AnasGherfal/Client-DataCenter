@@ -170,6 +170,7 @@ const resetForm = () => {
               <span class="p-float-label">
                 <InputNumber
                   id="EmpId"
+                  mask="99999"
                   v-model="user.empId"
                   :disabled="true"
                   style="direction: rtl; text-align: end"

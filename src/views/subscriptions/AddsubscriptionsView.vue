@@ -5,30 +5,31 @@ import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import BackButton from "@/components/BackButton.vue";
 import { useSubscriptionsStore } from "@/stores/subscriptions";
-import axios, { toFormData } from "axios";
 import router from "@/router";
 import { useCustomersStore } from "@/stores/customers";
 import type { Subscription } from "../../Models/SubscriptionModel/SubscriptionsModels";
 import moment from "moment";
-import { subscription } from "@/api/subscriptions";
+import { subscriptionApi } from "@/api/subscriptions";
+import { serviceApi } from "@/api/service";
 
 const store = useSubscriptionsStore();
 const storeCustomer = useCustomersStore();
 
 const loading = ref(false);
 const ServicesList = ref();
-console.log(new Date)
+
 const state: Subscription = reactive({
-  serviceId: null,
-  customerId: null,
+  serviceId: '',
+  customerId: '',
   startDate: "",
   endDate: "",
   file: "",
+  totalPrice:''
 });
 
 onMounted(async () => {
-  await axios
-    .get("https://localhost:7003/api/Service")
+  serviceApi
+  .get()
     .then(function (response) {
       ServicesList.value = response.data.content;
     })
@@ -55,7 +56,6 @@ const rules = computed(() => {
 });
 
 console.log(state);
-const serId = ref();
 
 const toast = useToast();
 
@@ -75,8 +75,8 @@ const submitForm = async () => {
     loading.value = true;
 
      const subrequest: Subscription = reactive({
-      serviceId: state.serviceId.id,
-      customerId: state.customerId.id,
+      serviceId: state.serviceId,
+      customerId: state.customerId,
       startDate: moment(state.startDate).format("YYYY/MM/DD"),
       endDate: moment(state.endDate).format("YYYY/MM/DD"),
       file: state.file,
@@ -93,7 +93,7 @@ const submitForm = async () => {
 
     console.log(subdata)
 
-    subscription
+    subscriptionApi
     .create(subdata)
     .then((Response)=>{
       toast.add({
@@ -169,6 +169,7 @@ const search = (event: any) => {
                 <AutoComplete
                   v-model="state.customerId"
                   optionLabel="name"
+                  option-value="id"
                   :suggestions="filteredCountries"
                   @complete="search"
                 />
@@ -231,12 +232,12 @@ const search = (event: any) => {
                 </div>
               </span>
             </div>
-
             <div class="field col-12 md:col-6 lg:col-4">
               <span class="p-float-label">
                 <Dropdown
                   id="subscriptionType"
                   :options="ServicesList"
+                  option-value="id"
                   optionLabel="name"
                   v-model="state.serviceId"
                   placeholder="اختر الباقه"

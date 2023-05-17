@@ -6,7 +6,7 @@ import { useToast } from "primevue/usetoast";
 import Dialog from "primevue/dialog";
 import type { Service } from "../../Models/ServicesModel/ServicesModel";
 import ServiceForm from "@/views/Services/serviceForm.vue";
-import { service } from "@/api/service";
+import { serviceApi } from "@/api/service";
 
 const pakgeInfo = defineProps<{
   pakge: Service;
@@ -43,7 +43,7 @@ const toast = useToast();
 const v$ = useVuelidate(rules, state);
 
 const onFormSubmit = async (state: Service) => {
-  service
+  serviceApi
     .edit(pakgeInfo.pakge.id, state)
     .then((Response) => {
       emit("getList");

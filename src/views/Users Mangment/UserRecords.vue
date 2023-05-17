@@ -50,14 +50,6 @@ const stor = useUserStor();
 
           <Column style="min-width: 3rem">
             <template #body="slotProps">
-
-              <LockButton
-                typeLock="Customers"
-                :id="slotProps.data.id"
-                :name="slotProps.data.name"
-                :status="slotProps.data.status"
-                @getdata="store.getCustomers"
-              />
               
               <RouterLink
                 :key="slotProps.data.id"

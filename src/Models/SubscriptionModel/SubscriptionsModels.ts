@@ -1,7 +1,9 @@
 export interface Subscription {
-    serviceId:number | null,
-    customerId: number | null,
+    serviceId: any | string,
+    customerId: any | string,
     startDate:string,
     endDate:string,
     file: null | any
+    totalPrice: any |string
+
   }

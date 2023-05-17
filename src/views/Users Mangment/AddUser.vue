@@ -163,6 +163,7 @@ const resetForm = () => {
               <span class="p-float-label">
                 <InputNumber
                   id="EmpId"
+                  mask="99999"
                   v-model="state.empId"
                   style="text-align: end"
                 />

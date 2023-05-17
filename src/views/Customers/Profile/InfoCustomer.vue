@@ -32,21 +32,26 @@ const onFormSubmit = async () => {
 
   if (result) {
     customersApi
-    .edit(dataClinet.customer.id, customer)
-    .then((response) => {
-      toast.add({
-        severity: "success",
-        summary: "رسالة تأكيد",
-        detail: response.data.msg,
-        life: 3000,
+      .edit(dataClinet.customer.id, customer)
+      .then((response) => {
+        toast.add({
+          severity: "success",
+          summary: "رسالة تأكيد",
+          detail: response.data.msg,
+          life: 3000,
+        });
+        actEdit.value = true;
+        emit("getCustomers");
+      })
+      .catch(() => {
+        store.loading = false;
+        toast.add({
+          severity: "error",
+          summary: "خطأ",
+          detail: "",
+          life: 3000,
+        });
       });
-      actEdit.value = true;
-      emit("getCustomers");
-    }) .catch(() => {
-      store.loading = false;
-      toast.add({ severity: "error", summary: "خطأ", detail: "", life: 3000 });
-    })
-    
   } else {
     toast.add({
       severity: "error",
@@ -55,7 +60,6 @@ const onFormSubmit = async () => {
       life: 3000,
     });
   }
-  
 };
 
 const isDisabled = ref(true);

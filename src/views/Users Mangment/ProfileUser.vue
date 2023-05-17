@@ -10,7 +10,6 @@ import { useUserStor } from "../../stores/user"
 import InfoUser from './InfoUser.vue';
 
 const route = useRoute()
-const loading = ref(false);
 
 const store=useUserStor();
 
@@ -33,8 +32,6 @@ const userDate:RequestUserModel = reactive({
     password:''
 });
 
-const representativeId = ref()
-const representatives = ref();
 
 onMounted(async () => {
     user
@@ -53,18 +50,7 @@ onMounted(async () => {
         })
 })
 console.log(userDate)
-// function getRepresentatives() {
-//     loading.value=true
 
-//         user
-//     .get()
-//     .then((response) => {
-//         representativeId.value = response.data.content.filter((users: { customerName: string }) => users.customerName == customerId.value.name);
-//         representatives.value = response.data.content
-//         loading.value=false
-
-//     });
-// }
 
 // Define a method to get the text based on the number
 const getIdentityTypeText = (type: number) => {

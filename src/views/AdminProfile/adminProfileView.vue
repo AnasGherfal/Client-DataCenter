@@ -25,7 +25,7 @@ const state = reactive({
         <div class="grid p-fluid">
           <div class="field col-12 md:col-6">
             <span class="p-float-label">
-              <InputMask
+              <InputNumber
                 id="address"
                 mask="99999"
                 value="الرقم الوظيفي"

@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
 import Knob from "primevue/knob";
-import axios, { toFormData } from "axios";
 import type { Service } from "../../Models/ServicesModel/ServicesModel";
 import BackButton from "@/components/BackButton.vue";
 import type { SubscriptionRespons } from "../../Models/SubscriptionModel/SubscriptionsRespons";
 import { useToast } from "primevue/usetoast";
 import { useSubscriptionsStore } from "@/stores/subscriptions";
-import { subscription } from "@/api/subscriptions";
+import {  subscriptionApi } from "@/api/subscriptions";
+import { serviceApi } from "@/api/service";
 
 const loading = ref(false);
 const loading2 = ref(false);
@@ -43,8 +43,8 @@ let date3: number;
 
 onMounted(async () => {
   loading.value = true;
-  await axios
-    .get("https://localhost:7003/api/Subscription?pagenum=1&pagesize=10")
+subscriptionApi
+    .get()
     .then(function (response) {
       tab.id = response.data.content.filter(
         (id: { id: number }) => id.id == prop.nad
@@ -75,8 +75,8 @@ onMounted(async () => {
       );
     })
     .then(function () {
-      axios
-        .get("https://localhost:7003/api/Service?PageNumber=1&PageSize=20")
+      serviceApi
+        .get()
         .then(function (response) {
           servobj.id = response.data.content.filter(
             (servic: { name: string }) => servic.name === tab.serviceName
@@ -113,8 +113,8 @@ onMounted(async () => {
 });
 function getdata() {
   loading.value = true;
-  axios
-    .get("https://localhost:7003/api/Subscription?pagenum=1&pagesize=10")
+  subscriptionApi
+    .get()
     .then(function (response) {
       tab.id = response.data.content.filter(
         (id: { id: number }) => id.id == prop.nad
@@ -145,8 +145,8 @@ function getdata() {
       );
     })
     .then(function () {
-      axios
-        .get("https://localhost:7003/api/Service?PageNumber=1&PageSize=20")
+      serviceApi
+        .get()
         .then(function (response) {
           servobj.id = response.data.content.filter(
             (servic: { name: string }) => servic.name === tab.serviceName
@@ -184,7 +184,7 @@ const customersDialog = ref(false);
 
 const renewalSubscription = () => {
   loading2.value = true;
-  subscription
+  subscriptionApi
   .renew(tab.id)
     .then((response) => {
       console.log(response);
@@ -248,7 +248,6 @@ function car() {
         <div v-else class="flex-1" style="text-align: center; width: 20rem">
           <Knob
             v-if="date3 != 0"
-            :size="Knob"
             v-model="date3"
             readonly
             :max="365"

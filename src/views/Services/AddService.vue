@@ -6,7 +6,7 @@ import { useToast } from "primevue/usetoast";
 import Dialog from 'primevue/dialog';
 import type { Service } from '../../Models/ServicesModel/ServicesModel';
 import ServiceForm from '@/views/Services/serviceForm.vue';
-import { service } from '@/api/service';
+import { serviceApi } from '@/api/service';
 
 
 const loading=ref(false)
@@ -51,7 +51,7 @@ const resetForm = () => {
 // submit form 
 
 const onFormSubmit =  (state: Service) => {
-    service
+    serviceApi
     .create(state)
     .then((Response)=>{
         loading.value=false
