@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 import { useCustomersStore } from "@/stores/customers";
 import router from "@/router";
@@ -10,10 +10,9 @@ import {  customersApi } from "@/api/customers";
 
 const store = useCustomersStore();
 
-const editable = ref(false);
 const loading = ref(false);
 
-const customer:Customer = ref({
+const customer:Customer = reactive({
   name: "",
   email: "",
   primaryPhone: "",
@@ -38,6 +37,7 @@ const onFormSubmit = async (customer: Customer) =>{
       setTimeout(() => {
         router.go(-1);
       }, 500);
+      resetForm()
     })
     .catch(() => {
       store.loading = false;
@@ -45,30 +45,9 @@ const onFormSubmit = async (customer: Customer) =>{
     })
     .finally(() => {
       loading.value = false;
+      
     });
 };
-
-// async (customer: Customer) => {
-//     try {
-
-//         store.loading=true
-//             const response = await axios.post("https://localhost:7003/api/Customers", customer);
-//             store.getCustomers();
-
-//             toast.add({ severity: 'success', summary: 'رسالة نجاح', detail: response.data.msg, life: 3000 });
-//             setTimeout(() => {
-//                 router.go(-1)
-
-//             }, 500);
-
-//     } catch (error:any) {
-//         console.log(error);
-//         store.loading=false
-//         toast.add({ severity: 'error', summary: 'خطأ', detail: error.response.data, life: 3000 });
-
-//     }
-// }
-
 const toast = useToast();
 
 const resetForm = () => {
@@ -79,6 +58,7 @@ const resetForm = () => {
   customer.address = "";
   customer.file = null;
 };
+
 </script>
 
 <template>

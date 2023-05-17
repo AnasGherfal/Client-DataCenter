@@ -1,32 +1,9 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from "vue";
 import AddBotton from "@/components/AddBotton.vue";
-import type { RequestUserModel } from "@/Models/UserModel/RequestUserModel";
-import { user } from "@/api/user";
+import LockButton from "@/components/LockButton.vue";
+import { useUserStor } from "@/stores/user";
 
-const userDate = ref();
-
-// const state:RequestUserModel = reactive({
-//      Email:"",
-//      FullName:"",
-//      EmpId:null,
-//      Status:null,
-//      Password:'',
-//      PasswordConfirmation:'',
-//      StartDate:''
-// })
-
-onMounted(async () => {
-  user
-    .get()
-    .then((Response) => {
-      console.log(Response.data.content);
-      userDate.value = Response.data.content;
-    })
-    .catch((e) => {
-      console.log(e);
-    });
-});
+const stor = useUserStor();
 </script>
 
 <template>
@@ -43,7 +20,7 @@ onMounted(async () => {
       <template #content>
         <DataTable
           ref="dt"
-          :value="userDate"
+          :value="stor.userData"
           dataKey="id"
           :paginator="true"
           :rows="5"
@@ -71,16 +48,32 @@ onMounted(async () => {
             style="min-width: 10rem"
           ></Column>
 
-          <Column style="min-width:3rem">
-                        <template #body="slotProps">
+          <Column style="min-width: 3rem">
+            <template #body="slotProps">
 
-                  <RouterLink :key="slotProps.data.id"  :to="'/UsersRecord/UsersProfile/' + slotProps.data.id" style="text-decoration: none">
-                   <Button icon="fa-solid fa-circle-info" severity="info" text rounded 
-                  v-tooltip="{ value: 'التفاصيل', fitContent: true }"  />
-                  </RouterLink>
- 
-                   </template>
-                   </Column>
+              <LockButton
+                typeLock="Customers"
+                :id="slotProps.data.id"
+                :name="slotProps.data.name"
+                :status="slotProps.data.status"
+                @getdata="store.getCustomers"
+              />
+              
+              <RouterLink
+                :key="slotProps.data.id"
+                :to="'/UsersRecord/UsersProfile/' + slotProps.data.id"
+                style="text-decoration: none"
+              >
+                <Button
+                  icon="fa-solid fa-circle-info"
+                  severity="info"
+                  text
+                  rounded
+                  v-tooltip="{ value: 'التفاصيل', fitContent: true }"
+                />
+              </RouterLink>
+            </template>
+          </Column>
         </DataTable>
       </template>
     </card>
