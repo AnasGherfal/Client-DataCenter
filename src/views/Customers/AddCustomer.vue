@@ -12,7 +12,7 @@ const store = useCustomersStore();
 
 const loading = ref(false);
 
-const customer:Customer = reactive({
+const customer:Customer =  reactive({
   name: "",
   email: "",
   primaryPhone: "",
