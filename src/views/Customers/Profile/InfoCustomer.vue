@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import { computed, reactive, ref, type PropType } from "vue";
 import { useToast } from "primevue/usetoast";
-import axios from "axios";
 import BackButton from "@/components/BackButton.vue";
 import type { Customer } from "../../../Models/CustomerModel/Customers";
-import CustomerForm from "../CustomerForm.vue";
 import { email, helpers, minLength, required } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
 import { isLibyanPhoneNumber, validateText } from "@/tools/validations";
 import { useCustomersStore } from "@/stores/customers";
-import { customers } from "@/api/customers";
+import { customersApi } from "@/api/customers";
 
 const actEdit = ref(true);
 const loading = ref(true);
@@ -33,7 +31,7 @@ const onFormSubmit = async () => {
   const result = await v$.value.$validate();
 
   if (result) {
-    customers
+    customersApi
     .edit(dataClinet.customer.id, customer)
     .then((response) => {
       toast.add({

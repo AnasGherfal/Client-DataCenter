@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from "vue";
+import { ref } from "vue";
 import { FilterMatchMode } from "primevue/api";
 import { useCustomersStore } from "@/stores/customers";
-import axios from "axios";
 import { useToast } from "primevue/usetoast";
 import Dialog from "primevue/dialog";
 import AddBotton from "@/components/AddBotton.vue";
@@ -67,11 +66,7 @@ function getId(index: {}) {
 const deleteCustomer = () => {
   loading.value = true;
 
-<<<<<<< HEAD
   customersApi
-=======
-  customers
->>>>>>> 7572c0a597b0cd2ad4e66f3bbbaa952700a5664d
     .remove(rotName.value.id)
     .then((response) => {
       store.getCustomers();

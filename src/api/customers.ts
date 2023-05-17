@@ -2,6 +2,10 @@ import type { Customer } from "@/Models/CustomerModel/Customers";
 import httpClient from ".";
 
 export const customersApi = {
+    get: async function () {
+        const response = await httpClient.get(`/Customers`);
+        return response;
+    },
     create: async function (customer: Customer) {
         const response = await httpClient.post(`/Customers`, customer);
         return response;

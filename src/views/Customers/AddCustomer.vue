@@ -6,7 +6,7 @@ import router from "@/router";
 import BackButton from "@/components/BackButton.vue";
 import type { Customer } from "../../Models/CustomerModel/Customers";
 import CustomerForm from '../Customers/CustomerForm.vue'
-import { customers } from "@/api/customers";
+import { customers, customersApi } from "@/api/customers";
 
 const store = useCustomersStore();
 
@@ -24,7 +24,7 @@ const customer:Customer = ref({
 const onFormSubmit = async (customer: Customer) =>{
   store.loading = true;
 
-  customers
+  customersApi
     .create(customer)
     .then((response) => {
       store.getCustomers();

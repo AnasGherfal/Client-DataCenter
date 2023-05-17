@@ -2,15 +2,17 @@
 import InfoCustomer from './InfoCustomer.vue'
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
-import { computed, inject, onMounted,ref } from 'vue';
+import { computed, onMounted,ref } from 'vue';
 import { useRoute } from 'vue-router';
-import axios from "axios"
 import Representative from './Representatives.vue';
 import DeleteRepresentives from './DeleteRepresentatives.vue';
 import EditRepresentatives from './EditRepresentatives.vue';
 import { useCustomersStore } from '@/stores/customers'
 import SubscriptionRecord from '@/components/Subscriptions/subscriptionRecordCompunent.vue';
 import LockButton from '@/components/LockButton.vue';
+import { customersApi } from '@/api/customers';
+import { representativesApi } from '@/api/representatives';
+
 
 const route = useRoute()
 const store = useCustomersStore();
@@ -27,9 +29,7 @@ const customerId = ref({
     id: '',
     name: '',
 });
-const customerStatus = ref({
 
-})
 const representativeId = ref()
 const representatives = ref();
 
@@ -37,7 +37,8 @@ onMounted(async () => {
     store.loading=true
     loading.value=true
 
-    await axios.get("https://localhost:7003/api/Customers/")
+    customersApi
+    .get()
         .then(function (response) {
 
 
@@ -55,8 +56,9 @@ onMounted(async () => {
 })
 
 function getRepresentatives() {
-
-    axios.get("https://localhost:7003/api/Representives/").then((response) => {
+    representativesApi
+    .get()
+    .then((response) => {
         representativeId.value = response.data.content.filter((users: { customerName: string }) => users.customerName == customerId.value.name);
         representatives.value = response.data.content
 
@@ -81,7 +83,7 @@ const getIdentityTypeText = (type: number) => {
 </script>
 
 <template>
-    <InfoCustomer :customer="customerId" :key="customerId.id" @getCustomers="store.getdata" />
+    <InfoCustomer :customer="customerId" :key="customerId.id" @getCustomers="store.getCustomers" />
 
     <card class=" shadow-2 p-3 mt-3 border-round-2xl">
         <template #content>

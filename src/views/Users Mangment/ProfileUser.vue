@@ -1,56 +1,70 @@
 <script setup lang="ts">
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import {  useRoute } from 'vue-router';
-import axios from "axios"
+import { user } from '@/api/user';
+import { toNumber } from '@vue/shared';
+import type { RequestUserModel } from '@/Models/UserModel/RequestUserModel';
+import { useUserStor } from "../../stores/user"
 import InfoUser from './InfoUser.vue';
 
 const route = useRoute()
 const loading = ref(false);
+
+const store=useUserStor();
+
 const userId = computed(() => {
     if (route && route.params && route.params.id) {
-        return route.params.id
+        return toNumber(route.params.id)
     } else {
         return null // or return a default value if id is not available
     }
 })
-const customerId = ref({
-    id: '',
-    name: '',
-});
-const customerStatus = ref({
 
-})
+console.log(userId.value)
+
+const userDate:RequestUserModel = reactive({
+    id:null,
+    fullName :'',
+    empId : null,
+    permisssions: null,
+    status:null,
+    password:''
+});
+
 const representativeId = ref()
 const representatives = ref();
 
 onMounted(async () => {
-    await axios.get("https://localhost:7003/api/Customers/")
+    user
+    .getById(userId.value)
         .then(function (response) {
-
-
-            customerId.value = response.data.content.filter((users: { id: String }) => users.id == userId.value)[0];
-             
-
-            getRepresentatives();
-
+            console.log(response.data)
+            userDate.id = response.data.id;
+            userDate.empId = response.data.empId;
+            userDate.fullName = response.data.fullName
+            userDate.password = response.data.password
+            userDate.status = response.data.status
+            userDate.permisssions = response.data.permisssions
         })
         .catch(function (error) {
             console.log(error)
         })
 })
+console.log(userDate)
+// function getRepresentatives() {
+//     loading.value=true
 
-function getRepresentatives() {
-    loading.value=true
+//         user
+//     .get()
+//     .then((response) => {
+//         representativeId.value = response.data.content.filter((users: { customerName: string }) => users.customerName == customerId.value.name);
+//         representatives.value = response.data.content
+//         loading.value=false
 
-    axios.get("https://localhost:7003/api/Representives/").then((response) => {
-        representativeId.value = response.data.content.filter((users: { customerName: string }) => users.customerName == customerId.value.name);
-        representatives.value = response.data.content
-        loading.value=false
-
-    });
-}
+//     });
+// }
 
 // Define a method to get the text based on the number
 const getIdentityTypeText = (type: number) => {
@@ -68,7 +82,7 @@ const getIdentityTypeText = (type: number) => {
 </script>
 
 <template>
-    <InfoUser />
+    <InfoUser :user="userDate" :key="userId" @getUser="store.getUser" />
     <card class=" shadow-2 p-3 mt-3 border-round-2xl">
         <template #content>
 
