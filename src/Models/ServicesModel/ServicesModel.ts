@@ -1,5 +1,5 @@
 export interface Service {
-    id: number|null,
+    id: number,
     name: string,
     amountOfPower: string,
     acpPort: string,

@@ -6,6 +6,7 @@ import { useToast } from "primevue/usetoast";
 import { ref } from 'vue';
 import type { Service } from '../../Models/ServicesModel/ServicesModel';
 import { service } from '@/api/service';
+import { numeric } from '@vuelidate/validators';
 
 const confirm = useConfirm();
 const toast = useToast();

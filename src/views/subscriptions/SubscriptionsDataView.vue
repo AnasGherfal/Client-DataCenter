@@ -7,6 +7,7 @@ import BackButton from "@/components/BackButton.vue";
 import type { SubscriptionRespons } from "../../Models/SubscriptionModel/SubscriptionsRespons";
 import { useToast } from "primevue/usetoast";
 import { useSubscriptionsStore } from "@/stores/subscriptions";
+import { subscription } from "@/api/subscriptions";
 
 const loading = ref(false);
 const loading2 = ref(false);
@@ -183,8 +184,8 @@ const customersDialog = ref(false);
 
 const renewalSubscription = () => {
   loading2.value = true;
-  axios
-    .put("https://localhost:7003/api/Subscription/Renew?id=" + tab.id)
+  subscription
+  .renew(tab.id)
     .then((response) => {
       console.log(response);
       loading2.value = false;
