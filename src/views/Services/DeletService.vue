@@ -5,7 +5,7 @@ import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import { ref } from 'vue';
 import type { Service } from '../../Models/ServicesModel/ServicesModel';
-import { service } from '@/api/service';
+import { serviceApi } from '@/api/service';
 import { numeric } from '@vuelidate/validators';
 
 const confirm = useConfirm();
@@ -22,15 +22,15 @@ const emit=defineEmits(['getList'])
 
 const delet = () => {
 loading.value=true
-service
+serviceApi
 .remove(props.pakge.id)
       .then(response => {
        loading.value=false
        toast.add({ severity: 'success', summary: 'Confirmed', detail: response.data.msg, life: 3000 });
        deleteProductDialog.value = false
        emit('getList')
-      }).catch (Response=> {
-        toast.add({ severity: 'error', summary: 'رسالة فشل', detail: Response.data.msg, life: 3000 });
+      }).catch (response=> {
+        toast.add({ severity: 'error', summary: 'رسالة فشل', detail: response.data.msg, life: 3000 });
     });
 
     
