@@ -8,6 +8,7 @@ import useVuelidate from "@vuelidate/core";
 import { isLibyanPhoneNumber, validateText } from "@/tools/validations";
 import { useCustomersStore } from "@/stores/customers";
 import { customersApi } from "@/api/customers";
+import DeleteCustomer from "../DeleteCustomer.vue";
 
 const actEdit = ref(true);
 const loading = ref(true);
@@ -105,6 +106,7 @@ const v$ = useVuelidate(rules, customer);
             </div>
           </div>
         </div>
+        
 
         <Button
           v-else="customer.status !== 5"
@@ -112,8 +114,12 @@ const v$ = useVuelidate(rules, customer);
           icon=" fa-solid fa-pen"
           style="width: 30px; height: 30px; margin-right: 10px"
           class="p-button-primary p-button-text"
-          v-tooltip="{ value: 'تعديل البيانات الشخصية', fitContent: true }"
+          v-tooltip.top="{ value: 'تعديل البيانات الشخصية', fitContent: true }"
         />
+        <DeleteCustomer 
+        :name="dataClinet.customer.name"
+        :id="dataClinet.customer.id"></DeleteCustomer>
+
 
         <Divider />
       </template>
@@ -319,10 +325,7 @@ const v$ = useVuelidate(rules, customer);
 </template>
 
 <style>
-error {
-  font-size: 12px;
-  font-weight: bold;
-}
+
 
 .p-dropdown {
   border-radius: 10px;

@@ -178,8 +178,6 @@ const onCalendarClick = () => {
                 :show-seconds="true"
                 :step-second="60"
               />
-              <!-- <error v-for="error in v$.endWorkTime.$errors" :key="error.$uid" class="p-error ">
-                                                                                        {{ error.$message }}</error> -->
               <label for="endTime">الى</label>
             </span>
           </div>

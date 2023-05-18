@@ -69,6 +69,15 @@ console.log(store.loading);
               </div>
             </div>
           </template>
+
+          <template #empty>
+              <div
+                class="no-data-message"
+                style="height: 100px"
+              >
+                <p>لا يوجد بيانات</p>
+              </div>
+            </template>
           <Column
             field="id"
             header="ID"

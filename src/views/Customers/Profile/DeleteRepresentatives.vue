@@ -32,7 +32,7 @@ const deleteRepresentitive = () => {
     .catch((error) => {
       toast.add({
         severity: "warn",
-        summary: "Confirmed",
+        summary: "خطا",
         detail: error,
         life: 3000,
       });

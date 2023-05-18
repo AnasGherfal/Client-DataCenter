@@ -7,6 +7,7 @@ import Dialog from "primevue/dialog";
 import AddBotton from "@/components/AddBotton.vue";
 import LockButton from "@/components/LockButton.vue";
 import { customersApi } from "@/api/customers";
+import DeleteCustomer from "./DeleteCustomer.vue";
 
 const toast = useToast();
 const store = useCustomersStore();
@@ -75,15 +76,22 @@ const deleteCustomer = () => {
       });
       customersDialog.value = false;
     })
-    .catch(() => {})
+    .catch((error) => {
+      toast.add({
+        severity: "warn",
+        summary: "حدث خطأ",
+        detail: error,
+        life: 3000,
+      });
+    })
     .finally(() => {
       loading.value = false;
     });
 };
 
-const getSelectedStatusLabel = (value:any) => {
+const getSelectedStatusLabel = (value: any) => {
   const status = statuses.value.find((s) => s.value === value);
-  return status ? status.label : '';
+  return status ? status.label : "";
 };
 </script>
 
@@ -162,6 +170,11 @@ const getSelectedStatusLabel = (value:any) => {
                 </div>
               </div>
             </template>
+            <template #empty>
+              <div class="no-data-message" style="height: 100px">
+                <p>لا يوجد بيانات</p>
+              </div>
+            </template>
             <!-- <Column field="id" header="ID" class="font-bold" frozen></Column> -->
 
             <Column
@@ -221,15 +234,12 @@ const getSelectedStatusLabel = (value:any) => {
             <Column style="min-width: 13rem">
               <template #body="slotProps">
                 <span v-if="slotProps.data.status !== 5">
-                  <Button
-                    v-tooltip="{ value: 'حذف', fitContent: true }"
-                    icon="fa-solid fa-trash-can"
-                    severity="danger"
-                    text
-                    rounded
-                    aria-label="Cancel"
-                    @click="getId(slotProps.data)"
-                  />
+                  <DeleteCustomer
+                    :rot-name="rotName"
+                    :name="slotProps.data.name"
+                    :id="slotProps.data.id"
+                  >
+                  </DeleteCustomer>
                 </span>
 
                 <RouterLink
@@ -252,37 +262,7 @@ const getSelectedStatusLabel = (value:any) => {
                   :status="slotProps.data.status"
                   @getdata="store.getCustomers"
                 />
-                <Dialog
-                  v-model:visible="customersDialog"
-                  :style="{ width: '450px' }"
-                  header="تأكيد"
-                  :modal="true"
-                >
-                  <div class="confirmation-content">
-                    <i
-                      class="pi pi-exclamation-triangle mr-3"
-                      style="font-size: 2rem; color: red"
-                    />
-                    <span v-if="rotName"
-                      >هل انت متأكد من حذف <b>{{ rotName.name }}</b> ؟</span
-                    >
-                  </div>
-                  <template #footer>
-                    <Button
-                      label="نعم"
-                      icon="pi pi-check"
-                      text
-                      @click="deleteCustomer"
-                      :loading="loading"
-                    />
-                    <Button
-                      label="لا"
-                      icon="pi pi-times"
-                      text
-                      @click="customersDialog = false"
-                    />
-                  </template>
-                </Dialog>
+               
               </template>
             </Column>
             <Toast position="bottom-left" />
@@ -293,4 +273,21 @@ const getSelectedStatusLabel = (value:any) => {
   </div>
 </template>
 
-<style></style>
+<style>
+.no-data-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.no-data-message p {
+  font-size: 18px;
+  font-weight: bold;
+  color: #888;
+}
+</style>

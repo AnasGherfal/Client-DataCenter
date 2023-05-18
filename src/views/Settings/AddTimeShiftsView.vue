@@ -47,7 +47,7 @@ const v$ = useVuelidate(rules, timeShifts);
 const submitForm = async () => {
   const result = await v$.value.$validate();
 
-  loading.value = true;
+
   const send = reactive<VisitHours>({
     name: timeShifts.name,
     startTime: moment(timeShifts.startTime).format("HH:mm:ss"),
@@ -57,6 +57,7 @@ const submitForm = async () => {
   });
 
   if (result) {
+    loading.value = true;
     timeShiftsApi
       .create(send)
       .then(function (response) {
@@ -127,13 +128,13 @@ const closeModal = () => {
           <span class="p-float-label">
             <InputText id="name" type="text" v-model="timeShifts.name" />
             <label for="name">اسم الساعه </label>
-            <div style="height: 10px">
-              <error
+            <div style="height: 2px">
+              <span
                 v-for="error in v$.name.$errors"
                 :key="error.$uid"
-                class="p-error"
+                style="color: red; font-weight: bold; font-size: small"
                 >{{ error.$message }}
-              </error>
+            </span>
             </div>
           </span>
         </div>
@@ -152,13 +153,14 @@ const closeModal = () => {
               :step-second="60"
             />
             <label for="startTime">وقت البداية </label>
-            <div style="height: 10px">
-              <error
+            <div style="height: 2px">
+              <span
                 v-for="error in v$.startTime.$errors"
                 :key="error.$uid"
                 class="p-error"
+                style="color: red; font-weight: bold; font-size: small"
                 >{{ error.$message }}
-              </error>
+            </span>
             </div>
           </span>
         </div>
@@ -177,13 +179,13 @@ const closeModal = () => {
               :step-second="60"
             />
             <label for="endTime">وقت النهاية </label>
-            <div style="height: 10px">
-              <error
+            <div style="height: 2px">
+              <span
                 v-for="error in v$.endTime.$errors"
                 :key="error.$uid"
-                class="p-error"
+                style="color: red; font-weight: bold; font-size: small"
                 >{{ error.$message }}
-              </error>
+            </span>
             </div>
           </span>
         </div>
@@ -206,13 +208,13 @@ const closeModal = () => {
               :allowEmpty="false"
               :highlightOnFocus="true"
             />
-            <div style="height: 10px">
-              <error
+            <div style="height: 2px">
+              <span
                 v-for="error in v$.priceForFirstHour.$errors"
                 :key="error.$uid"
-                class="p-error"
+                style="color: red; font-weight: bold; font-size: small"
                 >{{ error.$message }}
-              </error>
+            </span>
             </div>
           </span>
         </div>
@@ -233,13 +235,13 @@ const closeModal = () => {
               :allowEmpty="false"
               :highlightOnFocus="true"
             />
-            <div style="height: 10px">
-              <error
+            <div style="height: 2px">
+              <span
                 v-for="error in v$.priceForFirstHour.$errors"
                 :key="error.$uid"
-                class="p-error"
+                style="color: red; font-weight: bold; font-size: small"
                 >{{ error.$message }}
-              </error>
+            </span>
             </div>
           </span>
         </div>
