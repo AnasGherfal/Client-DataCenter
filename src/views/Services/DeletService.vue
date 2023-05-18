@@ -30,7 +30,7 @@ serviceApi
        deleteProductDialog.value = false
        emit('getList')
       }).catch (error=> {
-        toast.add({ severity: 'error', summary: 'رسالة فشل', detail: error.data, life: 3000 });
+        toast.add({ severity: 'error', summary: 'رسالة فشل', detail: error, life: 3000 });
     });
 
     
