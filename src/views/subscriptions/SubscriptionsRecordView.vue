@@ -16,7 +16,6 @@ const filters = ref({
 const columns = ref([{ field: "serviceName", header: "الباقه" }]);
 const selectedColumns = ref(columns.value);
 
-
 const formatDate = (value: Date) => {
   return moment(value).format("yy/M/D  hh:mm a");
 };
@@ -71,13 +70,25 @@ console.log(store.loading);
           </template>
 
           <template #empty>
-              <div
-                class="no-data-message"
-                style="height: 100px"
-              >
-                <p>لا يوجد بيانات</p>
-              </div>
-            </template>
+            <div
+              class="no-data-message"
+              style="
+                height: 100px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+                background-color: #f9f9f9;
+                border-radius: 5px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+              "
+            >
+              <p style="font-size: 18px; font-weight: bold; color: #888">
+                لا يوجد بيانات
+              </p>
+            </div>
+          </template>
           <Column
             field="id"
             header="ID"
