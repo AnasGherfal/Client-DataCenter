@@ -162,7 +162,6 @@ const getSelectedStatusLabel = (value:any) => {
                 </div>
               </div>
             </template>
-            <!-- <Column field="id" header="ID" class="font-bold" frozen></Column> -->
 
             <Column
               field="name"

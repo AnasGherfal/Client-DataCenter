@@ -70,6 +70,7 @@ const submitForm = async () => {
     user
       .create(state)
       .then(function (response) {
+        store.getUser()
         toast.add({
           severity: "success",
           summary: "رسالة نجاح",
@@ -77,11 +78,8 @@ const submitForm = async () => {
           life: 3000,
         });
         console.log(response);
-        store.getUser
         loading.value = false;
         router.go(-1);
-
-
       })
       .catch(function (error) {
         console.log(error);

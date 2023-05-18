@@ -64,6 +64,15 @@ function unlockButton() {
       });
       status.value = 1;
       emit("getdata");
+
+    }).catch((e)=>{
+      toast.add({
+        severity: "error",
+        summary: "رسالة خطأ",
+        detail: e.data,
+        life: 3000,
+      });
+    }).finally(()=>{
       dialog.value = false;
       loading.value = false;
     });

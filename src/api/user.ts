@@ -16,7 +16,7 @@ export const user = {
         return response;
     },
     remove: async function (id: number) {
-        const response = await httpClient.delete(`/Service?id=${id}`);
+        const response = await httpClient.delete(`/User/${id}/Delete`);
         return response;
     },
 
