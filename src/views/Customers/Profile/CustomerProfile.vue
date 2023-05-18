@@ -1,183 +1,239 @@
 <script setup lang="ts">
-import InfoCustomer from './InfoCustomer.vue'
-import TabView from 'primevue/tabview';
-import TabPanel from 'primevue/tabpanel';
-import { computed, onMounted,ref } from 'vue';
-import { useRoute } from 'vue-router';
-import Representative from './Representatives.vue';
-import DeleteRepresentives from './DeleteRepresentatives.vue';
-import EditRepresentatives from './EditRepresentatives.vue';
-import { useCustomersStore } from '@/stores/customers'
-import SubscriptionRecord from '@/components/Subscriptions/subscriptionRecordCompunent.vue';
-import LockButton from '@/components/LockButton.vue';
-import { customersApi } from '@/api/customers';
-import { representativesApi } from '@/api/representatives';
+import InfoCustomer from "./InfoCustomer.vue";
+import TabView from "primevue/tabview";
+import TabPanel from "primevue/tabpanel";
+import { computed, onMounted, reactive, ref } from "vue";
+import { useRoute } from "vue-router";
+import Representative from "./Representatives.vue";
+import DeleteRepresentives from "./DeleteRepresentatives.vue";
+import EditRepresentatives from "./EditRepresentatives.vue";
+import { useCustomersStore } from "@/stores/customers";
+import SubscriptionRecord from "@/components/Subscriptions/subscriptionRecordCompunent.vue";
+import LockButton from "@/components/LockButton.vue";
+import { customersApi } from "@/api/customers";
+import { representativesApi } from "@/api/representatives";
+import type { Customer } from "@/Models/CustomerModel/Customers";
 
-
-const route = useRoute()
+const route = useRoute();
 const store = useCustomersStore();
 const loading = ref(false);
 
 const userId = computed(() => {
-    if (route && route.params && route.params.id) {
-        return route.params.id
-    } else {
-        return null // or return a default value if id is not available
-    }
-})
-const customerId = ref({
-    id: '',
-    name: '',
+  if (route && route.params && route.params.id) {
+    return route.params.id;
+  } else {
+    return null; // or return a default value if id is not available
+  }
+});
+const customerId: Customer = reactive({
+  name: "",
+  email: "",
+  address: "",
+  primaryPhone: "",
+  secondaryPhone: "",
 });
 
-const representativeId = ref()
+const representativeId = ref();
 const representatives = ref();
 
 onMounted(async () => {
-    store.loading=true
-    loading.value=true
+  store.loading = true;
+  loading.value = true;
 
-    customersApi
+  customersApi
     .get()
-        .then(function (response) {
+    .then(function (response) {
+        customerId.id = response.data.content.filter(
+        (users: { id: String }) => users.id == userId.value
+      )[0].id;
 
+      customerId.name = response.data.content.filter(
+        (users: { id: String }) => users.id == userId.value
+      )[0].name;
 
-            customerId.value = response.data.content.filter((users: { id: String }) => users.id == userId.value)[0];
-            
-            getRepresentatives();
-            store.loading=false;
-            loading.value=false
+      customerId.address = response.data.content.filter(
+        (users: { id: String }) => users.id == userId.value
+      )[0].address;
 
+      customerId.email = response.data.content.filter(
+        (users: { id: String }) => users.id == userId.value
+      )[0].email;
 
-        })
-        .catch(function (error) {
-            console.log(error)
-        })
-})
+      customerId.primaryPhone = response.data.content.filter(
+        (users: { id: String }) => users.id == userId.value
+      )[0].primaryPhone;
+
+      customerId.secondaryPhone = response.data.content.filter(
+        (users: { id: String }) => users.id == userId.value
+      )[0].secondaryPhone;
+
+      customerId.status = response.data.content.filter(
+        (users: { id: String }) => users.id == userId.value
+      )[0].status;
+
+      getRepresentatives();
+      store.loading = false;
+      loading.value = false;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+});
 
 function getRepresentatives() {
-    representativesApi
-    .get()
-    .then((response) => {
-        representativeId.value = response.data.content.filter((users: { customerName: string }) => users.customerName == customerId.value.name);
-        representatives.value = response.data.content
-
-    });
+  representativesApi.get().then((response) => {
+    representativeId.value = response.data.content.filter(
+      (users: { customerName: string }) =>
+        users.customerName == customerId.name
+    );
+    representatives.value = response.data.content;
+  });
 }
 
 // Define a method to get the text based on the number
 const getIdentityTypeText = (type: number) => {
-    switch (type) {
-        case 1:
-            return 'اثبات هويه';
-        case 2:
-            return 'جواز سفر';
-        // Add more cases for other identity types
-        default:
-            return 'Unknown identity type';
-    }
+  switch (type) {
+    case 1:
+      return "اثبات هويه";
+    case 2:
+      return "جواز سفر";
+    // Add more cases for other identity types
+    default:
+      return "Unknown identity type";
+  }
 };
-
-
-
 </script>
 
 <template>
-    <InfoCustomer :customer="customerId" :key="customerId.id" @getCustomers="store.getCustomers" />
+  <InfoCustomer
+    :customer="customerId"
+    :key="customerId.id"
+    @getCustomers="store.getCustomers"
+  />
 
-    <card class=" shadow-2 p-3 mt-3 border-round-2xl">
-        <template #content>
+  <card class="shadow-2 p-3 mt-3 border-round-2xl">
+    <template #content>
+      <TabView class="tabview-custom" ref="tabview4">
+        <TabPanel>
+          <template #header>
+            <i class="ml-2 pi pi-user"></i>
+            <span>المخولين</span>
+          </template>
 
-            
+          <!-- المخولون الخاصون بالعميل -->
+          <Representative
+            @getRepresentatives="getRepresentatives()"
+            :customerStatus="customerId.status"
+          />
+          <div v-if="loading">
+            <div class="grid p-fluid">
+              <div v-for="n in 2" class="ml-3 mb-2">
+                <span>
+                  <Skeleton width="15rem" height="25rem"></Skeleton>
+                </span>
+              </div>
+            </div>
+          </div>
 
-            <TabView class="tabview-custom" ref="tabview4">
-                <TabPanel>
-                    <template #header>
-                        <i class="ml-2 pi pi-user"></i>
-                        <span>المخولين</span>
+          <div v-else class="grid">
+            <div
+              class="col-12 md:col-6"
+              v-for="representative in representativeId"
+              :key="representative.id"
+            >
+              <Card
+                class="w-3/5 mx-auto"
+                style="background-color: #ffffff; color: #333333"
+              >
+                <template #header>
+                  <DeleteRepresentives
+                    :name="representative"
+                    :key="representative.id"
+                    @getRepresentatives="getRepresentatives()"
+                  />
 
-                    </template>
+                  <LockButton
+                    typeLock="Representives"
+                    :id="representative.id"
+                    :name="
+                      representative.firstName + ' ' + representative.lastName
+                    "
+                    :status="representative.status"
+                    @getdata="getRepresentatives()"
+                  />
 
-
-                    <!-- المخولون الخاصون بالعميل -->
-                    <Representative @getRepresentatives="getRepresentatives()" :customerStatus="customerId.status" />
-                    <div v-if="loading" >
-                        <div class="grid p-fluid">
-                            <div v-for="n in 2" class=" ml-3 mb-2">
-                                <span >
-                                    <Skeleton width="15rem" height="25rem"></Skeleton>
-                                </span>
-                            </div>
-                            </div>
+                  <div v-if="representative.status !== 5">
+                    <EditRepresentatives
+                      :name="representative"
+                      :key="representative.id"
+                      @get-representatives="getRepresentatives"
+                    >
+                    </EditRepresentatives>
+                  </div>
+                </template>
+                <template #content>
+                  <div class="min-h-450">
+                    <div class="text-center font-bold text-lg mb-2">
+                      اسم المخول:
                     </div>
-
-                    <div v-else class="grid ">
-                        <div class="col-12 md:col-6" v-for="representative in representativeId" :key="representative.id">
-                            <Card class="w-3/5 mx-auto" style="background-color: #FFFFFF; color: #333333;">
-                                <template #header>
-                                    <DeleteRepresentives :name="representative" :key="representative.id"
-                                        @getRepresentatives="getRepresentatives()" />
-
-                                        <LockButton typeLock="Representives" :id="representative.id"
-                                        :name="representative.firstName + ' ' + representative.lastName"
-                                        :status="representative.status" @getdata="getRepresentatives()" />
-
-                                    <div v-if="representative.status !== 5">
-                                        <EditRepresentatives :name="representative" :key="representative.id"
-                                            @get-representatives="getRepresentatives">
-                                        </EditRepresentatives>
-                                    </div>
-
-                                </template>
-                                <template #content>
-                                    <div class="min-h-450">
-                                        <div class="text-center font-bold text-lg mb-2">اسم المخول:</div>
-                                        <div class="text-center text-lg">{{ representative.firstName }}
-                                            {{ representative.lastName }}</div>
-                                        <div class="text-center font-bold mt-4 mb-2 text-lg">البريد الإلكتروني:</div>
-                                        <div class="text-center text-lg">{{ representative.email }}</div>
-                                        <div class="flex justify-center mt-4">
-                                            <div class="flex-1">
-                                                <div class="text-center font-bold mb-2 text-lg">رقم الإثبات:</div>
-                                                <div class="text-center text-lg">{{ representative.identityNo }}</div>
-                                            </div>
-                                            <div class="flex-1">
-                                                <div class="text-center font-bold mb-2 text-lg">نوع الإثبات:</div>
-                                                <div class="text-center text-lg">{{
-                                                    getIdentityTypeText(representative.identityType) }}</div>
-                                            </div>
-                                        </div>
-                                        <div class="text-center mt-4">
-                                            <div class="font-bold mb-2 text-lg">رقم الهاتف:</div>
-                                            <div class="text-lg" style="direction: ltr;">{{ representative.phoneNo }}</div>
-                                        </div>
-                                    </div>
-                                </template>
-                            </Card>
+                    <div class="text-center text-lg">
+                      {{ representative.firstName }}
+                      {{ representative.lastName }}
+                    </div>
+                    <div class="text-center font-bold mt-4 mb-2 text-lg">
+                      البريد الإلكتروني:
+                    </div>
+                    <div class="text-center text-lg">
+                      {{ representative.email }}
+                    </div>
+                    <div class="flex justify-center mt-4">
+                      <div class="flex-1">
+                        <div class="text-center font-bold mb-2 text-lg">
+                          رقم الإثبات:
                         </div>
+                        <div class="text-center text-lg">
+                          {{ representative.identityNo }}
+                        </div>
+                      </div>
+                      <div class="flex-1">
+                        <div class="text-center font-bold mb-2 text-lg">
+                          نوع الإثبات:
+                        </div>
+                        <div class="text-center text-lg">
+                          {{ getIdentityTypeText(representative.identityType) }}
+                        </div>
+                      </div>
                     </div>
-
-
-
-                </TabPanel>
-                <TabPanel>
-                    <template #header>
-                        <i class="ml-2 pi pi-calendar"></i>
-                        <span>جدول الزيارات</span>
-                    </template>
-                    <!-- الزيارات الخاصة بالعميل -->
-                </TabPanel>
-                <TabPanel>
-                    <template #header>
-                        <i class="ml-2 pi pi-cog"></i>
-                        <span>جدول الاشتراكات</span>
-                    </template>
-                    <SubscriptionRecord :key="customerId.id" :customerId="customerId" />
-                    <!-- الخدمات الخاصة بالعميل -->
-                </TabPanel>
-            </TabView>
-        </template>
-    </card>
+                    <div class="text-center mt-4">
+                      <div class="font-bold mb-2 text-lg">رقم الهاتف:</div>
+                      <div class="text-lg" style="direction: ltr">
+                        {{ representative.phoneNo }}
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </Card>
+            </div>
+          </div>
+        </TabPanel>
+        <TabPanel>
+          <template #header>
+            <i class="ml-2 pi pi-calendar"></i>
+            <span>جدول الزيارات</span>
+          </template>
+          <!-- الزيارات الخاصة بالعميل -->
+        </TabPanel>
+        <TabPanel>
+          <template #header>
+            <i class="ml-2 pi pi-cog"></i>
+            <span>جدول الاشتراكات</span>
+          </template>
+          <SubscriptionRecord :key="customerId.id" :customerId="customerId" />
+          <!-- الخدمات الخاصة بالعميل -->
+        </TabPanel>
+      </TabView>
+    </template>
+  </card>
 </template>
 
 <style></style>

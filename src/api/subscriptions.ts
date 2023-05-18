@@ -1,7 +1,11 @@
 import httpClient from ".";
 import type { Subscription } from "@/Models/SubscriptionModel/SubscriptionsModels";
 
-export const subscription = {
+export const subscriptionApi = {
+    get: async function () {
+        const response = await httpClient.get(`/Subscription`);
+        return response;
+    },
     create: async function (subscription: Subscription) {
         const response = await httpClient.post(`/subscription`, subscription);
         return response;
@@ -10,7 +14,7 @@ export const subscription = {
         const response = await httpClient.put(`/subscription/${id}/Renew`);
         return response;
     },
-    edit: async function (id: number,service: Service) {
+    edit: async function (id: number,service: Subscription) {
         const response = await httpClient.put(`/Service?id=${id}`, service);
         return response;
     },

@@ -1,4 +1,6 @@
 export interface Customer {
+    id?: number;
+    status?: number;
     name: string;
     email: string;
     address: string;

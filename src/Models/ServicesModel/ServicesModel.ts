@@ -1,9 +1,9 @@
 export interface Service {
-    id: number,
+    id: number|null,
     name: string,
-    amountOfPower: string,
+    amountOfPower: string ,
     acpPort: string,
     dns: string,
-    monthlyVisits: number|null,
+    monthlyVisits: number| null | undefined,
     price: number|null,
   }

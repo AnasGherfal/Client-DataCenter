@@ -1,7 +1,6 @@
-import { createApp, ref, computed, onMounted } from "vue";
-import { createPinia } from "pinia";
+import { ref, computed, onMounted } from "vue";
 import { defineStore } from "pinia";
-import axios from "axios";
+import { serviceApi } from "@/api/service";
 
 export const usePackagesStore = defineStore("package", () => {
   const Services = ref();
@@ -12,8 +11,8 @@ export const usePackagesStore = defineStore("package", () => {
   });
 
   function getService() {
-    axios
-      .get("https://localhost:7003/api/Service")
+    serviceApi
+      .get()
       .then((response) => {
         packagesList.value = response.data.content;
       })
