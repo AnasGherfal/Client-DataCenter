@@ -27,11 +27,11 @@ const state: ResponseUserModel = reactive({
 
 const selectedCities = ref();
 const cities = ref([
-  { name: "New York", code: "NY" },
-  { name: "Rome", code: "RM" },
-  { name: "London", code: "LDN" },
-  { name: "Istanbul", code: "IST" },
-  { name: "Paris", code: "PRS" },
+  { name: "New York", code: "NY" , value:1 },
+  { name: "Rome", code: "RM" , value:2 },
+  { name: "London", code: "LDN" , value:3 },
+  { name: "Istanbul", code: "IST" , value:4 },
+  { name: "Paris", code: "PRS" , value:5 },
 ]);
 
 const rules = computed(() => {
@@ -183,6 +183,7 @@ const resetForm = () => {
                   <MultiSelect
                     v-model="selectedCities"
                     display="chip"
+                    optionValue="value"
                     :options="cities"
                     optionLabel="name"
                     placeholder="Select Cities"

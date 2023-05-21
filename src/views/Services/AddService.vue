@@ -54,13 +54,14 @@ const onFormSubmit =  (state: Service) => {
     serviceApi
     .create(state)
     .then((Response)=>{
-        loading.value=false
         emit('getList')
         toast.add({ severity: 'success', summary: 'رسالة نجاح', detail: Response.data.msg, life: 3000 });
         displayModal.value = false;
         resetForm();
     }) .catch (Response=> {
         toast.add({ severity: 'error', summary: 'رسالة فشل', detail: Response.data.msg, life: 3000 });
+    }).finally(()=>{
+        loading.value=false
     })
 } 
   
@@ -71,9 +72,7 @@ const displayModal = ref(false);
 const openModal = () => {
             displayModal.value = true;
         };
-        const closeModal = () => {
-            displayModal.value = false;
-        }
+
 </script>
 
 

@@ -85,7 +85,7 @@ const submitForm = async () => {
 
     const subdata = new FormData();
     subdata.append("serviceId",  subrequest.serviceId);
-    subdata.append("customerId", subrequest.customerId);
+    subdata.append("customerId", subrequest.customerId.id);
     subdata.append("startDate", subrequest.startDate);
     subdata.append("endDate", subrequest.endDate);
     subdata.append("file", state.file, state.file.name);
@@ -169,7 +169,6 @@ const search = (event: any) => {
                 <AutoComplete
                   v-model="state.customerId"
                   optionLabel="name"
-                  option-value="id"
                   :suggestions="filteredCountries"
                   @complete="search"
                 />

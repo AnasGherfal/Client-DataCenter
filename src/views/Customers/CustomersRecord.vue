@@ -3,7 +3,6 @@ import { ref } from "vue";
 import { FilterMatchMode } from "primevue/api";
 import { useCustomersStore } from "@/stores/customers";
 import { useToast } from "primevue/usetoast";
-import Dialog from "primevue/dialog";
 import AddBotton from "@/components/AddBotton.vue";
 import LockButton from "@/components/LockButton.vue";
 import { customersApi } from "@/api/customers";
@@ -170,12 +169,14 @@ const getSelectedStatusLabel = (value: any) => {
                 </div>
               </div>
             </template>
+
             <template #empty>
-              <div class="no-data-message" style="height: 100px">
+              <div class="no-data-message" style="height: 100px;">
                 <p>لا يوجد بيانات</p>
               </div>
             </template>
-            <!-- <Column field="id" header="ID" class="font-bold" frozen></Column> -->
+
+            <Column field="id" header="ID" class="font-bold"></Column>
 
             <Column
               field="name"
@@ -227,10 +228,7 @@ const getSelectedStatusLabel = (value: any) => {
               :key="col.field + '_' + index"
               style="min-width: 10rem"
             ></Column>
-            <!-- <Column field="email" header="البريد الالكتروني"  style="min-width:12rem"></Column>
-                                        <Column field="address" header=" العنوان"  style="min-width:12rem"></Column>
-                                        <Column field="primaryPhone" header="  رقم الهاتف 1"  style="min-width:12rem"></Column>
-                                        <Column field="secondaryPhone" header="  رقم الهاتف 2"  style="min-width:12rem"></Column> -->
+
             <Column style="min-width: 13rem">
               <template #body="slotProps">
                 <span v-if="slotProps.data.status !== 5">

@@ -44,7 +44,6 @@ const rules = computed(() => {
 });
 
 console.log(state);
-const serId = ref();
 
 const toast = useToast();
 
@@ -63,27 +62,20 @@ const resetForm = () => {
 
         <BackButton style="float: left" />
 
-        <div v-if="0">
-          <div class="warning-message">
-            <div class="warning-message-icon"></div>
-            <div class="warning-message-text">
-              هاذا العميل في حالة قفل لا يمكن التعديل او اضافة مخوليين
-            </div>
-          </div>
-        </div>
-
-        <Button
-          v-else-if="actEdit"
-          @click="actEdit = !actEdit"
-          icon=" fa-solid fa-pen"
-          style="width: 30px; height: 30px; margin-right: 10px"
-          class="p-button-primary p-button-text"
-          v-tooltip="{ value: 'تعديل البيانات الشخصية', fitContent: true }"
-        />
 
         <Divider />
+        
       </template>
       <template #content>
+        <div v-if="user.status == 5" class="mb-5">
+        <div class="warning-message">
+          <div class="warning-message-icon"></div>
+          <div class="warning-message-text">
+            هذا المستخدم  مقفل لا يمكن التعديل عليه
+          </div>
+        </div>
+      </div>
+
         <div v-if="store.loading">
           <div class="grid p-fluid">
             <div class="field col-12 md:col-6 lg:col-4">
@@ -170,7 +162,7 @@ const resetForm = () => {
               <span class="p-float-label">
                 <InputNumber
                   id="EmpId"
-                  mask="99999"
+                  mask="9999999"
                   v-model="user.empId"
                   :disabled="true"
                   style="direction: rtl; text-align: end"

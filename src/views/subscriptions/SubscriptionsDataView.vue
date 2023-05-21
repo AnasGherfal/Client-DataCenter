@@ -8,6 +8,8 @@ import { useToast } from "primevue/usetoast";
 import { useSubscriptionsStore } from "@/stores/subscriptions";
 import {  subscriptionApi } from "@/api/subscriptions";
 import { serviceApi } from "@/api/service";
+import axios from "axios";
+import Inplace from 'primevue/inplace';
 
 const loading = ref(false);
 const loading2 = ref(false);
@@ -15,7 +17,7 @@ const cardVis = ref(false);
 const prop = defineProps<{
   nad: number;
 }>();
-
+const fileView=ref()
 const store = useSubscriptionsStore();
 const toast = useToast();
 
@@ -180,6 +182,7 @@ function getdata() {
       loading.value = false;
     });
 }
+
 const customersDialog = ref(false);
 
 const renewalSubscription = () => {
@@ -213,6 +216,20 @@ const renewalSubscription = () => {
 function car() {
   cardVis.value = !cardVis.value;
 }
+const img=ref()
+onMounted( () => {
+  console.log(prop.nad)
+axios .get(`https://localhost:7003/api/Subscription/${prop.nad}/fileById`)
+.then((response)=>{
+  console.log(response.data)
+  fileView.value=response.data[0].fileName
+}).then(()=>{
+  axios.get(`https://localhost:7003/api/Subscription/page?url=${fileView.value}`)
+  .then((response)=>{
+   img.value= response.data
+  })
+})
+});
 </script>
 
 <template>
@@ -394,6 +411,25 @@ function car() {
           <ProgressBar class="mt-2" v-else :value="servobj.monthlyVisits">
             {{ servobj.monthlyVisits }}
           </ProgressBar>
+
+          <Divider class="p-divider-solid" layout="horizontal" />
+
+<h4 style="margin: 0">عقد الاشتراك :</h4>
+<Skeleton v-if="loading" width="50%" height="1rem"></Skeleton>
+
+<img  :src="fileView"/>
+
+<Inplace>
+    <template #display>
+        <span class="pi pi-search" style="vertical-align: middle"></span>
+        <span style="margin-left: 0.5rem; vertical-align: middle">View Picture</span>
+    </template>
+    <template #content>
+      {{ img }}
+        <img class="w-full" alt="Nature" :src="img" />
+    </template>
+</Inplace>
+
         </div>
       </div>
     </template>
