@@ -11,7 +11,7 @@ import { customersApi } from "@/api/customers";
 import DeleteCustomer from "../DeleteCustomer.vue";
 
 const actEdit = ref(true);
-const loading = ref(true);
+const loading = ref(false);
 const store = useCustomersStore();
 
 const dataClinet = defineProps<{ customer: any }>();
@@ -110,20 +110,25 @@ const v$ = useVuelidate(rules, customer);
             </div>
           </div>
         </div>
-        
 
-        <Button
-          v-else="customer.status !== 5"
-          @click="actEdit = !actEdit"
-          icon=" fa-solid fa-pen"
-          style="width: 30px; height: 30px; margin-right: 10px"
-          class="p-button-primary p-button-text"
-          v-tooltip.top="{ value: 'تعديل البيانات الشخصية', fitContent: true }"
-        />
-        <DeleteCustomer 
-        :name="dataClinet.customer.name"
-        :id="dataClinet.customer.id"></DeleteCustomer>
+        <span v-else-if="customer.status !== 5 && !store.loading"
+        style=" width: 30px; height: 30px; margin-right: 10px ;margin-top:0px; "
+>
+          <Button
+            @click="actEdit = !actEdit"
+            icon=" fa-solid fa-pen"
+            class="p-button-primary p-button-text"
+            v-tooltip.top="{
+              value: 'تعديل البيانات الشخصية',
+              fitContent: true,
+            }"
+          />
 
+          <DeleteCustomer
+            :name="dataClinet.customer.name"
+            :id="dataClinet.customer.id"
+          ></DeleteCustomer>
+          </span>
 
         <Divider />
       </template>
@@ -329,8 +334,6 @@ const v$ = useVuelidate(rules, customer);
 </template>
 
 <style>
-
-
 .p-dropdown {
   border-radius: 10px;
 }

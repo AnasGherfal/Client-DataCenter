@@ -53,9 +53,10 @@ const resetForm = () => {
 const onFormSubmit =  (state: Service) => {
     serviceApi
     .create(state)
-    .then((Response)=>{
+    .then((response)=>{
+        loading.value=false
         emit('getList')
-        toast.add({ severity: 'success', summary: 'رسالة نجاح', detail: Response.data.msg, life: 3000 });
+        toast.add({ severity: 'success', summary: 'رسالة نجاح', detail: response.data.msg, life: 3000 });
         displayModal.value = false;
         resetForm();
     }) .catch (Response=> {

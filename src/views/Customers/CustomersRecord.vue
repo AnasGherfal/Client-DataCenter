@@ -23,7 +23,6 @@ const columns = ref([
 
   { field: "address", header: "العنوان" },
   { field: "primaryPhone", header: "رقم الهاتف (1)" },
-  { field: "secondaryPhone", header: "رقم الهاتف (2)" },
 ]);
 const selectedColumns = ref(columns.value);
 
@@ -171,8 +170,23 @@ const getSelectedStatusLabel = (value: any) => {
             </template>
 
             <template #empty>
-              <div class="no-data-message" style="height: 100px;">
-                <p>لا يوجد بيانات</p>
+              <div
+                class="no-data-message"
+                style="
+                  height: 100px;
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  justify-content: center;
+                  padding: 20px;
+                  background-color: #f9f9f9;
+                  border-radius: 5px;
+                  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                "
+              >
+                <p style="font-size: 18px; font-weight: bold; color: #888">
+                  لا يوجد بيانات
+                </p>
               </div>
             </template>
 
@@ -260,7 +274,6 @@ const getSelectedStatusLabel = (value: any) => {
                   :status="slotProps.data.status"
                   @getdata="store.getCustomers"
                 />
-               
               </template>
             </Column>
             <Toast position="bottom-left" />
@@ -272,17 +285,6 @@ const getSelectedStatusLabel = (value: any) => {
 </template>
 
 <style>
-.no-data-message {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
 .no-data-message p {
   font-size: 18px;
   font-weight: bold;
