@@ -3,7 +3,7 @@ import { ref } from "vue";
 import { FilterMatchMode } from "primevue/api";
 import { useCustomersStore } from "@/stores/customers";
 import { useToast } from "primevue/usetoast";
-import AddBotton from "@/components/AddBotton.vue";
+import AddBotton from "@/components/AddButton.vue";
 import LockButton from "@/components/LockButton.vue";
 import { customersApi } from "@/api/customers";
 import DeleteCustomer from "./DeleteCustomer.vue";

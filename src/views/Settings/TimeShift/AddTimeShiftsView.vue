@@ -10,7 +10,7 @@ import {
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import Dialog from "primevue/dialog";
-import type { VisitHours } from "../../Models/TimeShifts/TimeShiftsModels";
+import type { VisitHours } from "@/Modules/TimeShiftsModule/TimeShiftsModule";
 import axios from "axios";
 import moment from "moment";
 import { timeShiftsApi } from "@/api/timeShifts";

@@ -1,10 +1,6 @@
 <script lang="ts" setup>
-import IconGroup from "./IconGroup.vue";
+import IconGroup from "./TopBarIcons.vue";
 import Divider from "primevue/divider";
-
-import SideBar from "./SideBar.vue";
-
-import { ref } from "vue";
 </script>
 
 <template>

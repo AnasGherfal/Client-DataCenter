@@ -3,7 +3,7 @@ import { useToast } from "primevue/usetoast";
 import { onMounted, reactive, ref } from "vue";
 import axios from "axios";
 import moment from "moment";
-import type { VisitHours } from "../../Models/TimeShifts/TimeShiftsModels";
+import type { VisitHours } from "@/Modules/TimeShiftsModule/TimeShiftsModule";
 import DeleteTimeShifts from "./DeleteTimeShifts.vue";
 import AddTimeShifts from "./AddTimeShiftsView.vue";
 import { timeShiftsApi } from "@/api/timeShifts";

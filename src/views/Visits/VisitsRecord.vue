@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
-import router from '@/router';
 import axios from 'axios';
-import AddBotton from '@/components/AddBotton.vue';
+import AddBotton from '@/components/AddButton.vue';
 import { useVistisStore } from '@/stores/visits'
 import { useToast } from 'primevue/usetoast';
 import Dialog from 'primevue/dialog';

@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import TabView from "primevue/tabview";
-import TabPanel from "primevue/tabpanel";
-import { computed, onMounted, reactive, ref } from "vue";
-import { useRoute } from "vue-router";
-import { user } from "@/api/user";
-import { toNumber } from "@vue/shared";
-import type { RequestUserModel } from "@/Models/UserModel/RequestUserModel";
-import { useUserStor } from "../../stores/user";
-import InfoUser from "./InfoUser.vue";
+import TabView from 'primevue/tabview';
+import TabPanel from 'primevue/tabpanel';
+import { computed, onMounted, reactive, ref } from 'vue';
+import {  useRoute } from 'vue-router';
+import { user } from '../../api/user';
+import { toNumber } from '@vue/shared';
+import type { RequestUserModel } from '../../Modules/UserModule/UserModuleRequest';
+import { useUserStor } from "../../stores/user"
+import InfoUser from './InfoUser.vue';
 
 const route = useRoute();
 

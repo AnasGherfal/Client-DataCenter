@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { FilterMatchMode } from "primevue/api";
-import AddBotton from "@/components/AddBotton.vue";
+import AddBotton from "@/components/AddButton.vue";
 import LockButton from "@/components/LockButton.vue";
 import { useSubscriptionsStore } from "@/stores/subscriptions";
 import moment from "moment";

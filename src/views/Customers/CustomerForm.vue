@@ -4,7 +4,7 @@ import { email, required, helpers, minLength } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import InputText from "primevue/inputtext";
-import type { Customer } from "../../Models/CustomerModel/Customers";
+import type { Customer } from "../../Modules/CustomerModule/CustomersModule";
 import { isLibyanPhoneNumber, validateText } from "@/tools/validations";
 import { useCustomersStore } from "@/stores/customers";
 

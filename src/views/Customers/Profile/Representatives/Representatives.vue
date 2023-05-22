@@ -2,10 +2,10 @@
 import { computed, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 import Dialog from "primevue/dialog";
-import type { Representatives } from "../../../Models/CustomerModel/RepresentativesModel/Representatives";
+import type { Representatives } from "../../../../Modules/CustomerModule/RepresentativesModule/Representatives";
 import { useRoute } from "vue-router";
 import { toNumber } from "@vue/shared";
-import RepresentativeForm from "@/views/Customers/Profile/RepresentativeForm.vue";
+import RepresentativeForm from "./RepresentativeForm.vue";
 import { representativesApi } from "@/api/representatives";
 
 const route = useRoute();

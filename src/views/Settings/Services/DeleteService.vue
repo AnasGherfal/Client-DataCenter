@@ -4,9 +4,8 @@ import Dialog from "primevue/dialog";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import { ref } from "vue";
-import type { Service } from "../../Models/ServicesModel/ServicesModel";
-import { serviceApi } from "@/api/service";
-import { numeric } from "@vuelidate/validators";
+import type { Service } from '../../../Modules/ServicesModule/ServicesModule';
+import { serviceApi } from "../../../api/service";
 
 const confirm = useConfirm();
 const toast = useToast();

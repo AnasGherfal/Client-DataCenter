@@ -6,7 +6,7 @@ import { useToast } from "primevue/usetoast";
 import { useCustomersStore } from '@/stores/customers';
 import VisitDetails from './VisitDetails.vue';
 import router from '@/router';
-import type { Visit } from '../../Models/VistModel/VisitModule'
+import type { Visit } from '@/Modules/VisitModule/VisitModule'
 import axios from 'axios';
 
 const store = useCustomersStore();
@@ -81,7 +81,7 @@ function backButton() {
 </script>
 
 <template >
-<VisitDetails :customer="tab" :key="tab.id"></VisitDetails>
+<VisitDetails :customer="tab" :key="tab"></VisitDetails>
 </template>
 <style >
 .p-button-icon {

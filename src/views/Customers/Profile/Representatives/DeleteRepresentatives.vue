@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import router from "@/router";
-import axios from "axios";
 import { useToast } from "primevue/usetoast";
 import { ref } from "vue";
 import { representativesApi } from "@/api/representatives";

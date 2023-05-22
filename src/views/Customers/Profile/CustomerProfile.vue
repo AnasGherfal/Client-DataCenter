@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import InfoCustomer from "./InfoCustomer.vue";
+import InfoCustomer from "./CustomerDetails.vue";
 import TabView from "primevue/tabview";
 import TabPanel from "primevue/tabpanel";
 import { computed, onMounted, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
-import Representative from "./Representatives.vue";
-import DeleteRepresentives from "./DeleteRepresentatives.vue";
-import EditRepresentatives from "./EditRepresentatives.vue";
+import Representative from "./Representatives/Representatives.vue";
+import DeleteRepresentives from "./Representatives/DeleteRepresentatives.vue";
+import EditRepresentatives from "./Representatives/EditRepresentatives.vue";
 import { useCustomersStore } from "@/stores/customers";
-import SubscriptionRecord from "@/components/Subscriptions/subscriptionRecordCompunent.vue";
+import SubscriptionRecord from "@/components/Subscriptions/subscriptionRecord.vue";
 import LockButton from "@/components/LockButton.vue";
 import { customersApi } from "@/api/customers";
 import { representativesApi } from "@/api/representatives";
-import type { Customer } from "@/Models/CustomerModel/Customers";
+import type { Customer } from "@/Modules/CustomerModule/CustomersModule";
 
 const route = useRoute();
 const store = useCustomersStore();

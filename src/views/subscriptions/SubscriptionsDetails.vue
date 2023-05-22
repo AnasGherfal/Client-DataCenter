@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import Knob from "primevue/knob";
-import type { Service } from "../../Models/ServicesModel/ServicesModel";
+import type { Service } from "../../Modules/ServicesModule/ServicesModule";
 import BackButton from "@/components/BackButton.vue";
-import type { SubscriptionRespons } from "../../Models/SubscriptionModel/SubscriptionsRespons";
+import type { SubscriptionRespons } from "../../Modules/SubscriptionModule/SubscriptionsResponseModule";
 import { useToast } from "primevue/usetoast";
 import { useSubscriptionsStore } from "@/stores/subscriptions";
-import {  subscriptionApi } from "@/api/subscriptions";
+import { subscriptionApi } from "@/api/subscriptions";
 import { serviceApi } from "@/api/service";
 import axios from "axios";
-import Inplace from 'primevue/inplace';
+import Inplace from "primevue/inplace";
 
 const loading = ref(false);
 const loading2 = ref(false);
@@ -17,7 +17,7 @@ const cardVis = ref(false);
 const prop = defineProps<{
   nad: number;
 }>();
-const fileView=ref()
+const fileView = ref();
 const store = useSubscriptionsStore();
 const toast = useToast();
 
@@ -37,81 +37,16 @@ const servobj: Service = reactive({
   amountOfPower: "",
   acpPort: "",
   dns: "",
-  monthlyVisits: null,
+  monthlyVisits:0,
   price: null,
 });
 
-let date3: number;
+
+const value1 = ref(0);
+const date3 = ref(0);
 
 onMounted(async () => {
-  loading.value = true;
-subscriptionApi
-    .get()
-    .then(function (response) {
-      tab.id = response.data.content.filter(
-        (id: { id: number }) => id.id == prop.nad
-      )[0].id;
-      tab.status = response.data.content.filter(
-        (id: { id: number }) => id.id == prop.nad
-      )[0].status;
-      tab.customerName = response.data.content.filter(
-        (id: { id: number }) => id.id == prop.nad
-      )[0].customerName;
-      tab.endDate = response.data.content.filter(
-        (id: { id: number }) => id.id == prop.nad
-      )[0].endDate;
-      tab.startDate = response.data.content.filter(
-        (id: { id: number }) => id.id == prop.nad
-      )[0].startDate;
-      tab.serviceName = response.data.content.filter(
-        (id: { id: number }) => id.id == prop.nad
-      )[0].serviceName;
-      tab.subscriptionFileId = response.data.content.filter(
-        (id: { id: number }) => id.id == prop.nad
-      )[0].subscriptionFileId;
-
-      const date1 = new Date(tab.endDate);
-      const date2 = new Date();
-      date3 = Math.trunc(
-        (date1.valueOf() - date2.valueOf()) / 24 / 60 / 60 / 1000
-      );
-    })
-    .then(function () {
-      serviceApi
-        .get()
-        .then(function (response) {
-          servobj.id = response.data.content.filter(
-            (servic: { name: string }) => servic.name === tab.serviceName
-          )[0].id;
-          servobj.acpPort = response.data.content.filter(
-            (servic: { name: string }) => servic.name === tab.serviceName
-          )[0].acpPort;
-          servobj.dns = response.data.content.filter(
-            (servic: { name: string }) => servic.name === tab.serviceName
-          )[0].dns;
-          servobj.amountOfPower = response.data.content.filter(
-            (servic: { name: string }) => servic.name === tab.serviceName
-          )[0].amountOfPower;
-          servobj.name = response.data.content.filter(
-            (servic: { name: string }) => servic.name === tab.serviceName
-          )[0].name;
-          servobj.monthlyVisits = response.data.content.filter(
-            (servic: { name: string }) => servic.name === tab.serviceName
-          )[0].monthlyVisits;
-          servobj.price = response.data.content.filter(
-            (servic: { name: string }) => servic.name === tab.serviceName
-          )[0].price;
-          getdata();
-          loading.value = false;
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    })
-    .catch(function (error) {
-      console.log(error);
-      loading.value = false;
-    });
+  getdata();
 });
 function getdata() {
   loading.value = true;
@@ -142,7 +77,7 @@ function getdata() {
 
       const date1 = new Date(tab.endDate);
       const date2 = new Date();
-      date3 = Math.trunc(
+      date3.value = Math.trunc(
         (date1.valueOf() - date2.valueOf()) / 24 / 60 / 60 / 1000
       );
     })
@@ -188,7 +123,7 @@ const customersDialog = ref(false);
 const renewalSubscription = () => {
   loading2.value = true;
   subscriptionApi
-  .renew(tab.id)
+    .renew(tab.id)
     .then((response) => {
       console.log(response);
       loading2.value = false;
@@ -216,20 +151,28 @@ const renewalSubscription = () => {
 function car() {
   cardVis.value = !cardVis.value;
 }
-const img=ref()
-onMounted( () => {
-  console.log(prop.nad)
-axios .get(`https://localhost:7003/api/Subscription/${prop.nad}/fileById`)
-.then((response)=>{
-  console.log(response.data)
-  fileView.value=response.data[0].fileName
-}).then(()=>{
-  axios.get(`https://localhost:7003/api/Subscription/page?url=${fileView.value}`)
-  .then((response)=>{
-   img.value= response.data
-  })
-})
+const img = ref();
+onMounted(() => {
+  console.log(prop.nad);
+  axios
+    .get(`https://localhost:7003/api/Subscription/${prop.nad}/fileById`)
+    .then((response) => {
+      console.log(response.data);
+      fileView.value = response.data[0].fileName;
+    })
+    .then(() => {
+      axios
+        .get(
+          `https://localhost:7003/api/Subscription/page?url=${fileView.value}`
+        )
+        .then((response) => {
+          img.value = response.data;
+        });
+    });
 });
+
+
+
 </script>
 
 <template>
@@ -264,7 +207,7 @@ axios .get(`https://localhost:7003/api/Subscription/${prop.nad}/fileById`)
         </div>
         <div v-else class="flex-1" style="text-align: center; width: 20rem">
           <Knob
-            v-if="date3 != 0"
+            v-if="date3 !== 0"
             v-model="date3"
             readonly
             :max="365"
@@ -408,28 +351,29 @@ axios .get(`https://localhost:7003/api/Subscription/${prop.nad}/fileById`)
 
           <h4 style="margin: 0">عدد الزيارات المتبقية بالساعة</h4>
           <Skeleton v-if="loading" width="50%" height="1rem"></Skeleton>
-          <ProgressBar class="mt-2" v-else :value="servobj.monthlyVisits">
-            {{ servobj.monthlyVisits }}
+          <ProgressBar class="mt-2" v-else :value="servobj.monthlyVisits ">
+            {{ servobj.monthlyVisits  }}
           </ProgressBar>
 
           <Divider class="p-divider-solid" layout="horizontal" />
 
-<h4 style="margin: 0">عقد الاشتراك :</h4>
-<Skeleton v-if="loading" width="50%" height="1rem"></Skeleton>
+          <h4 style="margin: 0">عقد الاشتراك :</h4>
+          <Skeleton v-if="loading" width="50%" height="1rem"></Skeleton>
 
-<img  :src="fileView"/>
+          <img :src="fileView" />
 
-<Inplace>
-    <template #display>
-        <span class="pi pi-search" style="vertical-align: middle"></span>
-        <span style="margin-left: 0.5rem; vertical-align: middle">View Picture</span>
-    </template>
-    <template #content>
-      {{ img }}
-        <img class="w-full" alt="Nature" :src="img" />
-    </template>
-</Inplace>
-
+          <Inplace>
+            <template #display>
+              <span class="pi pi-search" style="vertical-align: middle"></span>
+              <span style="margin-left: 0.5rem; vertical-align: middle"
+                >View Picture</span
+              >
+            </template>
+            <template #content>
+              {{ img }}
+              <img class="w-full" alt="Nature" :src="img" />
+            </template>
+          </Inplace>
         </div>
       </div>
     </template>
