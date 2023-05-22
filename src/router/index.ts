@@ -5,7 +5,6 @@ import LoginPage from "../views/LoginPage.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-
     {
       path: "/Login",
       name: "loginPage",
@@ -17,7 +16,7 @@ const router = createRouter({
       name: "home",
       component: HomeView,
     },
-  
+
     {
       path: "/:pathMatch(.*)*",
       name: "NotFound",

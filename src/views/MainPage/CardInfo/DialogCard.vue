@@ -15,14 +15,12 @@ const stateTest = defineProps<{
   iconShape: string;
 }>();
 const tab1 = ref();
-console.log(stateTest.stateCheck);
 const test = toNumber(stateTest.stateCheck);
 
 onMounted(async () => {
   subscriptionApi
     .get()
     .then(function (response) {
-      console.log(response);
       tab1.value = response.data.content.filter(
         (users: { status: number }) => users.status === test
       );
@@ -31,7 +29,6 @@ onMounted(async () => {
       console.log(error);
     });
 });
-console.log(tab1);
 
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },

@@ -20,6 +20,16 @@ const formatDate = (value: Date) => {
   return moment(value).format("yy/M/D  hh:mm a");
 };
 
+const getSeverity = (status: any) => {
+  switch (trans(status)) {
+    case "الاشتراك مفعل":
+      return "success";
+    case "الاشتراك غير مفعل":
+      return "danger";
+    case "الاشتراك مقفل":
+      return "danger";
+  }
+};
 const status = (value: number) => {
   if (value === 1) {
     return "الاشتراك مفعل";
@@ -28,6 +38,11 @@ const status = (value: number) => {
   } else if (value === 5) return "الاشتراك مقفل";
 };
 
+const trans = (value: string) => {
+  if (value == "1") return "الاشتراك مفعل";
+  else if (value == "2") return "الاشتراك غير مفعل";
+  else if (value == "5") return "الاشتراك مقفل";
+};
 console.log(store.loading);
 </script>
 
@@ -111,7 +126,9 @@ console.log(store.loading);
             :filterMenuStyle="{ width: '12rem' }"
           >
             <template #body="{ data }">
-              <Tag :value="status(data.status)" :severity="data.status" />
+              <Tag :value="status(data.status)" 
+              :severity="getSeverity(data.status)"
+/>
             </template>
             <template #filter="{ filterModel, filterCallback }">
               <Dropdown

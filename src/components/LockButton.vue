@@ -39,7 +39,7 @@ function lockButton() {
       toast.add({
         severity: "success",
         summary: "رسالة تأكيد",
-        detail: response.data,
+        detail: response.data.msg,
         life: 3000,
       });
       status.value = 5;
@@ -58,7 +58,7 @@ function unlockButton() {
       toast.add({
         severity: "success",
         summary: "رسالة تأكيد",
-        detail: response.data,
+        detail: response.data.msg,
         life: 3000,
       });
       status.value = 1;

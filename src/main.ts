@@ -9,6 +9,7 @@ import PrimeVue from 'primevue/config';
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 
+
 //style
 import './assets/style/style.scss'
 import    './assets/themes/lightTheme.css'
@@ -88,7 +89,6 @@ app.component('Checkbox', Checkbox);
 app.use(ConfirmationService);
 app.directive('tooltip', Tooltip);
 app.directive('ripple', Ripple);
-
 
 
 //------------- Data Table -------------------------
