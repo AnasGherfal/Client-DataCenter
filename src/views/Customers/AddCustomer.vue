@@ -4,7 +4,7 @@ import { useToast } from "primevue/usetoast";
 import { useCustomersStore } from "@/stores/customers";
 import router from "@/router";
 import BackButton from "@/components/BackButton.vue";
-import type { Customer } from "../../Models/CustomerModel/Customers";
+import type { Customer } from "../../Modules/CustomerModule/CustomersModule";
 import CustomerForm from "../Customers/CustomerForm.vue";
 import { customersApi } from "@/api/customers";
 

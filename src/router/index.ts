@@ -26,17 +26,17 @@ const router = createRouter({
     {
       path: "/UsersRecord",
       name: "UsersRecord",
-      component: () => import("../views/Users Mangment/UserRecords.vue"),
+      component: () => import("../views/UsersMangment/UserRecords.vue"),
       children: [
         {
           path: "AddUser",
           props: true,
-          component: () => import("../views/Users Mangment/AddUser.vue"),
+          component: () => import("../views/UsersMangment/AddUser.vue"),
         },
         {
           path: "UsersProfile/:id",
           props: true,
-          component: () => import("../views/Users Mangment/ProfileUser.vue"),
+          component: () => import("../views/UsersMangment/ProfileUser.vue"),
         },
       ],
     },
@@ -66,19 +66,19 @@ const router = createRouter({
       name: "SubscriptionsRecord",
 
       component: () =>
-        import("../views/subscriptions/SubscriptionsRecordView.vue"),
+        import("../views/subscriptions/SubscriptionsRecord.vue"),
 
       children: [
         {
           path: "addSubsciptions",
           component: () =>
-            import("../views/subscriptions/AddsubscriptionsView.vue"),
+            import("../views/subscriptions/Addsubscription.vue"),
         },
         {
           path: "SubscriptionsDetaView/:nad",
           props: true,
           component: () =>
-            import("../views/subscriptions/SubscriptionsDataView.vue"),
+            import("../views/subscriptions/SubscriptionsDetails.vue"),
         },
       ],
     },

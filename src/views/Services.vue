@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ServicesList from '@/views/Services/ServicesList.vue.js';
+import ServicesList from '@/views/Settings/Services/ServicesList.vue';
 </script>
 
 <template>

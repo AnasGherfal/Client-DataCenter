@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { validateText } from "@/tools/validations";
-import { useSubscriptionsStore } from "@/stores/subscriptions";
+import { validateText } from "../../tools/validations";
+import { useSubscriptionsStore } from "../../stores/subscriptions";
 import useVuelidate from "@vuelidate/core";
 import { helpers, required, minLength } from "@vuelidate/validators";
 import { useToast } from "primevue/usetoast";
 import { computed, reactive, ref } from "vue";
-import type { RequestUserModel } from "../../Models/UserModel/RequestUserModel";
-import BackButton from "@/components/BackButton.vue";
-import ChangePasswordUser from "@/components/User/ChangePasswordUser.vue";
+import type { RequestUserModel } from "../../Modules/UserModule/UserModuleRequest";
+import BackButton from "../../components/BackButton.vue";
+import ChangePasswordUser from '../../components/User/ChangePasswordUser.vue';
 
 const store = useSubscriptionsStore();
 const actEdit = ref(true);

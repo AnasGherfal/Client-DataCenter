@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { computed, reactive } from 'vue';
-import AddNewHours from './AddTimeShiftsView.vue';
-import ServicesList from '../Services/ServicesList.vue'
-import VisitHours from './TimeShiftsView.vue';
-import AddService from '../Services/AddService.vue'
+import AddNewHours from './TimeShift/AddTimeShiftsView.vue';
+import ServicesList from './Services/ServicesList.vue'
+import VisitHours from './TimeShift/TimeShiftsView.vue';
+import AddService from './Services/AddService.vue'
 const state = reactive({
 
 })

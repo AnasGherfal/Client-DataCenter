@@ -4,9 +4,9 @@ import { required, helpers } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import Dialog from "primevue/dialog";
-import type { Service } from "../../Models/ServicesModel/ServicesModel";
-import ServiceForm from "@/views/Services/serviceForm.vue";
-import { serviceApi } from "@/api/service";
+import type { Service } from '../../../Modules/ServicesModule/ServicesModule';
+import ServiceForm from "./serviceForm.vue";
+import { serviceApi } from "../../../api/service";
 
 const pakgeInfo = defineProps<{
   pakge: Service;

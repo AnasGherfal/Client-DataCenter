@@ -2,7 +2,7 @@
 import { computed, reactive, ref, type PropType } from "vue";
 import { useToast } from "primevue/usetoast";
 import BackButton from "@/components/BackButton.vue";
-import type { Customer } from "../../../Models/CustomerModel/Customers";
+import type { Customer } from "../../../Modules/CustomerModule/CustomersModule";
 import { email, helpers, minLength, required } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
 import { isLibyanPhoneNumber, validateText } from "@/tools/validations";

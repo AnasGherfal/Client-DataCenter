@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Representatives } from "../../../Models/CustomerModel/RepresentativesModel/Representatives";
+import type { Representatives } from "../../../../Modules/CustomerModule/RepresentativesModule/Representatives";
 import useVuelidate from "@vuelidate/core";
 import { helpers, required, email, minLength } from "@vuelidate/validators";
 import { computed, ref, getCurrentInstance } from "vue";

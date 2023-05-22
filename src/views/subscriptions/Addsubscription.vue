@@ -7,7 +7,7 @@ import BackButton from "@/components/BackButton.vue";
 import { useSubscriptionsStore } from "@/stores/subscriptions";
 import router from "@/router";
 import { useCustomersStore } from "@/stores/customers";
-import type { Subscription } from "../../Models/SubscriptionModel/SubscriptionsModels";
+import type { Subscription } from "../../Modules/SubscriptionModule/SubscriptionsRequestModule";
 import moment from "moment";
 import { subscriptionApi } from "@/api/subscriptions";
 import { serviceApi } from "@/api/service";

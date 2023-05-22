@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { user } from "@/api/user";
-import AddBotton from "@/components/AddBotton.vue";
+import { user } from "../../api/user";
+import AddBotton from "../../components/AddButton.vue";
 import { useUserStor } from "@/stores/user";
 import { ref } from "vue";
 import { useToast } from "primevue/usetoast";

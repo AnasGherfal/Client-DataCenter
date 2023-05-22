@@ -6,7 +6,7 @@ import { useToast } from "primevue/usetoast";
 import { useVistisStore } from '@/stores/visits';
 import addCompanion from './addCompanion.vue';
 import moment from 'moment';
-import type { Visit } from '../../Models/VistModel/VisitModule'
+import type { Visit } from '@/Modules/VisitModule/VisitModule'
 import BackButton from '@/components/BackButton.vue';
 import router from '@/router';
 import axios from 'axios';

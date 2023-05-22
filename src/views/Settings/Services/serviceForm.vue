@@ -3,7 +3,7 @@ import { computed, getCurrentInstance, reactive, ref } from "vue";
 import { required, helpers } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
-import type { Service } from "../../Models/ServicesModel/ServicesModel";
+import type { Service } from '../../../Modules/ServicesModule/ServicesModule';
 
 const loading = ref(false);
 const props = defineProps({

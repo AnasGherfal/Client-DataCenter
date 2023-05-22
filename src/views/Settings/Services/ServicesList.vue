@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import axios from "axios";
 import { onMounted, ref } from "vue";
 import editservice from "./EditService.vue";
-import DeletService from "./DeletService.vue";
+import DeletService from "./DeleteService.vue";
 import AddService from "./AddService.vue";
-import LockButton from "@/components/LockButton.vue";
-import { serviceApi } from "@/api/service";
+import LockButton from "../../../components/LockButton.vue";
+import { serviceApi } from "../../../api/service";
 
 const loading = ref(true);
 const packagesList = ref();
