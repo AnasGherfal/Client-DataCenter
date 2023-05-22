@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import router from "@/router";
 import axios from "axios";
 import { useToast } from "primevue/usetoast";
 import { computed, ref, reactive } from "vue";
@@ -40,7 +39,7 @@ function lockButton() {
       toast.add({
         severity: "success",
         summary: "رسالة تأكيد",
-        detail: response.data,
+        detail: response.data.msg,
         life: 3000,
       });
       status.value = 5;
@@ -59,20 +58,21 @@ function unlockButton() {
       toast.add({
         severity: "success",
         summary: "رسالة تأكيد",
-        detail: response.data,
+        detail: response.data.msg,
         life: 3000,
       });
       status.value = 1;
       emit("getdata");
-
-    }).catch((e)=>{
+    })
+    .catch((e) => {
       toast.add({
         severity: "error",
         summary: "رسالة خطأ",
         detail: e.data,
         life: 3000,
       });
-    }).finally(()=>{
+    })
+    .finally(() => {
       dialog.value = false;
       loading.value = false;
     });
