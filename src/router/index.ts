@@ -96,7 +96,7 @@ const router = createRouter({
           component: () => import("../views/Visits/VisitForm.vue"),
         },
         {
-          path: "vistDetails/:id",
+          path: "visitDetails/:id",
           props: true,
           component: () => import("../views/Visits/VisitDetailsView.vue"),
         },

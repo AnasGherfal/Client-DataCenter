@@ -8,7 +8,7 @@ import useVuelidate from "@vuelidate/core";
 import { isLibyanPhoneNumber, validateText } from "@/tools/validations";
 import { useCustomersStore } from "@/stores/customers";
 import { customersApi } from "@/api/customers";
-import DeleteCustomer from "../DeleteCustomer.vue";
+import DeleteCustomer from "../../../components/DeleteButton.vue";
 
 const actEdit = ref(true);
 const loading = ref(false);

@@ -1,32 +1,26 @@
-import { ref, computed, reactive, onMounted } from 'vue'
-import { defineStore } from 'pinia'
-import axios from "axios"
+import { ref, computed, reactive, onMounted } from "vue";
+import { defineStore } from "pinia";
+import axios from "axios";
+import { visitApi } from "@/api/visits";
 
-export const useVistisStore = defineStore('visit', () => {
-
+export const useVistisStore = defineStore("visit", () => {
   const visits = ref();
 
   onMounted(async () => {
     await getdata();
+  });
+  function getdata() {
+    visitApi
+      .get()
+      .then(function (response) {
+        visits.value = response.data.content;
 
-  })
-function getdata(){
-   axios.get("http://localhost:3000/visits")
-  .then(function (response) {
-    visits.value = response.data
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+      .finally(function () {});
+  }
 
-    console.log(visits.value)
-  })
-  .catch(function (error) {
-    console.log(error)
-  })
-  
- }
-
- 
-  
-
-
-  return {  visits, getdata }
-
-})
+  return { visits, getdata };
+});

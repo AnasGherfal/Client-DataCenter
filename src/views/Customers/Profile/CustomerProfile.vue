@@ -43,7 +43,7 @@ onMounted(async () => {
   customersApi
     .get()
     .then(function (response) {
-        customerId.id = response.data.content.filter(
+      customerId.id = response.data.content.filter(
         (users: { id: String }) => users.id == userId.value
       )[0].id;
 
@@ -80,13 +80,15 @@ onMounted(async () => {
     });
 });
 
+const representativesLength = ref();
+
 function getRepresentatives() {
   representativesApi.get().then((response) => {
     representativeId.value = response.data.content.filter(
-      (users: { customerName: string }) =>
-        users.customerName == customerId.name
+      (users: { customerName: string }) => users.customerName == customerId.name
     );
     representatives.value = response.data.content;
+    representativesLength.value = representativeId.value.length;
   });
 }
 
@@ -124,6 +126,7 @@ const getIdentityTypeText = (type: number) => {
           <Representative
             @getRepresentatives="getRepresentatives()"
             :customerStatus="customerId.status"
+            :representatives-length="representativesLength"
           />
           <div v-if="loading">
             <div class="grid p-fluid">

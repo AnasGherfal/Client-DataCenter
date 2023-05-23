@@ -5,22 +5,27 @@ import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import { useVistisStore } from "@/stores/visits";
 import router from "@/router";
-import type { Visit } from "@/Modules/VisitModule/VisitModule";
+import type { Visit } from "@/Modules/VisitModule/VisitRequestModule";
 import BackButton from "@/components/BackButton.vue";
 
 const store = useVistisStore();
-const data = defineProps<{ customer: any }>();
+const data = defineProps<{ visit: any }>();
 const editable = ref(true);
 
 const visit: Visit = reactive({
-  customerName: data.customer.name,
-  authorizedName: data.customer.authorizedName,
-  companionName: data.customer.companionName,
-  visitReason: data.customer.visitReason,
-  startVisit: data.customer.startVisit,
-  endVisit: data.customer.endVisit,
-  visitDuration: data.customer.visitDuration,
-  price: data.customer.price,
+
+  startTime: data.visit.startTime,
+  endTime: data.visit.endTime,
+  customerName: data.visit.customerName,
+  visitType: data.visit.visitType,
+  notes: data.visit.notes,
+  timeShift: data.visit.timeShift,
+  totalMin: data.visit.totalMin,
+  price: data.visit.price,
+  invoiceId: data.visit.invoiceId,
+  representives: data.visit.representative,
+  companions: data.visit.companions,
+
 });
 
 const compList = reactive([{}]);
@@ -46,7 +51,7 @@ const rules = computed(() => {
     customerName: {
       required: helpers.withMessage("اسم العميل مطلوب", required),
     },
-    authorizedName: {
+    representives: {
       required: helpers.withMessage(" المخول مطلوب", required),
     },
   };
@@ -118,7 +123,7 @@ function backButton() {
                   <InputText
                     id="name"
                     type="text"
-                    v-model="visit.authorizedName"
+                    v-model="visit.representives"
                     :disabled="editable"
                   />
                   <label
@@ -135,7 +140,7 @@ function backButton() {
                   <InputText
                     id="name"
                     type="text"
-                    v-model="visit.visitReason"
+                    v-model="visit.visitType"
                     :disabled="editable"
                   />
                   <label
@@ -150,7 +155,7 @@ function backButton() {
                 <span class="p-float-label">
                   <Calendar
                     inputId="startVisit"
-                    v-model="visit.startVisit"
+                    v-model="visit.startTime"
                     dateFormat="yy/mm/dd"
                     :showTime="true"
                     selectionMode="single"
@@ -169,7 +174,7 @@ function backButton() {
                 <span class="p-float-label">
                   <Calendar
                     inputId="startVisit"
-                    v-model="visit.endVisit"
+                    v-model="visit.endTime"
                     dateFormat="yy/mm/dd"
                     :showTime="true"
                     selectionMode="single"
@@ -188,7 +193,7 @@ function backButton() {
                 <span class="p-float-label">
                   <InputText
                     id="companionName"
-                    v-model="visit.visitDuration"
+                    v-model="visit.totalMin"
                     :readonly="true"
                     :disabled="true"
                   />

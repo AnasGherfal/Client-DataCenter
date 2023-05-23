@@ -6,7 +6,7 @@ import { useToast } from "primevue/usetoast";
 import AddBotton from "@/components/AddButton.vue";
 import LockButton from "@/components/LockButton.vue";
 import { customersApi } from "@/api/customers";
-import DeleteCustomer from "./DeleteCustomer.vue";
+import DeleteCustomer from "../../components/DeleteButton.vue";
 
 const toast = useToast();
 const store = useCustomersStore();
@@ -250,6 +250,7 @@ const getSelectedStatusLabel = (value: any) => {
                     :rot-name="rotName"
                     :name="slotProps.data.name"
                     :id="slotProps.data.id"
+                    type = "customer"
                   >
                   </DeleteCustomer>
                 </span>
