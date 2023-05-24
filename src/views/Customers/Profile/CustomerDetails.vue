@@ -24,6 +24,7 @@ const customer: Customer = reactive({
   secondaryPhone: dataClinet.customer.secondaryPhone,
   address: dataClinet.customer.address,
   status: dataClinet.customer.status,
+  file: dataClinet.customer.file
 });
 
 const toast = useToast();
