@@ -252,7 +252,6 @@ function backButton() {
           </div>
         </div>
 
-        <DataTable></DataTable>
       </template>
     </Card>
   </div>
