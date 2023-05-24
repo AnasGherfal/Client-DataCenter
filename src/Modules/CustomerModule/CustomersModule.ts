@@ -6,5 +6,5 @@ export interface Customer {
     address: string;
     primaryPhone: string;
     secondaryPhone: string;
-    file?: any | null;
+    file:string|null;
   }

@@ -50,6 +50,7 @@ import Skeleton from 'primevue/skeleton';
 import Dialog from 'primevue/dialog';
 import Checkbox from 'primevue/checkbox';
 import ProgressBar from 'primevue/progressbar';
+
 const app = createApp(App)
 
 app.use(createPinia())

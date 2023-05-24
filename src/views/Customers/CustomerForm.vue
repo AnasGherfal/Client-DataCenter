@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, getCurrentInstance, ref } from "vue";
+import { computed, getCurrentInstance, reactive, ref } from "vue";
 import { email, required, helpers, minLength } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
@@ -25,6 +25,13 @@ const props = defineProps({
 const toast = useToast();
 
 const customers = ref(props.customers);
+
+const onFileUpload = (event: any) => {
+  console.log(customers.value.file);
+  console.log(event.target.files)
+  customers.value.file = event.target.file;
+  console.log(event.target.file[0]);
+};
 
 const rules = computed(() => {
   return {
@@ -59,13 +66,20 @@ const instance = getCurrentInstance();
 
 const submitForm = async () => {
   const result = await v$.value.$validate();
+  const customerForm = new FormData();
+  customerForm.append("name", customers.value.name);
+  customerForm.append("email", customers.value.email);
+  customerForm.append("address", customers.value.address);
+  customerForm.append("primaryPhone", customers.value.primaryPhone);
+  customerForm.append("secondaryPhone", customers.value.secondaryPhone);
+  customerForm.append("file", customers.value.file );
 
   try {
     if (result) {
       if (instance) {
         // Form submission logic here
 
-        instance.emit("form-submit", customers.value);
+        instance.emit("form-submit", customerForm);
       }
     } else {
       toast.add({
@@ -176,8 +190,19 @@ const isDisabled = ref(true);
             <label for="secondaryPhone">رقم هاتف 2</label>
           </span>
         </div>
-
-        <div class="field col-12 md:col-6 lg:col-4">
+        <div class="form-group">
+              <input
+              style="
+                  font-family: tajawal;
+                  width: 100%;
+                  height: 40px;
+                  border-radius: 10px;
+                  background-color: white;
+                  color: black;
+                  border-color: gray;
+                " type="file" @change="onFileUpload" />
+            </div>
+        <!-- <div class="field col-12 md:col-6 lg:col-4">
           <FileUpload
             style="
               width: 100%;
@@ -198,7 +223,7 @@ const isDisabled = ref(true);
             :maxFileSize="1000000"
             invalidFileSizeMessage="Exceeded the maximum file size"
           />
-        </div>
+        </div> -->
       </div>
       <Button
         @click="submitForm"

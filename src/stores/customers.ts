@@ -21,6 +21,9 @@ export const useCustomersStore = defineStore("customer", () => {
       })
       .catch(function (error) {
         console.log(error);
+      })
+      .finally(()=>{
+        loading.value = false;
       });
   }
   return { customers, getCustomers, loading, data };

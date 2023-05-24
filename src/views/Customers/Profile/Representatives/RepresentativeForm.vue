@@ -119,7 +119,7 @@ const selectedIdentityTypeText = computed(() => {
             v-model="representatives.firstName"
           />
           <label for="name">الاسم </label>
-          <div style="height: 10px">
+          <div style="height: 2px">
             <span
               v-for="error in v$.firstName.$errors"
               :key="error.$uid"
@@ -134,7 +134,7 @@ const selectedIdentityTypeText = computed(() => {
         <span class="p-float-label">
           <InputText id="name" type="text" v-model="representatives.lastName" />
           <label for="name">اللقب </label>
-          <div style="height: 10px">
+          <div style="height: 2px">
             <span
               v-for="error in v$.lastName.$errors"
               :key="error.$uid"
@@ -149,7 +149,7 @@ const selectedIdentityTypeText = computed(() => {
         <span class="p-float-label">
           <InputText id="email" type="text" v-model="representatives.email" />
           <label for="email">البريد الإلكتروني</label>
-          <div style="height: 10px">
+          <div style="height: 2px">
             <span
               v-for="error in v$.email.$errors"
               :key="error.$uid"
@@ -168,7 +168,7 @@ const selectedIdentityTypeText = computed(() => {
             style="direction: ltr"
           />
           <label for="inputtext">رقم هاتف </label>
-          <div style="height: 10px">
+          <div style="height: 2px">
             <span
               v-for="error in v$.phoneNo.$errors"
               :key="error.$uid"

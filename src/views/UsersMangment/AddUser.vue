@@ -11,7 +11,7 @@ import { useToast } from "primevue/usetoast";
 import BackButton from "@/components/BackButton.vue";
 import router from "@/router";
 import { user } from "@/api/user";
-import type { ResponseUserModel } from "@/Models/UserModel/ResponsUserModel";
+import type { ResponseUserModel } from "../../Modules/UserModule/UserModuleResponse";
 import { useUserStor } from "@/stores/user";
 
 
@@ -22,16 +22,15 @@ const state: ResponseUserModel = reactive({
   fullName: "",
   email: "",
   empId: null,
-  permission: 1,
+  permission: null,
 });
 
 const selectedCities = ref();
 const cities = ref([
-  { name: "New York", code: "NY" , value:1 },
-  { name: "Rome", code: "RM" , value:2 },
-  { name: "London", code: "LDN" , value:3 },
+  { name: "Rome", code: "RM" , value:1 },
+  { name: "London", code: "LDN" , value:2 },
   { name: "Istanbul", code: "IST" , value:4 },
-  { name: "Paris", code: "PRS" , value:5 },
+  { name: "Paris", code: "PRS" , value:8 },
 ]);
 
 const rules = computed(() => {
@@ -42,8 +41,8 @@ const rules = computed(() => {
     empId: {
       required: helpers.withMessage("الحقل مطلوب", required),
       minLength: helpers.withMessage(
-        "يجب أن يحتوي على الأقل 3 أحرف",
-        minLength(3)
+        "يجب أن يحتوي 4 ارقام",
+        minLength(4)
       ),
     },
     email: {
@@ -65,6 +64,7 @@ const submitForm = async () => {
   console.log(state)
 
   if (result) {
+    state.permission=selectedCities
     loading.value = true;
 
     user
@@ -194,7 +194,7 @@ const resetForm = () => {
                 </div>
                 <!-- <div style="height: 2px">
                   <error
-                    v-for="error in v$.Password.$errors"
+                    v-for="error in v$.selectedCities.$errors"
                     :key="error.$uid"
                     class="p-error"
                   >
@@ -204,43 +204,6 @@ const resetForm = () => {
               </span>
             </div>
 
-            <!-- <div class="field col-12 md:col-6 lg:col-4">
-              <span class="p-float-label">
-                <Password v-model="state.Password" toggle-mask dir="ltr" />
-                <label style="right: 40px" for="subscriptionType"
-                  >كلمة المرور</label
-                >
-                <div style="height: 2px">
-                  <error
-                    v-for="error in v$.Password.$errors"
-                    :key="error.$uid"
-                    class="p-error"
-                    >{{ error.$message }}</error
-                  >
-                </div>
-              </span>
-            </div>
-
-            <div class="field col-12 md:col-6 lg:col-4">
-              <span class="p-float-label">
-                <Password
-                  v-model="state.PasswordConfirmation"
-                  toggle-mask
-                  dir="ltr"
-                />
-                <label style="right: 40px" for="subscriptionType"
-                  >تأكيد كلمة المرور</label
-                >
-                <div style="height: 2px">
-                  <error
-                    v-for="error in v$.PasswordConfirmation.$errors"
-                    :key="error.$uid"
-                    class="p-error"
-                    >{{ error.$message }}</error
-                  >
-                </div>
-              </span>
-            </div> -->
           </div>
           <Button
             class="p-button-primry"

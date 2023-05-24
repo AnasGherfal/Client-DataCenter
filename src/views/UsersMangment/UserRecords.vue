@@ -87,6 +87,28 @@ const getSelectedStatusLabel = (value:any) => {
           currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} عميل"
           responsiveLayout="scroll"
         >
+        
+        <template #empty>
+              <div
+                class="no-data-message"
+                style="
+                  height: 100px;
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  justify-content: center;
+                  padding: 20px;
+                  background-color: #f9f9f9;
+                  border-radius: 5px;
+                  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                "
+              >
+                <p style="font-size: 18px; font-weight: bold; color: #888">
+                  لا يوجد بيانات
+                </p>
+              </div>
+            </template>
+
           <Column
             field="fullName"
             header="اسم الموظف"
