@@ -18,7 +18,6 @@ const filters = ref({
 });
 
 const columns = ref([
-  // {field: 'status', header: 'الحاله'},
   { field: "email", header: "البريد الإكتروني" },
 
   { field: "address", header: "العنوان" },
@@ -54,38 +53,38 @@ const trans = (value: string) => {
 
 const rotName = ref();
 
-function getId(index: {}) {
-  rotName.value = index;
-  customersDialog.value = true;
-}
+// function getId(index: {}) {
+//   rotName.value = index;
+//   customersDialog.value = true;
+// }
 
-const deleteCustomer = () => {
-  loading.value = true;
+// const deleteCustomer = () => {
+//   loading.value = true;
 
-  customersApi
-    .remove(rotName.value.id)
-    .then((response) => {
-      store.getCustomers();
-      toast.add({
-        severity: "success",
-        summary: "تم الحذف",
-        detail: response.data,
-        life: 3000,
-      });
-      customersDialog.value = false;
-    })
-    .catch((error) => {
-      toast.add({
-        severity: "warn",
-        summary: "حدث خطأ",
-        detail: error,
-        life: 3000,
-      });
-    })
-    .finally(() => {
-      loading.value = false;
-    });
-};
+//   customersApi
+//     .remove(rotName.value.id)
+//     .then((response) => {
+//       store.getCustomers();
+//       toast.add({
+//         severity: "success",
+//         summary: "تم الحذف",
+//         detail: response.data,
+//         life: 3000,
+//       });
+//       customersDialog.value = false;
+//     })
+//     .catch((error) => {
+//       toast.add({
+//         severity: "warn",
+//         summary: "حدث خطأ",
+//         detail: error,
+//         life: 3000,
+//       });
+//     })
+//     .finally(() => {
+//       loading.value = false;
+//     });
+// };
 
 const getSelectedStatusLabel = (value: any) => {
   const status = statuses.value.find((s) => s.value === value);

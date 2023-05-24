@@ -19,17 +19,17 @@ const loading = ref(false);
 const ServicesList = ref();
 
 const state: Subscription = reactive({
-  serviceId: '',
-  customerId: '',
+  serviceId: "",
+  customerId: "",
   startDate: "",
   endDate: "",
   file: "",
-  totalPrice:''
+  totalPrice: "",
 });
 
 onMounted(async () => {
   serviceApi
-  .get()
+    .get()
     .then(function (response) {
       ServicesList.value = response.data.content;
     })
@@ -61,10 +61,13 @@ const toast = useToast();
 
 const v$ = useVuelidate(rules, state);
 
-const onFileUpload=  (event:any)=> {
-          state.file = event.target.files[0]
-          console.log(state.file)
-        }
+const onFileUpload = (event: any) => {
+  console.log(state.file);
+
+  console.log(event.target.files)
+  state.file = event.target.files[0];
+  console.log(state.file);
+};
 
 const submitForm = async () => {
   console.log(moment(state.startDate).format("yy/M/d hh:mm a"));
@@ -74,7 +77,7 @@ const submitForm = async () => {
   if (result) {
     loading.value = true;
 
-     const subrequest: Subscription = reactive({
+    const subrequest: Subscription = reactive({
       serviceId: state.serviceId,
       customerId: state.customerId,
       startDate: moment(state.startDate).format("YYYY/MM/DD"),
@@ -84,19 +87,19 @@ const submitForm = async () => {
     });
 
     const subdata = new FormData();
-    subdata.append("serviceId",  subrequest.serviceId);
+    subdata.append("serviceId", subrequest.serviceId);
     subdata.append("customerId", subrequest.customerId.id);
     subdata.append("startDate", subrequest.startDate);
     subdata.append("endDate", subrequest.endDate);
     subdata.append("file", state.file, state.file.name);
     subdata.append("totalPrice", subrequest.totalPrice);
 
-    console.log(subdata)
+    console.log(subdata);
 
     subscriptionApi
-    .create(subdata)
-    .then((Response)=>{
-      toast.add({
+      .create(subdata)
+      .then((Response) => {
+        toast.add({
           severity: "success",
           summary: "تمت اضافة اشتراك",
           detail: Response.data.msg,
@@ -106,7 +109,8 @@ const submitForm = async () => {
         loading.value = false;
         store.getSub();
         router.go(-1);
-    }).catch(function (error) {
+      })
+      .catch(function (error) {
         console.log(error);
         toast.add({
           severity: "error",
@@ -133,14 +137,14 @@ const minDate = ref(new Date());
 const invalidDates = ref();
 
 const selectedCustomer = ref();
-const filteredCountries = ref();
+const filteredCustomer = ref();
 
 const search = (event: any) => {
   setTimeout(() => {
     if (!event.query.trim().length) {
-      filteredCountries.value = [...storeCustomer.customers];
+      filteredCustomer.value = [...storeCustomer.customers];
     } else {
-      filteredCountries.value = storeCustomer.customers.filter(
+      filteredCustomer.value = storeCustomer.customers.filter(
         (users: { name: String }) => {
           return users.name.toLowerCase().startsWith(event.query.toLowerCase());
         }
@@ -148,7 +152,6 @@ const search = (event: any) => {
     }
   }, 250);
 };
-
 </script>
 
 <template>
@@ -169,7 +172,7 @@ const search = (event: any) => {
                 <AutoComplete
                   v-model="state.customerId"
                   optionLabel="name"
-                  :suggestions="filteredCountries"
+                  :suggestions="filteredCustomer"
                   @complete="search"
                 />
                 <label for="customerName">العملاء</label>
@@ -254,7 +257,16 @@ const search = (event: any) => {
               </span>
             </div>
             <div class="form-group">
-                <input type="file" @change="onFileUpload">
+              <input
+              style="
+                  font-family: tajawal;
+                  width: 100%;
+                  height: 40px;
+                  border-radius: 10px;
+                  background-color: white;
+                  color: black;
+                  border-color: gray;
+                " type="file" @change="onFileUpload" />
             </div>
             <div class="field col-12 md:col-6 lg:col-4" style="height: 1%">
               <FileUpload
@@ -267,7 +279,7 @@ const search = (event: any) => {
                   color: black;
                   border-color: gray;
                 "
-                
+                type="file"
                 mode="basic"
                 name="file"
                 @change="onFileUpload"
@@ -301,6 +313,21 @@ const search = (event: any) => {
   </div>
 </template>
 <style>
+input[type=file]::file-selector-button {
+  margin-right: 20px;
+  border: none;
+  background: #084cdf;
+  padding: 10px 20px;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  transition: background .2s ease-in-out;
+}
+
+input[type=file]::file-selector-button:hover {
+  background: #0d45a5;
+}
+
 error {
   font-size: 12px;
   font-weight: bold;

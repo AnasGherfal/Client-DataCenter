@@ -18,7 +18,7 @@ const customer: Customer = reactive({
   primaryPhone: "",
   secondaryPhone: "",
   address: "",
-  file: null,
+  file: ""
 });
 
 const onFormSubmit = async (customer: Customer) => {

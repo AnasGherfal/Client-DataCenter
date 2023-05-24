@@ -67,6 +67,7 @@ const resetForm = () => {
         
       </template>
       <template #content>
+
         <div v-if="user.status == 5" class="mb-5">
         <div class="warning-message">
           <div class="warning-message-icon"></div>

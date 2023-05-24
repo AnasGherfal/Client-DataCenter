@@ -6,7 +6,7 @@ export const subscriptionApi = {
     const response = await httpClient.get(`/Subscription`);
     return response;
   },
-  create: async function (subscription: Subscription) {
+  create: async function (subscription: FormData) {
     const response = await httpClient.post(`/subscription`, subscription);
     return response;
   },

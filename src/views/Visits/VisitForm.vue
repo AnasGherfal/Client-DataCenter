@@ -5,28 +5,23 @@ import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import { useVistisStore } from '@/stores/visits';
 import addCompanion from './addCompanion.vue';
+import type {companions} from '../../Modules/VisitModule/companionsModule'
 import moment from 'moment';
 import type { Visit } from '@/Modules/VisitModule/VisitModule'
 import BackButton from '@/components/BackButton.vue';
 import router from '@/router';
 import axios from 'axios';
+import { useCustomersStore } from '@/stores/customers';
 
 
 const store = useVistisStore();
+const storeCustomers=useCustomersStore();
 const loading = ref(false);
 
-const visit: Visit = reactive({
-    customerName: "",
-    authorizedName: "",
-    companionName: "",
-    visitReason: "",
-    startVisit: "",
-    endVisit: "",
-    visitDuration: "ساعه",
-    price: "100دينار",
-})
+const visit:Visit;
 
-const compList = reactive([{}])
+
+const compList:companions[]
 
 
 const visitReason = ref([
@@ -38,7 +33,7 @@ const visitReason = ref([
 const startDate = ref(new Date());
 const endDate = ref(new Date());
 
-const date = new Date((moment(visit.startVisit).format('hh:mm a')))
+const date = new Date((moment(visit.startTime).format('hh:mm a')))
 const minDate = ref(date);
 
 
@@ -71,7 +66,7 @@ const rules = computed(() => {
 
 // Validate that end date is not before start date
 const isEndDateValid = computed(() => {
-    return !visit.endVisit || !visit.startVisit || visit.endVisit >= visit.startVisit;
+    return !visit.endTime || !visit.startTime || visit.endTime >= visit.startTime;
 });
 
 const toast = useToast();
@@ -79,13 +74,13 @@ const toast = useToast();
 const v$ = useVuelidate(rules, visit);
 
 function invalidDate() {
-    if (visit.endVisit <= visit.startVisit) {
+    if (visit.endTime <= visit.startTime) {
         alert('error')
     }
 }
 
 const submitForm = async () => {
-    console.log(visit.startVisit)
+    console.log(visit.startTime)
 
     const result = await v$.value.$validate();
     if (result) {
@@ -122,18 +117,9 @@ const submitForm = async () => {
 
 }
 
-const resetForm = () => {
-    visit.customerName = '';
-    visit.authorizedName = '';
-    visit.companionName = '';
-    visit.visitReason = "";
-    visit.startVisit = "";
-    visit.endVisit = "",
-        visit.visitDuration = "",
-        visit.price = ""
-}
 
 
+const customerselect=ref()
 </script>
 
 <template >
@@ -144,7 +130,7 @@ const resetForm = () => {
                 <BackButton style="float: left;" />
 
                 <Divider />
-                {{ visit.authorizedName }}
+                {{ visit.representives }}
 
             </template>
             <template #content>
@@ -154,7 +140,7 @@ const resetForm = () => {
 
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label">
-                                <MultiSelect v-model="visit.customerName" :options="store.visits" optionLabel="name"
+                                <MultiSelect v-model="customerselect" :options="storeCustomers.customers" optionLabel="name"
                                     :filter="true" placeholder=" اختر عميل" :selectionLimit="1" />
                                 <label for="customerName">العملاء</label>
 
@@ -165,9 +151,24 @@ const resetForm = () => {
 
                         </div>
 
+                        <div class="field col-12 md:col-6 lg:col-4">
+                            <span class="p-float-label">
+                                <MultiSelect v-model="visit.subscriptionId" :options="storeCustomers.customers" optionLabel="name"
+                                    :filter="true" placeholder=" اختر الخدمة" :selectionLimit="1" />
+                                <label for="customerName">العملاء</label>
+
+                                <error v-for="error in v$.customerName.$errors" :key="error.$uid" class="p-error">{{
+                                    error.$message }}</error>
+
+                            </span>
+
+                        </div>
+
+                        
+
                         <div class="field col-12 md:col-6 lg:col-4 ">
                             <span class="p-float-label">
-                                <MultiSelect v-model="visit.authorizedName" :options="store.visits"
+                                <MultiSelect v-model="visit.representives" :options="store.visits"
                                     optionLabel="authorizedName" placeholder="اختر" emptySelectionMessage="ll"
                                     :selectionLimit="2" />
                                 <label for="authorizedName">المخولين</label>
@@ -181,7 +182,7 @@ const resetForm = () => {
 
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
-                                <Dropdown id="" v-model="visit.visitReason" :options="visitReason" optionLabel="name" />
+                                <Dropdown id="" v-model="visit.visitTypeId" :options="visitReason" optionLabel="name" />
                                 <label for="visitReason">سبب الزيارة </label>
                                 <error v-for="error in v$.visitReason.$errors" :key="error.$uid" class="p-error">{{
                                     error.$message }}</error>
@@ -192,7 +193,7 @@ const resetForm = () => {
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
 
-                                <Calendar inputId="startVisit" v-model="visit.startVisit" dateFormat="yy/mm/dd"
+                                <Calendar inputId="startVisit" v-model="visit.startTime" dateFormat="yy/mm/dd"
                                     :showTime="true" selectionMode="single" :minDate="startDate" :showButtonBar="true"
                                     :manualInput="true" :stepMinute="5" hourFormat="12" @onChange="updateEndDate" />
                                 <label for="startVisit">تاريخ بداية الزيارة </label>
@@ -204,7 +205,7 @@ const resetForm = () => {
 
                         <div class="field col-12 md:col-6 lg:col-4">
                             <span class="p-float-label ">
-                                <Calendar inputId="endVisit" v-model="visit.endVisit" dateFormat="yy/mm/dd" :showTime="true"
+                                <Calendar inputId="endVisit" v-model="visit.endTime" dateFormat="yy/mm/dd" :showTime="true"
                                     selectionMode="single" :minDate="startDate" :showButtonBar="true" :manualInput="true"
                                     :stepMinute="5" hourFormat="12" />
                                 <label for="endVisit">تاريخ انتهاء الزيارة </label>
@@ -216,23 +217,31 @@ const resetForm = () => {
 
                         <div class="field col-6 md:col-3 lg:col-2">
                             <span class="p-float-label ">
-                                <InputText id="companionName" v-model="visit.visitDuration" :readonly="true" />
+                                <InputText id="companionName"  :readonly="true" />
                                 <label for="companionName"> مدة الزيارة </label>
 
                             </span>
                         </div>
                         <div class="field col-6 md:col-3 lg:col-2">
                             <span class="p-float-label ">
-                                <InputText id="companionName" v-model="visit.price" :readonly="true" />
+                                <InputText id="companionName" :readonly="true" />
                                 <label for="companionName"> السعر </label>
                             </span>
                         </div>
+
+                        <div class="field col-12 md:col-8 lg:col-8">
+                            <span class="p-float-label ">
+                                <Textarea v-model="visit.notes" rows="5" cols="77" />                                <label for="companionName"> الملاحظات</label>
+                            </span>
+                        </div>
+                    
                     </div>
+         
 
 
 
 
-                    <addCompanion :compList="compList" />
+                    <addCompanion :compList="compList"  />
                     <br><br>
                     <div v-if="compList.length > 1">
                         {{ compList }}
@@ -246,7 +255,7 @@ const resetForm = () => {
                     </div>
 
                     <Button @click="submitForm" icon="fa-solid fa-plus" label="إنشاء" type="submit" />
-                    <Button @click="resetForm" icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger"
+                    <Button  icon="fa-solid fa-delete-left" label="مسح" class="p-button-danger"
                         style="margin-right: .5rem;" />
                 </form>
 
