@@ -26,6 +26,8 @@ const userId = computed(() => {
 });
 
 const visits: Visit = reactive({
+  expectedStartTime: "",
+  expectedEndTime: "",
   startTime: "",
   endTime: "",
   customerName: "",
@@ -36,7 +38,7 @@ const visits: Visit = reactive({
   price: 0,
   invoiceId: 0,
   representives: [],
-  companions:[],
+  companions: [],
 });
 
 const compList = reactive([{}]);
@@ -45,7 +47,7 @@ onMounted(async () => {
   visitApi
     .get()
     .then((response) => {
-        getVisits.value = response.data.content.filter(
+      getVisits.value = response.data.content.filter(
         (visit: { id: String }) => visit.id == userId.value
       )[0];
       console.log(getVisits);
