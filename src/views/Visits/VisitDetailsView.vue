@@ -45,10 +45,10 @@ onMounted(async () => {
   visitApi
     .get()
     .then((response) => {
-        getVisits.id = response.data.content.filter(
-        (visit: { id: String }) => visits.id == id.id
+        getVisits.value = response.data.content.filter(
+        (visit: { id: String }) => visit.id == userId.value
       )[0];
-      console.log(visits);
+      console.log(getVisits);
     })
     .catch((error) => {
       console.log(error);
@@ -88,7 +88,7 @@ function backButton() {
 </script>
 
 <template>
-  <VisitDetails :visits="visits" :key="visits.id"></VisitDetails>
+  <VisitDetails :visit="getVisits" :key="getVisits.id"></VisitDetails>
 </template>
 <style>
 .p-button-icon {

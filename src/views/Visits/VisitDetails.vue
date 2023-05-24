@@ -7,13 +7,13 @@ import { useVistisStore } from "@/stores/visits";
 import router from "@/router";
 import type { Visit } from "@/Modules/VisitModule/VisitRequestModule";
 import BackButton from "@/components/BackButton.vue";
+import type Textarea from "primevue/textarea";
 
 const store = useVistisStore();
 const data = defineProps<{ visit: any }>();
 const editable = ref(true);
 
 const visit: Visit = reactive({
-
   startTime: data.visit.startTime,
   endTime: data.visit.endTime,
   customerName: data.visit.customerName,
@@ -25,7 +25,6 @@ const visit: Visit = reactive({
   invoiceId: data.visit.invoiceId,
   representives: data.visit.representative,
   companions: data.visit.companions,
-
 });
 
 const compList = reactive([{}]);
@@ -110,7 +109,7 @@ function backButton() {
                 <span class="p-float-label">
                   <InputText
                     v-model="visit.customerName"
-                    optionLabel="name"
+                    optionLabel="customerName"
                     placeholder=" اختر عميل"
                     :disabled="editable"
                   />
@@ -121,14 +120,14 @@ function backButton() {
               <div class="field col-12 md:col-6 lg:col-4">
                 <span class="p-float-label">
                   <InputText
-                    id="name"
+                    id="representives"
                     type="text"
                     v-model="visit.representives"
                     :disabled="editable"
                   />
                   <label
                     style="color: black; top: -0.75rem; font-size: 12px"
-                    for="authorizedName"
+                    for="representives"
                   >
                     المخوليين
                   </label>
@@ -138,14 +137,14 @@ function backButton() {
               <div class="field col-12 md:col-6 lg:col-4">
                 <span class="p-float-label">
                   <InputText
-                    id="name"
+                    id="visitType"
                     type="text"
                     v-model="visit.visitType"
                     :disabled="editable"
                   />
                   <label
                     style="color: black; top: -0.75rem; font-size: 12px"
-                    for="authorizedName"
+                    for="visitType"
                     >سبب الزيارة
                   </label>
                 </span>
@@ -154,7 +153,7 @@ function backButton() {
               <div class="field col-12 md:col-6 lg:col-4">
                 <span class="p-float-label">
                   <Calendar
-                    inputId="startVisit"
+                    inputId="startTime"
                     v-model="visit.startTime"
                     dateFormat="yy/mm/dd"
                     :showTime="true"
@@ -166,7 +165,7 @@ function backButton() {
                     hourFormat="12"
                     :disabled="editable"
                   />
-                  <label for="startVisit">تاريخ بداية الزيارة </label>
+                  <label for="startTime">تاريخ بداية الزيارة </label>
                 </span>
               </div>
 
@@ -185,7 +184,7 @@ function backButton() {
                     hourFormat="12"
                     :disabled="editable"
                   />
-                  <label for="startVisit">تاريخ انتهاء الزيارة </label>
+                  <label for="endTime">تاريخ انتهاء الزيارة </label>
                 </span>
               </div>
 
@@ -210,6 +209,27 @@ function backButton() {
                     :disabled="true"
                   />
                   <label for="companionName"> السعر </label>
+                </span>
+              </div>
+
+              <div class="field col-6 md:col-3 lg:col-2">
+                <span class="p-float-label">
+                  <InputText
+                    id="companionName"
+                    v-model="visit.timeShift"
+                    :disabled="editable"
+                  />
+                  <label for="companionName"> وقت الزيارة </label>
+                </span>
+              </div>
+              <div class="field col-6 md:col-3 lg:col-2">
+                <span class="p-float-label">
+                  <Textarea
+                    id="companionName"
+                    v-model="visit.notes"
+                    :disabled="editable"
+                  />
+                  <label for="companionName"> الملاحظات </label>
                 </span>
               </div>
             </div>

@@ -50,6 +50,8 @@ import Skeleton from 'primevue/skeleton';
 import Dialog from 'primevue/dialog';
 import Checkbox from 'primevue/checkbox';
 import ProgressBar from 'primevue/progressbar';
+import Textarea from 'primevue/textarea';
+
 const app = createApp(App)
 
 app.use(createPinia())
@@ -85,6 +87,7 @@ app.component('ToggleButton', ToggleButton);
 app.component('Skeleton', Skeleton);
 app.component('Dialog', Dialog);
 app.component('Checkbox', Checkbox);
+app.component('Textarea', Textarea);
 
 app.use(ConfirmationService);
 app.directive('tooltip', Tooltip);

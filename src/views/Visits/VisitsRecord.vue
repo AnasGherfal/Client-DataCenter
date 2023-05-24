@@ -116,7 +116,8 @@ console.log(store.visits);
             <template #body="slotProps">
                 <span v-if="slotProps.data.status !== 5">
 
-                <DeleteVisit></DeleteVisit>
+                <DeleteVisit
+                ></DeleteVisit>
                 </span>
 
               <RouterLink
