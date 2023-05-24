@@ -11,6 +11,7 @@ import { representativesApi } from "@/api/representatives";
 const route = useRoute();
 const prop = defineProps<{
   customerStatus: number | undefined;
+  representativesLength: number;
 }>();
 const userId = computed(() => {
   if (route && route.params && route.params.id) {
@@ -46,6 +47,14 @@ const onFormSubmit = async (representative: Representatives) => {
       });
     })
     .catch((error) => {
+      if (prop.representativesLength > 2) {
+        toast.add({
+          severity: "warn",
+          summary: "هذا العميل لديه الحد الأقصى من عدد المخوليين",
+          detail: error,
+          life: 3000,
+        });
+      }
       console.log(error);
     })
     .finally(() => {
@@ -69,8 +78,13 @@ const openModal = () => {
 </script>
 
 <template>
-  <div v-if="prop.customerStatus !== 5">
-    <Button @click="openModal" class="p-button-primary mb-4">
+  <div style="display: flex; align-items: center;">
+    <Button
+      @click="openModal"
+      class="p-button-primary mb-4"
+      style="display: flex"
+      :disabled="prop.customerStatus == 5 || prop.representativesLength >= 2"
+    >
       اضافة مُخول
     </Button>
     <Dialog
@@ -91,6 +105,11 @@ const openModal = () => {
       </template>
     </Dialog>
   </div>
+    <div v-if="prop.representativesLength >= 2" class="warning-message" style="margin-bottom: 1rem; margin-top: -1rem;">
+      <div class="warning-message-icon"></div>
+      <div class="warning-message-text">
+        هذا العميل لديه الحد الأقصى من عدد المخوليين      </div>
+    </div>
 </template>
 
 <style>

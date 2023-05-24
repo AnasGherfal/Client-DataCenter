@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { customersApi } from "@/api/customers";
 import { useCustomersStore } from "@/stores/customers";
+import axios from "axios";
 import { useToast } from "primevue/usetoast";
 import { ref } from "vue";
 
@@ -11,14 +12,15 @@ const dialog = ref(false);
 
 const props = defineProps<{
   name:string,
-  id:number
+  id:number,
+  type:string,
 }>();
 
 console.log(props.name)
 const deleteCustomer = () => {
   loading.value = true;
-  customersApi
-    .remove(props.id)
+  axios
+    .delete(`https://localhost:7003/api/${props.type}/${props.id}`)
     .then((response) => {
       store.getCustomers();
       toast.add({
@@ -47,7 +49,7 @@ const deleteCustomer = () => {
   <Button
     @click="dialog=true"
     v-tooltip.top="{ value: 'حذف', fitContent: true }"
-    icon="fa-solid fa-trash-can"
+    icon="fa-solid fa-trash"
     severity="danger"
     text
     rounded
