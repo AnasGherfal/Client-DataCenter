@@ -4,8 +4,8 @@ import { required, helpers, minValue } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import { useVistisStore } from "@/stores/visits";
-import addCompanion from "./addCompanion.vue";
-import type { companions } from "../../Modules/VisitModule/companionsModule";
+import addCompanion from "./Companions/addCompanion.vue";
+import type { Companions } from "../../Modules/VisitModule/companionsModule";
 import moment from "moment";
 import type { Visit } from "@/Modules/VisitModule/VisitModule";
 import BackButton from "@/components/BackButton.vue";
@@ -30,7 +30,6 @@ const visit: Visit = reactive({
   companions: [],
 });
 
-let compList: companions[] = [];
 
 const visitReason = ref([{ name: "صيانه" }, { name: "انهاء عمل" }]);
 
@@ -61,12 +60,13 @@ const rules = computed(() => {
       required: helpers.withMessage(" الحقل مطلوب", required),
       minValue: helpers.withMessage(
         "تاريخ انتهاء الزياره يجب ان يكون بعد تاريخ البدايه",
-        minValue(visit.startTime))},
-      representives: {
-        required: helpers.withMessage("  الحقل مطلوب", required),
-      },
-      companions: { required: helpers.withMessage("  الحقل مطلوب", required) },
-    
+        minValue(visit.startTime)
+      ),
+    },
+    representives: {
+      required: helpers.withMessage("  الحقل مطلوب", required),
+    },
+    companions: { required: helpers.withMessage("  الحقل مطلوب", required) },
   };
 });
 
@@ -127,7 +127,7 @@ const submitForm = async () => {
 
 const customerselect = ref();
 
-const customer = ref()
+const customer = ref();
 const filteredCustomer = ref();
 
 const search = (event: any) => {
@@ -143,6 +143,20 @@ const search = (event: any) => {
     }
   }, 250);
 };
+
+ const resetForm = () => {
+  visit.expectedStartTime= "";
+  visit.expectedEndTime= "";
+  visit.startTime= "";
+  visit.endTime= "",
+  visit.visitTypeId= null,
+  visit.notes= "",
+  visit.subscriptionId= null,
+  visit.invoiceId= 0,
+  visit.representives= [],
+  visit.companions= []
+
+ };
 </script>
 
 <template>
@@ -157,7 +171,6 @@ const search = (event: any) => {
       <template #content>
         <form @submit.prevent="submitForm">
           <div class="grid p-fluid">
-
             <div class="field col-12 md:col-6 lg:col-4">
               <span class="p-float-label">
                 <AutoComplete
@@ -177,7 +190,6 @@ const search = (event: any) => {
                 </div> -->
               </span>
             </div>
-
 
             <div class="field col-12 md:col-6 lg:col-4">
               <span class="p-float-label">
@@ -309,15 +321,9 @@ const search = (event: any) => {
             </div>
           </div>
 
-          <addCompanion :compList="compList" />
+          <addCompanion :compList="visit.companions" />
           <br /><br />
-          <div v-if="compList.length > 1">
-            {{ compList }}
-            المُرافقين :
-            <div class="field col-12 md:col-2">
-              <Card v-for="i in compList"> </Card>
-            </div>
-          </div>
+
 
           <Button
             @click="submitForm"
@@ -326,6 +332,7 @@ const search = (event: any) => {
             type="submit"
           />
           <Button
+            @click="resetForm"
             icon="fa-solid fa-delete-left"
             label="مسح"
             class="p-button-danger"

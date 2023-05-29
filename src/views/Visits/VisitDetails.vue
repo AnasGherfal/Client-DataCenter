@@ -8,23 +8,27 @@ import router from "@/router";
 import type { Visit } from "@/Modules/VisitModule/VisitRequestModule";
 import BackButton from "@/components/BackButton.vue";
 import type Textarea from "primevue/textarea";
+import ComapanionsDataTable from "./Companions/CompanionsDataTable.vue";
 
 const store = useVistisStore();
-const data = defineProps<{ visit: any }>();
+const props = defineProps<{ visit: any }>();
 const editable = ref(true);
+const dialog = ref(false);
+const selectedRepresentative = ref(null);
 
 const visit: Visit = reactive({
-  startTime: data.visit.startTime,
-  endTime: data.visit.endTime,
-  customerName: data.visit.customerName,
-  visitType: data.visit.visitType,
-  notes: data.visit.notes,
-  timeShift: data.visit.timeShift,
-  totalMin: data.visit.totalMin,
-  price: data.visit.price,
-  invoiceId: data.visit.invoiceId,
-  representives: data.visit.representative,
-  companions: data.visit.companions,
+  id: props.visit.id,
+  startTime: props.visit.startTime,
+  endTime: props.visit.endTime,
+  customerName: props.visit.customerName,
+  visitType: props.visit.visitType,
+  notes: props.visit.notes,
+  timeShift: props.visit.timeShift,
+  totalMin: props.visit.totalMin,
+  price: props.visit.price,
+  invoiceId: props.visit.invoiceId,
+  representives: props.visit.representative || [],
+  companions: props.visit.companions,
 });
 
 const compList = reactive([{}]);
@@ -41,9 +45,9 @@ const minDate = ref(new Date());
 
 const invalidDates = ref();
 
-const filterdUsers = ref();
-
 const searchUsers = () => {};
+
+console.log(visit);
 
 const rules = computed(() => {
   return {
@@ -83,6 +87,10 @@ const submitForm = async () => {
 function backButton() {
   router.go(-1);
 }
+function openDialog(representives: any) {
+  dialog.value = true;
+  selectedRepresentative.value = representives;
+}
 </script>
 
 <template>
@@ -114,23 +122,6 @@ function backButton() {
                     :disabled="editable"
                   />
                   <label for="customerName">العميل</label>
-                </span>
-              </div>
-
-              <div class="field col-12 md:col-6 lg:col-4">
-                <span class="p-float-label">
-                  <InputText
-                    id="representives"
-                    type="text"
-                    v-model="visit.representives"
-                    :disabled="editable"
-                  />
-                  <label
-                    style="color: black; top: -0.75rem; font-size: 12px"
-                    for="representives"
-                  >
-                    المخوليين
-                  </label>
                 </span>
               </div>
 
@@ -212,7 +203,7 @@ function backButton() {
                 </span>
               </div>
 
-              <div class="field col-6 md:col-3 lg:col-2">
+              <div class="field col-6 md:col-3 lg:col-4">
                 <span class="p-float-label">
                   <InputText
                     id="companionName"
@@ -222,16 +213,131 @@ function backButton() {
                   <label for="companionName"> وقت الزيارة </label>
                 </span>
               </div>
-              <div class="field col-6 md:col-3 lg:col-2">
+              <div class="field col-8 md:col-3 lg:col-4">
                 <span class="p-float-label">
                   <Textarea
                     id="companionName"
                     v-model="visit.notes"
                     :disabled="editable"
                   />
+
                   <label for="companionName"> الملاحظات </label>
                 </span>
               </div>
+            </div>
+
+            <span
+              style="font-size: 20px; font-weight: bold; margin-right: 0.5rem"
+              for="representives"
+            >
+              المخوليين:
+            </span>
+            <div class="grid" style="margin-right: 10rem">
+              <Card
+                class="col-12 md:col-4"
+                style="
+                  display: flex;
+                  flex-wrap: wrap;
+                  width: 10rem;
+                  max-height: 5rem;
+                  margin: 1rem;
+                "
+                v-for="representative in props.visit.representives"
+                :key="representative.id"
+              >
+                <template #content>
+                  <div
+                    class="representative-field"
+                    style="
+                      margin-bottom: 1rem;
+                      display: flex;
+                      position: absolute;
+                    "
+                  >
+                    <span class="representative-value"
+                      >{{ representative.firstName }}
+                      {{ representative.lastName }}</span
+                    >
+
+                    <Button
+                      @click="openDialog(representative)"
+                      icon="fa-solid fa-circle-info"
+                      severity="info"
+                      text
+                      rounded
+                      v-tooltip="{ value: 'التفاصيل', fitContent: true }"
+                      style="width: 2rem; height: 1rem; margin-left: 0.5rem"
+                    />
+                  </div>
+
+                  <Dialog
+                    v-if="selectedRepresentative === representative"
+                    v-model:visible="dialog"
+                    :modal="true"
+                  >
+                    <div style="height-min: 30rem; width: 18rem">
+                      <div class="justify-content-between">
+                        <div>
+                          <div class="text-center font-bold text-lg mb-2">
+                            اسم المخول:
+                          </div>
+                          <span class="block text-center text-xl"
+                            >{{ representative.firstName }}
+                            {{ representative.lastName }}</span
+                          >
+
+                          <div class="text-center font-bold mt-4 mb-2 text-lg">
+                            البريد الإلكتروني:
+                          </div>
+                          <div class="text-center mb-3">
+                            {{ representative.email }}
+                          </div>
+                          <div class="font-bold mb-2 text-lg text-center mt-4">
+                            رقم الهاتف:
+                          </div>
+
+                          <div class="text-center mb-3" style="direction: ltr">
+                            {{ representative.phoneNo }}
+                          </div>
+
+                          <div class="font-bold mb-2 text-lg text-center mt-4">
+                            نوع الاثبات:
+                          </div>
+
+                          <div class="text-center mb-3">
+                            {{ representative.identityType }}
+                          </div>
+
+                          <div class="font-bold mb-2 text-lg text-center mt-4">
+                            رقم الاثبات:
+                          </div>
+
+                          <div class="text-center mb-3" style="direction: ltr">
+                            {{ representative.identityNo }}
+                          </div>
+                        </div>
+                        <Divider />
+                      </div>
+                    </div>
+                  </Dialog>
+                </template>
+              </Card>
+            </div>
+            <span
+              style="
+                top: -0.75rem;
+                font-size: 20px;
+                font-weight: bold;
+                margin-right: 0.5rem;
+              "
+              for="representives"
+            >
+              المرافقين:
+            </span>
+            <div v-if="props.visit.companions == 0">لايوجد</div>
+            <div v-else class="field col-12 md:col-6 lg:col-4">
+              <ComapanionsDataTable :comp-list="visit.companions">
+              </ComapanionsDataTable>
             </div>
           </form>
 
@@ -251,8 +357,16 @@ function backButton() {
             />
           </div>
         </div>
-
       </template>
     </Card>
   </div>
 </template>
+<style scoped>
+.representative-label {
+  font-weight: bold;
+}
+
+.representative-value {
+  font-weight: normal;
+}
+</style>

@@ -1,4 +1,5 @@
 export interface Visit {
+  id: number;
   startTime: string;
   endTime: string;
   customerName: string;
@@ -9,5 +10,11 @@ export interface Visit {
   price: number;
   invoiceId: number;
   representives: [];
-  companions: [];
+  companions: [  {
+    firstName: "string",
+    lastName: "string",
+    identityNo: "string",
+    identityType: 0,
+    jobTitle: "string"
+  }];
 }

@@ -31,7 +31,7 @@ const customerId: Customer = reactive({
   address: "",
   primaryPhone: "",
   secondaryPhone: "",
-  file: ""
+  file: "",
 });
 
 const representativeId = ref();

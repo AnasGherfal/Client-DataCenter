@@ -13,8 +13,6 @@ import { visitApi } from "@/api/visits";
 import type { Visit } from "@/Modules/VisitModule/VisitRequestModule";
 
 const store = useCustomersStore();
-const id = defineProps<{ id: string }>();
-const getVisits = ref({});
 const route = useRoute();
 
 const userId = computed(() => {
@@ -31,6 +29,7 @@ const visits: Visit = reactive({
   startTime: "",
   endTime: "",
   customerName: "",
+  id: 0,
   visitType: "",
   notes: "",
   timeShift: "",
@@ -38,7 +37,13 @@ const visits: Visit = reactive({
   price: 0,
   invoiceId: 0,
   representives: [],
-  companions: [],
+  companions: [  {
+      firstName: "string",
+      lastName: "string",
+      identityNo: "string",
+      identityType: 0,
+      jobTitle: "string"
+    }],
 });
 
 const compList = reactive([{}]);
@@ -47,10 +52,12 @@ onMounted(async () => {
   visitApi
     .get()
     .then((response) => {
-      getVisits.value = response.data.content.filter(
+      const filteredVisits = response.data.content.filter(
         (visit: { id: String }) => visit.id == userId.value
-      )[0];
-      console.log(getVisits);
+      );
+      if (filteredVisits.length > 0) {
+        Object.assign(visits, filteredVisits[0]);
+      }
     })
     .catch((error) => {
       console.log(error);
@@ -90,7 +97,7 @@ function backButton() {
 </script>
 
 <template>
-  <VisitDetails :visit="getVisits" :key="getVisits.id"></VisitDetails>
+  <VisitDetails :visit="visits" :key="visits.id" ></VisitDetails>
 </template>
 <style>
 .p-button-icon {

@@ -47,7 +47,6 @@ function getId(index: {}) {
 //     });
 // };
 
-console.log(store.visits);
 </script>
 
 <template>
