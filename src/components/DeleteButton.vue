@@ -18,11 +18,14 @@ const props = defineProps<{
 
 console.log(props.name)
 const deleteCustomer = () => {
+  console.log
   loading.value = true;
   axios
     .delete(`https://localhost:7003/api/${props.type}/${props.id}`)
     .then((response) => {
       store.getCustomers();
+      console.log(response)
+
       toast.add({
         severity: "success",
         summary: "تم الحذف",
@@ -32,6 +35,8 @@ const deleteCustomer = () => {
       dialog.value = false;
     })
     .catch((error) => {
+      console.log(error)
+
       toast.add({
         severity: "warn",
         summary: "حدث خطأ",

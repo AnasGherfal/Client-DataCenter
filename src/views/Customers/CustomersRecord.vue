@@ -249,7 +249,7 @@ const getSelectedStatusLabel = (value: any) => {
                     :rot-name="rotName"
                     :name="slotProps.data.name"
                     :id="slotProps.data.id"
-                    type = "customer"
+                    type = "Customers"
                   >
                   </DeleteCustomer>
                 </span>
