@@ -1,15 +1,18 @@
+import type { Representatives } from "../CustomerModule/RepresentativesModule/Representatives";
+import type { Companions } from "./companionsModule";
+
+
 export interface Visit {
-  expectedStartTime: "2023-05-22T11:56:04.751Z";
-  expectedEndTime: "2023-05-22T11:56:04.751Z";
-  companions: [];
+  expectedStartTime: string;
+  expectedEndTime: string;
+  companions: Companions[];
   startTime: string;
   endTime: string;
-  visitTypeId:string;
-  subscriptionId: string;
-  representives:[];
+  visitTypeId:number|null;
+  subscriptionId: number|null;
+  representatives:Representatives[];
   notes: string;
 
 
-//   visitDuration: string;
-//   price: string;
+
 }

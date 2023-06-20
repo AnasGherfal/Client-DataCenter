@@ -2,11 +2,16 @@ import type { Customer } from "../Modules/CustomerModule/CustomersModule";
 import httpClient from ".";
 
 export const customersApi = {
-  get: async function () {
-    const response = await httpClient.get(`/Customers`);
+  get: async function (pageNumber: number, pageSize: number){
+    const response = await httpClient.get(`/Customers?PageNumber=${pageNumber}&PageSize=${pageSize}`);
     return response;
   },
-  create: async function (customer: Customer) {
+  getById: async function (id: number) {
+    const response = await httpClient.get(`/Customers/${id}`);
+    return response;
+  },
+
+  create: async function (customer: any) {
     const response = await httpClient.post(`/Customers`, customer);
     return response;
   },

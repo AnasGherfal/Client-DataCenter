@@ -19,13 +19,25 @@ const loading = ref(false);
 const ServicesList = ref();
 
 const state: Subscription = reactive({
-  serviceId: "",
-  customerId: "",
+  serviceId: 0,
+  customerId: 0,
   startDate: "",
   endDate: "",
-  file: "",
-  totalPrice: "",
+  file: {
+    file: null,
+    docType: 0,
+  },
 });
+
+type DocTypeOption = {
+  value: number;
+  text: string;
+};
+// Array of identity type options
+const docTypeTypeOptions: DocTypeOption[] = [
+  { value: 1, text: "تخويل" },
+  { value: 2, text: "اثبات شخصي" },
+];
 
 onMounted(async () => {
   serviceApi
@@ -55,47 +67,51 @@ const rules = computed(() => {
   };
 });
 
-console.log(state);
-
 const toast = useToast();
 
 const v$ = useVuelidate(rules, state);
 
 const onFileUpload = (event: any) => {
-  console.log(state.file);
-
-  console.log(event.target.files)
-  state.file = event.target.files[0];
-  console.log(state.file);
+  const file = event.target.files[0];
+  state.file = {
+    file: file,
+    docType: state.file.docType,
+  };
 };
 
 const submitForm = async () => {
-  console.log(moment(state.startDate).format("yy/M/d hh:mm a"));
-
   const result = await v$.value.$validate();
 
   if (result) {
     loading.value = true;
+    if (state.file.file === null) {
+      // File is null, do not proceed with the submission
+      console.log("File is null");
+      return;
+    }
+    // const subrequest: Subscription = reactive({
+    //   serviceId: state.serviceId,
+    //   customerId: state.customerId,
+    //   startDate: moment(state.startDate).format("YYYY/MM/DD"),
+    //   endDate: moment(state.endDate).format("YYYY/MM/DD"),
 
-    const subrequest: Subscription = reactive({
-      serviceId: state.serviceId,
-      customerId: state.customerId,
-      startDate: moment(state.startDate).format("YYYY/MM/DD"),
-      endDate: moment(state.endDate).format("YYYY/MM/DD"),
-      file: state.file,
-      totalPrice: 5,
-    });
+    //   file: state.file.file,
+    //   docType: state.file.docType,
+    // });
+
+    const customerId = state.customerId?.id ?? 0;
 
     const subdata = new FormData();
-    subdata.append("serviceId", subrequest.serviceId);
-    subdata.append("customerId", subrequest.customerId.id);
-    subdata.append("startDate", subrequest.startDate);
-    subdata.append("endDate", subrequest.endDate);
-    subdata.append("file", state.file, state.file.name);
-    subdata.append("totalPrice", subrequest.totalPrice);
+    subdata.append("serviceId", String(state.serviceId));
+    subdata.append("customerId", String(customerId));
+    subdata.append("startDate", moment(state.startDate).format("YYYY/MM/DD"));
+    subdata.append("endDate", moment(state.endDate).format("YYYY/MM/DD"));
+    subdata.append("file", state.file.file);
+    subdata.append("docType", String(state.file.docType));
 
-    console.log(subdata);
-
+    subdata.forEach((value, key) => {
+      console.log(key, value);
+    });
     subscriptionApi
       .create(subdata)
       .then((Response) => {
@@ -108,7 +124,7 @@ const submitForm = async () => {
         console.log(Response);
         loading.value = false;
         store.getSub();
-        router.go(-1);
+        // router.go(-1);
       })
       .catch(function (error) {
         console.log(error);
@@ -127,14 +143,13 @@ const submitForm = async () => {
 
 const resetForm = () => {
   (state.serviceId = null),
-    (state.customerId = null),
+    (state.customerId = 0),
     (state.startDate = ""),
     (state.endDate = ""),
-    (state.file = null);
+    (state.file.file = null);
 };
 
 const minDate = ref(new Date());
-const invalidDates = ref();
 
 const selectedCustomer = ref();
 const filteredCustomer = ref();
@@ -197,7 +212,6 @@ const search = (event: any) => {
                   selectionMode="single"
                   :showButtonBar="true"
                   :manualInput="false"
-                  :disabledDates="invalidDates"
                 />
                 <label for="startDate">تاريخ بداية الاشتراك</label>
                 <div style="height: 2px">
@@ -221,7 +235,6 @@ const search = (event: any) => {
                   :minDate="minDate"
                   :showButtonBar="true"
                   :manualInput="false"
-                  :disabledDates="invalidDates"
                 />
                 <label for="endtDate">تاريخ انتهاء الاشتراك</label>
                 <div style="height: 2px">
@@ -256,9 +269,22 @@ const search = (event: any) => {
                 </div>
               </span>
             </div>
+
+            <div class="field col-12 md:col-6 lg:col-4">
+              <span class="p-float-label">
+                <Dropdown
+                  v-model="state.file.docType"
+                  :options="docTypeTypeOptions"
+                  optionValue="value"
+                  optionLabel="text"
+                  placeholder=" نوع الاثبات"
+                />
+                <label for="identityType">نوع الاثبات </label>
+              </span>
+            </div>
             <div class="form-group">
               <input
-              style="
+                style="
                   font-family: tajawal;
                   width: 100%;
                   height: 40px;
@@ -266,9 +292,12 @@ const search = (event: any) => {
                   background-color: white;
                   color: black;
                   border-color: gray;
-                " type="file" @change="onFileUpload" />
+                "
+                type="file"
+                @change="onFileUpload($event)"
+              />
             </div>
-            <div class="field col-12 md:col-6 lg:col-4" style="height: 1%">
+            <!-- <div class="field col-12 md:col-6 lg:col-4" style="height: 1%">
               <FileUpload
                 style="
                   font-family: tajawal;
@@ -290,7 +319,7 @@ const search = (event: any) => {
                 :maxFileSize="5000000"
                 invalidFileSizeMessage="Exceeded the maximum file size"
               />
-            </div>
+            </div> -->
           </div>
           <Button
             class="p-button-primry"
@@ -313,7 +342,7 @@ const search = (event: any) => {
   </div>
 </template>
 <style>
-input[type=file]::file-selector-button {
+input[type="file"]::file-selector-button {
   margin-right: 20px;
   border: none;
   background: #084cdf;
@@ -321,10 +350,10 @@ input[type=file]::file-selector-button {
   border-radius: 10px;
   color: #fff;
   cursor: pointer;
-  transition: background .2s ease-in-out;
+  transition: background 0.2s ease-in-out;
 }
 
-input[type=file]::file-selector-button:hover {
+input[type="file"]::file-selector-button:hover {
   background: #0d45a5;
 }
 

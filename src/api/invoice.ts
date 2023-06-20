@@ -1,12 +1,12 @@
 import httpClient from ".";
-import type { Invoice } from "../Modules/Invoices/InvoicesRequestModule";
+import type { InvoiceResponde } from "../Modules/Invoices/InvoicesRespondeModule";
 
-export const InvoiceApi = {
+export const invoiceApi = {
   get: async function () {
     const response = await httpClient.get(`/Invoices`);
     return response;
   },
-  create: async function (invoice: Invoice) {
+  create: async function (invoice: InvoiceResponde) {
     const response = await httpClient.post(`/Invoices`, invoice);
     return response;
   },

@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { FilterMatchMode } from "primevue/api";
-import AddBotton from "@/components/AddButton.vue";
+import AddButton from "@/components/AddButton.vue";
 import { useVistisStore } from "@/stores/visits";
 import { useToast } from "primevue/usetoast";
-import DeleteVisit from "../../components/DeleteButton.vue";
+import DeleteV from "../../components/DeleteButton.vue";
+import LockButton from "@/components/LockButton.vue";
+import { visitApi } from "@/api/visits";
 
 const store = useVistisStore();
-const loading = ref(true);
+
 const toast = useToast();
 const visitsDialog = ref(false);
 
@@ -22,31 +24,63 @@ const columns = ref([
 ]);
 const selectedColumns = ref(columns.value);
 
-const rotName = ref();
+const statuses = ref([
+  { value: 1, label: "نشط" },
+  { value: 5, label: "مقفل" },
+]);
 
-function getId(index: {}) {
-  rotName.value = index;
-  console.log(rotName.value.name);
-  visitsDialog.value = true;
-}
+const getSeverity = (status: any) => {
+  switch (trans(status)) {
+    case "نشط":
+      return "success";
+    case "مقفل":
+      return "danger";
+  }
+};
 
-// const deleteVisit = () => {
-//   console.log(rotName.value);
-//   axios
-//     .delete("http://localhost:3000/visits/" + rotName.value.id)
-//     .then((response) => {
-//       console.log(response);
-//       store.getdata();
-//       toast.add({
-//         severity: "success",
-//         summary: "تم الحذف",
-//         detail: response.data.msg,
-//         life: 3000,
-//       });
-//       visitsDialog.value = false;
-//     });
-// };
+const trans = (value: string) => {
+  if (value == "1") return "نشط";
+  else if (value == "5") return "مقفل";
+};
+const getSelectedStatusLabel = (value: any) => {
+  const status = statuses.value.find((s) => s.value === value);
+  return status ? status.label : "";
+};
+onMounted(async () => {
+  try {
+    const response = await visitApi.get();
+    store.visits = response.data.content;
+  } catch (error) {
+    console.log(error);
+  } finally {
+    store.loading = false;
+  }
+});
 
+// Watch for changes in filters and trigger server-side search
+watch(filters, (newFilters) => {
+  store.currentPage = 1; // Reset currentPage to the first page
+  store.pageNumber = 1; // Reset pageNumber to 1
+  store.getVisits();
+});
+const goToNextPage = () => {
+  if (store.currentPage < store.totalPages) {
+    store.currentPage += 1;
+    store.pageNumber += 1; // Increment the pageNumber value
+    store.loading = true;
+    store.getVisits();
+  }
+};
+
+const goToPreviousPage = () => {
+  if (store.currentPage > 1) {
+    store.currentPage -= 1;
+    store.pageNumber -= 1; // Decrement the pageNumber value
+    store.loading = true;
+
+    store.getVisits();
+  }
+};
 </script>
 
 <template>
@@ -56,25 +90,62 @@ function getId(index: {}) {
     <Card>
       <template #title>
         سجل الزيارات
-        <AddBotton
+        <AddButton
           name-button="إنشاء زياره"
           rout-name="/visitsRecords/createVisit"
         />
       </template>
       <template #content>
+        <div
+          v-if="store.loading"
+          class="border-round border-1 surface-border p-4 surface-card"
+        >
+          <div class="grid p-fluid">
+            <div v-for="n in 9" class="field col-12 md:col-6 lg:col-4">
+              <span class="p-float-label">
+                <Skeleton width="100%" height="2rem"></Skeleton>
+              </span>
+            </div>
+          </div>
+
+          <Skeleton width="100%" height="100px"></Skeleton>
+          <div class="flex justify-content-between mt-3">
+            <Skeleton width="100%" height="2rem"></Skeleton>
+          </div>
+        </div>
         <DataTable
+          v-else
           :value="store.visits"
           dataKey="id"
+          ref="dt"
           filterDisplay="row"
           :globalFilterFields="['customerName', 'visitReason']"
           :paginator="true"
           :rows="10"
-          :filters="filters"
-          paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown"
-          :rowsPerPageOptions="[5, 10, 25]"
-          currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} سجل الزيارات"
-          responsiveLayout="scroll"
+          v-model:filters="filters"
+          :pageLinkSize="store.totalPages"
+          :currentPage="store.currentPage - 1"
+          paginatorTemplate="  "
         >
+          <template #paginatorstart>
+            <Button
+              icon="pi pi-angle-right"
+              class="p-button-rounded p-button-primary p-paginator-element"
+              :disabled="store.currentPage === 1"
+              @click="goToPreviousPage"
+            />
+            <span class="p-paginator-pages">
+              الصفحة {{ store.currentPage }} من {{ store.totalPages }}
+            </span>
+          </template>
+          <template #paginatorend>
+            <Button
+              icon="pi pi-angle-left"
+              class="p-button-rounded p-button-primary p-paginator-element"
+              :disabled="store.currentPage === store.totalPages"
+              @click="goToNextPage"
+            />
+          </template>
           <template #header>
             <div class="grid p-fluid">
               <div class="field col-12 md:col-6 lg:col-4">
@@ -89,36 +160,53 @@ function getId(index: {}) {
               </div>
             </div>
           </template>
+          <template #empty>
+            <div
+              class="no-data-message"
+              style="
+                height: 100px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+                background-color: #f9f9f9;
+                border-radius: 5px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+              "
+            >
+              <p style="font-size: 18px; font-weight: bold; color: #888">
+                لا يوجد بيانات
+              </p>
+            </div>
+          </template>
+          <Column field="id" header="id " style="min-width: 4rem"></Column>
           <Column
             field="customerName"
             header="اسم العميل "
-            style="min-width: 12rem"
+            style="min-width: 8rem"
           ></Column>
           <Column
             field="visitType"
             header="سبب الزياره"
-            style="min-width: 12rem"
+            style="min-width: 8rem"
           ></Column>
           <Column
             field="totalMin"
             header="مدة الزيارة"
-            style="min-width: 12rem"
-          ></Column>
-          <Column
-            field="price"
-            header="السعر"
             style="min-width: 8rem"
+          ></Column>
+          <Column field="price" header="السعر" style="min-width: 8rem"></Column>
+          <Column field="status" header="الحاله" style="min-width: 1rem">
+            <template #body="{ data }">
+              <Tag
+                :value="getSelectedStatusLabel(data.status)"
+                :severity="getSeverity(data.status)"
+              /> </template
           ></Column>
 
           <Column style="min-width: 8rem">
-
             <template #body="slotProps">
-                <span v-if="slotProps.data.status !== 5">
-
-                <DeleteVisit
-                ></DeleteVisit>
-                </span>
-
               <RouterLink
                 :to="'/visitsRecords/visitDetails/' + slotProps.data.id"
                 style="text-decoration: none"
@@ -131,6 +219,13 @@ function getId(index: {}) {
                   v-tooltip="{ value: 'التفاصيل', fitContent: true }"
                 />
               </RouterLink>
+              <LockButton
+                typeLock="Visit"
+                :id="slotProps.data.id"
+                :name="slotProps.data.name"
+                :status="slotProps.data.status"
+                @getdata="store.getVisits"
+              />
             </template>
           </Column>
           <Toast position="bottom-left" />

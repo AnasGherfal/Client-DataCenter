@@ -1,39 +1,79 @@
 <script lang="ts" setup>
-import { useCustomersStore } from '@/stores/customers'
+import { useInvoicesStore } from "@/stores/invoices";
+import { computed, onMounted, reactive, ref } from "vue";
+import { useRoute } from "vue-router";
+import { invoiceApi } from "@/api/invoice";
+import InvoiceDetails from "./InvoiceDetails.vue";
+const invoicesStore = useInvoicesStore();
 
-const store = useCustomersStore();
+const invoices = reactive({
+  id: 0,
+  status: 0,
+  date: "",
+  description: "",
+  invoiceNo: "",
+  startDate: "",
+  endDate: "",
+  isPaid: false,
+  subscriptionId: 0,
+  visits: [
+    {
+      startTime: "",
+      endTime: "",
+      customerName: "",
+      id: 0,
+      visitType: "",
+      notes: "",
+      timeShift: "",
+      totalMin: "",
+      price: 0,
+      invoiceId: 0,
+      representives: [],
+      companions: [
+        {
+          firstName: "string",
+          lastName: "string",
+          identityNo: "string",
+          identityType: 0,
+          jobTitle: "string",
+        },
+      ],
+    },
+  ],
+});
+const route = useRoute();
+// for getting the data from the route
+const userId = computed(() => {
+  if (route && route.params && route.params.id) {
+    return route.params.id;
+  } else {
+    return null;
+  }
+});
 
+onMounted(async () => {
+  invoicesStore.loading = true;
+  invoiceApi
+    .get()
+    .then((response) => {
+      const filteredInvoices = response.data.content.filter(
+        (visit: { id: String }) => visit.id == userId.value
+      );
+      if (filteredInvoices.length > 0) {
+        Object.assign(invoices, filteredInvoices[0]);
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+    .finally(() => {
+      invoicesStore.loading = false;
+    });
+});
 </script>
 
 <template>
-    <Card>
-        <template #header>
-            <div class="flex justify-content-between flex-wrap card-container ">
-                <div class="align-items-center justify-content-center  border-round m-3 ">
-                    <h1 class=" m-0">فاتورة/#13</h1>
-                    <h5 class="text-600  m-0">مركز ادارة الخدمات والبيانات</h5>
-                    <div class="border-green-500 border-round-md text-center justify-content-center">
-                        <p class="text-md"> مدفوعة</p>
-                    </div>
-
-                </div>
-                <div class="align-items-center justify-content-center  border-round m-3 ">
-                    <p>تاريخ الانشاء : 12/2/2022</p>
-                    <p>تاريخ الاستحقاق : 11/1/2023</p>
-
-                </div>
-            </div>
-        </template>
-        <template #content>
-            <DataTable style="text-align: right;" :value="store.customers" stripedRows tableStyle="min-width: 50rem">
-                <Column style="text-align: right;" field="id" header="id"></Column>
-                <Column style="text-align: right;" field="name" header="الوصف"></Column>
-                <Column style="text-align: right;" field="status" header="الكمية"></Column>
-                <Column style="text-align: right;" field="endDate" header="السعر"></Column>
-
-            </DataTable>
-        </template>
-    </Card>
+  <InvoiceDetails :key="invoices.id" :invoices="invoices"></InvoiceDetails>
 </template>
 
-<style ></style>
+<style></style>

@@ -6,25 +6,36 @@ import { customersApi } from "@/api/customers";
 export const useCustomersStore = defineStore("customer", () => {
   const customers = ref();
   const loading = ref(true);
-  const data = ref(null);
+  const totalPages = ref(1);
+  const pageNumber = ref(1);
+  const pageSize = ref(10);
+  const currentPage = ref(0);
 
   onMounted(async () => {
     getCustomers();
   });
-
-  function getCustomers() {
- customersApi
- .get()
+  async function getCustomers() {
+    await customersApi
+      .get(pageNumber.value, pageSize.value)
       .then(function (response) {
         customers.value = response.data.content;
-        loading.value = false;
+        totalPages.value = response.data.totalPages;
+        currentPage.value = response.data.currentPage;
       })
       .catch(function (error) {
         console.log(error);
       })
-      .finally(()=>{
+      .finally(() => {
         loading.value = false;
       });
   }
-  return { customers, getCustomers, loading, data };
+  return {
+    customers,
+    getCustomers,
+    loading,
+    totalPages,
+    pageNumber,
+    currentPage,
+    pageSize,
+  };
 });

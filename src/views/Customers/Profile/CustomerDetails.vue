@@ -24,7 +24,7 @@ const customer: Customer = reactive({
   secondaryPhone: dataClinet.customer.secondaryPhone,
   address: dataClinet.customer.address,
   status: dataClinet.customer.status,
-  file: dataClinet.customer.file
+  files: dataClinet.customer.file
 });
 
 const toast = useToast();
@@ -345,38 +345,5 @@ const v$ = useVuelidate(rules, customer);
   border-color: #0d89ec;
 }
 
-.warning-message {
-  display: flex;
-  align-items: center;
-  background-color: #ffeeba;
-  color: #856404;
-  padding: 8px;
-  border: 1px solid #ffeeba;
-  border-radius: 10px;
-  width: 60%;
-}
 
-.warning-message-icon {
-  width: 24px;
-  height: 24px;
-  background-color: #ffc107;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 5px;
-}
-
-.warning-message-icon:before {
-  content: "!";
-  font-size: 16px;
-  color: #fff;
-  font-weight: bold;
-}
-
-.warning-message-text {
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.5;
-}
 </style>

@@ -3,18 +3,17 @@ import { computed, onMounted, reactive, ref } from "vue";
 import { email, minLength, required, helpers } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
-import { useCustomersStore } from "@/stores/customers";
+import { useVistisStore } from "@/stores/visits";
 import VisitDetails from "./VisitDetails.vue";
 import router from "@/router";
 // import type { Visit } from '@/Modules/VisitModule/VisitModule'
 import axios from "axios";
 import { useRoute } from "vue-router";
 import { visitApi } from "@/api/visits";
-import type { Visit } from "@/Modules/VisitModule/VisitRequestModule";
+import type { VisitReq } from "@/Modules/VisitModule/VisitRequestModule";
 
-const store = useCustomersStore();
+const store = useVistisStore();
 const route = useRoute();
-
 const userId = computed(() => {
   if (route && route.params && route.params.id) {
     return route.params.id;
@@ -23,7 +22,7 @@ const userId = computed(() => {
   }
 });
 
-const visits: Visit = reactive({
+const visits = reactive({
   expectedStartTime: "",
   expectedEndTime: "",
   startTime: "",
@@ -46,15 +45,17 @@ const visits: Visit = reactive({
     }],
 });
 
-const compList = reactive([{}]);
 
 onMounted(async () => {
+  store.loading = true;
   visitApi
     .get()
     .then((response) => {
       const filteredVisits = response.data.content.filter(
         (visit: { id: String }) => visit.id == userId.value
       );
+
+
       if (filteredVisits.length > 0) {
         Object.assign(visits, filteredVisits[0]);
       }
@@ -62,7 +63,9 @@ onMounted(async () => {
     .catch((error) => {
       console.log(error);
     })
-    .finally(() => {});
+    .finally(() => {
+      store.loading = false;
+    });
 });
 
 let today = new Date();
@@ -91,9 +94,7 @@ const toast = useToast();
 
 // }
 
-function backButton() {
-  router.go(-1);
-}
+
 </script>
 
 <template>

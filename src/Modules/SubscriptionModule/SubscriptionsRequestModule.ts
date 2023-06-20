@@ -1,9 +1,11 @@
 export interface Subscription {
-    serviceId: any | string,
-    customerId: any | string,
+    serviceId: any|null,
+    customerId:  number,
     startDate:string,
     endDate:string,
-    file: null | any
-    totalPrice: any |string
+    file: {
+      file: File|null|any;
+      docType: number|any;
+    };
 
   }

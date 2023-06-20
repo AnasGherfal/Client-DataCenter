@@ -1,9 +1,22 @@
 import httpClient from ".";
 import type { Visit } from "../Modules/VisitModule/VisitResponseModule";
-
+import type { VisitEdit } from "../Modules/VisitModule/VisitEditModule";
 export const visitApi = {
+
+
+
+
   get: async function () {
-    const response = await httpClient.get(`/Visit`);
+    const response = await httpClient.get(
+      `/Visit`
+    );
+    return response;
+  },
+
+  getPages: async function (pageNumber: number, pageSize: number) {
+    const response = await httpClient.get(
+      `/Visit?PageNumber=${pageNumber}&PageSize=${pageSize}`
+    );
     return response;
   },
   create: async function (visit: Visit) {
@@ -14,7 +27,7 @@ export const visitApi = {
     const response = await httpClient.delete(`/Visit/${id}`);
     return response;
   },
-  edit: async function (id: number, visit: Visit) {
+  edit: async function (id: number, visit: VisitEdit) {
     const response = await httpClient.put(`/Visit/${id}`, visit);
     return response;
   },

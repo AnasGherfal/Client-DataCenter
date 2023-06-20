@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import { required, helpers, minValue } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import { useVistisStore } from "@/stores/visits";
 import addCompanion from "./Companions/addCompanion.vue";
-import type { Companions } from "../../Modules/VisitModule/companionsModule";
 import moment from "moment";
-import type { Visit } from "@/Modules/VisitModule/VisitModule";
+import type { Visit } from "@/Modules/VisitModule/VisitResponseModule";
 import BackButton from "@/components/BackButton.vue";
-import router from "@/router";
-import axios from "axios";
 import { useCustomersStore } from "@/stores/customers";
-
+import { visitApi } from "@/api/visits";
+import { representativesApi } from "@/api/representatives";
+import { subscriptionApi } from "@/api/subscriptions";
 const store = useVistisStore();
 const storeCustomers = useCustomersStore();
 const loading = ref(false);
+const disableValidation = ref(false);
 
 const visit: Visit = reactive({
   expectedStartTime: "2023-05-24T08:26:49.160Z",
@@ -25,13 +25,20 @@ const visit: Visit = reactive({
   visitTypeId: null,
   notes: "",
   subscriptionId: null,
-  invoiceId: 0,
-  representives: [],
+  representatives: [],
   companions: [],
 });
 
+type visitReason = {
+  value: number;
+  text: string;
+};
+// Array of identity type options
 
-const visitReason = ref([{ name: "صيانه" }, { name: "انهاء عمل" }]);
+const visitReasons: visitReason[] = [
+  { value: 1, text: "صيانه" },
+  { value: 2, text: "انهاء عمل" },
+];
 
 const startDate = ref(new Date());
 const endDate = ref(new Date());
@@ -63,10 +70,9 @@ const rules = computed(() => {
         minValue(visit.startTime)
       ),
     },
-    representives: {
+    representatives: {
       required: helpers.withMessage("  الحقل مطلوب", required),
     },
-    companions: { required: helpers.withMessage("  الحقل مطلوب", required) },
   };
 });
 
@@ -85,26 +91,65 @@ function invalidDate() {
   }
 }
 
-const submitForm = async () => {
-  console.log(visit.startTime);
+const customerselect = ref();
+const customerRepresentatives = ref();
+const representatives = ref();
+const customerSubscriptions = ref();
+const subscriptions = ref();
 
-  const result = await v$.value.$validate();
-  if (result) {
-    loading.value = true;
+watch(customerselect, async (newValue) => {
+  if (newValue) {
+    try {
+      loading.value = true;
+      const response = await representativesApi.get();
+      representatives.value = response.data.content.filter(
+        (representative: any) => representative.customerName === newValue.name
+      );
+      visit.representatives = []; // Reset the representatives array
+      customerRepresentatives.value = representatives.value; // Update the array with the selected representatives
 
-    setTimeout(() => {
-      router.go(-1);
+      const subscriptionResponse = await subscriptionApi.get();
+      subscriptions.value = subscriptionResponse.data.content.filter(
+        (subscription: any) => subscription.customerName === newValue.name
+      );
+      customerSubscriptions.value = subscriptions.value;
       loading.value = false;
-    }, 1000);
+    } catch (error) {
+      console.error("Error fetching representatives:", error);
+    }
+  }
+});
 
-    // const subrequest: Visit = reactive({
-    //     customerName: visit.customerName.customerName,
-    //     authorizedName: visit.authorizedName.authorizedName
+const submitForm = async () => {
+  const result = await v$.value.$validate();
 
-    // })
+  if (result) {
+    // Extract representative IDs
+    const representativeIds = representatives.value.map((rep: any) => rep.id);
+    // Modify the visit object to include only the representative IDs
 
-    await axios
-      .post("http://localhost:3000/visits", visit)
+    // Extract subscription IDs
+    const subscriptionIds = subscriptions.value.map((sub: any) => sub.id);
+    // Modify the visit object to include only the subscription IDs
+    const subscriptionId =
+      subscriptionIds.length > 0 ? subscriptionIds[0] : null; // Take the first subscription ID from the array
+
+    const data = reactive({
+      expectedStartTime: "2023-05-24T08:26:49.160Z",
+      expectedEndTime: "2023-05-24T08:26:49.160Z",
+      startTime: visit.startTime,
+      endTime: visit.endTime,
+      visitTypeId: visit.visitTypeId,
+      notes: visit.notes,
+      subscriptionId: subscriptionId,
+      representatives: representativeIds,
+      companions: visit.companions,
+    });
+
+    loading.value = true;
+    console.log(data);
+    visitApi
+      .create(data)
       .then(function (response) {
         toast.add({
           severity: "success",
@@ -113,9 +158,8 @@ const submitForm = async () => {
           life: 3000,
         });
 
-        console.log(visit);
         console.log(response);
-        store.getdata();
+        store.getVisits();
       })
       .catch(function (error) {
         console.log(error);
@@ -124,10 +168,15 @@ const submitForm = async () => {
     console.log("not valid");
   }
 };
-
-const customerselect = ref();
-
-const customer = ref();
+const resetForm = () => {
+  visit.startTime = "";
+  (visit.endTime = ""),
+    (visit.visitTypeId = null),
+    (visit.notes = ""),
+    (visit.subscriptionId = null),
+    (visit.representatives = []),
+    (visit.companions = []);
+};
 const filteredCustomer = ref();
 
 const search = (event: any) => {
@@ -143,20 +192,6 @@ const search = (event: any) => {
     }
   }, 250);
 };
-
- const resetForm = () => {
-  visit.expectedStartTime= "";
-  visit.expectedEndTime= "";
-  visit.startTime= "";
-  visit.endTime= "",
-  visit.visitTypeId= null,
-  visit.notes= "",
-  visit.subscriptionId= null,
-  visit.invoiceId= 0,
-  visit.representives= [],
-  visit.companions= []
-
- };
 </script>
 
 <template>
@@ -174,7 +209,7 @@ const search = (event: any) => {
             <div class="field col-12 md:col-6 lg:col-4">
               <span class="p-float-label">
                 <AutoComplete
-                  v-model="customer"
+                  v-model="customerselect"
                   optionLabel="name"
                   :suggestions="filteredCustomer"
                   @complete="search"
@@ -195,13 +230,14 @@ const search = (event: any) => {
               <span class="p-float-label">
                 <MultiSelect
                   v-model="visit.subscriptionId"
-                  :options="storeCustomers.customers"
-                  optionLabel="name"
-                  :filter="true"
-                  placeholder=" اختر الخدمة"
+                  :options="customerSubscriptions"
+                  optionLabel="serviceName"
+                  emptyMessage="هاذا العميل ليس لديه اشتراكات"
+                  placeholder=" اختر اشتراك"
                   :selectionLimit="1"
+                  :loading="loading"
                 />
-                <label for="customerName">خدمات</label>
+                <label for="customerName">اشتراكات</label>
 
                 <error
                   v-for="error in v$.subscriptionId.$errors"
@@ -215,17 +251,18 @@ const search = (event: any) => {
             <div class="field col-12 md:col-6 lg:col-4">
               <span class="p-float-label">
                 <MultiSelect
-                  v-model="visit.representives"
-                  :options="store.visits"
-                  optionLabel="representives"
+                  v-model="visit.representatives"
+                  :options="customerRepresentatives"
+                  optionLabel="firstName"
                   placeholder="اختر"
                   emptySelectionMessage="ll"
                   :selectionLimit="2"
+                  emptyMessage="هاذا العميل ليس لديه مخوليين"
                 />
-                <label for="representives">المخولين</label>
+                <label for="representatives">المخولين</label>
 
                 <error
-                  v-for="error in v$.representives.$errors"
+                  v-for="error in v$.representatives.$errors"
                   :key="error.$uid"
                   class="p-error"
                   >{{ error.$message }}</error
@@ -236,12 +273,13 @@ const search = (event: any) => {
             <div class="field col-12 md:col-6 lg:col-4">
               <span class="p-float-label">
                 <Dropdown
-                  id=""
+                  id="visitType"
                   v-model="visit.visitTypeId"
-                  :options="visitReason"
-                  optionLabel="name"
+                  :options="visitReasons"
+                  optionValue="value"
+                  optionLabel="text"
                 />
-                <label for="visitReason">سبب الزيارة </label>
+                <label for="visitType">سبب الزيارة </label>
                 <error
                   v-for="error in v$.visitTypeId.$errors"
                   :key="error.$uid"
@@ -300,19 +338,6 @@ const search = (event: any) => {
               </span>
             </div>
 
-            <div class="field col-6 md:col-3 lg:col-2">
-              <span class="p-float-label">
-                <InputText id="companionName" :readonly="true" />
-                <label for="companionName"> مدة الزيارة </label>
-              </span>
-            </div>
-            <div class="field col-6 md:col-3 lg:col-2">
-              <span class="p-float-label">
-                <InputText id="companionName" :readonly="true" />
-                <label for="companionName"> السعر </label>
-              </span>
-            </div>
-
             <div class="field col-12 md:col-8 lg:col-8">
               <span class="p-float-label">
                 <Textarea v-model="visit.notes" rows="5" cols="77" />
@@ -321,9 +346,13 @@ const search = (event: any) => {
             </div>
           </div>
 
-          <addCompanion :compList="visit.companions" />
+          <!-- <label for="addCompanions"> هل تريد اضافة مرافقين؟ </label>
+          <Checkbox id="addCompanions" v-model="disableValidation" binary="true" /> -->
+          <addCompanion
+            :compList="visit.companions"
+            :disable-validation="disableValidation"
+          />
           <br /><br />
-
 
           <Button
             @click="submitForm"

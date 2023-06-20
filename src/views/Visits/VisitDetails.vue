@@ -1,60 +1,47 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import { required, helpers } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import { useVistisStore } from "@/stores/visits";
-import router from "@/router";
-import type { Visit } from "@/Modules/VisitModule/VisitRequestModule";
+import type { VisitEdit } from "@/Modules/VisitModule/VisitEditModule";
 import BackButton from "@/components/BackButton.vue";
 import type Textarea from "primevue/textarea";
 import ComapanionsDataTable from "./Companions/CompanionsDataTable.vue";
+import moment from "moment";
+import { visitApi } from "@/api/visits";
 
 const store = useVistisStore();
 const props = defineProps<{ visit: any }>();
 const editable = ref(true);
 const dialog = ref(false);
-const selectedRepresentative = ref(null);
+const loading = ref(true);
 
-const visit: Visit = reactive({
+const visit = reactive({
   id: props.visit.id,
-  startTime: props.visit.startTime,
-  endTime: props.visit.endTime,
+  startTime: convertToDate(props.visit.startTime),
+  endTime: convertToDate(props.visit.endTime),
   customerName: props.visit.customerName,
-  visitType: props.visit.visitType,
+  visitTypeId: props.visit.visitTypeId,
   notes: props.visit.notes,
-  timeShift: props.visit.timeShift,
   totalMin: props.visit.totalMin,
   price: props.visit.price,
-  invoiceId: props.visit.invoiceId,
-  representives: props.visit.representative || [],
+  invoiceId: 0,
+  representatives: props.visit.representatives || [],
   companions: props.visit.companions,
+  status: props.visit.status,
 });
-
-const compList = reactive([{}]);
 
 const visitReason = ref([{ name: "صيانه" }, { name: "انهاء عمل" }]);
 
-let today = new Date();
-let month = today.getMonth;
-let year = today.getFullYear;
-let hours = today.getHours();
 const startDate = ref(new Date());
-
-const minDate = ref(new Date());
-
-const invalidDates = ref();
-
-const searchUsers = () => {};
-
-console.log(visit);
 
 const rules = computed(() => {
   return {
     customerName: {
       required: helpers.withMessage("اسم العميل مطلوب", required),
     },
-    representives: {
+    representatives: {
       required: helpers.withMessage(" المخول مطلوب", required),
     },
   };
@@ -64,32 +51,80 @@ const toast = useToast();
 
 const v$ = useVuelidate(rules, visit);
 
+type visitReason = {
+  value: number;
+  text: string;
+};
+// Array of identity type options
+
+const visitReasons: visitReason[] = [
+  { value: 1, text: "صيانه" },
+  { value: 2, text: "انهاء عمل" },
+];
+function convertToDate(dateString: string): string {
+  const date = moment(dateString).format("YYYY-MM-DD HH:mm"); // Convert to string format
+  return date;
+}
+function convertDateFormat(dateString: any) {
+  const dateObj = new Date(dateString);
+  const formattedDate = dateObj.toISOString();
+  return formattedDate;
+}
+const selectedRepresentatives = computed({
+  get: () => visit.representatives,
+  set: (value) => {
+    visit.representatives = value;
+  },
+});
+function updateRepresentatives() {
+  visit.representatives = selectedRepresentatives.value;
+}
 const submitForm = async () => {
   const result = await v$.value.$validate();
+  const selectedRepresentativeIds = visit.representatives.map(
+    (rep: any) => rep.id
+  );
+  const data: VisitEdit = reactive({
+    startTime: convertDateFormat(visit.startTime),
+    endTime: convertDateFormat(visit.endTime),
+    customerName: visit.customerName,
+    visitTypeId: visit.visitTypeId,
+    notes: visit.notes,
+    totalMin: visit.totalMin,
+    price: visit.price,
+    invoiceId: null,
+    representatives: selectedRepresentativeIds,
+    companions: visit.companions,
+  });
 
-  // if (result) {
-  //     axios.put(`http://localhost:3000/visits${data.customer.id, visit}`)
-  //         .then(function (response) {
-  //             editable.value = true;
-  //             toast.add({ severity: 'success', summary: 'Success Message', detail: 'تمت إضافة زيارة', life: 3000 });
-
-  //         })
-  //         .catch(function (error) {
-  //             console.log(error)
-
-  //         })
-
-  // } else {
-  //     console.log("empty")
-  // }
+  if (result) {
+    loading.value = true;
+    visitApi
+      .edit(props.visit.id, data)
+      .then((response) => {
+        console.log(response);
+        editable.value = true;
+        toast.add({
+          severity: "success",
+          summary: "Success Message",
+          detail: "تمت إضافة زيارة",
+          life: 3000,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        loading.value = false;
+      });
+  } else {
+    console.log("empty");
+  }
 };
 
-function backButton() {
-  router.go(-1);
-}
 function openDialog(representives: any) {
   dialog.value = true;
-  selectedRepresentative.value = representives;
+  selectedRepresentatives.value = representives;
 }
 </script>
 
@@ -100,17 +135,87 @@ function openDialog(representives: any) {
         تفاصيل الزيارة
         <BackButton style="float: left" />
 
-        <Button
-          v-if="editable"
-          @click="editable = !editable"
-          icon=" fa-solid fa-pen"
-          style="width: 30px; height: 30px; margin-right: 10px"
-          class="p-button-primary p-button-text"
-          v-tooltip="{ value: 'تعديل بيانات الزيارة', fitContent: true }"
-        />
+        <div v-if="visit.status === 5">
+          <div class="warning-message">
+            <div class="warning-message-icon"></div>
+            <div class="warning-message-text">
+              هذه الزيارة في حالة قفل لا يمكن التعديل
+            </div>
+          </div>
+        </div>
+
+        <span
+          v-else-if="visit.status !== 5 && !store.loading"
+          style="width: 30px; height: 30px; margin-right: 10px; margin-top: 0px"
+        >
+          <Button
+            v-if="editable"
+            @click="editable = !editable"
+            icon=" fa-solid fa-pen"
+            style="width: 30px; height: 30px; margin-right: 10px"
+            class="p-button-primary p-button-text"
+            v-tooltip="{ value: 'تعديل بيانات الزيارة', fitContent: true }"
+          />
+        </span>
       </template>
       <template #content>
-        <div>
+        <div v-if="store.loading">
+          <div class="grid p-fluid">
+            <div class="field col-12 md:col-6 lg:col-4">
+              <span class="p-float-label">
+                <Skeleton
+                  :loading="loading"
+                  width="100%"
+                  height="2rem"
+                ></Skeleton>
+              </span>
+            </div>
+            <div class="field col-12 md:col-6 lg:col-4">
+              <span class="p-float-label">
+                <Skeleton
+                  :loading="loading"
+                  width="100%"
+                  height="2rem"
+                ></Skeleton>
+              </span>
+            </div>
+            <div class="field col-12 md:col-6 lg:col-4">
+              <span class="p-float-label">
+                <Skeleton
+                  :loading="loading"
+                  width="100%"
+                  height="2rem"
+                ></Skeleton>
+              </span>
+            </div>
+            <div class="field col-12 md:col-6 lg:col-4">
+              <span class="p-float-label">
+                <Skeleton
+                  :loading="loading"
+                  width="100%"
+                  height="2rem"
+                ></Skeleton>
+              </span>
+            </div>
+            <div class="field col-12 md:col-6 lg:col-4">
+              <span class="p-float-label">
+                <Skeleton
+                  :loading="loading"
+                  width="100%"
+                  height="2rem"
+                ></Skeleton>
+              </span>
+            </div>
+            <div class="field col-12 md:col-6 lg:col-4">
+              <Skeleton
+                :loading="loading"
+                width="100%"
+                height="2rem"
+              ></Skeleton>
+            </div>
+          </div>
+        </div>
+        <div v-else>
           <form @submit.prevent="submitForm">
             <div class="grid p-fluid">
               <div class="field col-12 md:col-6 lg:col-4">
@@ -119,19 +224,55 @@ function openDialog(representives: any) {
                     v-model="visit.customerName"
                     optionLabel="customerName"
                     placeholder=" اختر عميل"
-                    :disabled="editable"
+                    :disabled="true"
                   />
                   <label for="customerName">العميل</label>
                 </span>
               </div>
-
-              <div class="field col-12 md:col-6 lg:col-4">
+              <div class="field col-4 md:col-3 lg:col-4">
                 <span class="p-float-label">
                   <InputText
-                    id="visitType"
-                    type="text"
-                    v-model="visit.visitType"
+                    id="companionName"
+                    v-model="visit.timeShift"
+                    :disabled="true"
+                  />
+                  <label for="companionName"> وقت الزيارة </label>
+                </span>
+              </div>
+
+              <div class="field col-4 md:col-3 lg:col-2">
+                <span class="p-float-label">
+                  <InputText
+                    id="companionName"
+                    v-model="visit.totalMin"
+                    :readonly="true"
+                    :disabled="true"
+                  />
+                  <label for="companionName"> مدة الزيارة </label>
+                </span>
+              </div>
+
+              <div class="field col-4 md:col-3 lg:col-2">
+                <span class="p-float-label">
+                  <InputText
+                    id="companionName"
+                    v-model="visit.price"
+                    :value="visit.price + ' دينار'"
+                    :readonly="true"
+                    :disabled="true"
+                  />
+                  <label for="companionName"> السعر </label>
+                </span>
+              </div>
+              <div class="field col-12 md:col-6 lg:col-4">
+                <span class="p-float-label">
+                  <Dropdown
+                    id="visitTypeId"
+                    v-model="visit.visitTypeId"
+                    :options="visitReasons"
                     :disabled="editable"
+                    optionValue="value"
+                    optionLabel="text"
                   />
                   <label
                     style="color: black; top: -0.75rem; font-size: 12px"
@@ -179,40 +320,6 @@ function openDialog(representives: any) {
                 </span>
               </div>
 
-              <div class="field col-6 md:col-3 lg:col-2">
-                <span class="p-float-label">
-                  <InputText
-                    id="companionName"
-                    v-model="visit.totalMin"
-                    :readonly="true"
-                    :disabled="true"
-                  />
-                  <label for="companionName"> مدة الزيارة </label>
-                </span>
-              </div>
-
-              <div class="field col-6 md:col-3 lg:col-2">
-                <span class="p-float-label">
-                  <InputText
-                    id="companionName"
-                    v-model="visit.price"
-                    :readonly="true"
-                    :disabled="true"
-                  />
-                  <label for="companionName"> السعر </label>
-                </span>
-              </div>
-
-              <div class="field col-6 md:col-3 lg:col-4">
-                <span class="p-float-label">
-                  <InputText
-                    id="companionName"
-                    v-model="visit.timeShift"
-                    :disabled="editable"
-                  />
-                  <label for="companionName"> وقت الزيارة </label>
-                </span>
-              </div>
               <div class="field col-8 md:col-3 lg:col-4">
                 <span class="p-float-label">
                   <Textarea
@@ -232,46 +339,52 @@ function openDialog(representives: any) {
             >
               المخوليين:
             </span>
-            <div class="grid" style="margin-right: 10rem">
-              <Card
-                class="col-12 md:col-4"
-                style="
-                  display: flex;
-                  flex-wrap: wrap;
-                  width: 10rem;
-                  max-height: 5rem;
-                  margin: 1rem;
-                "
-                v-for="representative in props.visit.representives"
-                :key="representative.id"
-              >
-                <template #content>
-                  <div
-                    class="representative-field"
-                    style="
-                      margin-bottom: 1rem;
-                      display: flex;
-                      position: absolute;
-                    "
-                  >
-                    <span class="representative-value"
-                      >{{ representative.firstName }}
-                      {{ representative.lastName }}</span
-                    >
+            <div class="field col-12 md:col-6 lg:col-4">
+              <span class="p-float-label">
+                <MultiSelect
+                  v-model="selectedRepresentatives"
+                  :options="store.representatives"
+                  optionLabel="firstName"
+                  placeholder="اختر"
+                  :selectionLimit="2"
+                  emptyMessage="هاذا العميل ليس لديه مخوليين"
+                  :disabled="editable"
+                  @change="updateRepresentatives"
+                  :loading="store.loading"
+                />
 
-                    <Button
-                      @click="openDialog(representative)"
-                      icon="fa-solid fa-circle-info"
-                      severity="info"
-                      text
-                      rounded
-                      v-tooltip="{ value: 'التفاصيل', fitContent: true }"
-                      style="width: 2rem; height: 1rem; margin-left: 0.5rem"
-                    />
-                  </div>
+                <error
+                  v-for="error in v$.representatives.$errors"
+                  :key="error.$uid"
+                  class="p-error"
+                  >{{ error.$message }}</error
+                >
+              </span>
+            </div>
+            <DataTable
+              v-if="visit.representatives.length > 0"
+              :value="visit.representatives"
+            >
+              <Column field="firstName" header="اسم المخول"></Column>
+              <Column field="email" header=" البريد الالكتروني"></Column>
+              <Column field="phoneNo" header="رقم الهاتف"> </Column>
+              <Column field="identityNo" header="رقم الاثبات"></Column>
+              <Column>
+                <template #body="slotProps">
+                  <Button
+                    @click="openDialog(slotProps.data.representative)"
+                    icon="fa-solid fa-circle-info"
+                    severity="info"
+                    text
+                    rounded
+                    v-tooltip="{ value: 'التفاصيل', fitContent: true }"
+                    style="width: 2rem; height: 1rem; margin-left: 0.5rem"
+                  />
 
                   <Dialog
-                    v-if="selectedRepresentative === representative"
+                    v-if="
+                      selectedRepresentatives === slotProps.data.representative
+                    "
                     v-model:visible="dialog"
                     :modal="true"
                   >
@@ -279,25 +392,25 @@ function openDialog(representives: any) {
                       <div class="justify-content-between">
                         <div>
                           <div class="text-center font-bold text-lg mb-2">
-                            اسم المخول:
+                            اسم واللقب:
                           </div>
                           <span class="block text-center text-xl"
-                            >{{ representative.firstName }}
-                            {{ representative.lastName }}</span
+                            >{{ slotProps.data.firstName }}
+                            {{ slotProps.data.lastName }}</span
                           >
 
                           <div class="text-center font-bold mt-4 mb-2 text-lg">
                             البريد الإلكتروني:
                           </div>
                           <div class="text-center mb-3">
-                            {{ representative.email }}
+                            {{ slotProps.data.email }}
                           </div>
                           <div class="font-bold mb-2 text-lg text-center mt-4">
                             رقم الهاتف:
                           </div>
 
                           <div class="text-center mb-3" style="direction: ltr">
-                            {{ representative.phoneNo }}
+                            {{ slotProps.data.phoneNo }}
                           </div>
 
                           <div class="font-bold mb-2 text-lg text-center mt-4">
@@ -305,7 +418,7 @@ function openDialog(representives: any) {
                           </div>
 
                           <div class="text-center mb-3">
-                            {{ representative.identityType }}
+                            {{ slotProps.data.identityType }}
                           </div>
 
                           <div class="font-bold mb-2 text-lg text-center mt-4">
@@ -313,7 +426,7 @@ function openDialog(representives: any) {
                           </div>
 
                           <div class="text-center mb-3" style="direction: ltr">
-                            {{ representative.identityNo }}
+                            {{ slotProps.data.identityNo }}
                           </div>
                         </div>
                         <Divider />
@@ -321,8 +434,9 @@ function openDialog(representives: any) {
                     </div>
                   </Dialog>
                 </template>
-              </Card>
-            </div>
+              </Column>
+            </DataTable>
+
             <span
               style="
                 top: -0.75rem;
@@ -334,9 +448,14 @@ function openDialog(representives: any) {
             >
               المرافقين:
             </span>
-            <div v-if="props.visit.companions == 0">لايوجد</div>
-            <div v-else class="field col-12 md:col-6 lg:col-4">
-              <ComapanionsDataTable :comp-list="visit.companions">
+            <div
+              v-if="props.visit.companions == 0"
+              style="font-style: italic; color: #999; margin-top: 0.5rem"
+            >
+              لايوجد مرافقين في هذه الزيارة
+            </div>
+            <div v-else>
+              <ComapanionsDataTable :comp-list="visit.companions" :editable="editable"> 
               </ComapanionsDataTable>
             </div>
           </form>

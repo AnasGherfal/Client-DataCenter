@@ -26,13 +26,31 @@ const toast = useToast();
 
 const customers = ref(props.customers);
 
-const onFileUpload = (event: any) => {
-  console.log(customers.value.file);
-  console.log(event.target.files)
-  customers.value.file = event.target.file;
-  console.log(event.target.file[0]);
-};
+async function onFileUpload(event: any) {
+  const file = event.target.files[0];
+  const base64String = await convertFileToBase64(file);
+  if (base64String) {
+    const docType = 1; // Specify the desired docType value here
+    customers.value.files = [{ file: base64String, docType }];
+  }
+}
 
+const convertFileToBase64 = (file: File) => {
+  return new Promise<string | null>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result === "string") {
+        const base64String = result.split(",")[1];
+        resolve(base64String);
+      } else {
+        resolve(null);
+      }
+    };
+    reader.onerror = (error) => reject(error);
+  });
+};
 const rules = computed(() => {
   return {
     name: {
@@ -66,20 +84,11 @@ const instance = getCurrentInstance();
 
 const submitForm = async () => {
   const result = await v$.value.$validate();
-  const customerForm = new FormData();
-  customerForm.append("name", customers.value.name);
-  customerForm.append("email", customers.value.email);
-  customerForm.append("address", customers.value.address);
-  customerForm.append("primaryPhone", customers.value.primaryPhone);
-  customerForm.append("secondaryPhone", customers.value.secondaryPhone);
-  customerForm.append("file", customers.value.file );
 
   try {
     if (result) {
       if (instance) {
-        // Form submission logic here
-
-        instance.emit("form-submit", customerForm);
+        instance.emit("form-submit", customers.value);
       }
     } else {
       toast.add({
@@ -191,17 +200,20 @@ const isDisabled = ref(true);
           </span>
         </div>
         <div class="form-group">
-              <input
-              style="
-                  font-family: tajawal;
-                  width: 100%;
-                  height: 40px;
-                  border-radius: 10px;
-                  background-color: white;
-                  color: black;
-                  border-color: gray;
-                " type="file" @change="onFileUpload" />
-            </div>
+          <input
+            style="
+              font-family: tajawal;
+              width: 100%;
+              height: 40px;
+              border-radius: 10px;
+              background-color: white;
+              color: black;
+              border-color: gray;
+            "
+            type="file"
+            @change="onFileUpload"
+          />
+        </div>
         <!-- <div class="field col-12 md:col-6 lg:col-4">
           <FileUpload
             style="

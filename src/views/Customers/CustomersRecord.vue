@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { FilterMatchMode } from "primevue/api";
 import { useCustomersStore } from "@/stores/customers";
 import { useToast } from "primevue/usetoast";
@@ -10,8 +10,6 @@ import DeleteCustomer from "../../components/DeleteButton.vue";
 
 const toast = useToast();
 const store = useCustomersStore();
-const customersDialog = ref(false);
-const loading = ref(false);
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   status: { value: null, matchMode: FilterMatchMode.EQUALS },
@@ -51,50 +49,39 @@ const trans = (value: string) => {
   else if (value == "5") return "مقفل";
 };
 
-const rotName = ref();
-
-// function getId(index: {}) {
-//   rotName.value = index;
-//   customersDialog.value = true;
-// }
-
-// const deleteCustomer = () => {
-//   loading.value = true;
-
-//   customersApi
-//     .remove(rotName.value.id)
-//     .then((response) => {
-//       store.getCustomers();
-//       toast.add({
-//         severity: "success",
-//         summary: "تم الحذف",
-//         detail: response.data,
-//         life: 3000,
-//       });
-//       customersDialog.value = false;
-//     })
-//     .catch((error) => {
-//       toast.add({
-//         severity: "warn",
-//         summary: "حدث خطأ",
-//         detail: error,
-//         life: 3000,
-//       });
-//     })
-//     .finally(() => {
-//       loading.value = false;
-//     });
-// };
-
 const getSelectedStatusLabel = (value: any) => {
   const status = statuses.value.find((s) => s.value === value);
   return status ? status.label : "";
+};
+
+// Watch for changes in filters and trigger server-side search
+watch(filters, (newFilters) => {
+  store.currentPage = 1; // Reset currentPage to the first page
+  store.pageNumber = 1; // Reset pageNumber to 1
+  store.getCustomers();
+});
+const goToNextPage = () => {
+  if (store.currentPage < store.totalPages) {
+    store.currentPage += 1;
+    store.pageNumber += 1; // Increment the pageNumber value
+    store.loading = true;
+    store.getCustomers();
+  }
+};
+
+const goToPreviousPage = () => {
+  if (store.currentPage > 1) {
+    store.currentPage -= 1;
+    store.pageNumber -= 1; // Decrement the pageNumber value
+    store.loading = true;
+
+    store.getCustomers();
+  }
 };
 </script>
 
 <template>
   <RouterView></RouterView>
-
   <div v-if="$route.path === '/customersRecord'">
     <Card>
       <template #title>
@@ -123,7 +110,6 @@ const getSelectedStatusLabel = (value: any) => {
               <Skeleton width="100%" height="2rem"></Skeleton>
             </div>
           </div>
-
           <DataTable
             v-else
             filterDisplay="row"
@@ -131,14 +117,36 @@ const getSelectedStatusLabel = (value: any) => {
             :value="store.customers"
             dataKey="id"
             :paginator="true"
-            :rows="5"
+            :rows="10"
             v-model:filters="filters"
             :globalFilterFields="['name', 'status']"
-            paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown"
             :rowsPerPageOptions="[5, 10, 25]"
-            currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} عميل"
-            responsiveLayout="scroll"
+            currentPageReportTemplate="  عرض {first} الى {last} من {totalRecords} عميل"
+            :pageLinkSize="store.totalPages"
+            :currentPage="store.currentPage - 1"
+            paginatorTemplate="  "
+
           >
+            <template #paginatorstart>
+              <Button
+                icon="pi pi-angle-right"
+                class="p-button-rounded p-button-primary p-paginator-element"
+                :disabled="store.currentPage === 1"
+                @click="goToPreviousPage"
+              />
+              <span class="p-paginator-pages">
+                الصفحة {{ store.currentPage }} من {{ store.totalPages }}
+              </span>
+            </template>
+            <template #paginatorend>
+              <Button
+                icon="pi pi-angle-left"
+                class="p-button-rounded p-button-primary p-paginator-element"
+                :disabled="store.currentPage === store.totalPages"
+                @click="goToNextPage"
+              />
+            </template>
+
             <template #header>
               <div class="grid p-fluid">
                 <div class="field col-12 md:col-6 lg:col-4">
@@ -246,10 +254,9 @@ const getSelectedStatusLabel = (value: any) => {
               <template #body="slotProps">
                 <span v-if="slotProps.data.status !== 5">
                   <DeleteCustomer
-                    :rot-name="rotName"
                     :name="slotProps.data.name"
                     :id="slotProps.data.id"
-                    type = "Customers"
+                    type="Customers"
                   >
                   </DeleteCustomer>
                 </span>
@@ -289,5 +296,10 @@ const getSelectedStatusLabel = (value: any) => {
   font-size: 18px;
   font-weight: bold;
   color: #888;
+}
+.paginator-info {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
 }
 </style>

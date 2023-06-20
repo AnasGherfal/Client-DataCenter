@@ -18,14 +18,36 @@ const customer: Customer = reactive({
   primaryPhone: "",
   secondaryPhone: "",
   address: "",
-  file: ""
+  files: [{file:"", docType:0}],
 });
 
-const onFormSubmit = async (customer: Customer) => {
-  store.loading = true;
+const docType = ref(1)
 
+const onFormSubmit = async (customer: Customer) => {
+  const formData = new FormData();
+
+  formData.append("name", customer.name);
+  formData.append("email", customer.email);
+  formData.append("primaryPhone", customer.primaryPhone);
+  formData.append("secondaryPhone", customer.secondaryPhone);
+  formData.append("address", customer.address);
+  formData.append("files", customer.files[0].file);
+  formData.append("docTypes", customer.files[0].docType.toString());
+
+
+  const formDataObject: { [key: string]: string } = {};
+  formData.forEach((value, key) => {
+    formDataObject[key] = value.toString();
+  });
+
+  console.log("formData:", formDataObject);
+
+  store.loading = true;
+//   customerForm.forEach((value, key) => {
+//   console.log(key, value);
+// });
   customersApi
-    .create(customer)
+    .create(formData)
     .then((response) => {
       store.getCustomers();
       toast.add({
@@ -34,7 +56,7 @@ const onFormSubmit = async (customer: Customer) => {
         detail: response.data.msg,
         life: 3000,
       });
-      router.go(-1);
+      // router.go(-1);
       setTimeout(() => {
         resetForm();
       }, 500);
@@ -54,7 +76,7 @@ const resetForm = () => {
   customer.primaryPhone = "";
   customer.secondaryPhone = "";
   customer.address = "";
-  customer.file = null;
+  customer.files = [{file:'', docType:0}];
 };
 </script>
 
@@ -82,7 +104,5 @@ const resetForm = () => {
   </div>
 </template>
 <style scoped>
-/* .menuitem-content:hover {
 
-} */
 </style>

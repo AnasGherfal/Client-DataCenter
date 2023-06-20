@@ -1,4 +1,4 @@
-export interface Visit {
+export interface VisitReq {
   id: number;
   startTime: string;
   endTime: string;
@@ -8,8 +8,8 @@ export interface Visit {
   timeShift: string;
   totalMin: string;
   price: number;
-  invoiceId: number;
-  representives: [];
+  invoiceId: number|null;
+  representatives: [];
   companions: [  {
     firstName: "string",
     lastName: "string",

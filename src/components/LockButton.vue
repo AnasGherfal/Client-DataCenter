@@ -3,6 +3,8 @@ import axios from "axios";
 import { useToast } from "primevue/usetoast";
 import { computed, ref, reactive } from "vue";
 import { useCustomersStore } from "@/stores/customers";
+import LockButton from "@/components/LockButton.vue";
+
 const prop = defineProps<{
   id: number;
   name: string;

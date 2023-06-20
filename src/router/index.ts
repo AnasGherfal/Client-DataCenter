@@ -64,17 +64,15 @@ const router = createRouter({
       path: "/subscriptionsRecord",
       name: "SubscriptionsRecord",
 
-      component: () =>
-        import("../views/subscriptions/SubscriptionsRecord.vue"),
+      component: () => import("../views/subscriptions/SubscriptionsRecord.vue"),
 
       children: [
         {
           path: "addSubsciptions",
-          component: () =>
-            import("../views/subscriptions/Addsubscription.vue"),
+          component: () => import("../views/subscriptions/Addsubscription.vue"),
         },
         {
-          path: "SubscriptionsDetaView/:nad",
+          path: "SubscriptionsDetaView/:id",
           props: true,
           component: () =>
             import("../views/subscriptions/SubscriptionsDetails.vue"),
@@ -117,12 +115,17 @@ const router = createRouter({
     {
       path: "/invoices",
       name: "Invoices",
-      component: () => import("../views/Invoices/InvoicesView.vue"),
+      component: () => import("../views/Invoices/InvoicesRecord.vue"),
       children: [
         {
-          path: "invoicesDetails",
+          path: "invoicesDetails/:id",
           props: true,
           component: () => import("../views/Invoices/InvoicesDetailsView.vue"),
+        },
+        {
+          path: "addInvoice",
+          component: () => import("../views/Invoices/AddInvoice.vue")
+
         },
       ],
     },

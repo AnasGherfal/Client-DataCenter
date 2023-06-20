@@ -1,4 +1,4 @@
-export interface Invoice {
+export interface InvoiceRequest {
     id: number;
     status: number;
     date: string;

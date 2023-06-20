@@ -31,7 +31,8 @@ const customerId: Customer = reactive({
   address: "",
   primaryPhone: "",
   secondaryPhone: "",
-  file: "",
+  files: [{file:"", docType:0}],
+
 });
 
 const representativeId = ref();
@@ -84,10 +85,13 @@ onMounted(async () => {
 const representativesLength = ref();
 
 function getRepresentatives() {
-  representativesApi.get().then((response) => {
+  representativesApi
+  .get()
+  .then((response) => {
     representativeId.value = response.data.content.filter(
       (users: { customerName: string }) => users.customerName == customerId.name
     );
+
     representatives.value = response.data.content;
     representativesLength.value = representativeId.value.length;
   });

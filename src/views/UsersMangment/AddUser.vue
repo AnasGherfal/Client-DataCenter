@@ -1,11 +1,6 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from "vue";
-import {
-  required,
-  helpers,
-  email,
-  minLength,
-} from "@vuelidate/validators";
+import { required, helpers, email, minLength } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import BackButton from "@/components/BackButton.vue";
@@ -14,23 +9,28 @@ import { user } from "@/api/user";
 import type { ResponseUserModel } from "../../Modules/UserModule/UserModuleResponse";
 import { useUserStor } from "@/stores/user";
 
-
 const loading = ref(false);
-const store = useUserStor()
+const store = useUserStor();
 
 const state: ResponseUserModel = reactive({
   fullName: "",
   email: "",
   empId: null,
-  permission: null,
+  permissions: "",
 });
 
-const selectedCities = ref();
-const cities = ref([
-  { name: "Rome", code: "RM" , value:1 },
-  { name: "London", code: "LDN" , value:2 },
-  { name: "Istanbul", code: "IST" , value:4 },
-  { name: "Paris", code: "PRS" , value:8 },
+const selectedPermissions = ref([]);
+const permissions = ref([
+  { name: "من غير صلاحيه", value: 0 },
+  { name: "جميع الصلاحيات", value: 1 },
+  { name: "ادارة العملاء", value: 2 },
+  { name: "مسح عميل", value: 4 },
+  { name: "ادارة الخدمات", value: 8 },
+  { name: "مسح خدمه", value: 16 },
+  { name: "ادارة الاشتركات", value: 32 },
+  { name: "مسخ اشتراك", value: 64 },
+  { name: "ادارة المرافقين", value: 128 },
+  { name: "مسح مرافق", value: 256 },
 ]);
 
 const rules = computed(() => {
@@ -40,10 +40,7 @@ const rules = computed(() => {
     },
     empId: {
       required: helpers.withMessage("الحقل مطلوب", required),
-      minLength: helpers.withMessage(
-        "يجب أن يحتوي 4 ارقام",
-        minLength(4)
-      ),
+      minLength: helpers.withMessage("يجب أن يحتوي 4 ارقام", minLength(4)),
     },
     email: {
       required: helpers.withMessage("الحقل مطلوب", required),
@@ -58,19 +55,31 @@ const toast = useToast();
 
 const v$ = useVuelidate(rules, state);
 
+const calculatePermissions = () => {
+  let permissions = 0;
+  if (selectedPermissions.value && selectedPermissions.value.length > 0) {
+    permissions = selectedPermissions.value.reduce(
+      (sum, perm) => sum + parseInt(perm),
+      0
+    );
+  }
+  return permissions;
+};
 const submitForm = async () => {
-
   const result = await v$.value.$validate();
-  console.log(state)
 
   if (result) {
-    state.permission=selectedCities
-    loading.value = true;
+    const permissions = calculatePermissions();
+    state.permissions = permissions;
+    console.log(state.permissions);
+    console.log(state);
 
     user
       .create(state)
       .then(function (response) {
-        store.getUser()
+        store.getUser();
+        console.log(response);
+
         toast.add({
           severity: "success",
           summary: "رسالة نجاح",
@@ -105,7 +114,7 @@ const resetForm = () => {
   (state.empId = null),
     (state.fullName = ""),
     (state.email = ""),
-    (state.permission = null);
+    (state.permissions = 0);
 };
 </script>
 
@@ -176,17 +185,17 @@ const resetForm = () => {
                 </div>
               </span>
             </div>
-{{ selectedCities }}
+            {{ selectedPermissions }}
             <div class="field col-12 md:col-6 lg:col-4">
               <span class="p-float-label">
                 <div class="card flex justify-content-center">
                   <MultiSelect
-                    v-model="selectedCities"
+                    v-model="selectedPermissions"
                     display="chip"
                     optionValue="value"
-                    :options="cities"
+                    :options="permissions"
                     optionLabel="name"
-                    placeholder="Select Cities"
+                    placeholder="Select permissions"
                     :maxSelectedLabels="3"
                     class="w-full md:w-20rem"
                   />
@@ -203,7 +212,6 @@ const resetForm = () => {
                 </div> -->
               </span>
             </div>
-
           </div>
           <Button
             class="p-button-primry"

@@ -1,27 +1,39 @@
 import { ref, computed, reactive, onMounted } from "vue";
 import { defineStore } from "pinia";
-import axios from "axios";
-import { InvoiceApi } from "@/api/invoice";
+import { invoiceApi } from "@/api/invoice";
+import { useRoute } from "vue-router";
 
 export const useInvoicesStore = defineStore("visit", () => {
-  const Invoices = ref();
-
+  const invoices = ref([]);
+  const visits = ref()
+  const loading = ref(true);
   onMounted(async () => {
-    await getdata();
+    getInvoices();
   });
-  function getdata() {
-    InvoiceApi
+  const route = useRoute();
+
+  const userId = computed(() => {
+    if (route && route.params && route.params.id) {
+      return route.params.id;
+    } else {
+      return null;
+    }
+  });
+  function getInvoices() {
+    loading.value = true;
+    invoiceApi
       .get()
       .then(function (response) {
-        Invoices.value = response.data.content;
-        console.log(Invoices);
-
+        invoices.value = response.data.content;
+        visits.value = response.data.content;
       })
       .catch(function (error) {
         console.log(error);
       })
-      .finally(function () {});
+      .finally(function () {
+        loading.value = false;
+      });
   }
 
-  return { Invoices, getdata };
+  return { invoices, getInvoices, loading, visits };
 });

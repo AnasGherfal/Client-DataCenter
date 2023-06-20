@@ -59,7 +59,25 @@ console.log(store.loading);
         />
       </template>
       <template #content>
+        <div
+          v-if="store.loading"
+          class="border-round border-1 surface-border p-4 surface-card"
+        >
+          <div class="grid p-fluid">
+            <div v-for="n in 9" class="field col-12 md:col-6 lg:col-4">
+              <span class="p-float-label">
+                <Skeleton width="100%" height="2rem"></Skeleton>
+              </span>
+            </div>
+          </div>
+
+          <Skeleton width="100%" height="100px"></Skeleton>
+          <div class="flex justify-content-between mt-3">
+            <Skeleton width="100%" height="2rem"></Skeleton>
+          </div>
+        </div>
         <DataTable
+          v-else
           ref="dt"
           :value="store.subscriptions"
           dataKey="id"
@@ -126,9 +144,10 @@ console.log(store.loading);
             :filterMenuStyle="{ width: '12rem' }"
           >
             <template #body="{ data }">
-              <Tag :value="status(data.status)" 
-              :severity="getSeverity(data.status)"
-/>
+              <Tag
+                :value="status(data.status)"
+                :severity="getSeverity(data.status)"
+              />
             </template>
             <template #filter="{ filterModel, filterCallback }">
               <Dropdown

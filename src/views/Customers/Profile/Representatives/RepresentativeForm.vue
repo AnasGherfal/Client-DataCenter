@@ -100,13 +100,13 @@ const identityTypeOptions: IdentityTypeOption[] = [
   { value: 2, text: "جواز سفر" },
 ];
 
-const selectedIdentityTypeText = computed(() => {
-  const selectedValue = representatives.value.identityType;
-  const selectedOption = identityTypeOptions.find(
-    (option) => option.value === selectedValue
-  );
-  return selectedOption ? selectedOption.text : "";
-});
+// const selectedIdentityTypeText = computed(() => {
+//   const selectedValue = representatives.value.identityType;
+//   const selectedOption = identityTypeOptions.find(
+//     (option) => option.value === selectedValue
+//   );
+//   return selectedOption ? selectedOption.text : "";
+// });
 </script>
 <template>
   <form @submit.prevent="onSubmitForm">
@@ -188,6 +188,7 @@ const selectedIdentityTypeText = computed(() => {
             optionLabel="text"
             placeholder=" نوع الاثبات"
           />
+          <label for="identityType">نوع الاثبات </label>
         </span>
       </div>
       <div class="field col-12 md:col-6 lg:col-4">

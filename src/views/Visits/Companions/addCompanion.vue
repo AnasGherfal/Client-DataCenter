@@ -7,7 +7,8 @@ import Dialog from "primevue/dialog";
 import type { Companions } from "@/Modules/VisitModule/companionsModule";
 import ComapanionsDataTable from "./CompanionsDataTable.vue";
 
-const props = defineProps(["compList"]);
+const props = defineProps(["compList", "disableValidation"]);
+
 const companion: Companions = reactive({
   firstName: "",
   lastName: "",
@@ -17,36 +18,42 @@ const companion: Companions = reactive({
 });
 
 const rules = computed(() => {
-  return {
-    firstName: {
-      required: helpers.withMessage("ادخل اسم المرافق", required),
-      minLength: helpers.withMessage(
-        "يجب أن يحتوي على الأقل 3 أحرف",
-        minLength(3)
-      ),
-    },
-    lastName: {
-      required: helpers.withMessage("ادخل اسم المرافق", required),
-      minLength: helpers.withMessage(
-        "يجب أن يحتوي على الأقل 3 أحرف",
-        minLength(3)
-      ),
-    },
+  // return {
+  //   firstName: {
+  //     required: helpers.withMessage("ادخل اسم المرافق", required),
+  //     minLength: helpers.withMessage(
+  //       "يجب أن يحتوي على الأقل 3 أحرف",
+  //       minLength(3)
+  //     ),
+  //   },
+  //   lastName: {
+  //     required: helpers.withMessage("ادخل اسم المرافق", required),
+  //     minLength: helpers.withMessage(
+  //       "يجب أن يحتوي على الأقل 3 أحرف",
+  //       minLength(3)
+  //     ),
+  //   },
 
-    jobTitle: { required: helpers.withMessage("يجب ادخال الصفة", required) },
-    identityType: {
-      required: helpers.withMessage("اختر نوع اثبات الهوية", required),
-    },
-    identityNo: { required: helpers.withMessage("ادخل رقم الاثبات", required) },
-  };
+  //   jobTitle: { required: helpers.withMessage("يجب ادخال الصفة", required) },
+  //   identityType: {
+  //     required: helpers.withMessage("اختر نوع اثبات الهوية", required),
+  //   },
+  //   identityNo: { required: helpers.withMessage("ادخل رقم الاثبات", required) },
+  // };
 });
 
 const toast = useToast();
 
 const v$ = useVuelidate(rules, companion);
 
-const submitForm = async () => {
-  const result = await v$.value.$validate();
+const submitFormCom = async () => {
+  let result = true; // Assume validation success by default
+
+   if (!props.disableValidation) {
+    // Only validate if disableValidation is false
+    result = await v$.value.$validate();
+    console.log(props.disableValidation, result);
+  }
 
   if (result) {
     toast.add({
@@ -108,7 +115,7 @@ const getIdentityTypeLabel = (value: number) => {
 };
 </script>
 
-<template>
+<template>{{ props.disableValidation }}
   <Dialog
     header="اضافة مُرافق"
     contentStyle="height: 200px; padding: 20px;"
@@ -117,7 +124,8 @@ const getIdentityTypeLabel = (value: number) => {
     :style="{ width: '60vw' }"
     :modal="true"
   >
-    <form @submit.prevent="submitForm">
+    <form @submit.prevent="submitFormCom">
+
       <div class="grid p-fluid">
         <div class="field col-12 md:col-4">
           <span class="p-float-label">
@@ -127,7 +135,7 @@ const getIdentityTypeLabel = (value: number) => {
               v-model="companion.firstName"
             />
             <label for="firstName">الاسم </label>
-            <div style="height: 2px">
+            <!-- <div style="height: 2px">
               <span
                 style="color: red; font-weight: bold; font-size: small"
                 v-for="error in v$.firstName.$errors"
@@ -136,7 +144,7 @@ const getIdentityTypeLabel = (value: number) => {
               >
                 {{ error.$message }}
               </span>
-            </div>
+            </div> -->
           </span>
         </div>
 
@@ -144,7 +152,7 @@ const getIdentityTypeLabel = (value: number) => {
           <span class="p-float-label">
             <InputText id="lastName" type="text" v-model="companion.lastName" />
             <label for="lastName">اللقب </label>
-            <div style="height: 2px">
+            <!-- <div style="height: 2px">
               <span
                 style="color: red; font-weight: bold; font-size: small"
                 v-for="error in v$.lastName.$errors"
@@ -153,7 +161,7 @@ const getIdentityTypeLabel = (value: number) => {
               >
                 {{ error.$message }}
               </span>
-            </div>
+            </div> -->
           </span>
         </div>
 
@@ -161,7 +169,7 @@ const getIdentityTypeLabel = (value: number) => {
           <span class="p-float-label">
             <InputText id="jobTitle" type="text" v-model="companion.jobTitle" />
             <label for="jobTitle">صفة المرافق</label>
-            <div style="height: 2px">
+            <!-- <div style="height: 2px">
               <span
                 style="color: red; font-weight: bold; font-size: small"
                 v-for="error in v$.jobTitle.$errors"
@@ -170,7 +178,7 @@ const getIdentityTypeLabel = (value: number) => {
               >
                 {{ error.$message }}
               </span>
-            </div>
+            </div> -->
           </span>
         </div>
 
@@ -185,7 +193,7 @@ const getIdentityTypeLabel = (value: number) => {
               optionValue="value"
               optionLabel="text"
             />
-            <div style="height: 2px">
+            <!-- <div style="height: 2px">
               <span
                 style="color: red; font-weight: bold; font-size: small"
                 v-for="error in v$.identityType.$errors"
@@ -194,7 +202,7 @@ const getIdentityTypeLabel = (value: number) => {
               >
                 {{ error.$message }}
               </span>
-            </div>
+            </div> -->
             <label for="identityType">نوع الاثبات</label>
           </span>
         </div>
@@ -207,7 +215,7 @@ const getIdentityTypeLabel = (value: number) => {
               v-model="companion.identityNo"
             />
             <label for="identityNo">رقم الاثبات</label>
-            <div style="height: 2px">
+            <!-- <div style="height: 2px">
               <span
                 style="color: red; font-weight: bold; font-size: small"
                 v-for="error in v$.identityNo.$errors"
@@ -216,14 +224,14 @@ const getIdentityTypeLabel = (value: number) => {
               >
                 {{ error.$message }}
               </span>
-            </div>
+            </div> -->
           </span>
         </div>
       </div>
     </form>
     <template #footer>
       <Button
-        @click="submitForm"
+        @click="submitFormCom"
         class="p-button-primry"
         icon="fa-solid fa-plus"
         label="إضافة"

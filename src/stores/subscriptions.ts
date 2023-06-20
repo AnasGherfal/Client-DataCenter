@@ -4,26 +4,26 @@ import { subscriptionApi } from "@/api/subscriptions";
 
 export const useSubscriptionsStore = defineStore("Subscription", () => {
   const subscriptions = ref<any[]>([]);
-  const loading = ref(false);
-
+  const loading = ref(true);
+  const totalPages = ref(1);
+  const pageNumber = ref(1);
+  const pageSize = ref(10);
+  const currentPage = ref(0);
   onMounted(async () => {
     getSub();
   });
 
   function getSub() {
-    loading.value=true
     subscriptionApi
-      .get()
+      .getPages(pageNumber.value, pageSize.value)
       .then(function (response) {
         subscriptions.value = response.data.content;
-        console.log(subscriptions);
       })
       .catch(function (error) {
         console.log(error);
       })
-      .finally(()=>{
-        loading.value=false
-
+      .finally(() => {
+        loading.value = false;
       });
   }
 

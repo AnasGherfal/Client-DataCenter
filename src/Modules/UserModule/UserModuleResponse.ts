@@ -1,6 +1,6 @@
 export interface ResponseUserModel {
-    fullName :string | null,
+    fullName :string ,
     empId :number | null,
-    email : null | string,
-    permission: any | null
+    email :  string,
+    permissions:  any
   }
