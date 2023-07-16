@@ -1,4 +1,4 @@
-import httpClient from ".";
+import {httpClient} from "./index";
 import type { Visit } from "../Modules/VisitModule/VisitResponseModule";
 import type { VisitEdit } from "../Modules/VisitModule/VisitEditModule";
 export const visitApi = {

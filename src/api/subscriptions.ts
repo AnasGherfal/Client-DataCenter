@@ -1,4 +1,4 @@
-import httpClient from ".";
+import {httpClient} from "./index";
 import type { Subscription } from "../Modules/SubscriptionModule/SubscriptionsRequestModule";
 
 export const subscriptionApi = {

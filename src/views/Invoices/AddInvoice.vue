@@ -171,7 +171,6 @@ const resetForm = () => {
                 <Calendar
                   inputId="startDate"
                   v-model="invoices.startDate"
-                  :minDate="minDate"
                   dateFormat="yy/mm/dd"
                   selectionMode="single"
                   :showButtonBar="true"
@@ -196,7 +195,7 @@ const resetForm = () => {
                   v-model="invoices.endDate"
                   dateFormat="yy/mm/dd"
                   selectionMode="single"
-                  :minDate="minDate"
+                  :minDate="invoices.startDate"
                   :showButtonBar="true"
                   :manualInput="false"
                 />

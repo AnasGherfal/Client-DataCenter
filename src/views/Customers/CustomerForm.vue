@@ -55,10 +55,7 @@ const rules = computed(() => {
   return {
     name: {
       required: helpers.withMessage("الحقل مطلوب", required),
-      validateText: helpers.withMessage(
-        ", حروف عربيه او انجليزيه فقط",
-        validateText
-      ),
+      validateText: helpers.withMessage(", حروف فقط", validateText),
       minLength: helpers.withMessage(
         "يجب أن يحتوي على الأقل 3 أحرف",
         minLength(3)
@@ -199,20 +196,18 @@ const isDisabled = ref(true);
             <label for="secondaryPhone">رقم هاتف 2</label>
           </span>
         </div>
-        <div class="form-group">
-          <input
-            style="
-              font-family: tajawal;
-              width: 100%;
-              height: 40px;
-              border-radius: 10px;
-              background-color: white;
-              color: black;
-              border-color: gray;
-            "
-            type="file"
-            @change="onFileUpload"
-          />
+        <div class="field col-12 md:col-6 lg:col-4">
+          <label class="file-input-label" for="fileInput">
+            رقم هاتف 2
+            <input
+              id="fileInput"
+              style="display: none"
+              type="file"
+              @change="onFileUpload"
+              accept="*"
+            />
+          </label>
+          <span class="selected-file-name"> selectedFileName </span>
         </div>
         <!-- <div class="field col-12 md:col-6 lg:col-4">
           <FileUpload
@@ -225,7 +220,7 @@ const isDisabled = ref(true);
               border-color: gray;
             "
             mode="basic"
-            v-model="customers.file"
+            v-model="customers.files"
             name="File"
             url="./upload"
             chooseLabel=" ارفق ملف"
@@ -250,4 +245,28 @@ const isDisabled = ref(true);
   </div>
 </template>
 
-<style></style>
+<style>
+.file-input-label {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  font-family: tajawal;
+  width: 100%;
+  height: 45px;
+  border-radius: 10px;
+  background-color: rgb(255, 255, 255);
+  color: black;
+  border: 2px solid gray;
+  text-align: center;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.file-input-label::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+</style>

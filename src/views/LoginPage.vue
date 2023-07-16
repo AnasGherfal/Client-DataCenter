@@ -1,8 +1,60 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, nextTick, onMounted, reactive, ref } from "vue";
 import Password from "primevue/password";
+import { loginApi } from "@/api/login";
+import { useRouter } from "vue-router";
+import { storeToken } from "@/auth";
+import { email, helpers, required } from "@vuelidate/validators";
+import useVuelidate from "@vuelidate/core";
+import { useToast } from "primevue/usetoast";
 
-const hello = ref();
+const credentials = reactive({
+  email: "",
+  password: "",
+});
+const toast = useToast();
+const router = useRouter();
+const loading = ref(false);
+console.log(credentials);
+const submitForm = async () => {
+  const result = await v$.value.$validate();
+  if (result) {
+    loginApi
+      .create(credentials)
+      .then((response) => {
+        console.log(response);
+        // Store the token if the login is successful
+        if (response.status == 200) {
+          const token = response.data.content.accessToken;
+          storeToken(token);
+
+          window.location.href = "/";
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        console.log(credentials);
+        toast.add({
+          severity: "error",
+          summary: "رسالة خطأ",
+          detail: "Validation failed",
+          life: 3000,
+        });
+      })
+      .finally(() => {});
+  }
+};
+
+const rules = computed(() => {
+  return {
+    email: {
+      required: helpers.withMessage("البريد الأكتروني مطلوب", required),
+      email: helpers.withMessage(" ليس عنوان بريد إلكتروني صالح", email),
+    },
+    password: { required: helpers.withMessage("كلمة المرور مطلوبة", required) },
+  };
+});
+const v$ = useVuelidate(rules, credentials);
 </script>
 
 <template>
@@ -29,24 +81,43 @@ const hello = ref();
               style="width: 100%; height: 40px"
               id="address"
               type="text"
-              v-model="hello"
+              v-model="credentials.email"
             />
+            <div style="height: 2px">
+              <span
+                v-for="error in v$.email.$errors"
+                :key="error.$uid"
+                style="color: red; font-weight: bold; font-size: small"
+              >
+                {{ error.$message }}</span
+              >
+            </div>
             <label for="address">البريد الالكتروني</label>
           </span>
         </div>
         <div class="field col-12 md:col-12 lg:col-12">
           <span class="p-float-label">
             <Password
-              v-model="hello"
+              v-model="credentials.password"
               :feedback="false"
               toggleMask
               style="width: 100%; height: 40px"
             />
+            <div style="height: 2px">
+              <span
+                v-for="error in v$.password.$errors"
+                :key="error.$uid"
+                style="color: red; font-weight: bold; font-size: small"
+              >
+                {{ error.$message }}</span
+              >
+            </div>
             <label style="margin-right: 30px" for="address">كلمة المرور</label>
           </span>
         </div>
       </div>
       <Button
+        @click="submitForm()"
         class="p-button-primry mt-3"
         style="width: 100%"
         label="تسجيل دخول"
@@ -54,6 +125,7 @@ const hello = ref();
         :loading="loading"
       />
     </div>
+    <Toast position="bottom-left" />
   </div>
 </template>
 
@@ -91,4 +163,3 @@ p {
   margin-right: 50%;
 }
 </style>
-<style></style>

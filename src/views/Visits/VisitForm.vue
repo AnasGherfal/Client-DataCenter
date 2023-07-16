@@ -4,6 +4,7 @@ import { required, helpers, minValue } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import { useVistisStore } from "@/stores/visits";
+import { useSubscriptionsStore } from "@/stores/subscriptions";
 import addCompanion from "./Companions/addCompanion.vue";
 import moment from "moment";
 import type { Visit } from "@/Modules/VisitModule/VisitResponseModule";
@@ -13,6 +14,8 @@ import { visitApi } from "@/api/visits";
 import { representativesApi } from "@/api/representatives";
 import { subscriptionApi } from "@/api/subscriptions";
 const store = useVistisStore();
+const storeubscriptions = useSubscriptionsStore();
+
 const storeCustomers = useCustomersStore();
 const loading = ref(false);
 const disableValidation = ref(false);
@@ -108,7 +111,7 @@ watch(customerselect, async (newValue) => {
       visit.representatives = []; // Reset the representatives array
       customerRepresentatives.value = representatives.value; // Update the array with the selected representatives
 
-      const subscriptionResponse = await subscriptionApi.get();
+      const subscriptionResponse = await subscriptionApi.getPages(storeubscriptions.pageNumber, storeubscriptions.pageSize);
       subscriptions.value = subscriptionResponse.data.content.filter(
         (subscription: any) => subscription.customerName === newValue.name
       );

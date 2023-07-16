@@ -1,5 +1,5 @@
 import type { Customer } from "../Modules/CustomerModule/CustomersModule";
-import httpClient from ".";
+import {httpClient} from "./index";
 
 export const customersApi = {
   get: async function (pageNumber: number, pageSize: number){

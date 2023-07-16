@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { FilterMatchMode } from "primevue/api";
 import AddBotton from "@/components/AddButton.vue";
 import LockButton from "@/components/LockButton.vue";
@@ -22,28 +22,51 @@ const formatDate = (value: Date) => {
 
 const getSeverity = (status: any) => {
   switch (trans(status)) {
-    case "الاشتراك مفعل":
+    case " مفعل":
       return "success";
-    case "الاشتراك غير مفعل":
+    case " غير مفعل":
       return "danger";
-    case "الاشتراك مقفل":
+    case " مقفل":
       return "danger";
   }
 };
 const status = (value: number) => {
   if (value === 1) {
-    return "الاشتراك مفعل";
+    return " مفعل";
   } else if (value === 2) {
-    return "الاشتراك غير مفعل";
-  } else if (value === 5) return "الاشتراك مقفل";
+    return " غير مفعل";
+  } else if (value === 5) return " مقفل";
 };
 
 const trans = (value: string) => {
-  if (value == "1") return "الاشتراك مفعل";
-  else if (value == "2") return "الاشتراك غير مفعل";
-  else if (value == "5") return "الاشتراك مقفل";
+  if (value == "1") return " مفعل";
+  else if (value == "2") return " غير مفعل";
+  else if (value == "5") return " مقفل";
 };
-console.log(store.loading);
+
+watch(filters, (newFilters) => {
+  store.currentPage = 1; // Reset currentPage to the first page
+  store.pageNumber = 1; // Reset pageNumber to 1
+  store.getSubs();
+});
+const goToNextPage = () => {
+  if (store.currentPage < store.totalPages) {
+    store.currentPage += 1;
+    store.pageNumber += 1; // Increment the pageNumber value
+    store.loading = true;
+    store.getSubs();
+  }
+};
+
+const goToPreviousPage = () => {
+  if (store.currentPage > 1) {
+    store.currentPage -= 1;
+    store.pageNumber -= 1; // Decrement the pageNumber value
+    store.loading = true;
+
+    store.getSubs();
+  }
+};
 </script>
 
 <template>
@@ -82,15 +105,36 @@ console.log(store.loading);
           :value="store.subscriptions"
           dataKey="id"
           :paginator="true"
-          :rows="5"
+          :rows="10"
           v-model:filters="filters"
           :globalFilterFields="['serviceName', 'customerName']"
-          paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown"
+          paginatorTemplate=" PrevPageLink    NextPageLink "
           :rowsPerPageOptions="[5, 10, 25]"
           currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} عميل"
           responsiveLayout="scroll"
+          :pageLinkSize="store.totalPages"
+          :currentPage="store.currentPage - 1"
         >
-          <template #header>
+          <template #paginatorstart>
+            <Button
+              icon="pi pi-angle-right"
+              class="p-button-rounded p-button-primary p-paginator-element"
+              :disabled="store.currentPage === 1"
+              @click="goToPreviousPage"
+            />
+            <span class="p-paginator-pages">
+              الصفحة {{ store.currentPage }} من {{ store.totalPages }}
+            </span>
+          </template>
+          <template #paginatorend>
+            <Button
+              icon="pi pi-angle-left"
+              class="p-button-rounded p-button-primary p-paginator-element"
+              :disabled="store.currentPage === store.totalPages"
+              @click="goToNextPage"
+            />
+          </template>
+          <!-- <template #header>
             <div class="grid p-fluid">
               <div class="field col-12 md:col-6 lg:col-4">
                 <span class="p-input-icon-left p-float-label">
@@ -100,7 +144,7 @@ console.log(store.loading);
                 </span>
               </div>
             </div>
-          </template>
+          </template> -->
 
           <template #empty>
             <div
@@ -204,7 +248,7 @@ console.log(store.loading);
                 :id="slotProps.data.id"
                 :name="slotProps.data.id"
                 :status="slotProps.data.status"
-                @getdata="store.getSub"
+                @getdata="store.getSubs"
               />
 
               <RouterLink

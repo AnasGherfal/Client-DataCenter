@@ -10,10 +10,10 @@ export const useSubscriptionsStore = defineStore("Subscription", () => {
   const pageSize = ref(10);
   const currentPage = ref(0);
   onMounted(async () => {
-    getSub();
+    getSubs();
   });
 
-  function getSub() {
+  function getSubs() {
     subscriptionApi
       .getPages(pageNumber.value, pageSize.value)
       .then(function (response) {
@@ -27,5 +27,13 @@ export const useSubscriptionsStore = defineStore("Subscription", () => {
       });
   }
 
-  return { subscriptions, getSub, loading };
+  return {
+    subscriptions,
+    getSubs,
+    loading,
+    totalPages,
+    pageNumber,
+    currentPage,
+    pageSize,
+  };
 });

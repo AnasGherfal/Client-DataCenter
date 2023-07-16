@@ -1,4 +1,4 @@
-import httpClient from ".";
+import {httpClient} from "./index";
 
 export const timeShiftsApi = {
   get: async function () {

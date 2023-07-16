@@ -1,5 +1,5 @@
 import type { ResponseUserModel } from "../Modules/UserModule/UserModuleResponse";
-import httpClient from ".";
+import {httpClient} from "./index";
 
 export const user = {
   getById: async function (id: any) {

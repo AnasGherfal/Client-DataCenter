@@ -3,7 +3,7 @@ import { ref, watch } from "vue";
 import { FilterMatchMode } from "primevue/api";
 import { useCustomersStore } from "@/stores/customers";
 import { useToast } from "primevue/usetoast";
-import AddBotton from "@/components/AddButton.vue";
+import AddButton from "@/components/AddButton.vue";
 import LockButton from "@/components/LockButton.vue";
 import { customersApi } from "@/api/customers";
 import DeleteCustomer from "../../components/DeleteButton.vue";
@@ -54,12 +54,29 @@ const getSelectedStatusLabel = (value: any) => {
   return status ? status.label : "";
 };
 
-// Watch for changes in filters and trigger server-side search
-watch(filters, (newFilters) => {
-  store.currentPage = 1; // Reset currentPage to the first page
-  store.pageNumber = 1; // Reset pageNumber to 1
-  store.getCustomers();
-});
+// // Watch for changes in filters and trigger server-side search
+// watch(filters, async (newFilters) => {
+//   store.currentPage = 1; // Reset currentPage to the first page
+//   store.pageNumber = 1; // Reset pageNumber to 1
+//   store.getCustomers();
+
+//   try {
+//     store.loading = true;
+//     // Make the API request to fetch filtered data based on the search criteria
+//     const response = await customersApi.getById(id);
+//     store.customers = response.data; // Update the table data with the filtered results
+//   } catch (error) {
+//     // Handle the error
+//     console.error(error);
+//     toast.add({
+//       severity: "error",
+//       summary: "Error",
+//       detail: "Failed to fetch customers.",
+//     });
+//   } finally {
+//     store.loading = false;
+//   }
+// });
 const goToNextPage = () => {
   if (store.currentPage < store.totalPages) {
     store.currentPage += 1;
@@ -86,7 +103,7 @@ const goToPreviousPage = () => {
     <Card>
       <template #title>
         سجل العملاء
-        <AddBotton
+        <AddButton
           name-button="اضافة عميل"
           rout-name="/customersRecord/addCustomer"
         />
@@ -125,7 +142,6 @@ const goToPreviousPage = () => {
             :pageLinkSize="store.totalPages"
             :currentPage="store.currentPage - 1"
             paginatorTemplate="  "
-
           >
             <template #paginatorstart>
               <Button

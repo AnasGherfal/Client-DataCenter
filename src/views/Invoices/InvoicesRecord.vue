@@ -6,6 +6,7 @@ import { useCustomersStore } from "@/stores/customers";
 import type { InvoiceResponde } from "@/Modules/Invoices/InvoicesRespondeModule";
 import AddButton from "@/components/AddButton.vue";
 import { invoiceApi } from "@/api/invoice";
+import moment from "moment";
 
 const loading = ref(true);
 const store = useInvoicesStore();
@@ -47,32 +48,27 @@ const getPaymentStatus = (isPaid: boolean) => {
   return isPaid ? "مدفوعه" : "غير مدفوعه";
 };
 
-
+function convertToDate(dateString: string): string {
+  const date = moment(dateString).format("YYYY/MM/DD | hh:mm A"); // Convert to string format
+  return date;
+}
 
 const updateEndDate = () => {
   if (startDate.value > endDate.value) {
     endDate.value = startDate.value;
   }
 };
-function convertDateFormat(dateString: string | number | Date) {
-  const date = new Date(dateString);
-  
-  const year = date.getFullYear().toString().slice(-2);
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  
-  return `${year}/${month}/${day}`;
-}
 
 onMounted(async () => {
   try {
-      const response = await invoiceApi.get();
-      store.invoices = response.data.content;
-    } catch (error) {
-      console.log(error);
-    } finally {
-      loading.value = false;
-    }  });
+    const response = await invoiceApi.get();
+    store.invoices = response.data.content;
+  } catch (error) {
+    console.log(error);
+  } finally {
+    loading.value = false;
+  }
+});
 </script>
 
 <template>
@@ -80,7 +76,8 @@ onMounted(async () => {
 
   <div v-if="$route.path === '/invoices'">
     <Card>
-      <template #title> سجل الفواتير 
+      <template #title>
+        سجل الفواتير
         <AddButton
           name-button="إنشاء فاتورة"
           rout-name="/invoices/addInvoice"
@@ -171,16 +168,16 @@ onMounted(async () => {
               </div>
             </form>
           </template>
-          <Column field="id" header="id " style="min-width: 12rem"></Column>
-          <Column
-            field="date"
-            header="التاريخ"
-            style="min-width: 12rem"
-          ></Column>
+          <Column field="id" header="id " style="min-width: 4rem"></Column>
+          <Column field="date" header="التاريخ" style="min-width: 12rem">
+            <template #body="slotProps">
+              {{ convertToDate(slotProps.data.date) }}
+            </template></Column
+          >
           <Column
             field="description"
             header="وصف"
-            style="min-width: 12rem"
+            style="min-width: 8rem"
           ></Column>
           <Column
             field="totalAmount"

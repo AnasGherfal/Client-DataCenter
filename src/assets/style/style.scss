@@ -1,173 +1,165 @@
 @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap');
 
+// Typography
 body {
-
-    font-family: 'Tajawal', sans-serif;
+  font-family: 'Tajawal', sans-serif;
 }
 
-.p-card{
-     border-radius: 10px !important;
-     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important;
-          max-width: 100% !important;
-
+// Cards
+.p-card {
+  border-radius: 10px !important;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important;
+  max-width: 100% !important;
 }
 
-//---- Input---///
-
-
+// Inputs
 .p-float-label label {
-    position: absolute;
-    pointer-events: none;
-    top: 40%;
-    margin-top: -.5rem;
-    transition-property: all;
-    transition-timing-function: ease;
-    line-height: 1;
-  }
-  .p-button .p-button-icon-left {
-    margin-left: .5rem;
-    margin-right: 0rem !important;
-  }
-
-.p-inputtext	{
-    border-radius: 10px !important;
-    
-}
-.p-multiSelect-label{
-    border-radius: 10px !important;
-
-}
-error{
-    font-size: 12px !important; 
-    font-weight: bold !important;
-    
+  position: absolute;
+  pointer-events: none;
+  top: 40%;
+  margin-top: -0.5rem;
+  transition-property: all;
+  transition-timing-function: ease;
+  line-height: 1;
 }
 
-.p-dropdown	{
-    border-radius: 10px !important;
-
+.p-button .p-button-icon-left {
+  margin-left: 0.5rem;
+  margin-right: 0 !important;
 }
 
-.p-float-label>label {
-    right: 0.5rem;
-    transition-duration: 0.3s
+.p-inputtext {
+  border-radius: 10px !important;
 }
 
-//--Buttons--//
+.p-multiSelect-label {
+  border-radius: 10px !important;
+}
 
+.error {
+  font-size: 12px !important;
+  font-weight: bold !important;
+}
 
-//---Data Table---//
-//text allign to the right
+.p-dropdown {
+  border-radius: 10px !important;
+}
+
+.p-float-label > label {
+  right: 0.5rem;
+  transition-duration: 0.3s;
+}
+
+// Buttons
+
+// Data Table
 .p-datatable .p-datatable-tbody > tr > td {
-    text-align: right !important;
-    border: 1px solid #e9ecef ;
-    border-width: 0 0 1px 0 ;
-    padding: 1rem 1rem ;
-    direction: ltr;
+  text-align: right !important;
+  border: 1px solid #e9ecef;
+  border-width: 0 0 1px 0;
+  padding: 1rem 1rem;
+  direction: ltr;
 }
+
 .p-paginator .p-dropdown .p-dropdown-label {
-    padding-right: 0.5rem !important;
+  padding-right: 0.5rem !important;
 }
-.p-paginator-next	{
-    transform: rotate(180deg) !important;
-    
-    
-    }
-    
-    .p-paginator-prev	{
-        transform: rotate(180deg) !important;
-    }
-    .p-datatable .p-datatable-tbody > tr > td {
-        text-align: right;
-        border: 1px solid #e9ecef;
-        border-width: 0 0 1px 0;
-        padding: 1rem 1rem;
-    }
 
-    .p-multiselect-panel .p-multiselect-items .p-multiselect-item .p-checkbox {
-        margin-left: 0.5rem;
-    }
+.p-paginator-next {
+  transform: rotate(180deg) !important;
+}
 
-    //---- calander -----//
-    .p-datepicker .p-timepicker {
-        border-top: 1px solid #ebebeb;
-        padding: 0.5rem;
-        direction: ltr;
-        text-align: right;
-    }
-    .p-datepicker{
-        direction: ltr;
+.p-paginator-prev {
+  transform: rotate(180deg) !important;
+}
 
-    }
-    .p-fluid .p-calendar .p-inputtext {
-        width: 1%;
-        direction: ltr;
-        text-align: end;
-    }
-    
-    .p-datepicker table td{ padding: 1%; }
-    .p-datepicker table td > span { width: 40px;
-    height: 30px; }
-    .p-calendar .p-inputtext {
-        flex: 1 1 auto;
-        width: 1%;
-        text-align: right;
-        direction: ltr;
-    }
+.p-datatable .p-datatable-tbody > tr > td {
+  text-align: right;
+  border: 1px solid #e9ecef;
+  border-width: 0 0 1px 0;
+  padding: 1rem 1rem;
+}
 
-    
+.p-multiselect-panel .p-multiselect-items .p-multiselect-item .p-checkbox {
+  margin-left: 0.5rem;
+}
 
-    .p-menu .p-menuitem > .p-menuitem-content .p-menuitem-link .p-menuitem-icon {
-        color: #898989;
-        margin-left: .5rem;
-      }
+// Calendar
+.p-datepicker .p-timepicker {
+  border-top: 1px solid #ebebeb;
+  padding: 0.5rem;
+  direction: ltr;
+  text-align: right;
+}
 
-    .p-menu .p-menuitem > .p-menuitem-content .p-menuitem-link .p-menuitem-icon {
+.p-datepicker {
+  direction: ltr;
+}
+
+.p-fluid .p-calendar .p-inputtext {
+  width: 1%;
+  direction: ltr;
+  text-align: end;
+}
+
+.p-datepicker table td {
+  padding: 1%;
+}
+
+.p-datepicker table td > span {
+  width: 40px;
+  height: 30px;
+}
+
+.p-calendar .p-inputtext {
+  flex: 1 1 auto;
+  width: 1%;
+  text-align: right;
+  direction: ltr;
+}
+
+// Menu
+.p-menu .p-menuitem > .p-menuitem-content .p-menuitem-link .p-menuitem-icon {
   color: #898989;
-  margin-left: .5rem;
+  margin-left: 0.5rem;
 }
 
-// .p-inputtext:enabled:focus {
-
-//     direction: ltr;
-// }
-
+// Utility Classes
 .mr-3 {
-    margin-left: 1rem !important;
-  }
+  margin-left: 1rem !important;
+}
 
+.warning-message {
+  display: flex;
+  align-items: center;
+  background-color: #ffeeba;
+  color: #856404;
+  padding: 8px;
+  border: 1px solid #ffeeba;
+  border-radius: 10px;
+  width: 60%;
+}
 
-  .warning-message {
-    display: flex;
-    align-items: center;
-    background-color: #ffeeba;
-    color: #856404;
-    padding: 8px;
-    border: 1px solid #ffeeba;
-    border-radius: 10px;
-    width: 60%;
-  }
-  
-  .warning-message-icon {
-    width: 24px;
-    height: 24px;
-    background-color: #ffc107;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: 5px;
-  }
-  
-  .warning-message-icon:before {
-    content: "!";
-    font-size: 16px;
-    color: #fff;
-    font-weight: bold;
-  }
-  
-  .warning-message-text {
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 1.5;
-  }
+.warning-message-icon {
+  width: 24px;
+  height: 24px;
+  background-color: #ffc107;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 5px;
+}
+
+.warning-message-icon:before {
+  content: "!";
+  font-size: 16px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.warning-message-text {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+}

@@ -24,7 +24,7 @@ const state: Subscription = reactive({
   startDate: "",
   endDate: "",
   file: {
-    file: null,
+    file: "",
     docType: 0,
   },
 });
@@ -99,6 +99,8 @@ const submitForm = async () => {
     //   docType: state.file.docType,
     // });
 
+    console.log(typeof state.file);
+
     const customerId = state.customerId?.id ?? 0;
 
     const subdata = new FormData();
@@ -106,7 +108,8 @@ const submitForm = async () => {
     subdata.append("customerId", String(customerId));
     subdata.append("startDate", moment(state.startDate).format("YYYY/MM/DD"));
     subdata.append("endDate", moment(state.endDate).format("YYYY/MM/DD"));
-    subdata.append("file", state.file.file);
+    const fileName = `@${state.file.file.name};type=`;
+    subdata.append(fileName, state.file.file.type);
     subdata.append("docType", String(state.file.docType));
 
     subdata.forEach((value, key) => {
@@ -123,7 +126,7 @@ const submitForm = async () => {
         });
         console.log(Response);
         loading.value = false;
-        store.getSub();
+        store.getSubs();
         // router.go(-1);
       })
       .catch(function (error) {

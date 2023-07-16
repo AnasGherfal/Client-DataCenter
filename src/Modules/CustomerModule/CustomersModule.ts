@@ -7,7 +7,7 @@ export interface Customer {
     primaryPhone: string;
     secondaryPhone: string;
     files: [{
-      file: File;
+      file: File |any;
       docType: number;
     }];
 

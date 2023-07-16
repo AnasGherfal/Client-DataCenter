@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Button from "primevue/button";
 import { onMounted, ref } from "vue";
+import { removeToken } from "@/auth";
 
 const checked = ref<boolean>(false);
 const menu = ref();
@@ -16,6 +17,11 @@ const toggle = (event: any) => {
 
 const isDarkTheme = ref(false);
 
+const logout = () => {
+  removeToken()
+  window.location.href = "/Login"; // Replace "/" with the actual home page URL
+
+};
 const toggleThemeMode = () => {
   isDarkTheme.value = !isDarkTheme.value;
   const theme = isDarkTheme.value ? "dark" : "light";
@@ -64,6 +70,7 @@ const toggleThemeMode = () => {
       </template>
       <template #end>
         <button
+          @click="logout"
           class="w-full p-link flex align-items-center p-2 pl-4 text-color hover:surface-200 border-noround"
         >
           <i class="pi pi-sign-out" />

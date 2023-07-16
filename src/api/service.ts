@@ -1,5 +1,5 @@
 import type { Service } from "../Modules/ServicesModule/ServicesModule";
-import httpClient from ".";
+import {httpClient} from "./index";
 
 export const serviceApi = {
   get: async function () {

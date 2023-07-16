@@ -6,12 +6,12 @@ import {  useRoute } from 'vue-router';
 import { user } from '../../api/user';
 import { toNumber } from '@vue/shared';
 import type { RequestUserModel } from '../../Modules/UserModule/UserModuleRequest';
-import { useUserStor } from "../../stores/user"
+import { useUserStore } from "../../stores/user"
 import InfoUser from './InfoUser.vue';
 
 const route = useRoute();
 
-const store = useUserStor();
+const store = useUserStore();
 
 const userId = computed(() => {
   if (route && route.params && route.params.id) {

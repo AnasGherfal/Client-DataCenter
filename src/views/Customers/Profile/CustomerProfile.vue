@@ -20,9 +20,9 @@ const loading = ref(false);
 
 const userId = computed(() => {
   if (route && route.params && route.params.id) {
-    return route.params.id;
+    return Number(route.params.id); // Convert the ID to a number
   } else {
-    return null; // or return a default value if id is not available
+    return -1; // or return a default value if id is not available, such as -1
   }
 });
 const customerId: Customer = reactive({
@@ -31,8 +31,7 @@ const customerId: Customer = reactive({
   address: "",
   primaryPhone: "",
   secondaryPhone: "",
-  files: [{file:"", docType:0}],
-
+  files: [{ file: "", docType: 0 }],
 });
 
 const representativeId = ref();
@@ -43,51 +42,33 @@ onMounted(async () => {
   loading.value = true;
 
   customersApi
-    .get()
-    .then(function (response) {
-      customerId.id = response.data.content.filter(
-        (users: { id: String }) => users.id == userId.value
-      )[0].id;
-
-      customerId.name = response.data.content.filter(
-        (users: { id: String }) => users.id == userId.value
-      )[0].name;
-
-      customerId.address = response.data.content.filter(
-        (users: { id: String }) => users.id == userId.value
-      )[0].address;
-
-      customerId.email = response.data.content.filter(
-        (users: { id: String }) => users.id == userId.value
-      )[0].email;
-
-      customerId.primaryPhone = response.data.content.filter(
-        (users: { id: String }) => users.id == userId.value
-      )[0].primaryPhone;
-
-      customerId.secondaryPhone = response.data.content.filter(
-        (users: { id: String }) => users.id == userId.value
-      )[0].secondaryPhone;
-
-      customerId.status = response.data.content.filter(
-        (users: { id: String }) => users.id == userId.value
-      )[0].status;
+    .getById(userId.value)
+    .then((response) => {
+      console.log(response);
+      customerId.id = response.data.id;
+      customerId.name = response.data.name;
+      customerId.address = response.data.address;
+      customerId.email = response.data.email;
+      customerId.primaryPhone = response.data.primaryPhone;
+      customerId.secondaryPhone = response.data.secondaryPhone;
+      customerId.status = response.data.status;
 
       getRepresentatives();
-      store.loading = false;
-      loading.value = false;
     })
     .catch(function (error) {
       console.log(error);
+    })
+    .finally(() => {
+      store.loading = false;
+      loading.value = false;
     });
 });
 
 const representativesLength = ref();
 
+// needs an update with getbyId
 function getRepresentatives() {
-  representativesApi
-  .get()
-  .then((response) => {
+  representativesApi.get().then((response) => {
     representativeId.value = response.data.content.filter(
       (users: { customerName: string }) => users.customerName == customerId.name
     );

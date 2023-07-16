@@ -1,58 +1,70 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import { onMounted, ref } from 'vue';
-import SideBar from './layouts/SideBar.vue'
-import TopBar from './layouts/TopBar.vue'
-import LoginPage from './views/LoginPage.vue';
-
+import { RouterLink, RouterView } from "vue-router";
+import { onBeforeMount, onMounted, ref } from "vue";
+import SideBar from "./layouts/SideBar.vue";
+import TopBar from "./layouts/TopBar.vue";
+import LoginPage from "./views/LoginPage.vue";
+import { isAuthorized  } from './auth';
+import router from "./router";
 
 const loading = ref(false);
 onMounted(() => {
-      setTimeout(() => {
-        loading.value = false;
-      }, 0); // Set the timeout to the amount of time you want the loading page to display
-    });
+  setTimeout(() => {
+    loading.value = false;
+  }, 0); // Set the timeout to the amount of time you want the loading page to display
+});
 
+// Check if the user is authorized
+const authorized = isAuthorized();
+
+console.log(authorized)
+
+// Redirect the user if authorized
+if (authorized) {
+  router.push("/");
+}
 
 </script>
 
 <template>
+  <!-- <LoginPage v-if="!authorized" /> -->
 
-<LoginPage v-if="($route.path === '/login')"/>
+  <main >
+    <TopBar />
 
+    <div style="width: 100%; margin-top: 75px" class="absolute">
+      <div
+        style="width: 28%; height: 100%; margin-right: 1%; position: absolute"
+      >
+        <SideBar />
+      </div>
 
-  <main v-else>
-
-      <TopBar/>
- 
-    <div style="width: 100%; margin-top: 75px;" class="absolute">
-
-    <div style="width:28%; height: 100%; margin-right: 1%; position: absolute;">
-        <SideBar/>
-    </div> 
-
-    <div class="content" style="transition: all 0.5s ease; width: 73%; margin-right: 26%; padding: 25px;">
-      <!-- main -->
-      <RouterView/>
+      <div
+        class="content"
+        style="
+          transition: all 0.5s ease;
+          width: 73%;
+          margin-right: 26%;
+          padding: 25px;
+        "
+      >
+        <!-- main -->
+        <RouterView />
+      </div>
     </div>
-    
-    </div>
-
-</main>
+  </main>
 </template>
 
 <style>
-
-
 @media screen and (max-width: 600px) {
-    .content{
-      width: 100% !important; margin-right: 0% !important;
-    }
+  .content {
+    width: 100% !important;
+    margin-right: 0% !important;
+  }
 }
 
-
-body{
-  padding:0;
+body {
+  padding: 0;
   margin: 0;
   background-color: var(--surface-ground);
 }
@@ -65,21 +77,20 @@ body{
 
 /* Track */
 ::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 5px grey; 
+  box-shadow: inset 0 0 5px grey;
   border-radius: 10px;
 }
- 
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: rgb(22, 67, 160); 
+  background: rgb(22, 67, 160);
   border-radius: 20px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: gray; 
+  background: gray;
 }
-
 
 /* #loading {
   position: fixed;
@@ -99,5 +110,3 @@ body{
   z-index: 100;
 } */
 </style>
-
-

@@ -2,7 +2,7 @@ import { ref, onMounted } from "vue";
 import { defineStore } from "pinia";
 import { user } from "@/api/user";
 
-export const useUserStor = defineStore("user", () => {
+export const useUserStore = defineStore("user", () => {
   const userData = ref();
   const loading = ref(true);
   const data = ref(null);

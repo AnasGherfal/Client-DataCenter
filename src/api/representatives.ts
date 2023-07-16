@@ -1,5 +1,5 @@
 import type { Representatives } from "../Modules/CustomerModule/RepresentativesModule/Representatives";
-import httpClient from ".";
+import {httpClient} from "./index";
 
 export const representativesApi = {
   get: async function () {

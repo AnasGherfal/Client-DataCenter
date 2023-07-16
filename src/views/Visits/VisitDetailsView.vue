@@ -49,13 +49,11 @@ const visits = reactive({
 onMounted(async () => {
   store.loading = true;
   visitApi
-    .get()
+    .getPages(store.pageNumber, store.pageSize)
     .then((response) => {
       const filteredVisits = response.data.content.filter(
         (visit: { id: String }) => visit.id == userId.value
       );
-
-
       if (filteredVisits.length > 0) {
         Object.assign(visits, filteredVisits[0]);
       }

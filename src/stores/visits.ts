@@ -24,7 +24,6 @@ export const useVistisStore = defineStore("visit", () => {
         visits.value = response.data.content;
         totalPages.value = response.data.totalPages;
         currentPage.value = response.data.currentPage;
-        console.log(response.data.content)
       })
       .catch((error) => {
         console.log(error);
