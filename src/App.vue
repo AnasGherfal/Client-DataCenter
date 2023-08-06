@@ -4,32 +4,20 @@ import { onBeforeMount, onMounted, ref } from "vue";
 import SideBar from "./layouts/SideBar.vue";
 import TopBar from "./layouts/TopBar.vue";
 import LoginPage from "./views/LoginPage.vue";
-import { isAuthorized  } from './auth';
-import router from "./router";
+import { isAuthorized } from "./auth";
 
 const loading = ref(false);
-onMounted(() => {
-  setTimeout(() => {
-    loading.value = false;
-  }, 0); // Set the timeout to the amount of time you want the loading page to display
-});
+
 
 // Check if the user is authorized
 const authorized = isAuthorized();
 
-console.log(authorized)
-
-// Redirect the user if authorized
-if (authorized) {
-  router.push("/");
-}
-
 </script>
 
 <template>
-  <!-- <LoginPage v-if="!authorized" /> -->
+  <LoginPage v-if="!authorized" />
 
-  <main >
+  <main>
     <TopBar />
 
     <div style="width: 100%; margin-top: 75px" class="absolute">

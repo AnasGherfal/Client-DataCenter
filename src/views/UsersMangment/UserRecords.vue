@@ -5,6 +5,7 @@ import { useUserStore } from "@/stores/user";
 import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
 import LockButton from "@/components/LockButton.vue";
+import DeleteCustomer from "../../components/DeleteButton.vue";
 
 const store = useUserStore();
 const toast = useToast();
@@ -23,7 +24,7 @@ const deleteUser = () => {
   user
     .remove(rotName.value.id)
     .then((response) => {
-      store.getUser();
+      store.getUsers();
       toast.add({
         severity: "success",
         summary: "تم الحذف",
@@ -61,6 +62,25 @@ const getSeverity = (status: any) => {
 const getSelectedStatusLabel = (value: any) => {
   const status = statuses.value.find((s) => s.value === value);
   return status ? status.label : "";
+};
+
+const goToNextPage = () => {
+  if (store.currentPage < store.totalPages) {
+    store.currentPage += 1;
+    store.pageNumber += 1; // Increment the pageNumber value
+    store.loading = true;
+    store.getUsers();
+  }
+};
+
+const goToPreviousPage = () => {
+  if (store.currentPage > 1) {
+    store.currentPage -= 1;
+    store.pageNumber -= 1; // Decrement the pageNumber value
+    store.loading = true;
+
+    store.getUsers();
+  }
 };
 </script>
 
@@ -100,11 +120,32 @@ const getSelectedStatusLabel = (value: any) => {
           dataKey="id"
           :paginator="true"
           :rows="5"
-          paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown"
+          paginatorTemplate=""
           :rowsPerPageOptions="[5, 10, 25]"
           currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} عميل"
           responsiveLayout="scroll"
+          :pageLinkSize="store.totalPages"
+          :currentPage="store.currentPage - 1"
         >
+        <template #paginatorstart>
+              <Button
+                icon="pi pi-angle-right"
+                class="p-button-rounded p-button-primary p-paginator-element"
+                :disabled="store.currentPage === 1"
+                @click="goToPreviousPage"
+              />
+              <span class="p-paginator-pages">
+                الصفحة {{ store.currentPage }} من {{ store.totalPages }}
+              </span>
+            </template>
+            <template #paginatorend>
+              <Button
+                icon="pi pi-angle-left"
+                class="p-button-rounded p-button-primary p-paginator-element"
+                :disabled="store.currentPage === store.totalPages"
+                @click="goToNextPage"
+              />
+            </template>
           <template #empty>
             <div
               class="no-data-message"
@@ -128,7 +169,7 @@ const getSelectedStatusLabel = (value: any) => {
 
           <Column
             field="fullName"
-            header="اسم الموظف"
+            header="اسم المستخدم"
             style="min-width: 10rem"
             class="font-bold"
           ></Column>
@@ -184,46 +225,12 @@ const getSelectedStatusLabel = (value: any) => {
           <Column style="min-width: 13rem">
             <template #body="slotProps">
               <span v-if="slotProps.data.status !== 5">
-                <Button
-                  v-tooltip="{ value: 'حذف', fitContent: true }"
-                  icon="fa-solid fa-trash-can"
-                  severity="danger"
-                  text
-                  rounded
-                  aria-label="Cancel"
-                  @click="getId(slotProps.data)"
-                />
-                <Dialog
-                  v-model:visible="userDialog"
-                  :style="{ width: '450px' }"
-                  header="تأكيد"
-                  :modal="true"
+                <DeleteCustomer
+                  :name="slotProps.data.fullName"
+                  :id="slotProps.data.id"
+                  type="User"
                 >
-                  <div class="confirmation-content">
-                    <i
-                      class="pi pi-exclamation-triangle mr-3"
-                      style="font-size: 2rem; color: red"
-                    />
-                    <span v-if="rotName"
-                      >هل انت متأكد من حذف <b>{{ rotName.name }}</b> ؟</span
-                    >
-                  </div>
-                  <template #footer>
-                    <Button
-                      label="نعم"
-                      icon="pi pi-check"
-                      text
-                      @click="deleteUser"
-                      :loading="loading"
-                    />
-                    <Button
-                      label="لا"
-                      icon="pi pi-times"
-                      text
-                      @click="userDialog = false"
-                    />
-                  </template>
-                </Dialog>
+                </DeleteCustomer>
               </span>
               <RouterLink
                 :key="slotProps.data.id"
@@ -243,7 +250,7 @@ const getSelectedStatusLabel = (value: any) => {
                 :id="slotProps.data.id"
                 :name="slotProps.data.id"
                 :status="slotProps.data.status"
-                @getdata="store.getUser"
+                @getdata="store.getUsers()"
               />
             </template>
           </Column>

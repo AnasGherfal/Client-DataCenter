@@ -6,21 +6,35 @@ export const useUserStore = defineStore("user", () => {
   const userData = ref();
   const loading = ref(true);
   const data = ref(null);
-
+  const totalPages = ref(1);
+  const pageNumber = ref(1);
+  const pageSize = ref(10);
+  const currentPage = ref(0);
   onMounted(async () => {
-    getUser();
+    getUsers();
   });
 
-  function getUser() {
+  function getUsers() {
     user
-      .get()
+      .get(pageNumber.value, pageSize.value)
       .then(function (response) {
         userData.value = response.data.content;
+        totalPages.value = response.data.totalPages;
+        currentPage.value = response.data.currentPage;
         loading.value = false;
       })
       .catch(function (error) {
         console.log(error);
       });
   }
-  return { userData, getUser, loading, data };
+  return {
+    userData,
+    getUsers,
+    loading,
+    data,
+    totalPages,
+    pageNumber,
+    currentPage,
+    pageSize,
+  };
 });

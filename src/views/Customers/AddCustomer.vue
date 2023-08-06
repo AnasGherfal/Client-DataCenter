@@ -56,7 +56,7 @@ const onFormSubmit = async (customer: Customer) => {
         detail: response.data.msg,
         life: 3000,
       });
-      // router.go(-1);
+      router.go(-1);
       setTimeout(() => {
         resetForm();
       }, 500);

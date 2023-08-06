@@ -23,11 +23,11 @@ export const visitApi = {
     const response = await httpClient.post(`/Visit`, visit);
     return response;
   },
-  remove: async function (id: number) {
+  remove: async function (id: string) {
     const response = await httpClient.delete(`/Visit/${id}`);
     return response;
   },
-  edit: async function (id: number, visit: VisitEdit) {
+  edit: async function (id: string, visit: VisitEdit) {
     const response = await httpClient.put(`/Visit/${id}`, visit);
     return response;
   },

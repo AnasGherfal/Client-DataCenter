@@ -76,10 +76,10 @@ const deleteRepresentitive = () => {
 
   <Button
     @click="deleteRepresentative = true"
-    style="height: 25px; width: 25px; float: left"
+    style=" float: left"
     icon="fa-solid fa-trash"
-    class="mt-2 ml-2 p-button-text p-button-danger"
-    v-tooltip="{ value: 'حذف المخول', fitContent: true }"
+    class=" ml-2 p-button-text p-button-danger"
+    v-tooltip="{ value: 'حذف ', fitContent: true }"
   />
 </template>
 

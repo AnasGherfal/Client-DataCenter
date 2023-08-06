@@ -52,6 +52,8 @@ import Checkbox from 'primevue/checkbox';
 import ProgressBar from 'primevue/progressbar';
 import Textarea from 'primevue/textarea';
 
+import Vue3Autocounter from 'vue3-autocounter';
+
 const app = createApp(App)
 
 app.use(createPinia())
@@ -98,6 +100,9 @@ app.directive('ripple', Ripple);
 //------------- Data Table -------------------------
 app.component('DataTable', DataTable);
 app.component('Column', Column);
+
+//Animated Number Counter
+app.component('vue3autocounter', Vue3Autocounter)
 
 
 app.mount('#app')

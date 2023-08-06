@@ -24,7 +24,8 @@ const customer: Customer = reactive({
   secondaryPhone: dataClinet.customer.secondaryPhone,
   address: dataClinet.customer.address,
   status: dataClinet.customer.status,
-  files: dataClinet.customer.file
+  files: dataClinet.customer.file,
+  subsicrptions: dataClinet.customer.subsicrptions
 });
 
 const toast = useToast();
@@ -98,7 +99,8 @@ const v$ = useVuelidate(rules, customer);
 <template>
   <div>
     <Card>
-      <template #title>
+      <template #title >
+
         البيانات الشخصية
 
         <BackButton style="float: left" />
@@ -118,19 +120,20 @@ const v$ = useVuelidate(rules, customer);
           <Button
             @click="actEdit = !actEdit"
             icon=" fa-solid fa-pen"
-            class="p-button-primary p-button-text"
+            text
+            rounded
+            class=" p-button-primary p-button-text"
             v-tooltip.top="{
               value: 'تعديل البيانات الشخصية',
               fitContent: true,
             }"
           />
 
-          <DeleteCustomer
+          <!-- <DeleteCustomer
             :name="dataClinet.customer.name"
             :id="dataClinet.customer.id"
-          ></DeleteCustomer>
-          </span>
-
+          ></DeleteCustomer> -->
+          </span>        
         <Divider />
       </template>
       <template #content>
@@ -193,7 +196,7 @@ const v$ = useVuelidate(rules, customer);
         <div v-else>
           <div>
             <form @submit.prevent="onFormSubmit" :disabled="actEdit">
-              <div class="grid p-fluid">
+              <div class="grid p-fluid  ">
                 <div class="field col-12 md:col-6 lg:col-4">
                   <span class="p-float-label">
                     <InputText
@@ -338,6 +341,7 @@ const v$ = useVuelidate(rules, customer);
 .p-dropdown {
   border-radius: 10px;
 }
+
 
 .p-button:enabled:hover {
   background: #0d89ec;

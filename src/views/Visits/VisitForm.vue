@@ -13,6 +13,7 @@ import { useCustomersStore } from "@/stores/customers";
 import { visitApi } from "@/api/visits";
 import { representativesApi } from "@/api/representatives";
 import { subscriptionApi } from "@/api/subscriptions";
+import router from "@/router";
 const store = useVistisStore();
 const storeubscriptions = useSubscriptionsStore();
 
@@ -32,15 +33,14 @@ const visit: Visit = reactive({
   companions: [],
 });
 
-type visitReason = {
-  value: number;
+interface visitReason {
+  value: string; // Change the type to string to accept GUIDs as strings
   text: string;
-};
-// Array of identity type options
+}
 
 const visitReasons: visitReason[] = [
-  { value: 1, text: "صيانه" },
-  { value: 2, text: "انهاء عمل" },
+  { value: "2712f755-9fb2-41d6-9498-683c2aeeb817", text: "صيانه" }, // Ensure the value is in quotes
+  { value: "f55941d9-bb78-4336-b599-e11141268704", text: "انهاء عمل" }, // Make sure other values are also strings if needed
 ];
 
 const startDate = ref(new Date());
@@ -111,7 +111,10 @@ watch(customerselect, async (newValue) => {
       visit.representatives = []; // Reset the representatives array
       customerRepresentatives.value = representatives.value; // Update the array with the selected representatives
 
-      const subscriptionResponse = await subscriptionApi.getPages(storeubscriptions.pageNumber, storeubscriptions.pageSize);
+      const subscriptionResponse = await subscriptionApi.getPages(
+        storeubscriptions.pageNumber,
+        storeubscriptions.pageSize
+      );
       subscriptions.value = subscriptionResponse.data.content.filter(
         (subscription: any) => subscription.customerName === newValue.name
       );
@@ -163,6 +166,10 @@ const submitForm = async () => {
 
         console.log(response);
         store.getVisits();
+        router.go(-1);
+        setTimeout(() => {
+          resetForm();
+        }, 500);
       })
       .catch(function (error) {
         console.log(error);

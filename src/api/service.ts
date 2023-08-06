@@ -6,15 +6,19 @@ export const serviceApi = {
     const response = await httpClient.get(`/Service`);
     return response;
   },
+  getById: async function (id:string) {
+    const response = await httpClient.get(`/Service/${id}`);
+    return response;
+  },
   create: async function (service: Service) {
     const response = await httpClient.post(`/Service`, service);
     return response;
   },
-  remove: async function (id: number | null) {
+  remove: async function (id: string ) {
     const response = await httpClient.delete(`/Service?id=${id}`);
     return response;
   },
-  edit: async function (id: number | null, service: Service) {
+  edit: async function (id: string | null, service: Service) {
     const response = await httpClient.put(`/Service?id=${id}`, service);
     return response;
   },

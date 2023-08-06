@@ -6,6 +6,7 @@ import type { Representatives } from "../../../../Modules/CustomerModule/Represe
 import { useRoute } from "vue-router";
 import axios from "axios";
 import { useToast } from "primevue/usetoast";
+import { representativesApi } from "@/api/representatives";
 
 const props = defineProps<{
   name: any;
@@ -33,11 +34,11 @@ const representatives: Representatives = reactive({
 const toast = useToast();
 
 const onFormSubmit = async (representative: Representatives) => {
-  try {
-    const response = await axios.put(
-      `https://localhost:7003/api/Representives/${props.name.id}`,
-      representative
-    );
+
+    representativesApi
+    .edit(props.name.id, representative)
+    .then((response) =>{
+
     emit("getRepresentatives");
     toast.add({
       severity: "success",
@@ -46,10 +47,15 @@ const onFormSubmit = async (representative: Representatives) => {
       life: 3000,
     });
     displayModal.value = false;
-  } catch (e) {
-    console.log(e);
-  }
-};
+  })     .catch((error) => {
+      toast.add({
+        severity: "warn",
+        summary: "خطا",
+        detail: error,
+        life: 3000,
+      });
+})
+}
 const displayModal = ref(false);
 
 const openModal = () => {
@@ -64,10 +70,10 @@ const closeModal = () => {
   <div>
     <Button
       @click="openModal"
-      style="height: 25px; width: 25px"
       icon=" fa-solid fa-pen"
-      class="mt-2 mr-2 p-button-primary p-button-text"
-      v-tooltip="{ value: 'تعديل الباقة', fitContent: true }"
+      class="mr-2 p-button-primary p-button-text"
+      text
+      v-tooltip="{ value: 'تعديل ', fitContent: true }"
     />
 
     <Dialog

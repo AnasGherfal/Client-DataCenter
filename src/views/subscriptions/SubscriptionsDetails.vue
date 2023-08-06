@@ -10,6 +10,9 @@ import { subscriptionApi } from "@/api/subscriptions";
 import { serviceApi } from "@/api/service";
 import axios from "axios";
 import Inplace from "primevue/inplace";
+import { useRoute } from "vue-router";
+import CircularProgressBar from "@/assets/style/CircularProgressBar.vue";
+import VisitRecordById from "../Visits/VisitRecordById.vue";
 
 const loading = ref(false);
 const loading2 = ref(false);
@@ -20,8 +23,9 @@ const prop = defineProps<{
 const fileView = ref();
 const store = useSubscriptionsStore();
 const toast = useToast();
+const route = useRoute();
 
-const tab: SubscriptionRespons = reactive({
+const subs: SubscriptionRespons = reactive({
   id: null,
   status: null,
   serviceName: "",
@@ -37,10 +41,17 @@ const servobj: Service = reactive({
   amountOfPower: "",
   acpPort: "",
   dns: "",
-  monthlyVisits:0,
+  monthlyVisits: 0,
   price: null,
 });
 
+const userId = computed(() => {
+  if (route && route.params && route.params.id) {
+    return String(route.params.id); // Convert the ID to a number
+  } else {
+    return ""; // or return a default value if id is not available, such as -1
+  }
+});
 
 const value1 = ref(0);
 const date3 = ref(0);
@@ -51,31 +62,17 @@ onMounted(async () => {
 function getdata() {
   loading.value = true;
   subscriptionApi
-    .get()
+    .getById(userId.value)
     .then(function (response) {
-      tab.id = response.data.content.filter(
-        (id: { id: number }) => id.id == prop.nad
-      )[0].id;
-      tab.status = response.data.content.filter(
-        (id: { id: number }) => id.id == prop.nad
-      )[0].status;
-      tab.customerName = response.data.content.filter(
-        (id: { id: number }) => id.id == prop.nad
-      )[0].customerName;
-      tab.endDate = response.data.content.filter(
-        (id: { id: number }) => id.id == prop.nad
-      )[0].endDate;
-      tab.startDate = response.data.content.filter(
-        (id: { id: number }) => id.id == prop.nad
-      )[0].startDate;
-      tab.serviceName = response.data.content.filter(
-        (id: { id: number }) => id.id == prop.nad
-      )[0].serviceName;
-      tab.subscriptionFileId = response.data.content.filter(
-        (id: { id: number }) => id.id == prop.nad
-      )[0].subscriptionFileId;
+      subs.id = response.data.id;
+      subs.status = response.data.status;
+      subs.customerName = response.data.customerName;
+      subs.endDate = response.data.endDate;
+      subs.startDate = response.data.startDate;
+      subs.serviceName = response.data.serviceName;
+      subs.subscriptionFileId = response.data.subscriptionFileId;
 
-      const date1 = new Date(tab.endDate);
+      const date1 = new Date(subs.endDate);
       const date2 = new Date();
       date3.value = Math.trunc(
         (date1.valueOf() - date2.valueOf()) / 24 / 60 / 60 / 1000
@@ -86,25 +83,25 @@ function getdata() {
         .get()
         .then(function (response) {
           servobj.id = response.data.content.filter(
-            (servic: { name: string }) => servic.name === tab.serviceName
+            (servic: { name: string }) => servic.name === subs.serviceName
           )[0].id;
           servobj.acpPort = response.data.content.filter(
-            (servic: { name: string }) => servic.name === tab.serviceName
+            (servic: { name: string }) => servic.name === subs.serviceName
           )[0].acpPort;
           servobj.dns = response.data.content.filter(
-            (servic: { name: string }) => servic.name === tab.serviceName
+            (servic: { name: string }) => servic.name === subs.serviceName
           )[0].dns;
           servobj.amountOfPower = response.data.content.filter(
-            (servic: { name: string }) => servic.name === tab.serviceName
+            (servic: { name: string }) => servic.name === subs.serviceName
           )[0].amountOfPower;
           servobj.name = response.data.content.filter(
-            (servic: { name: string }) => servic.name === tab.serviceName
+            (servic: { name: string }) => servic.name === subs.serviceName
           )[0].name;
           servobj.monthlyVisits = response.data.content.filter(
-            (servic: { name: string }) => servic.name === tab.serviceName
+            (servic: { name: string }) => servic.name === subs.serviceName
           )[0].monthlyVisits;
           servobj.price = response.data.content.filter(
-            (servic: { name: string }) => servic.name === tab.serviceName
+            (servic: { name: string }) => servic.name === subs.serviceName
           )[0].price;
           loading.value = false;
         })
@@ -123,7 +120,7 @@ const customersDialog = ref(false);
 const renewalSubscription = () => {
   loading2.value = true;
   subscriptionApi
-    .renew(tab.id)
+    .renew(subs.id)
     .then((response) => {
       console.log(response);
       loading2.value = false;
@@ -171,8 +168,11 @@ onMounted(() => {
     });
 });
 
+const maxDays = ref(400); // Set the maximum value for the knob
 
-
+const calculateProgress = () => {
+  return (date3.value / maxDays.value) * 100;
+};
 </script>
 
 <template>
@@ -186,7 +186,7 @@ onMounted(() => {
     </template>
 
     <template #content>
-      <div v-if="tab.status == 5">
+      <div v-if="subs.status == 5">
         <div class="warning-message">
           <div class="warning-message-icon"></div>
           <div class="warning-message-text">
@@ -205,30 +205,50 @@ onMounted(() => {
             </div>
           </div>
         </div>
-        <div v-else class="flex-1" style="text-align: center; width: 20rem">
-          <Knob
-            v-if="date3 !== 0"
-            v-model="date3"
-            readonly
-            :max="365"
-          />
-          <h2 v-if="date3">الأيام المتبقية</h2>
-          <h3 v-else class="text-red-800">
-            انتهت صلاحية هذه الخدمة هل تريد التجديد
-          </h3>
-          <h3 v-if="date3 < 30 && date3 != 0" class="text-orange-600">
-            قاربت الصلاحية على انتهاء هل تريد تجديد هذه الخدمة
-          </h3>
 
-          <Button
-            v-if="date3 < 30"
-            icon="fa-solid fa-arrows-rotate"
-            severity="warning"
-            text
-            rounded
-            aria-label="Cancel"
-            @click="customersDialog = true"
-          />
+        <div v-else class="flex-1" style="text-align: center; width: 20rem">
+          
+          <div style="display: inline-block">
+            <CircularProgressBar :percentage="date3" />
+          </div>
+
+          <div>
+            <h2>الأيام المتبقية</h2>
+            <!-- <h3 v-else class="text-red-800">انتهت صلاحية هذه الخدمة</h3> -->
+
+            <div v-if="date3 < 30 && date3 !== 0 ">
+              <h3 class="text-red-600">هذا الاشتراك قارب على الانتهاء</h3>
+              <div v-if="subs.status !== 5">
+              <h5  class="text-red-600" style="margin-bottom: 5px">
+                
+                اضغط على الأيقونة للتجديد
+              </h5>
+              <Button
+                icon="fa-solid fa-repeat"
+                severity="danger"
+                text
+                rounded
+                aria-label="Cancel"
+                @click="customersDialog = true"
+              />
+            </div>
+            </div>
+            <div v-else-if="date3 <= 0 && subs.status !== 5">
+              <h3 class="text-red-600">هذا الاشتراك انتهى</h3>
+
+              <h5 class="text-red-600" style="margin-bottom: 5px">
+                اضغط على الأيقونة للتجديد
+              </h5>
+              <Button
+                icon="fa-solid fa-repeat"
+                severity="danger"
+                text
+                rounded
+                aria-label="Cancel"
+                @click="customersDialog = true"
+              />
+            </div>
+          </div>
           <Dialog
             v-model:visible="customersDialog"
             :style="{ width: '450px' }"
@@ -237,8 +257,8 @@ onMounted(() => {
           >
             <div class="confirmation-content">
               <i
-                class="fa-solid fa-arrows-rotate mr-3"
-                style="font-size: 2rem; color: green"
+                class="fa-solid fa-repeat mr-3"
+                style=" color: green"
               />
               <span>هل انت متأكد من تجديد الاشتراك؟</span>
             </div>
@@ -266,20 +286,20 @@ onMounted(() => {
           <Skeleton v-if="loading" width="100%" height="1rem"></Skeleton>
 
           <span v-else="loading">
-            <p style="margin: 0; display: inline">{{ tab.customerName }}</p>
+            <p style="margin: 0; display: inline">{{ subs.customerName }}</p>
             <RouterLink
-              :key="tab.customerName"
+              :key="subs.customerName"
               :to="'/subscriptionsRecord/SubscriptionsDetaView/' + '1'"
               style="text-decoration: none"
             >
-              <Button
+              <!-- <Button
                 icon="fa-solid fa-circle-info"
                 severity="info"
                 text
                 rounded
                 v-tooltip="{ value: 'التفاصيل', fitContent: true }"
                 style="display: flex; float: left; width: 2rem; height: 1rem"
-              />
+              /> -->
             </RouterLink>
           </span>
           <Divider class="p-divider-solid" layout="horizontal" />
@@ -288,7 +308,7 @@ onMounted(() => {
           <Skeleton v-if="loading" width="50%" height="1rem"></Skeleton>
 
           <span v-else="loading">
-            <p style="margin: 0; display: inline">{{ tab.serviceName }}</p>
+            <p style="margin: 0; display: inline">{{ subs.serviceName }}</p>
 
             <Button
               @click="car()"
@@ -351,8 +371,8 @@ onMounted(() => {
 
           <h4 style="margin: 0">عدد الزيارات المتبقية بالساعة</h4>
           <Skeleton v-if="loading" width="50%" height="1rem"></Skeleton>
-          <ProgressBar class="mt-2" v-else :value="servobj.monthlyVisits ">
-            {{ servobj.monthlyVisits  }}
+          <ProgressBar class="mt-2" v-else :value="servobj.monthlyVisits">
+            {{ servobj.monthlyVisits }}
           </ProgressBar>
 
           <Divider class="p-divider-solid" layout="horizontal" />
@@ -386,16 +406,16 @@ onMounted(() => {
               <i class="fa-solid fa-book mr-2"></i>
               <span> سجل زيارات هذا الاشتراك </span>
             </template>
-            <!-- سجل زيارات هذه الخدمة -->
+            <VisitRecordById></VisitRecordById>
           </TabPanel>
 
-          <TabPanel>
+          <!-- <TabPanel>
             <template #header>
               <i class="fa-solid fa-toolbox mr-2"></i>
               <span> معدات هذا الاشتراك</span>
             </template>
-            <!-- سجل زيارات هذه الخدمة -->
-          </TabPanel>
+            سجل زيارات هذه الخدمة
+          </TabPanel> -->
 
           <TabPanel>
             <template #header>
@@ -457,8 +477,23 @@ onMounted(() => {
   line-height: 1.5;
 }
 
-.p-card .p-card-content {
-  padding-top: 0;
-  padding-bottom: 1.25rem;
+.progress-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.progress-knob {
+  animation: fadeIn 2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 </style>

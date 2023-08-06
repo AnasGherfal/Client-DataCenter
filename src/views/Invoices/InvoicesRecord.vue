@@ -7,6 +7,7 @@ import type { InvoiceResponde } from "@/Modules/Invoices/InvoicesRespondeModule"
 import AddButton from "@/components/AddButton.vue";
 import { invoiceApi } from "@/api/invoice";
 import moment from "moment";
+import DeleteInvoice from "../../components/DeleteButton.vue";
 
 const loading = ref(true);
 const store = useInvoicesStore();
@@ -110,7 +111,7 @@ onMounted(async () => {
           :paginator="true"
           :rows="10"
           :filters="filters"
-          paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown"
+          paginatorTemplate=" "
           :rowsPerPageOptions="[5, 10, 25]"
           currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} سجل الزيارات"
           responsiveLayout="scroll"
@@ -168,7 +169,6 @@ onMounted(async () => {
               </div>
             </form>
           </template>
-          <Column field="id" header="id " style="min-width: 4rem"></Column>
           <Column field="date" header="التاريخ" style="min-width: 12rem">
             <template #body="slotProps">
               {{ convertToDate(slotProps.data.date) }}
@@ -196,10 +196,18 @@ onMounted(async () => {
             </template>
           </Column>
 
+          
+
           <Column style="min-width: 8rem">
             <template #body="slotProps">
-              <span v-if="slotProps.data.status !== 5"> </span>
-
+              <span v-if="slotProps.data.status !== 5"> 
+                  <DeleteInvoice
+                    :name="slotProps.data.id"
+                    :id="slotProps.data.id"
+                    type="Invoices"
+                  >
+                  </DeleteInvoice>
+                </span>
               <RouterLink
                 :to="'/invoices/invoicesDetails/' + slotProps.data.id"
                 style="text-decoration: none"

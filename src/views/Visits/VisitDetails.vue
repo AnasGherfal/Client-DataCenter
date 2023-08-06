@@ -360,9 +360,8 @@ function openDialog(representives: any) {
                   >{{ error.$message }}</error
                 >
               </span>
-            </div>
+            </div> 
             <DataTable
-              v-if="visit.representatives.length > 0"
               :value="visit.representatives"
             >
               <Column field="firstName" header="اسم المخول"></Column>
@@ -371,7 +370,7 @@ function openDialog(representives: any) {
               <Column field="identityNo" header="رقم الاثبات"></Column>
               <Column>
                 <template #body="slotProps">
-                  <Button
+                  <!-- <Button
                     @click="openDialog(slotProps.data.representative)"
                     icon="fa-solid fa-circle-info"
                     severity="info"
@@ -379,7 +378,7 @@ function openDialog(representives: any) {
                     rounded
                     v-tooltip="{ value: 'التفاصيل', fitContent: true }"
                     style="width: 2rem; height: 1rem; margin-left: 0.5rem"
-                  />
+                  /> -->
 
                   <Dialog
                     v-if="

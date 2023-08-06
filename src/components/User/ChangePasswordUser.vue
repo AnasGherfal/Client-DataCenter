@@ -76,7 +76,6 @@ style="margin-right: .5em;"
 
 <Button icon="fa-solid fa-lock"
  label="تغيير كلمة المرور" 
-severity="warning"
 @click="displayModal = true"
 class="mr-2"
 style="width: 13rem;"

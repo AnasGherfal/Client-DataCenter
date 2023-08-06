@@ -17,9 +17,9 @@ const filters = ref({
 
 const columns = ref([
   { field: "email", header: "البريد الإكتروني" },
+  { field: "primaryPhone", header:"رقم الهاتف"},
 
   { field: "address", header: "العنوان" },
-  { field: "primaryPhone", header: "رقم الهاتف (1)" },
 ]);
 const selectedColumns = ref(columns.value);
 
@@ -173,9 +173,11 @@ const goToPreviousPage = () => {
                       <i class="fa-solid fa-magnifying-glass" />
                       <InputText
                         v-model="filters['global'].value"
-                        placeholder=""
+                        placeholder="البحث"
                       />
-                      <label for="search"> البحث </label>
+                      <label for="search" style="font-weight: lighter">
+                        البحث
+                      </label>
                     </span>
                   </div>
                 </div>
@@ -213,12 +215,12 @@ const goToPreviousPage = () => {
               </div>
             </template>
 
-            <Column field="id" header="ID" class="font-bold"></Column>
+            <!-- <Column field="id" header="ID" class="font-bold"></Column> -->
 
             <Column
               field="name"
               header="الإسم"
-              style="min-width: 10rem"
+              style="min-width: 6rem"
               class="font-bold"
               frozen
             ></Column>
@@ -227,7 +229,7 @@ const goToPreviousPage = () => {
               field="status"
               header="  الحاله "
               filterField="status"
-              style="width: 2rem"
+              style="width: 6rem"
               :showFilterMenu="false"
               :filterMenuStyle="{ width: '4rem' }"
             >
@@ -238,7 +240,7 @@ const goToPreviousPage = () => {
                 />
               </template>
               <template #filter="{ filterModel, filterCallback }">
-                <Dropdown
+                <!-- <Dropdown
                   v-model="filterModel.value"
                   @change="filterCallback()"
                   :options="statuses"
@@ -246,7 +248,7 @@ const goToPreviousPage = () => {
                   option-value="value"
                   placeholder="اختر الحالة"
                   class="p-column-filter"
-                  style="min-width: 12rem"
+                  style="width: 10rem"
                   :showClear="true"
                 >
                   <template #option="slotProps">
@@ -255,9 +257,32 @@ const goToPreviousPage = () => {
                       :severity="getSeverity(slotProps.option.value)"
                     />
                   </template>
-                </Dropdown>
+                </Dropdown> -->
               </template>
             </Column>
+            <!-- <Column
+              field="primaryPhone"
+              header="رقم الهاتف"
+              filterField="status"
+              style="width: 2rem"
+              :showFilterMenu="false"
+              :filterMenuStyle="{ width: '4rem' }"
+            />
+            <Column
+              field="email"
+              header="البريد الألكتروني"
+              filterField="status"
+              style="width: 2rem"
+              :showFilterMenu="false"
+              :filterMenuStyle="{ width: '4rem' }"
+            />            <Column
+              field="address"
+              header="العنوان"
+              filterField="status"
+              style="width: 2rem"
+              :showFilterMenu="false"
+              :filterMenuStyle="{ width: '4rem' }"
+            /> -->
             <Column
               v-for="(col, index) of selectedColumns"
               :field="col.field"
@@ -266,7 +291,7 @@ const goToPreviousPage = () => {
               style="min-width: 10rem"
             ></Column>
 
-            <Column style="min-width: 13rem">
+            <Column style="min-width: 11rem">
               <template #body="slotProps">
                 <span v-if="slotProps.data.status !== 5">
                   <DeleteCustomer

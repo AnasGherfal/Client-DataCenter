@@ -24,7 +24,7 @@ const userId = computed(() => {
 console.log(userId.value);
 
 const userDate: RequestUserModel = reactive({
-  id: null,
+  id: "",
   fullName: "",
   empId: null,
   permisssions: null,

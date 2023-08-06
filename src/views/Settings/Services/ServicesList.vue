@@ -46,7 +46,7 @@ function getList() {
     <div
       v-for="servic in packagesList"
       :key="servic.id"
-      class="col-12 md:col-6 lg:col-4"
+      class="col-12 sm:col-7 md:col-5"
     >
       <card>
         <template #header>
@@ -88,7 +88,7 @@ function getList() {
               </div>
               <Divider />
             </div>
-            <p class="font-bold">خواص هذه الباقة :</p>
+            <p class="font-bold mr-2">خواص هذه الباقة :</p>
 
             <div style="direction: ltr" class="text-center font-bold text-sm">
               <i class="text-green-600 fa-solid fa-circle-check mr-2"></i>
@@ -114,4 +114,10 @@ function getList() {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+
+.p-card >>> .p-card-body {
+    padding: 0.0rem 0;
+}
+</style>
+

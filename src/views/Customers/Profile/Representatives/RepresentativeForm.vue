@@ -204,6 +204,5 @@ const identityTypeOptions: IdentityTypeOption[] = [
       :label="value"
       :loading="loading"
     />
-    <toast />
   </form>
 </template>

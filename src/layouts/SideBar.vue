@@ -48,6 +48,10 @@ const items = ref([
         icon: "fa-solid fa-receipt",
         to: "/invoices",
       },
+      {
+        label: "test",
+        to:"/test",
+      }
     ],
   },
 ]);

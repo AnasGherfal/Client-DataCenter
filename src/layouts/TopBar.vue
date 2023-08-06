@@ -14,15 +14,17 @@ import Divider from "primevue/divider";
       padding: 20px;
     "
   >
-    <div>
-      <img
-        alt="logo"
-        src="../assets/pics/LTT-logo.png "
-        height="40"
-        style="margin-right: 0px; --fa-animation-iteration-count: 5"
-        class="logo fa-bounce"
-      />
-    </div>
+    <a href="/">
+      <div>
+        <img
+          alt="logo"
+          src="../assets/pics/LTT-logo.png "
+          height="40"
+          style="margin-right: 0px; --fa-animation-iteration-count: 5"
+          class="logo fa-bounce"
+        />
+      </div>
+    </a>
 
     <div
       style="
@@ -34,7 +36,9 @@ import Divider from "primevue/divider";
         margin-top: -20px;
       "
     >
-      <p>ليبيا للاتصالات والتقنية</p>
+      <a href="/" style="text-decoration: none; color: black">
+        <p>ليبيا للاتصالات والتقنية</p>
+      </a>
     </div>
 
     <Divider layout="vertical" />

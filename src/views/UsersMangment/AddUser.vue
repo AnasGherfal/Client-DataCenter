@@ -7,10 +7,10 @@ import BackButton from "@/components/BackButton.vue";
 import router from "@/router";
 import { user } from "@/api/user";
 import type { ResponseUserModel } from "../../Modules/UserModule/UserModuleResponse";
-import { useUserStor } from "@/stores/user";
+import { useUserStore } from "@/stores/user";
 
 const loading = ref(false);
-const store = useUserStor();
+const store = useUserStore();
 
 const state: ResponseUserModel = reactive({
   fullName: "",
@@ -18,6 +18,7 @@ const state: ResponseUserModel = reactive({
   empId: null,
   permissions: "",
 });
+
 
 const selectedPermissions = ref([]);
 const permissions = ref([

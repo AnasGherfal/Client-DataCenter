@@ -6,11 +6,15 @@ export const representativesApi = {
     const response = await httpClient.get(`/Representatives`);
     return response;
   },
-  create: async function (representives: Representatives) {
-    const response = await httpClient.post("/Representatives", representives);
+  create: async function (representatives: Representatives) {
+    const response = await httpClient.post("/Representatives", representatives);
     return response;
   },
-  remove: async function (id: number) {
+  edit:async function ( id: string ,representatives: Representatives) {
+    const response = await httpClient.put(`/Representatives/${id}`, representatives);
+    return response;
+  },
+  remove: async function (id: string) {
     const response = await httpClient.delete(`/Representatives/${id}`);
     return response;
   },

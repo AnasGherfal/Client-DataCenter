@@ -111,8 +111,6 @@ function unlockButton() {
     :icon="lockedIcon"
     :class="buttonColor"
     text
-    rounded
-    aria-label="Cancel"
   />
 </template>
 <style>

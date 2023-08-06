@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { FilterMatchMode } from "primevue/api";
 import moment from "moment";
 import { subscriptionApi } from "@/api/subscriptions";
+import type { SubscriptionRespons } from "@/Modules/SubscriptionModule/SubscriptionsResponseModule";
+import { useRoute } from "vue-router";
 
-// optional
+//
 
-const subDeta = ref();
+const subDeta = ref<SubscriptionRespons[]>([]);
 const props = defineProps<{
-  customerId: any;
+  subsId: any;
 }>();
-
+const route = useRoute();
+console.log(props.subsId)
 onMounted(async () => {
   subscriptionApi
-    .get()
+    .getById(props.subsId)
     .then(function (response) {
-
-      subDeta.value = response.data.content.filter(
-        (subscription: { customerName: String }) =>
-          subscription.customerName === props.customerId.name
-      );
+      console.log(response.data);
+      subDeta.value = [response.data]; // Wrap the response data in an array
     })
     .catch(function (error) {
       console.log(error);
@@ -38,17 +38,35 @@ const formatDate = (value: Date) => {
   return moment(value).format("yy/M/D  hh:mm a");
 };
 
-const status = (value: number) => {
-  if (value === 1) {
-    return "الخدمة مفعلة";
-  } else if (value === 2) {
-    return "الخدمة غير مفعلة";
+const getSeverity = (status: any) => {
+  switch (trans(status)) {
+    case " مفعل":
+      return "success";
+    case " غير مفعل":
+      return "danger";
+    case " مقفل":
+      return "danger";
   }
 };
+const status = (value: number) => {
+  if (value === 1) {
+    return " مفعل";
+  } else if (value === 2) {
+    return " غير مفعل";
+  } else if (value === 5) return " مقفل";
+};
+
+const trans = (value: string) => {
+  if (value == "1") return " مفعل";
+  else if (value == "2") return " غير مفعل";
+  else if (value == "5") return " مقفل";
+};
+
 </script>
 
-<template>
+<template>{{ subDeta }}
   <DataTable
+    v-if="subDeta"
     ref="dt"
     :value="subDeta"
     dataKey="id"
@@ -56,7 +74,7 @@ const status = (value: number) => {
     :rows="5"
     v-model:filters="filters"
     :globalFilterFields="['serviceName', 'customerName']"
-    paginatorTemplate=" PrevPageLink PageLinks   NextPageLink CurrentPageReport RowsPerPageDropdown"
+    paginatorTemplate=""
     :rowsPerPageOptions="[5, 10, 25]"
     currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} عميل"
     responsiveLayout="scroll"
@@ -64,7 +82,7 @@ const status = (value: number) => {
     <Column
       field="customerName"
       header="اسم العميل"
-      style="min-width: 10rem"
+      style="min-width: 8rem"
       class="font-bold"
     ></Column>
 
@@ -72,7 +90,7 @@ const status = (value: number) => {
       field="status"
       header="الحالة"
       dataType="date"
-      style="min-width: 10rem"
+      style="min-width:6rem"
     >
       <template #body="{ data }">
         {{ status(data.status) }}
@@ -84,14 +102,14 @@ const status = (value: number) => {
       :field="col.field"
       :header="col.header"
       :key="col.field + '_' + index"
-      style="min-width: 5rem"
+      style="min-width: 4rem"
     ></Column>
 
     <Column
       field="startDate"
       header="تاريخ بداية الاشتراك"
       dataType="date"
-      style="min-width: 11rem"
+      style="min-width: 10rem"
     >
       <template #body="{ data }">
         {{ formatDate(data.startDate) }}
@@ -102,7 +120,7 @@ const status = (value: number) => {
       field="endDate"
       header="تاريخ نهاية الاشتراك"
       dataType="date"
-      style="min-width: 11rem"
+      style="min-width: 10rem"
     >
       <template #body="{ data }">
         {{ formatDate(data.endDate) }}

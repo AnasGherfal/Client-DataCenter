@@ -198,7 +198,7 @@ const isDisabled = ref(true);
         </div>
         <div class="field col-12 md:col-6 lg:col-4">
           <label class="file-input-label" for="fileInput">
-            رقم هاتف 2
+          ملف
             <input
               id="fileInput"
               style="display: none"

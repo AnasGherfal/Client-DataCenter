@@ -1,5 +1,5 @@
 export interface RequestUserModel {
-    id:number|null,
+    id:string,
     fullName :string,
     empId :number | null,
     permisssions : null|number,

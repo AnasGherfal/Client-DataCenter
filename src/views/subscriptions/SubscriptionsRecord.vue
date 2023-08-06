@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import { FilterMatchMode } from "primevue/api";
-import AddBotton from "@/components/AddButton.vue";
+import AddButton from "@/components/AddButton.vue";
 import LockButton from "@/components/LockButton.vue";
 import { useSubscriptionsStore } from "@/stores/subscriptions";
 import moment from "moment";
+import DeleteSubscription from "../../components/DeleteButton.vue";
 
 // optional
 
@@ -15,6 +16,7 @@ const filters = ref({
 
 const columns = ref([{ field: "serviceName", header: "الباقه" }]);
 const selectedColumns = ref(columns.value);
+
 
 const formatDate = (value: Date) => {
   return moment(value).format("yy/M/D  hh:mm a");
@@ -76,7 +78,7 @@ const goToPreviousPage = () => {
     <Card>
       <template #title>
         سجل الاشتراكات
-        <AddBotton
+        <AddButton
           name-button="إضافة اشتراك"
           rout-name="/subscriptionsRecord/addSubsciptions"
         />
@@ -108,12 +110,10 @@ const goToPreviousPage = () => {
           :rows="10"
           v-model:filters="filters"
           :globalFilterFields="['serviceName', 'customerName']"
-          paginatorTemplate=" PrevPageLink    NextPageLink "
           :rowsPerPageOptions="[5, 10, 25]"
-          currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} عميل"
-          responsiveLayout="scroll"
           :pageLinkSize="store.totalPages"
           :currentPage="store.currentPage - 1"
+          paginatorTemplate="  "
         >
           <template #paginatorstart>
             <Button
@@ -134,17 +134,17 @@ const goToPreviousPage = () => {
               @click="goToNextPage"
             />
           </template>
-          <!-- <template #header>
+          <template #header>
             <div class="grid p-fluid">
               <div class="field col-12 md:col-6 lg:col-4">
                 <span class="p-input-icon-left p-float-label">
                   <i class="fa-solid fa-magnifying-glass" />
                   <InputText v-model="filters['global'].value" placeholder="" />
-                  <label for="phoneNum1"> البحث </label>
+                  <label for="search" style="font-weight: lighter;"> البحث </label>
                 </span>
               </div>
             </div>
-          </template> -->
+          </template>
 
           <template #empty>
             <div
@@ -166,12 +166,7 @@ const goToPreviousPage = () => {
               </p>
             </div>
           </template>
-          <Column
-            field="id"
-            header="ID"
-            style="min-width: 1rem"
-            class="font-bold"
-          ></Column>
+
 
           <Column
             field="customerName"
@@ -183,7 +178,7 @@ const goToPreviousPage = () => {
             field="status"
             header="  الحاله "
             filterField="status"
-            style="width: 12rem"
+            style="width: 6rem"
             :showFilterMenu="false"
             :filterMenuStyle="{ width: '12rem' }"
           >
@@ -223,7 +218,7 @@ const goToPreviousPage = () => {
             field="startDate"
             header="تاريخ بداية الاشتراك"
             dataType="date"
-            style="min-width: 12rem"
+            style="min-width: 11rem"
           >
             <template #body="{ data }">
               {{ formatDate(data.startDate) }}
@@ -234,7 +229,7 @@ const goToPreviousPage = () => {
             field="endDate"
             header="تاريخ نهاية الاشتراك"
             dataType="date"
-            style="min-width: 12rem"
+            style="min-width: 11rem"
           >
             <template #body="{ data }">
               {{ formatDate(data.endDate) }}
@@ -243,6 +238,14 @@ const goToPreviousPage = () => {
 
           <Column style="min-width: 8rem">
             <template #body="slotProps">
+              <span v-if="slotProps.data.status !== 5">
+                  <DeleteSubscription
+                    :name="slotProps.data.id"
+                    :id="slotProps.data.id"
+                    type="Subscription"
+                  >
+                  </DeleteSubscription>
+                </span>
               <LockButton
                 typeLock="Subscription"
                 :id="slotProps.data.id"

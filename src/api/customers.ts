@@ -6,7 +6,7 @@ export const customersApi = {
     const response = await httpClient.get(`/Customers?PageNumber=${pageNumber}&PageSize=${pageSize}`);
     return response;
   },
-  getById: async function (id: number) {
+  getById: async function (id: string) {
     const response = await httpClient.get(`/Customers/${id}`);
     return response;
   },
@@ -15,11 +15,11 @@ export const customersApi = {
     const response = await httpClient.post(`/Customers`, customer);
     return response;
   },
-  remove: async function (id: number) {
+  remove: async function (id: string) {
     const response = await httpClient.delete(`/Customers/${id}`);
     return response;
   },
-  edit: async function (id: number, customer: Customer) {
+  edit: async function (id: string, customer: Customer) {
     const response = await httpClient.put(`/customers/${id}`, customer);
     return response;
   },

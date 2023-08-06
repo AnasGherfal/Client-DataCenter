@@ -163,3 +163,14 @@ body {
   font-weight: 500;
   line-height: 1.5;
 }
+
+/* Customize the progress bar color */
+#nprogress .bar {
+  background: #29d;
+}
+
+/* Customize the spinner color (optional) */
+#nprogress .spinner-icon {
+  border-top-color: #29d;
+  border-left-color: #29d;
+}

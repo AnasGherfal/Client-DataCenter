@@ -6,7 +6,7 @@ export const invoiceApi = {
     const response = await httpClient.get(`/Invoices`);
     return response;
   },
-  getById: async function (id: number) {
+  getById: async function (id: string) {
     const response = await httpClient.get(`/Invoices/${id}`);
     return response;
   },

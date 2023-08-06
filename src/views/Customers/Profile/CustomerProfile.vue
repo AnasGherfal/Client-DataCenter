@@ -8,11 +8,12 @@ import Representative from "./Representatives/Representatives.vue";
 import DeleteRepresentives from "./Representatives/DeleteRepresentatives.vue";
 import EditRepresentatives from "./Representatives/EditRepresentatives.vue";
 import { useCustomersStore } from "@/stores/customers";
-import SubscriptionRecord from "@/components/Subscriptions/subscriptionRecord.vue";
+import SubscriptionRecordById from "@/views/subscriptions/SubscriptionRecordById.vue"
 import LockButton from "@/components/LockButton.vue";
 import { customersApi } from "@/api/customers";
 import { representativesApi } from "@/api/representatives";
 import type { Customer } from "@/Modules/CustomerModule/CustomersModule";
+import {formattedPhoneNumber} from "@/tools/phoneUtils"
 
 const route = useRoute();
 const store = useCustomersStore();
@@ -20,9 +21,9 @@ const loading = ref(false);
 
 const userId = computed(() => {
   if (route && route.params && route.params.id) {
-    return Number(route.params.id); // Convert the ID to a number
+    return String(route.params.id); // Convert the ID to a number
   } else {
-    return -1; // or return a default value if id is not available, such as -1
+    return ""; // or return a default value if id is not available, such as -1
   }
 });
 const customerId: Customer = reactive({
@@ -32,6 +33,7 @@ const customerId: Customer = reactive({
   primaryPhone: "",
   secondaryPhone: "",
   files: [{ file: "", docType: 0 }],
+  subsicrptions:"",
 });
 
 const representativeId = ref();
@@ -44,7 +46,7 @@ onMounted(async () => {
   customersApi
     .getById(userId.value)
     .then((response) => {
-      console.log(response);
+      console.log(response.data.subsicrptions);
       customerId.id = response.data.id;
       customerId.name = response.data.name;
       customerId.address = response.data.address;
@@ -52,6 +54,7 @@ onMounted(async () => {
       customerId.primaryPhone = response.data.primaryPhone;
       customerId.secondaryPhone = response.data.secondaryPhone;
       customerId.status = response.data.status;
+      customerId.subsicrptions = response.data.subsicrptions;
 
       getRepresentatives();
     })
@@ -99,7 +102,7 @@ const getIdentityTypeText = (type: number) => {
     @getCustomers="store.getCustomers"
   />
 
-  <card class="shadow-2 p-3 mt-3 border-round-2xl">
+  <card class="shadow-2 p-3 mt-3 border-round-2xl" >
     <template #content>
       <TabView class="tabview-custom" ref="tabview4">
         <TabPanel>
@@ -126,50 +129,63 @@ const getIdentityTypeText = (type: number) => {
 
           <div v-else class="grid">
             <div
-              class="col-12 md:col-6"
+              class="col-12 sm:col-6 md:col-4"
               v-for="representative in representativeId"
               :key="representative.id"
             >
               <Card
-                class="w-3/5 mx-auto"
-                style="background-color: #ffffff; color: #333333"
+
+                class=""
+                style="background-color: #ffffff; color: #333333; padding: 0%;"
+              
               >
                 <template #header>
-                  <DeleteRepresentives
-                    :name="representative"
-                    :key="representative.id"
-                    @getRepresentatives="getRepresentatives()"
-                  />
+                  <div class="flex ">
+                    <!-- Delete button on the left -->
+                    <div class="ml-auto">
+                      <div v-if="representative.status !== 5">
+                        <EditRepresentatives
+                          :name="representative"
+                          :key="representative.id"
+                          @get-representatives="getRepresentatives"
+                        >
+                        </EditRepresentatives>
+                      </div>
+                    </div>
+                    <!-- Lock button centered -->
+                    <div class="flex items-center justify-center">
+                      <LockButton
+                        typeLock="Representatives"
+                        :id="representative.id"
+                        :name="
+                          representative.firstName +
+                          ' ' +
+                          representative.lastName
+                        "
+                        :status="representative.status"
+                        @getdata="getRepresentatives()"
+                      />
+                    </div>
 
-                  <LockButton
-                    typeLock="Representives"
-                    :id="representative.id"
-                    :name="
-                      representative.firstName + ' ' + representative.lastName
-                    "
-                    :status="representative.status"
-                    @getdata="getRepresentatives()"
-                  />
-
-                  <div v-if="representative.status !== 5">
-                    <EditRepresentatives
-                      :name="representative"
-                      :key="representative.id"
-                      @get-representatives="getRepresentatives"
-                    >
-                    </EditRepresentatives>
+                    <div class="">
+                      <DeleteRepresentives
+                        :name="representative"
+                        :key="representative.id"
+                        @getRepresentatives="getRepresentatives()"
+                      />
+                    </div>
                   </div>
                 </template>
                 <template #content>
                   <div class="min-h-450">
-                    <div class="text-center font-bold text-lg mb-2">
+                    <div class="text-center font-bold text-lg ">
                       اسم المخول:
                     </div>
                     <div class="text-center text-lg">
                       {{ representative.firstName }}
                       {{ representative.lastName }}
                     </div>
-                    <div class="text-center font-bold mt-4 mb-2 text-lg">
+                    <div class="text-center font-bold mt-4 text-lg">
                       البريد الإلكتروني:
                     </div>
                     <div class="text-center text-lg">
@@ -177,7 +193,7 @@ const getIdentityTypeText = (type: number) => {
                     </div>
                     <div class="flex justify-center mt-4">
                       <div class="flex-1">
-                        <div class="text-center font-bold mb-2 text-lg">
+                        <div class="text-center font-bold  text-lg">
                           رقم الإثبات:
                         </div>
                         <div class="text-center text-lg">
@@ -196,7 +212,7 @@ const getIdentityTypeText = (type: number) => {
                     <div class="text-center mt-4">
                       <div class="font-bold mb-2 text-lg">رقم الهاتف:</div>
                       <div class="text-lg" style="direction: ltr">
-                        {{ representative.phoneNo }}
+                        {{ formattedPhoneNumber(representative.phoneNo) }}
                       </div>
                     </div>
                   </div>
@@ -216,13 +232,16 @@ const getIdentityTypeText = (type: number) => {
           <template #header>
             <i class="ml-2 pi pi-cog"></i>
             <span>جدول الاشتراكات</span>
-          </template>
-          <SubscriptionRecord :key="customerId.id" :customerId="customerId" />
-          <!-- الخدمات الخاصة بالعميل -->
+          </template>{{ customerId.subsicrptions }}
+          <SubscriptionRecordById :key="customerId.subsicrptions" :subsId="customerId.subsicrptions" />
+         
         </TabPanel>
       </TabView>
     </template>
   </card>
 </template>
 
-<style></style>
+<style scoped >
+ .p-card >>> .p-card-body {
+    padding: 0.0rem 0;
+}</style>

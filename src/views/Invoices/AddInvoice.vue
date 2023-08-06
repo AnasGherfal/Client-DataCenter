@@ -9,6 +9,7 @@ import { helpers, minValue, required } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import { subscriptionApi } from "@/api/subscriptions";
+import router from "@/router";
 
 const customerStore = useCustomersStore();
 const invoicesStore = useInvoicesStore();
@@ -80,6 +81,10 @@ const search = (event: any) => {
   }, 250);
 };
 
+const convertedStartDate = computed(() => {
+  if (!invoices.startDate) return undefined; // Return undefined if startDate is empty
+  return new Date(invoices.startDate);
+});
 const submitForm = async () => {
   const result = await v$.value.$validate();
 
@@ -99,7 +104,7 @@ const submitForm = async () => {
       invoiceNo: invoices.invoiceNo,
     });
 
-    console.log(data)
+    console.log(data);
     invoiceApi
       .create(data)
       .then(function (response) {
@@ -109,8 +114,11 @@ const submitForm = async () => {
           detail: response.data.msg,
           life: 3000,
         });
-        console.log(data)
-
+        router.go(-1);
+        setTimeout(() => {
+          resetForm();
+        }, 500);
+        console.log(data);
 
         console.log(response);
         invoicesStore.getInvoices();
@@ -195,7 +203,7 @@ const resetForm = () => {
                   v-model="invoices.endDate"
                   dateFormat="yy/mm/dd"
                   selectionMode="single"
-                  :minDate="invoices.startDate"
+                  :minDate="convertedStartDate"
                   :showButtonBar="true"
                   :manualInput="false"
                 />
@@ -220,7 +228,6 @@ const resetForm = () => {
                   placeholder="اختر الاشتراك"
                   emptyMessage="هاذا العميل ليس لديه اشتراكات"
                   :selectionLimit="1"
-
                 />
                 <label for="subscriptionType">اشتراكات</label>
                 <div style="height: 2px">

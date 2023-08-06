@@ -1,7 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/MainPage/HomeView.vue";
 import LoginPage from "../views/LoginPage.vue";
+import { isAuthorized } from "../auth";
+import NProgress from "nprogress";
+import "nprogress/nprogress.css";
 
+NProgress.configure({ showSpinner: false });
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -124,12 +128,43 @@ const router = createRouter({
         },
         {
           path: "addInvoice",
-          component: () => import("../views/Invoices/AddInvoice.vue")
-
+          component: () => import("../views/Invoices/AddInvoice.vue"),
         },
       ],
     },
+    {
+      path: "/test",
+      name: "test",
+
+      component: () => import("../views/test.vue"),
+    },
   ],
+});
+
+router.beforeEach((to, from, next) => {
+  // Check if the user is authorized/logged in (you can use your own logic here)
+  const authorized = isAuthorized();
+
+  // If the user is authorized and trying to access the login page, redirect to the home page
+  if (authorized && to.name === "loginPage") {
+    next({ name: "/" });
+  } else {
+    // Otherwise, continue with the navigation as usual
+    next();
+  }
+});
+router.beforeResolve((to, from, next) => {
+  // If this isn't an initial page load.
+  if (to.name) {
+    // Start the route progress bar.
+    NProgress.start();
+  }
+  next();
+});
+
+router.afterEach(() => {
+  // Complete the animation of the route progress bar.
+  NProgress.done();
 });
 
 export default router;

@@ -1,5 +1,5 @@
 export interface InvoiceRequest {
-    id: number;
+    id: string;
     status: number;
     date: string;
     description: string;

@@ -177,7 +177,7 @@ const status = (value: number) => {
               style="text-decoration: none"
             >
               <Button
-                icon="fa-solid fa-circle-info"
+                icon="fa-solid fa-circle-info "
                 severity="info"
                 text
                 rounded

@@ -1,5 +1,5 @@
 export interface Customer {
-    id?: number;
+    id?: string;
     status?: number;
     name: string;
     email: string;
@@ -10,6 +10,7 @@ export interface Customer {
       file: File |any;
       docType: number;
     }];
+    subsicrptions: string
 
 
 }

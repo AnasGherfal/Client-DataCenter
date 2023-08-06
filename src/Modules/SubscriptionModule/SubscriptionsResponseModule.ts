@@ -1,5 +1,5 @@
 export interface SubscriptionRespons {
-    id:number|null,
+    id:string|null,
     status:number|null,
     serviceName:string ,
     customerName: string ,

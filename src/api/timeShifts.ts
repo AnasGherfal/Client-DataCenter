@@ -9,11 +9,11 @@ export const timeShiftsApi = {
     const response = await httpClient.post("/VisitTimeShift", timeShift);
     return response;
   },
-  edit: async function (id: number, timeShift: any) {
+  edit: async function (id: string, timeShift: any) {
     const response = await httpClient.put(`/VisitTimeShift/${id}`, timeShift);
     return response;
   },
-  remove: async function (id: number) {
+  remove: async function (id: string) {
     const response = await httpClient.delete(`/VisitTimeShift/${id}`);
     return response;
   },

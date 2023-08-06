@@ -12,9 +12,9 @@ const route = useRoute();
 
 const userId = computed(() => {
   if (route && route.params && route.params.id) {
-    return Number(route.params.id); // Convert the ID to a number
+    return String(route.params.id); // Convert the ID to a number
   } else {
-    return -1; // or return a default value if id is not available, such as -1
+    return ""; // or return a default value if id is not available, such as -1
   }
 });
 
@@ -81,7 +81,7 @@ function convertToDate(dateString: string): string {
 }
 </script>
 
-<template>{{ invoices.visits }}
+<template>
   <Card>
     <template #title>
       <BackButton style="float: left"></BackButton>
