@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { reactive, ref, watch } from "vue";
 import { FilterMatchMode } from "primevue/api";
 import { useCustomersStore } from "@/stores/customers";
 import { useToast } from "primevue/usetoast";
@@ -10,14 +10,18 @@ import DeleteCustomer from "../../components/DeleteButton.vue";
 
 const toast = useToast();
 const store = useCustomersStore();
-const filters = ref({
-  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-  status: { value: null, matchMode: FilterMatchMode.EQUALS },
+interface Filters {
+  [key: string]: { value: string; matchMode: string };
+}
+
+const filters: Filters = reactive({
+  global: { value: "", matchMode: FilterMatchMode.CONTAINS },
+  status: { value: "", matchMode: FilterMatchMode.EQUALS },
 });
 
 const columns = ref([
   { field: "email", header: "البريد الإكتروني" },
-  { field: "primaryPhone", header:"رقم الهاتف"},
+  { field: "primaryPhone", header: "رقم الهاتف" },
 
   { field: "address", header: "العنوان" },
 ]);
@@ -95,6 +99,12 @@ const goToPreviousPage = () => {
     store.getCustomers();
   }
 };
+// Function to handle the Enter key press and trigger the search
+const onSearch = (event: KeyboardEvent) => {
+  if (event.key === "Enter") {
+    store.searchByName(store.name); // Call the searchByName function with the provided name
+  }
+};
 </script>
 
 <template>
@@ -142,6 +152,7 @@ const goToPreviousPage = () => {
             :pageLinkSize="store.totalPages"
             :currentPage="store.currentPage - 1"
             paginatorTemplate="  "
+            :globalFilter="store.name"
           >
             <template #paginatorstart>
               <Button
@@ -172,8 +183,10 @@ const goToPreviousPage = () => {
                     <span class="p-input-icon-left p-float-label">
                       <i class="fa-solid fa-magnifying-glass" />
                       <InputText
-                        v-model="filters['global'].value"
+                      ref="searchInput"
+                        v-model="store.name"
                         placeholder="البحث"
+                        @keydown.enter="onSearch"
                       />
                       <label for="search" style="font-weight: lighter">
                         البحث

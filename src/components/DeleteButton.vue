@@ -20,7 +20,6 @@ const props = defineProps<{
 }>();
 
 
-console.log(typeof(props.id))
 const deleteCustomer = () => {
   loading.value = true;
   axios

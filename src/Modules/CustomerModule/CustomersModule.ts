@@ -9,7 +9,12 @@ export interface Customer {
     files: [{
       file: File |any;
       docType: number;
-    }];
+    },
+    {
+    file: File |any;
+    docType: number;
+    }
+      ];
     subsicrptions: string
 
 

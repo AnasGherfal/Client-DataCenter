@@ -8,12 +8,12 @@ import Representative from "./Representatives/Representatives.vue";
 import DeleteRepresentives from "./Representatives/DeleteRepresentatives.vue";
 import EditRepresentatives from "./Representatives/EditRepresentatives.vue";
 import { useCustomersStore } from "@/stores/customers";
-import SubscriptionRecordById from "@/views/subscriptions/SubscriptionRecordById.vue"
+import SubscriptionRecordById from "@/views/subscriptions/SubscriptionRecordById.vue";
 import LockButton from "@/components/LockButton.vue";
 import { customersApi } from "@/api/customers";
 import { representativesApi } from "@/api/representatives";
 import type { Customer } from "@/Modules/CustomerModule/CustomersModule";
-import {formattedPhoneNumber} from "@/tools/phoneUtils"
+import { formattedPhoneNumber } from "@/tools/phoneUtils";
 
 const route = useRoute();
 const store = useCustomersStore();
@@ -32,8 +32,11 @@ const customerId: Customer = reactive({
   address: "",
   primaryPhone: "",
   secondaryPhone: "",
-  files: [{ file: "", docType: 0 }],
-  subsicrptions:"",
+  files: [
+    { file: null, docType: 0 },
+    { file: null, docType: 0 },
+  ],
+  subsicrptions: "",
 });
 
 const representativeId = ref();
@@ -55,6 +58,7 @@ onMounted(async () => {
       customerId.secondaryPhone = response.data.secondaryPhone;
       customerId.status = response.data.status;
       customerId.subsicrptions = response.data.subsicrptions;
+      customerId.files = response.data.files;
 
       getRepresentatives();
     })
@@ -102,7 +106,7 @@ const getIdentityTypeText = (type: number) => {
     @getCustomers="store.getCustomers"
   />
 
-  <card class="shadow-2 p-3 mt-3 border-round-2xl" >
+  <card class="shadow-2 p-3 mt-3 border-round-2xl">
     <template #content>
       <TabView class="tabview-custom" ref="tabview4">
         <TabPanel>
@@ -129,18 +133,16 @@ const getIdentityTypeText = (type: number) => {
 
           <div v-else class="grid">
             <div
-              class="col-12 sm:col-6 md:col-4"
+              class="col-12 sm:col-6 md:col-4 representative-card"
               v-for="representative in representativeId"
               :key="representative.id"
             >
               <Card
-
-                class=""
-                style="background-color: #ffffff; color: #333333; padding: 0%;"
-              
+                class="representative-card-content"
+                style="background-color: #ffffff; color: #333333"
               >
                 <template #header>
-                  <div class="flex ">
+                  <div class="flex">
                     <!-- Delete button on the left -->
                     <div class="ml-auto">
                       <div v-if="representative.status !== 5">
@@ -178,9 +180,7 @@ const getIdentityTypeText = (type: number) => {
                 </template>
                 <template #content>
                   <div class="min-h-450">
-                    <div class="text-center font-bold text-lg ">
-                      اسم المخول:
-                    </div>
+                    <div class="text-center font-bold text-lg">اسم المخول:</div>
                     <div class="text-center text-lg">
                       {{ representative.firstName }}
                       {{ representative.lastName }}
@@ -193,7 +193,7 @@ const getIdentityTypeText = (type: number) => {
                     </div>
                     <div class="flex justify-center mt-4">
                       <div class="flex-1">
-                        <div class="text-center font-bold  text-lg">
+                        <div class="text-center font-bold text-lg">
                           رقم الإثبات:
                         </div>
                         <div class="text-center text-lg">
@@ -231,17 +231,38 @@ const getIdentityTypeText = (type: number) => {
         <TabPanel>
           <template #header>
             <i class="ml-2 pi pi-cog"></i>
-            <span>جدول الاشتراكات</span>
-          </template>{{ customerId.subsicrptions }}
-          <SubscriptionRecordById :key="customerId.subsicrptions" :subsId="customerId.subsicrptions" />
-         
+            <span>جدول الاشتراكات</span> </template
+          >{{ customerId.subsicrptions }}
+          <SubscriptionRecordById
+            :key="customerId.subsicrptions"
+            :subsId="customerId.subsicrptions"
+          />
         </TabPanel>
       </TabView>
     </template>
   </card>
 </template>
 
-<style scoped >
- .p-card >>> .p-card-body {
-    padding: 0.0rem 0;
-}</style>
+<style scoped>
+.p-card >>> .p-card-body {
+  padding: 0rem 0;
+}
+
+/* Add this style to your component's <style> section */
+.representative-card {
+  transition: transform 0.3s, box-shadow 0.3s;
+  border-radius: 8px;
+  padding: 1px; /* Adjust the padding value */
+  overflow: hidden;
+  border: 2px solid transparent; /* Add a border */
+}
+
+.representative-card-content {
+  padding: 16px;
+}
+
+.representative-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(9, 9, 198, 0.2); /* Blueish shadow */
+}
+</style>

@@ -17,7 +17,6 @@ const filters = ref({
 const columns = ref([{ field: "serviceName", header: "الباقه" }]);
 const selectedColumns = ref(columns.value);
 
-
 const formatDate = (value: Date) => {
   return moment(value).format("yy/M/D  hh:mm a");
 };
@@ -44,6 +43,20 @@ const trans = (value: string) => {
   if (value == "1") return " مفعل";
   else if (value == "2") return " غير مفعل";
   else if (value == "5") return " مقفل";
+};
+
+const getDaysRemainingData = (endDate: Date) => {
+  const now = moment();
+  const end = moment(endDate);
+  const daysRemaining = end.diff(now, "days");
+
+  if (daysRemaining <= 0) {
+    return { label: "منتهي", color: "red" };
+  } else if (daysRemaining <= 30) {
+    return { label: "قريباً من الانتهاء", color: "orange" };
+  } else {
+    return { label: "صالح", color: "green" };
+  }
 };
 
 watch(filters, (newFilters) => {
@@ -136,13 +149,7 @@ const goToPreviousPage = () => {
           </template>
           <template #header>
             <div class="grid p-fluid">
-              <div class="field col-12 md:col-6 lg:col-4">
-                <span class="p-input-icon-left p-float-label">
-                  <i class="fa-solid fa-magnifying-glass" />
-                  <InputText v-model="filters['global'].value" placeholder="" />
-                  <label for="search" style="font-weight: lighter;"> البحث </label>
-                </span>
-              </div>
+              <div class="field col-12 md:col-6 lg:col-4"></div>
             </div>
           </template>
 
@@ -167,11 +174,10 @@ const goToPreviousPage = () => {
             </div>
           </template>
 
-
           <Column
             field="customerName"
             header="اسم العميل"
-            style="min-width: 8rem"
+            style="min-width: 6rem"
             class="font-bold"
           ></Column>
           <Column
@@ -213,6 +219,19 @@ const goToPreviousPage = () => {
             style="min-width: 3rem"
           >
           </Column>
+          <Column
+            field="daysRemaining"
+            header="الصلاحية"
+            style="min-width: 4rem"
+          >
+            <template #body="{ data }">
+              <span
+                :style="{ color: getDaysRemainingData(data.endDate).color }"
+              >
+                {{ getDaysRemainingData(data.endDate).label }}
+              </span>
+            </template>
+          </Column>
 
           <Column
             field="startDate"
@@ -236,16 +255,16 @@ const goToPreviousPage = () => {
             </template>
           </Column>
 
-          <Column style="min-width: 8rem">
+          <Column style="min-width: 11rem">
             <template #body="slotProps">
               <span v-if="slotProps.data.status !== 5">
-                  <DeleteSubscription
-                    :name="slotProps.data.id"
-                    :id="slotProps.data.id"
-                    type="Subscription"
-                  >
-                  </DeleteSubscription>
-                </span>
+                <DeleteSubscription
+                  :name="slotProps.data.id"
+                  :id="slotProps.data.id"
+                  type="Subscription"
+                >
+                </DeleteSubscription>
+              </span>
               <LockButton
                 typeLock="Subscription"
                 :id="slotProps.data.id"

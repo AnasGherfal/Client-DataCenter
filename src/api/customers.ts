@@ -1,14 +1,19 @@
 import type { Customer } from "../Modules/CustomerModule/CustomersModule";
-import {httpClient} from "./index";
+import { httpClient } from "./index";
 
 export const customersApi = {
-  get: async function (pageNumber: number, pageSize: number){
-    const response = await httpClient.get(`/Customers?PageNumber=${pageNumber}&PageSize=${pageSize}`);
+  get: async function (pageNumber: number, pageSize: number, name: string) {
+    const response = await httpClient.get(
+      `/Customers?CustomerName=${name}&PageNumber=${pageNumber}&PageSize=${pageSize}`
+    );
     return response;
   },
   getById: async function (id: string) {
     const response = await httpClient.get(`/Customers/${id}`);
     return response;
+  },
+  getFile: async function (id: string) {
+    const response = await httpClient.get(`/Customers/${id}/Download`);
   },
 
   create: async function (customer: any) {

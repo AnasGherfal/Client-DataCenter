@@ -149,16 +149,16 @@ const goToPreviousPage = () => {
           <template #header>
             <div class="grid p-fluid">
               <div class="field col-12 md:col-6 lg:col-4">
-                <span class="p-input-icon-left p-float-label">
-                  <i class="fa-solid fa-magnifying-glass" />
-                  <InputText
+                <!-- <span class="p-input-icon-left p-float-label"> -->
+                  <!-- <i class="fa-solid fa-magnifying-glass" /> -->
+                  <!-- <InputText
                     v-model="filters['global'].value"
                     placeholder="Search..."
                   />
                   <label for="search" style="font-weight: lighter">
                     البحث
-                  </label>
-                </span>
+                  </label> -->
+                <!-- </span> -->
               </div>
             </div>
           </template>
@@ -220,8 +220,8 @@ const goToPreviousPage = () => {
                   text
                   rounded
                   v-tooltip="{ value: 'التفاصيل', fitContent: true }"
-                />
-              </RouterLink>{{ slotProps.data.name }}
+                /> </RouterLink
+              >{{ slotProps.data.name }}
               <LockButton
                 typeLock="Visit"
                 :id="slotProps.data.id"

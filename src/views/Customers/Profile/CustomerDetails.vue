@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, ref, type PropType } from "vue";
+import { computed, reactive, ref, type PropType, onUnmounted } from "vue";
 import { useToast } from "primevue/usetoast";
 import BackButton from "@/components/BackButton.vue";
 import type { Customer } from "../../../Modules/CustomerModule/CustomersModule";
@@ -9,6 +9,7 @@ import { isLibyanPhoneNumber, validateText } from "@/tools/validations";
 import { useCustomersStore } from "@/stores/customers";
 import { customersApi } from "@/api/customers";
 import DeleteCustomer from "../../../components/DeleteButton.vue";
+import axios from "axios";
 
 const actEdit = ref(true);
 const loading = ref(false);
@@ -17,15 +18,15 @@ const store = useCustomersStore();
 const dataClinet = defineProps<{ customer: any }>();
 const emit = defineEmits(["getCustomers"]);
 
-const customer: Customer = reactive({
+const customer = reactive({
   name: dataClinet.customer.name,
   email: dataClinet.customer.email,
   primaryPhone: dataClinet.customer.primaryPhone,
   secondaryPhone: dataClinet.customer.secondaryPhone,
   address: dataClinet.customer.address,
   status: dataClinet.customer.status,
-  files: dataClinet.customer.file,
-  subsicrptions: dataClinet.customer.subsicrptions
+  files: dataClinet.customer.files,
+  subsicrptions: dataClinet.customer.subsicrptions,
 });
 
 const toast = useToast();
@@ -94,13 +95,42 @@ const rules = computed(() => {
   };
 });
 const v$ = useVuelidate(rules, customer);
+
+const fileUrl = ref<string | null>(null);
+
+
+const getFile = async (id: string) => {
+
+  try {
+    // Make the API call to get the file data from the server
+     customersApi
+     .getFile(id)
+     .then((response)=>{
+      console.log(response)
+     })
+
+    // Create a Blob from the file data
+
+  } catch (error) {
+    console.error('Error downloading file:', error);
+  }
+
+  
+};
+
+// Cleanup the temporary URL when the component is unmounted
+onUnmounted(() => {
+  if (fileUrl.value) {
+    URL.revokeObjectURL(fileUrl.value);
+  }
+});
+
 </script>
 
 <template>
   <div>
     <Card>
-      <template #title >
-
+      <template #title>
         البيانات الشخصية
 
         <BackButton style="float: left" />
@@ -114,15 +144,16 @@ const v$ = useVuelidate(rules, customer);
           </div>
         </div>
 
-        <span v-else-if="customer.status !== 5 && !store.loading"
-        style=" width: 30px; height: 30px; margin-right: 10px ;margin-top:0px; "
->
+        <span
+          v-else-if="customer.status !== 5 && !store.loading"
+          style="width: 30px; height: 30px; margin-right: 10px; margin-top: 0px"
+        >
           <Button
             @click="actEdit = !actEdit"
             icon=" fa-solid fa-pen"
             text
             rounded
-            class=" p-button-primary p-button-text"
+            class="p-button-primary p-button-text"
             v-tooltip.top="{
               value: 'تعديل البيانات الشخصية',
               fitContent: true,
@@ -133,7 +164,7 @@ const v$ = useVuelidate(rules, customer);
             :name="dataClinet.customer.name"
             :id="dataClinet.customer.id"
           ></DeleteCustomer> -->
-          </span>        
+        </span>
         <Divider />
       </template>
       <template #content>
@@ -196,7 +227,7 @@ const v$ = useVuelidate(rules, customer);
         <div v-else>
           <div>
             <form @submit.prevent="onFormSubmit" :disabled="actEdit">
-              <div class="grid p-fluid  ">
+              <div class="grid p-fluid">
                 <div class="field col-12 md:col-6 lg:col-4">
                   <span class="p-float-label">
                     <InputText
@@ -292,26 +323,23 @@ const v$ = useVuelidate(rules, customer);
                 </div>
 
                 <div class="field col-12 md:col-6 lg:col-4">
-                  <FileUpload
-                    style="
-                      width: 100%;
-                      height: 40px;
-                      border-radius: 10px;
-                      background-color: white;
-                      color: black;
-                      border-color: gray;
-                    "
-                    mode="basic"
-                    v-model="customer.file"
-                    name="File"
-                    url="./upload"
-                    chooseLabel=" ارفق ملف"
-                    cancelLabel="إلغاء"
-                    :showUploadButton="false"
-                    :showCancelButton="false"
-                    :maxFileSize="1000000"
-                    invalidFileSizeMessage="Exceeded the maximum file size"
-                  />
+                  <label for="files">الملفات</label>
+                  <ul>
+        <li v-for="file in customer.files" :key="file.id">
+          <div>
+            <span>{{ file.fileName }} - {{ file.docType }}</span>
+            <!-- Click event to trigger file download -->
+            <Button
+              @click="getFile(file.id)"
+              icon="fa-solid fa-download"
+              class="p-button-success"
+              label="تحميل"
+            />
+          </div>
+        </li>
+      </ul>
+
+                  
                 </div>
               </div>
             </form>
@@ -342,12 +370,9 @@ const v$ = useVuelidate(rules, customer);
   border-radius: 10px;
 }
 
-
 .p-button:enabled:hover {
   background: #0d89ec;
   color: #ffffff;
   border-color: #0d89ec;
 }
-
-
 </style>

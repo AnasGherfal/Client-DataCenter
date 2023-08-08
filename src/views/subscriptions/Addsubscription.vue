@@ -24,7 +24,7 @@ const state: Subscription = reactive({
   startDate: "",
   endDate: "",
   file: {
-    file: "",
+    file: null,
     docType: 0,
   },
 });
@@ -50,8 +50,6 @@ onMounted(async () => {
     });
 });
 
-console.log(state.startDate);
-
 const rules = computed(() => {
   return {
     customerId: { required: helpers.withMessage("الحقل مطلوب", required) },
@@ -71,13 +69,25 @@ const toast = useToast();
 
 const v$ = useVuelidate(rules, state);
 
-const onFileUpload = (event: any) => {
+async function onFileUpload(event: any, index: number) {
   const file = event.target.files[0];
-  state.file = {
-    file: file,
-    docType: state.file.docType,
-  };
-};
+
+  if (file && formData) {
+    const docType = index === 0 ? 1 : 2;
+    state.file = { file: file, docType }; // Store the File object in the array
+
+    const fieldName = index === 0 ? "File.File" : "File.File";
+    const docTypeNumber = Number(docType); // Convert docType to a number
+    formData.append(fieldName, file); // Append the File object to formData
+    formData.append(fieldName + ".DocType", docTypeNumber.toString()); // Append the docType as a string
+  }
+}
+const docTypeOptions = ref([
+  { value: 0, label: "اختر نوع الملف" },
+  { value: 1, label: "نوع الملف 1" },
+  { value: 2, label: "نوع الملف 2" },
+]);
+const formData = new FormData();
 
 const submitForm = async () => {
   const result = await v$.value.$validate();
@@ -103,20 +113,24 @@ const submitForm = async () => {
 
     const customerId = state.customerId?.id ?? 0;
 
-    const subdata = new FormData();
-    subdata.append("serviceId", String(state.serviceId));
-    subdata.append("customerId", String(customerId));
-    subdata.append("startDate", moment(state.startDate).format("YYYY/MM/DD"));
-    subdata.append("endDate", moment(state.endDate).format("YYYY/MM/DD"));
-    const fileName = `@${state.file.file.name};type=`;
-    subdata.append(fileName, state.file.file.type);
-    subdata.append("docType", String(state.file.docType));
+    formData.append("serviceId", String(state.serviceId));
+    formData.append("customerId", String(customerId));
+    formData.append("startDate", moment(state.startDate).format("YYYY/MM/DD"));
+    formData.append("endDate", moment(state.endDate).format("YYYY/MM/DD"));
+    // Append the first file as FormFile
+    if (state.file.file instanceof File) {
+      formData.append("File.File", state.file.file, state.file.file.name);
+      formData.append("File.DocType", state.file.docType.toString());
+    }
 
-    subdata.forEach((value, key) => {
-      console.log(key, value);
+    const formDataObject: { [key: string]: string } = {};
+    formData.forEach((value, key) => {
+      formDataObject[key] = value.toString();
     });
+
+    console.log("formData:", formDataObject);
     subscriptionApi
-      .create(subdata)
+      .create(formData)
       .then((Response) => {
         toast.add({
           severity: "success",
@@ -285,19 +299,34 @@ const search = (event: any) => {
                 <label for="identityType">نوع الاثبات </label>
               </span>
             </div>
-            <div class="form-group">
-              <input
-                style="
-                  font-family: tajawal;
-                  width: 100%;
-                  height: 40px;
-                  border-radius: 10px;
-                  background-color: white;
-                  color: black;
-                  border-color: gray;
-                "
-                type="file"
-                @change="onFileUpload($event)"
+            <div class="field col-12 md:col-6 lg:col-4">
+              <label class="file-input-label" for="fileInput1">
+                <div class="file-input-content">
+                  <div class="file-input-icon"></div>
+
+                  <div class="file-input-text">
+                    <i class="pi pi-upload"></i>
+
+                    {{ state.file?.file?.name || "ارفق ملف  1 " }}
+                  </div>
+                </div>
+
+                <input
+                  id="fileInput1"
+                  style="display: none"
+                  type="file"
+                  @change="(event) => onFileUpload(event, 0)"
+                  accept="*"
+                />
+              </label>
+              <Dropdown
+                :modelValue="state.file.docType"
+                :options="docTypeOptions"
+                optionValue="value"
+                optionLabel="label"
+                placeholder="Select a Document Type"
+                :visible="false"
+                @update:modelValue="(value: number) => (state.file.docType = value)"
               />
             </div>
             <!-- <div class="field col-12 md:col-6 lg:col-4" style="height: 1%">

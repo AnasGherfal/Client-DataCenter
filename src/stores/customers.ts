@@ -10,17 +10,25 @@ export const useCustomersStore = defineStore("customer", () => {
   const pageNumber = ref(1);
   const pageSize = ref(10);
   const currentPage = ref(0);
+  const name = ref("");
 
   onMounted(async () => {
     getCustomers();
   });
+  async function searchByName(searchName: string) {
+    name.value = searchName;
+    await getCustomers(); // Await the getCustomers function to wait for the API call to complete
+  }
   async function getCustomers() {
+    
     await customersApi
-      .get(pageNumber.value, pageSize.value)
+      .get(pageNumber.value, pageSize.value, name.value)
       .then(function (response) {
+        
         customers.value = response.data.content;
         totalPages.value = response.data.totalPages;
         currentPage.value = response.data.currentPage;
+        name.value = response.data.content.name;
       })
       .catch(function (error) {
         console.log(error);
@@ -37,5 +45,8 @@ export const useCustomersStore = defineStore("customer", () => {
     pageNumber,
     currentPage,
     pageSize,
+    name,
+    searchByName, // Expose the searchByName function
+
   };
 });

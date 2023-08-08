@@ -18,6 +18,7 @@ export const useSubscriptionsStore = defineStore("Subscription", () => {
       .getPages(pageNumber.value, pageSize.value)
       .then(function (response) {
         subscriptions.value = response.data.content;
+        console.log(subscriptions.value);
         totalPages.value = response.data.totalPages;
         currentPage.value = response.data.currentPage;
       })
