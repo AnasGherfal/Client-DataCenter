@@ -11,6 +11,7 @@ import axios from "axios";
 import { useRoute } from "vue-router";
 import { visitApi } from "@/api/visits";
 import type { VisitReq } from "@/Modules/VisitModule/VisitRequestModule";
+import { representativesApi } from "@/api/representatives";
 
 const store = useVistisStore();
 const route = useRoute();
@@ -29,34 +30,42 @@ const visits = reactive({
   endTime: "",
   customerName: "",
   id: 0,
-  visitType: "",
+  visitTypeId: "",
   notes: "",
   timeShift: "",
   totalMin: "",
   price: 0,
   invoiceId: 0,
-  representives: [],
+  representatives: [],
   companions: [  {
-      firstName: "string",
-      lastName: "string",
-      identityNo: "string",
+      firstName: "",
+      lastName: "",
+      identityNo: "",
       identityType: 0,
-      jobTitle: "string"
+      jobTitle: ""
     }],
 });
+const rep = ref([]);
 
 
 onMounted(async () => {
+  getRepresentativeData();
   store.loading = true;
   visitApi
-    .getPages(store.pageNumber, store.pageSize)
+    .getById(userId.value)
     .then((response) => {
-      const filteredVisits = response.data.content.filter(
-        (visit: { id: String }) => visit.id == userId.value
-      );
-      if (filteredVisits.length > 0) {
-        Object.assign(visits, filteredVisits[0]);
-      }
+      // visits.startTime = response.data.startTime;
+      // visits.endTime = response.data.endTime;
+      // visits.customerName = response.data.customerName;
+      // visits.representatives = response.data.representatives;
+      // visits.id = response.data.id;
+      const filteredVisits = response.data
+      console.log(filteredVisits)
+      
+
+      
+        Object.assign(visits, filteredVisits);
+      
     })
     .catch((error) => {
       console.log(error);
@@ -65,6 +74,15 @@ onMounted(async () => {
       store.loading = false;
     });
 });
+async function getRepresentativeData() {
+    try {
+      const response = await representativesApi.get();
+      rep.value = response.data.content;
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
 let today = new Date();
 let month = today.getMonth;
@@ -92,11 +110,10 @@ const toast = useToast();
 
 // }
 
-
 </script>
 
 <template>
-  <VisitDetails :visit="visits" :key="visits.id" ></VisitDetails>
+  <VisitDetails :visit="visits" :key="visits.id"  ></VisitDetails>
 </template>
 <style>
 .p-button-icon {

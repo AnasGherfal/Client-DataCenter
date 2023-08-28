@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import { required, helpers } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
@@ -10,30 +10,43 @@ import type Textarea from "primevue/textarea";
 import ComapanionsDataTable from "./Companions/CompanionsDataTable.vue";
 import moment from "moment";
 import { visitApi } from "@/api/visits";
+import { formatTotalMin } from "@/tools/formatTime";
+import 'vue-select/dist/vue-select.css';
 
+
+import VueSelect from "vue-select";
+import { representativesApi } from "@/api/representatives";
+import { customersApi } from "@/api/customers";
 const store = useVistisStore();
 const props = defineProps<{ visit: any }>();
 const editable = ref(true);
 const dialog = ref(false);
 const loading = ref(true);
-
 const visit = reactive({
   id: props.visit.id,
   startTime: convertToDate(props.visit.startTime),
   endTime: convertToDate(props.visit.endTime),
   customerName: props.visit.customerName,
-  visitTypeId: props.visit.visitTypeId,
+  visitTypeId: props.visit.visitType,
+  timeShift: props.visit.timeShift,
+  visitType: props.visit.visitType,
   notes: props.visit.notes,
   totalMin: props.visit.totalMin,
   price: props.visit.price,
   invoiceId: 0,
-  representatives: props.visit.representatives || [],
+  representatives: props.visit.representatives,
   companions: props.visit.companions,
   status: props.visit.status,
 });
 
-const visitReason = ref([{ name: "صيانه" }, { name: "انهاء عمل" }]);
-
+const visitReasons = [
+  { value: "7adbcf6d-e06f-410c-8a41-5857dadb0792", text: "صيانه" }, // Ensure the value is in quotes
+  { value: "be05cdb1-03e4-4899-a910-662a79d8653e", text: "انهاء عمل" }, // Make sure other values are also strings if needed
+];
+const getVisitReasonText = (visitType: string) => {
+  const visitReason = visitReasons.find((reason) => reason.value === visitType);
+  return visitReason ? visitReason.text : "";
+};
 const startDate = ref(new Date());
 
 const rules = computed(() => {
@@ -57,12 +70,8 @@ type visitReason = {
 };
 // Array of identity type options
 
-const visitReasons: visitReason[] = [
-  { value: 1, text: "صيانه" },
-  { value: 2, text: "انهاء عمل" },
-];
 function convertToDate(dateString: string): string {
-  const date = moment(dateString).format("YYYY-MM-DD HH:mm"); // Convert to string format
+  const date = moment(dateString).format("YYYY/MM/DD HH:mm a"); // Convert to string format
   return date;
 }
 function convertDateFormat(dateString: any) {
@@ -70,15 +79,38 @@ function convertDateFormat(dateString: any) {
   const formattedDate = dateObj.toISOString();
   return formattedDate;
 }
+
 const selectedRepresentatives = computed({
   get: () => visit.representatives,
   set: (value) => {
     visit.representatives = value;
   },
 });
+
 function updateRepresentatives() {
   visit.representatives = selectedRepresentatives.value;
 }
+
+const customerselect = ref();
+const representatives = ref();
+const customerRepresentatives = ref();
+
+
+
+onMounted( async() => {
+
+    try {
+      const response = await customersApi.get(1,5,visit.customerName);
+      representatives.value = response.data.content[0].representative;
+      console.log(representatives.value)
+
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+
+
 const submitForm = async () => {
   const result = await v$.value.$validate();
   const selectedRepresentativeIds = visit.representatives.map(
@@ -102,7 +134,6 @@ const submitForm = async () => {
     visitApi
       .edit(props.visit.id, data)
       .then((response) => {
-        console.log(response);
         editable.value = true;
         toast.add({
           severity: "success",
@@ -245,6 +276,7 @@ function openDialog(representives: any) {
                   <InputText
                     id="companionName"
                     v-model="visit.totalMin"
+                    :value="formatTotalMin(visit.totalMin)"
                     :readonly="true"
                     :disabled="true"
                   />
@@ -268,11 +300,11 @@ function openDialog(representives: any) {
                 <span class="p-float-label">
                   <Dropdown
                     id="visitTypeId"
-                    v-model="visit.visitTypeId"
+                    v-model="visit.visitType"
                     :options="visitReasons"
-                    :disabled="editable"
                     optionValue="value"
                     optionLabel="text"
+                    :disabled="editable"
                   />
                   <label
                     style="color: black; top: -0.75rem; font-size: 12px"
@@ -339,18 +371,23 @@ function openDialog(representives: any) {
             >
               المخوليين:
             </span>
-            <div class="field col-12 md:col-6 lg:col-4">
-              <span class="p-float-label">
-                <MultiSelect
+            <div class="field col-12 md:col-4 lg:col-4">
+
+              <span class="p-float-label ">
+                <vue-select
+                style="; background-color: white; border-radius: 1rem;"
+                class="custom-multiselect"
+                id="mySelect"
+                  multiple
                   v-model="selectedRepresentatives"
-                  :options="store.representatives"
-                  optionLabel="firstName"
-                  placeholder="اختر"
-                  :selectionLimit="2"
-                  emptyMessage="هاذا العميل ليس لديه مخوليين"
-                  :disabled="editable"
+                  :options="representatives"
+                  label="firstName"
+                  :selected="visit.representatives"
                   @change="updateRepresentatives"
-                  :loading="store.loading"
+                  :disabled="editable"
+
+                  
+                  
                 />
 
                 <error
@@ -360,10 +397,8 @@ function openDialog(representives: any) {
                   >{{ error.$message }}</error
                 >
               </span>
-            </div> 
-            <DataTable
-              :value="visit.representatives"
-            >
+            </div>
+            <DataTable :value="visit.representatives">
               <Column field="firstName" header="اسم المخول"></Column>
               <Column field="email" header=" البريد الالكتروني"></Column>
               <Column field="phoneNo" header="رقم الهاتف"> </Column>
@@ -454,7 +489,10 @@ function openDialog(representives: any) {
               لايوجد مرافقين في هذه الزيارة
             </div>
             <div v-else>
-              <ComapanionsDataTable :comp-list="visit.companions" :editable="editable"> 
+              <ComapanionsDataTable
+                :comp-list="visit.companions"
+                :editable="editable"
+              >
               </ComapanionsDataTable>
             </div>
           </form>
@@ -479,12 +517,50 @@ function openDialog(representives: any) {
     </Card>
   </div>
 </template>
-<style scoped>
+<style >
+
 .representative-label {
   font-weight: bold;
 }
 
 .representative-value {
   font-weight: normal;
+}
+.vs__selected {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border-radius: var(--vs-border-radius);
+    color: var(--vs-selected-color);
+    line-height: var(--vs-line-height);
+    margin: 4px 2px 0;
+    padding: 0 0.25em;
+    z-index: 0;
+    
+}
+
+.vs__dropdown-toggle {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    display: flex;
+    padding: 0 0 4px;
+    background: none;
+    border: 1.5px solid #eef1f4;
+    border-radius: 0.5rem;
+    white-space: normal;
+    direction: rtl;
+}
+.vs--disabled .vs__dropdown-toggle, .vs--disabled .vs__clear, .vs--disabled .vs__search, .vs--disabled .vs__selected, .vs--disabled .vs__open-indicator {
+    cursor: var(--vs-disabled-cursor);
+    background-color: white;
+}
+.vs--disabled .vs__dropdown-toggle{
+  direction: rtl;
+  border-color: #e4e9ee
+}
+
+.vs--disabled .vs__selected {
+  color:#688aab
 }
 </style>

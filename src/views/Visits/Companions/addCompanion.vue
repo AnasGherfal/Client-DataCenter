@@ -47,7 +47,45 @@ const toast = useToast();
 const v$ = useVuelidate(rules, companion);
 
 const submitFormCom = async () => {
-  let result = true; // Assume validation success by default
+
+  const nameRegex = /^[^\d]+$/; // Regex to match names without numbers
+const numberRegex = /^\d+$/; // Regex to match numbers without letters
+
+if (
+  !companion.firstName ||
+  !companion.lastName ||
+  !companion.identityType ||
+  !companion.identityNo ||
+  !companion.jobTitle
+) {
+  toast.add({
+    severity: "warn",
+    summary: "فشل",
+    detail: "يرجى تعبئة جميع الحقول المطلوبة",
+    life: 3000,
+  });
+  return;
+} else if (!nameRegex.test(companion.firstName) || !nameRegex.test(companion.lastName)) {
+  toast.add({
+    severity: "warn",
+    summary: "فشل",
+    detail: "الاسم يجب أن يحتوي على أحرف فقط",
+    life: 3000,
+  });
+  return;
+} else if (!numberRegex.test(companion.identityNo)) {
+  toast.add({
+    severity: "warn",
+    summary: "فشل",
+    detail: "رقم الاثبات يجب أن يحتوي على أرقام فقط",
+    life: 3000,
+  });
+  return;
+} else {
+  // Valid input, proceed with further actions
+}
+
+  let result = null
 
    if (!props.disableValidation) {
     // Only validate if disableValidation is false
@@ -59,7 +97,7 @@ const submitFormCom = async () => {
     toast.add({
       severity: "success",
       summary: "Success Message",
-      detail: "تمت إضافة الباقة",
+      detail: "تمت إضافة المرافق",
       life: 3000,
     });
     const newItem = {
@@ -115,7 +153,7 @@ const getIdentityTypeLabel = (value: number) => {
 };
 </script>
 
-<template>{{ props.disableValidation }}
+<template>
   <Dialog
     header="اضافة مُرافق"
     contentStyle="height: 200px; padding: 20px;"
@@ -259,5 +297,5 @@ const getIdentityTypeLabel = (value: number) => {
     label=" مُرافق"
   >
   </Button>
-  <ComapanionsDataTable :compList="props.compList"> </ComapanionsDataTable>
+  <ComapanionsDataTable :compList="props.compList" > </ComapanionsDataTable>
 </template>

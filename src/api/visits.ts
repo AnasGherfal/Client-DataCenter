@@ -19,6 +19,10 @@ export const visitApi = {
     );
     return response;
   },
+  getById: async function (id: any) {
+    const response = await httpClient.get(`/Visit/${id}`);
+    return response;
+  },
   create: async function (visit: Visit) {
     const response = await httpClient.post(`/Visit`, visit);
     return response;

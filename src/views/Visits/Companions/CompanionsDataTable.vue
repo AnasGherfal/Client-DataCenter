@@ -7,9 +7,9 @@ const selectedCompanion = ref(); // Store the selected companion for editing
 
 const openDialog = (companion: any) => {
   selectedCompanion.value = { ...companion }; // Create a copy of the selected companion
-
   dialog.value = true;
 };
+
 type IdentityTypeOption = {
   value: number;
   text: string;
@@ -25,7 +25,7 @@ const submitForm = () => {
     (companion: any) => companion.id === selectedCompanion.value.id
   );
   if (index !== -1) {
-    props.compList[index] = selectedCompanion.value; // Update the companion in the compList
+    props.compList[index] = { ...selectedCompanion.value }; // Update the companion in the compList
   }
   dialog.value = false;
 };
@@ -33,7 +33,9 @@ const submitForm = () => {
 
 <template>
   <DataTable v-if="compList.length > 0" :value="compList">
-    <Column field="fullName" header="اسم المرافق"></Column>
+    <Column field="firstName" header="اسم المرافق"></Column>
+    <Column field="lastName" header="لقب المرافق"></Column>
+
     <Column field="jobTitle" header="صفة المرافق"></Column>
     <Column field="identityType" header="نوع الاثبات"> </Column>
     <Column field="identityNo" header="رقم الاثبات"></Column>
@@ -50,7 +52,7 @@ const submitForm = () => {
         />
         <div v-if="dialog">
           <Dialog
-            header="تعديل مُرافق"
+            header="تعديل المُرافق"
             contentStyle="height: 200px; padding: 20px;"
             v-model:visible="dialog"
             :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
@@ -64,9 +66,30 @@ const submitForm = () => {
                     <InputText
                       id="firstName"
                       type="text"
-                      v-model="slotProps.data.fullName"
+                      v-model="selectedCompanion.firstName"
                     />
                     <label for="firstName">الاسم </label>
+                    <!-- <div style="height: 2px">
+                      <span
+                        style="color: red; font-weight: bold; font-size: small"
+                        v-for="error in v$.fullName.$errors"
+                        :key="error.$uid"
+                        class="p-error"
+                      >
+                        {{ error.$message }}
+                      </span>
+                    </div> -->
+                  </span>
+                </div>
+
+                <div class="field col-12 md:col-4">
+                  <span class="p-float-label">
+                    <InputText
+                      id="firstName"
+                      type="text"
+                      v-model="selectedCompanion.lastName"
+                    />
+                    <label for="firstName">اللقب </label>
                     <!-- <div style="height: 2px">
                       <span
                         style="color: red; font-weight: bold; font-size: small"

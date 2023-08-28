@@ -87,6 +87,7 @@ const goToNextPage = () => {
     store.pageNumber += 1; // Increment the pageNumber value
     store.loading = true;
     store.getCustomers();
+    console.log(store.name)
   }
 };
 
@@ -195,7 +196,7 @@ const onSearch = (event: KeyboardEvent) => {
                   </div>
                 </div>
 
-                <div class="field col-12 md:col-6 lg:col-4">
+                <!-- <div class="field col-12 md:col-6 lg:col-4">
                   <MultiSelect
                     :modelValue="selectedColumns"
                     :options="columns"
@@ -203,7 +204,7 @@ const onSearch = (event: KeyboardEvent) => {
                     @update:modelValue="onToggle"
                     placeholder="حدد الأعمدة"
                   />
-                </div>
+                </div> -->
               </div>
             </template>
 
@@ -253,55 +254,16 @@ const onSearch = (event: KeyboardEvent) => {
                 />
               </template>
               <template #filter="{ filterModel, filterCallback }">
-                <!-- <Dropdown
-                  v-model="filterModel.value"
-                  @change="filterCallback()"
-                  :options="statuses"
-                  optionLabel="label"
-                  option-value="value"
-                  placeholder="اختر الحالة"
-                  class="p-column-filter"
-                  style="width: 10rem"
-                  :showClear="true"
-                >
-                  <template #option="slotProps">
-                    <Tag
-                      :value="slotProps.option.label"
-                      :severity="getSeverity(slotProps.option.value)"
-                    />
-                  </template>
-                </Dropdown> -->
+
               </template>
             </Column>
-            <!-- <Column
-              field="primaryPhone"
-              header="رقم الهاتف"
-              filterField="status"
-              style="width: 2rem"
-              :showFilterMenu="false"
-              :filterMenuStyle="{ width: '4rem' }"
-            />
-            <Column
-              field="email"
-              header="البريد الألكتروني"
-              filterField="status"
-              style="width: 2rem"
-              :showFilterMenu="false"
-              :filterMenuStyle="{ width: '4rem' }"
-            />            <Column
-              field="address"
-              header="العنوان"
-              filterField="status"
-              style="width: 2rem"
-              :showFilterMenu="false"
-              :filterMenuStyle="{ width: '4rem' }"
-            /> -->
+
             <Column
               v-for="(col, index) of selectedColumns"
               :field="col.field"
               :header="col.header"
               :key="col.field + '_' + index"
-              style="min-width: 10rem"
+              style="min-width: 6rem"
             ></Column>
 
             <Column style="min-width: 11rem">

@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, watch } from "vue";
+import {
+  computed,
+  getCurrentInstance,
+  onMounted,
+  reactive,
+  ref,
+  watch,
+} from "vue";
 import { required, helpers, minValue } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
@@ -39,8 +46,8 @@ interface visitReason {
 }
 
 const visitReasons: visitReason[] = [
-  { value: "2712f755-9fb2-41d6-9498-683c2aeeb817", text: "صيانه" }, // Ensure the value is in quotes
-  { value: "f55941d9-bb78-4336-b599-e11141268704", text: "انهاء عمل" }, // Make sure other values are also strings if needed
+  { value: "7adbcf6d-e06f-410c-8a41-5857dadb0792", text: "صيانه" }, // Ensure the value is in quotes
+  { value: "be05cdb1-03e4-4899-a910-662a79d8653e", text: "انهاء عمل" }, // Make sure other values are also strings if needed
 ];
 
 const startDate = ref(new Date());
@@ -78,6 +85,7 @@ const rules = computed(() => {
     },
   };
 });
+const v$ = useVuelidate(rules, visit);
 
 // Validate that end date is not before start date
 const isEndDateValid = computed(() => {
@@ -86,39 +94,35 @@ const isEndDateValid = computed(() => {
 
 const toast = useToast();
 
-const v$ = useVuelidate(rules, visit);
-
 function invalidDate() {
   if (visit.endTime <= visit.startTime) {
     alert("error");
   }
 }
 
-const customerselect = ref();
+const customerselect = ref(storeCustomers.name);
 const customerRepresentatives = ref();
 const representatives = ref();
 const customerSubscriptions = ref();
 const subscriptions = ref();
+const customerSelected = ref(false); // Flag to track whether a customer is selected
 
 watch(customerselect, async (newValue) => {
-  if (newValue) {
+  if (newValue && customerSelected.value) {
     try {
       loading.value = true;
-      const response = await representativesApi.get();
-      representatives.value = response.data.content.filter(
-        (representative: any) => representative.customerName === newValue.name
-      );
-      visit.representatives = []; // Reset the representatives array
-      customerRepresentatives.value = representatives.value; // Update the array with the selected representatives
 
-      const subscriptionResponse = await subscriptionApi.getPages(
-        storeubscriptions.pageNumber,
-        storeubscriptions.pageSize
-      );
-      subscriptions.value = subscriptionResponse.data.content.filter(
-        (subscription: any) => subscription.customerName === newValue.name
-      );
+      // Update the representatives and subscriptions using data from the selected customer
+      representatives.value = storeCustomers.customers[0].representative;
+      subscriptions.value = storeCustomers.customers[0].subsicrptions;
+
+      console.log(representatives.value);
+
+      customerRepresentatives.value = representatives.value;
       customerSubscriptions.value = subscriptions.value;
+
+      loading.value = false;
+
       loading.value = false;
     } catch (error) {
       console.error("Error fetching representatives:", error);
@@ -131,8 +135,9 @@ const submitForm = async () => {
 
   if (result) {
     // Extract representative IDs
-    const representativeIds = representatives.value.map((rep: any) => rep.id);
+    const representativeIds = visit.representatives.map((rep: any) => rep.id);
     // Modify the visit object to include only the representative IDs
+    console.log("Extracted Representative IDs:", representativeIds);
 
     // Extract subscription IDs
     const subscriptionIds = subscriptions.value.map((sub: any) => sub.id);
@@ -166,8 +171,8 @@ const submitForm = async () => {
 
         console.log(response);
         store.getVisits();
-        router.go(-1);
         setTimeout(() => {
+          router.go(-1)
           resetForm();
         }, 500);
       })
@@ -189,18 +194,15 @@ const resetForm = () => {
 };
 const filteredCustomer = ref();
 
-const search = (event: any) => {
-  setTimeout(() => {
-    if (!event.query.trim().length) {
-      filteredCustomer.value = [...storeCustomers.customers];
-    } else {
-      filteredCustomer.value = storeCustomers.customers.filter(
-        (users: { name: String }) => {
-          return users.name.toLowerCase().startsWith(event.query.toLowerCase());
-        }
-      );
-    }
-  }, 250);
+const search = async (query: string) => {
+  await storeCustomers.searchByName(query); // Call the searchByName function
+  filteredCustomer.value = storeCustomers.customers; // Use the updated customers list
+  customerSelected.value = true
+};
+const searchOnEnter = (event: KeyboardEvent, query: string) => {
+  if (event.key === "Enter") {
+    search(query);
+  }
 };
 </script>
 
@@ -222,7 +224,7 @@ const search = (event: any) => {
                   v-model="customerselect"
                   optionLabel="name"
                   :suggestions="filteredCustomer"
-                  @complete="search"
+                  @keyup.enter="searchOnEnter($event, customerselect)"
                 />
                 <label for="customerName">العملاء</label>
                 <!-- <div style="height: 2px">
@@ -249,12 +251,16 @@ const search = (event: any) => {
                 />
                 <label for="customerName">اشتراكات</label>
 
-                <error
-                  v-for="error in v$.subscriptionId.$errors"
-                  :key="error.$uid"
-                  class="p-error"
-                  >{{ error.$message }}</error
-                >
+                <div style="height: 2px">
+                  <span
+                    style="color: red; font-weight: bold; font-size: small"
+                    v-for="error in v$.subscriptionId.$errors"
+                    :key="error.$uid"
+                    class="p-error"
+                  >
+                    {{ error.$message }}</span
+                  >
+                </div>
               </span>
             </div>
 
@@ -270,13 +276,16 @@ const search = (event: any) => {
                   emptyMessage="هاذا العميل ليس لديه مخوليين"
                 />
                 <label for="representatives">المخولين</label>
-
-                <error
-                  v-for="error in v$.representatives.$errors"
-                  :key="error.$uid"
-                  class="p-error"
-                  >{{ error.$message }}</error
-                >
+                <div style="height: 2px">
+                  <span
+                    style="color: red; font-weight: bold; font-size: small"
+                    v-for="error in v$.representatives.$errors"
+                    :key="error.$uid"
+                    class="p-error"
+                  >
+                    {{ error.$message }}</span
+                  >
+                </div>
               </span>
             </div>
 
@@ -290,12 +299,16 @@ const search = (event: any) => {
                   optionLabel="text"
                 />
                 <label for="visitType">سبب الزيارة </label>
-                <error
-                  v-for="error in v$.visitTypeId.$errors"
-                  :key="error.$uid"
-                  class="p-error"
-                  >{{ error.$message }}</error
-                >
+                <div style="height: 2px">
+                  <span
+                    style="color: red; font-weight: bold; font-size: small"
+                    v-for="error in v$.visitTypeId.$errors"
+                    :key="error.$uid"
+                    class="p-error"
+                  >
+                    {{ error.$message }}</span
+                  >
+                </div>
               </span>
             </div>
 
@@ -315,12 +328,16 @@ const search = (event: any) => {
                   @onChange="updateEndDate"
                 />
                 <label for="startTime">تاريخ بداية الزيارة </label>
-                <error
-                  v-for="error in v$.startTime.$errors"
-                  :key="error.$uid"
-                  class="p-error"
-                  >{{ error.$message }}</error
-                >
+                <div style="height: 2px">
+                  <span
+                    style="color: red; font-weight: bold; font-size: small"
+                    v-for="error in v$.startTime.$errors"
+                    :key="error.$uid"
+                    class="p-error"
+                  >
+                    {{ error.$message }}</span
+                  >
+                </div>
               </span>
             </div>
 
@@ -339,12 +356,16 @@ const search = (event: any) => {
                   hourFormat="12"
                 />
                 <label for="endTime">تاريخ انتهاء الزيارة </label>
-                <error
-                  v-for="error in v$.endTime.$errors"
-                  :key="error.$uid"
-                  class="p-error"
-                  >{{ error.$message }}</error
-                >
+                <div style="height: 2px">
+                  <span
+                    style="color: red; font-weight: bold; font-size: small"
+                    v-for="error in v$.endTime.$errors"
+                    :key="error.$uid"
+                    class="p-error"
+                  >
+                    {{ error.$message }}</span
+                  >
+                </div>
               </span>
             </div>
 
@@ -364,12 +385,7 @@ const search = (event: any) => {
           />
           <br /><br />
 
-          <Button
-            @click="submitForm"
-            icon="fa-solid fa-plus"
-            label="إنشاء"
-            type="submit"
-          />
+          <Button @click="submitForm" icon="fa-solid fa-plus" label="إنشاء" />
           <Button
             @click="resetForm"
             icon="fa-solid fa-delete-left"
@@ -377,6 +393,8 @@ const search = (event: any) => {
             class="p-button-danger"
             style="margin-right: 0.5rem"
           />
+          <Toast position="bottom-left" />
+
         </form>
       </template>
     </Card>

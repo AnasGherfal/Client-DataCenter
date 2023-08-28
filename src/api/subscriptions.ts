@@ -10,6 +10,18 @@ export const subscriptionApi = {
     const response = await httpClient.get(`/Subscription/${id}`);
     return response;
   },
+  getFiltered: async function (pageNumber: number, pageSize: number, status: number){
+    const response = await httpClient.get(`/Subscription?PageNumber=${pageNumber}&PageSize=${pageSize}&Status=${status}`);
+    return response;
+  },
+  getFilteredCount: async function (){
+    const response = await httpClient.get(`/Subscription/Filter`);
+    return response;
+  },
+  getFile: async function (id: string) {
+    const response = await httpClient.get(`/Subscription/${id}/Download`, { responseType: 'arraybuffer' });
+    return response;
+  },
   getPages: async function (pageNumber: number, pageSize: number) {
     const response = await httpClient.get(`/Subscription?PageNumber=${pageNumber}&PageSize=${pageSize}`);
     return response;
@@ -18,8 +30,8 @@ export const subscriptionApi = {
     const response = await httpClient.post(`/subscription`, subscription);
     return response;
   },
-  renew: async function (id: string | null) {
-    const response = await httpClient.put(`/subscription/${id}/Renew`);
+  renew: async function (id: string | null, subscription: FormData) {
+    const response = await httpClient.put(`/subscription/${id}/Renew`, subscription);
     return response;
   },
   edit: async function (id: string, service: Subscription) {

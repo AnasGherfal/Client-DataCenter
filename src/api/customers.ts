@@ -13,7 +13,8 @@ export const customersApi = {
     return response;
   },
   getFile: async function (id: string) {
-    const response = await httpClient.get(`/Customers/${id}/Download`);
+    const response = await httpClient.get(`/Customers/${id}/Download`, { responseType: 'arraybuffer' });
+    return response;
   },
 
   create: async function (customer: any) {
@@ -24,7 +25,7 @@ export const customersApi = {
     const response = await httpClient.delete(`/Customers/${id}`);
     return response;
   },
-  edit: async function (id: string, customer: Customer) {
+  edit: async function (id: string, customer: any) {
     const response = await httpClient.put(`/customers/${id}`, customer);
     return response;
   },

@@ -10,15 +10,15 @@ import useVuelidate from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import { subscriptionApi } from "@/api/subscriptions";
 import router from "@/router";
+import moment from "moment";
 
 const customerStore = useCustomersStore();
 const invoicesStore = useInvoicesStore();
 const customerselect = ref();
 const loading = ref(false);
-const minDate = ref(new Date());
+const customerSelected = ref(false); // Flag to track whether a customer is selected
 
 const invoices: InvoiceResponde = reactive({
-  date: "2023-06-11T09:12:09.303Z",
   description: "",
   invoiceNo: "",
   startDate: "",
@@ -37,49 +37,48 @@ const rules = computed(() => {
         minValue(invoices.startDate)
       ),
     },
-    description: {
-      required: helpers.withMessage("  الحقل مطلوب", required),
-    },
+
   };
 });
 
 const v$ = useVuelidate(rules, invoices);
 const toast = useToast();
 
+const startDate = ref(new Date());
+const endDate = ref(new Date());
+
+const date = new Date(moment(invoices.startDate).format("hh:mm a"));
+const minDate = ref(date);
+
+const updateEndDate = () => {
+  if (startDate.value > endDate.value) {
+    endDate.value = startDate.value;
+  }
+};
 const subscriptions = ref();
 const customerSubscriptions = ref();
 const filteredCustomer = ref();
 
 watch(customerselect, async (newValue) => {
-  if (newValue) {
+  if (newValue && customerSelected.value) {
     try {
       loading.value = true;
 
-      const subscriptionResponse = await subscriptionApi.get();
-      subscriptions.value = subscriptionResponse.data.content.filter(
-        (subscription: any) => subscription.customerName === newValue.name
-      );
+      // Update the representatives and subscriptions using data from the selected customer
+      subscriptions.value = customerStore.customers[0].subsicrptions;
+
+
       customerSubscriptions.value = subscriptions.value;
+
+      loading.value = false;
+
       loading.value = false;
     } catch (error) {
-      console.error("Error fetching subs:", error);
+      console.error("Error fetching representatives:", error);
     }
   }
 });
 
-const search = (event: any) => {
-  setTimeout(() => {
-    if (!event.query.trim().length) {
-      filteredCustomer.value = [...customerStore.customers];
-    } else {
-      filteredCustomer.value = customerStore.customers.filter(
-        (users: { name: String }) => {
-          return users.name.toLowerCase().startsWith(event.query.toLowerCase());
-        }
-      );
-    }
-  }, 250);
-};
 
 const convertedStartDate = computed(() => {
   if (!invoices.startDate) return undefined; // Return undefined if startDate is empty
@@ -96,7 +95,6 @@ const submitForm = async () => {
       subscriptionIds.length > 0 ? subscriptionIds[0] : null; // Take the first subscription ID from the array
 
     const data = reactive({
-      date: "2023-06-11T09:12:09.303Z",
       startDate: invoices.startDate,
       endDate: invoices.endDate,
       description: invoices.description,
@@ -139,6 +137,18 @@ const resetForm = () => {
   invoices.subscriptionId = 0;
   invoices.invoiceNo = "";
 };
+
+
+const search = async (query: string) => {
+  await customerStore.searchByName(query); // Call the searchByName function
+  filteredCustomer.value = customerStore.customers; // Use the updated customers list
+  customerSelected.value = true
+};
+const searchOnEnter = (event: KeyboardEvent, query: string) => {
+  if (event.key === "Enter") {
+    search(query);
+  }
+};
 </script>
 
 <template>
@@ -160,7 +170,7 @@ const resetForm = () => {
                   v-model="customerselect"
                   optionLabel="name"
                   :suggestions="filteredCustomer"
-                  @complete="search"
+                  @keyup.enter="searchOnEnter($event, customerselect)"
                 />
                 <label for="customerName">العملاء</label>
                 <!-- <div style="height: 2px">
@@ -183,6 +193,7 @@ const resetForm = () => {
                   selectionMode="single"
                   :showButtonBar="true"
                   :manualInput="false"
+                  @change="updateEndDate"
                 />
                 <label for="startDate">تاريخ بداية الاشتراك</label>
                 <div style="height: 2px">
@@ -203,7 +214,7 @@ const resetForm = () => {
                   v-model="invoices.endDate"
                   dateFormat="yy/mm/dd"
                   selectionMode="single"
-                  :minDate="convertedStartDate"
+                  :minDate="startDate"
                   :showButtonBar="true"
                   :manualInput="false"
                 />

@@ -17,16 +17,14 @@ const storeCustomer = useCustomersStore();
 
 const loading = ref(false);
 const ServicesList = ref();
+const firstFileError = ref<string | null>(null);
 
 const state: Subscription = reactive({
-  serviceId: 0,
-  customerId: 0,
+  serviceId: null,
+  customerId: null,
   startDate: "",
   endDate: "",
-  file: {
-    file: null,
-    docType: 0,
-  },
+  file: null,
 });
 
 type DocTypeOption = {
@@ -73,13 +71,10 @@ async function onFileUpload(event: any, index: number) {
   const file = event.target.files[0];
 
   if (file && formData) {
-    const docType = index === 0 ? 1 : 2;
-    state.file = { file: file, docType }; // Store the File object in the array
+    state.file = { file: file }; // Store the File object in the array
 
-    const fieldName = index === 0 ? "File.File" : "File.File";
-    const docTypeNumber = Number(docType); // Convert docType to a number
+    const fieldName = index === 0 ? "File" : "File";
     formData.append(fieldName, file); // Append the File object to formData
-    formData.append(fieldName + ".DocType", docTypeNumber.toString()); // Append the docType as a string
   }
 }
 const docTypeOptions = ref([
@@ -91,10 +86,14 @@ const formData = new FormData();
 
 const submitForm = async () => {
   const result = await v$.value.$validate();
-
+  if (!state.file) {
+    firstFileError.value = "الحقل مطلوب";
+  } else {
+    firstFileError.value = "";
+  
   if (result) {
     loading.value = true;
-    if (state.file.file === null) {
+    if (state.file === null) {
       // File is null, do not proceed with the submission
       console.log("File is null");
       return;
@@ -118,9 +117,8 @@ const submitForm = async () => {
     formData.append("startDate", moment(state.startDate).format("YYYY/MM/DD"));
     formData.append("endDate", moment(state.endDate).format("YYYY/MM/DD"));
     // Append the first file as FormFile
-    if (state.file.file instanceof File) {
-      formData.append("File.File", state.file.file, state.file.file.name);
-      formData.append("File.DocType", state.file.docType.toString());
+    if (state.file instanceof File) {
+      formData.append("file", state.file, state.file.name);
     }
 
     const formDataObject: { [key: string]: string } = {};
@@ -141,7 +139,7 @@ const submitForm = async () => {
         console.log(Response);
         loading.value = false;
         store.getSubs();
-        // router.go(-1);
+        router.go(-1);
       })
       .catch(function (error) {
         console.log(error);
@@ -155,6 +153,7 @@ const submitForm = async () => {
   } else {
     console.log("empty");
   }
+}
   loading.value = false;
 };
 
@@ -163,7 +162,7 @@ const resetForm = () => {
     (state.customerId = 0),
     (state.startDate = ""),
     (state.endDate = ""),
-    (state.file.file = null);
+    (state.file = null);
 };
 
 const minDate = ref(new Date());
@@ -209,11 +208,12 @@ const search = (event: any) => {
                 />
                 <label for="customerName">العملاء</label>
                 <div style="height: 2px">
-                  <error
+                  <span
+                    style="color: red; font-weight: bold; font-size: small"
                     v-for="error in v$.customerId.$errors"
                     :key="error.$uid"
                     class="p-error"
-                    >{{ error.$message }}</error
+                    >{{ error.$message }}</span
                   >
                 </div>
               </span>
@@ -232,11 +232,12 @@ const search = (event: any) => {
                 />
                 <label for="startDate">تاريخ بداية الاشتراك</label>
                 <div style="height: 2px">
-                  <error
+                  <span
+                    style="color: red; font-weight: bold; font-size: small"
                     v-for="error in v$.startDate.$errors"
                     :key="error.$uid"
                     class="p-error"
-                    >{{ error.$message }}</error
+                    >{{ error.$message }}</span
                   >
                 </div>
               </span>
@@ -255,11 +256,12 @@ const search = (event: any) => {
                 />
                 <label for="endtDate">تاريخ انتهاء الاشتراك</label>
                 <div style="height: 2px">
-                  <error
+                  <span
+                    style="color: red; font-weight: bold; font-size: small"
                     v-for="error in v$.endDate.$errors"
                     :key="error.$uid"
                     class="p-error"
-                    >{{ error.$message }}</error
+                    >{{ error.$message }}</span
                   >
                 </div>
               </span>
@@ -277,28 +279,17 @@ const search = (event: any) => {
                 />
                 <label for="subscriptionType">الباقة</label>
                 <div style="height: 2px">
-                  <error
+                  <span
+                    style="color: red; font-weight: bold; font-size: small"
                     v-for="error in v$.serviceId.$errors"
                     :key="error.$uid"
                     class="p-error"
-                    >{{ error.$message }}</error
+                    >{{ error.$message }}</span
                   >
                 </div>
               </span>
             </div>
 
-            <div class="field col-12 md:col-6 lg:col-4">
-              <span class="p-float-label">
-                <Dropdown
-                  v-model="state.file.docType"
-                  :options="docTypeTypeOptions"
-                  optionValue="value"
-                  optionLabel="text"
-                  placeholder=" نوع الاثبات"
-                />
-                <label for="identityType">نوع الاثبات </label>
-              </span>
-            </div>
             <div class="field col-12 md:col-6 lg:col-4">
               <label class="file-input-label" for="fileInput1">
                 <div class="file-input-content">
@@ -319,39 +310,14 @@ const search = (event: any) => {
                   accept="*"
                 />
               </label>
-              <Dropdown
-                :modelValue="state.file.docType"
-                :options="docTypeOptions"
-                optionValue="value"
-                optionLabel="label"
-                placeholder="Select a Document Type"
-                :visible="false"
-                @update:modelValue="(value: number) => (state.file.docType = value)"
-              />
+              <div
+                  v-if="firstFileError"
+                  style="color: red; font-weight: bold; font-size: small"
+                >
+                {{ firstFileError }}
+
+                </div>
             </div>
-            <!-- <div class="field col-12 md:col-6 lg:col-4" style="height: 1%">
-              <FileUpload
-                style="
-                  font-family: tajawal;
-                  width: 100%;
-                  height: 40px;
-                  border-radius: 10px;
-                  background-color: white;
-                  color: black;
-                  border-color: gray;
-                "
-                type="file"
-                mode="basic"
-                name="file"
-                @change="onFileUpload"
-                chooseLabel=" ارفق ملف"
-                cancelLabel="إلغاء"
-                :showUploadButton="false"
-                :showCancelButton="false"
-                :maxFileSize="5000000"
-                invalidFileSizeMessage="Exceeded the maximum file size"
-              />
-            </div> -->
           </div>
           <Button
             class="p-button-primry"
@@ -374,25 +340,7 @@ const search = (event: any) => {
   </div>
 </template>
 <style>
-input[type="file"]::file-selector-button {
-  margin-right: 20px;
-  border: none;
-  background: #084cdf;
-  padding: 10px 20px;
-  border-radius: 10px;
-  color: #fff;
-  cursor: pointer;
-  transition: background 0.2s ease-in-out;
-}
 
-input[type="file"]::file-selector-button:hover {
-  background: #0d45a5;
-}
-
-error {
-  font-size: 12px;
-  font-weight: bold;
-}
 
 .p-dropdown {
   border-radius: 10px;
@@ -404,7 +352,29 @@ error {
   transition-duration: 0.2s;
 }
 
-/* .menuitem-content:hover {
-
-} */
+.file-input-label {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  font-family: tajawal;
+  width: 100%;
+  height: 45px;
+  border-radius: 10px;
+  background-color: rgb(255, 255, 255);
+  color: #708da9;
+  border: 1px solid #d3dbe3;
+  text-align: center;
+  padding: 0.7rem;
+  cursor: pointer;
+}
+div.field > label {
+  margin-bottom: 0;
+}
+.file-input-label::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
 </style>

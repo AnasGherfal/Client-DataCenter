@@ -6,11 +6,15 @@ export const representativesApi = {
     const response = await httpClient.get(`/Representatives`);
     return response;
   },
-  create: async function (representatives: Representatives) {
+  getFile: async function (id: string) {
+    const response = await httpClient.get(`/Representatives/${id}/Download`, { responseType: 'arraybuffer' });
+    return response;
+  },
+  create: async function (representatives: FormData) {
     const response = await httpClient.post("/Representatives", representatives);
     return response;
   },
-  edit:async function ( id: string ,representatives: Representatives) {
+  edit:async function ( id: string ,representatives: any) {
     const response = await httpClient.put(`/Representatives/${id}`, representatives);
     return response;
   },

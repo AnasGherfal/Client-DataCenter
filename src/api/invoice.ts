@@ -1,9 +1,18 @@
-import {httpClient} from "./index";
+import { httpClient } from "./index";
 import type { InvoiceResponde } from "../Modules/Invoices/InvoicesRespondeModule";
 
 export const invoiceApi = {
-  get: async function () {
-    const response = await httpClient.get(`/Invoices`);
+  get: async function (
+    pageNumber: number,
+    pageSize: number,
+    name: string,
+    startDate: any,
+    endDate: any
+  ) {
+    const response = await httpClient.get(
+      `/Invoices?CustomerName=${name}&StartDate=${startDate}&EndDate=${endDate}&PageSize=${pageSize}&PageNumber=${pageNumber}`
+    );
+
     return response;
   },
   getById: async function (id: string) {

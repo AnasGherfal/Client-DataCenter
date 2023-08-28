@@ -1,7 +1,21 @@
 <script setup lang="ts">
+import { subscriptionApi } from '@/api/subscriptions';
 import DialogCard from './CardInfo/DialogCard.vue';
 import Vue3autocounter from 'vue3-autocounter';
+import { onMounted, ref } from 'vue';
 
+const active = ref();
+const aboutToExpire = ref();
+const expired = ref();
+onMounted(async () => {
+    subscriptionApi.getFilteredCount()
+    .then((response ) => {
+        active.value = response.data.filteredContent[0].count;
+        aboutToExpire.value = response.data.filteredContent[1].count
+        expired.value = response.data.filteredContent[2].count
+
+    })
+  });
 </script>
 <template>
     <div class="pp grid-container" style="display: grid; gap: 1rem;   grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
@@ -13,12 +27,12 @@ import Vue3autocounter from 'vue3-autocounter';
                     <div>
                         <span class="block text-green-600 font-medium font-semibold">الاشتراكات الصالحة</span>
                     </div>
-                       <DialogCard iconShape="fa-solid fa-check " stateCheck="1"/>
+                       <DialogCard iconShape="fa-solid fa-check" :stateCheck=1 />
                 </div>
             </div>
 
             <div class="text-green-600 font-medium text-xl">
-                <Vue3autocounter ref='counter' :startAmount='0' :endAmount='500' :duration='3' prefix='' suffix=' اشتراك ' separator=',' decimalSeparator='' :decimals='0' :autoinit='true' />
+                <Vue3autocounter ref='counter' :startAmount='0' :endAmount='active' :duration='3' prefix='' suffix=' اشتراك ' separator=',' decimalSeparator='' :decimals='0' :autoinit='true' />
 
             </div>
       
@@ -33,12 +47,12 @@ import Vue3autocounter from 'vue3-autocounter';
                     <div>
                         <span class="block text-orange-600 font-medium font-semibold">الاشتراكات القريب انتهاء صلاحيتها</span>
                     </div>
-                       <DialogCard iconShape="fa-solid fa-hourglass-half" stateCheck="2"/>
+                       <DialogCard iconShape="fa-solid fa-hourglass-half" :stateCheck=5 />
                 </div>
             </div>
        
             <div class="text-orange-600 font-medium text-xl">
-                <Vue3autocounter ref='counter' :startAmount='0' :endAmount='100' :duration='3' prefix='' suffix=' اشتراك ' separator=',' decimalSeparator='' :decimals='0' :autoinit='true' />
+                <Vue3autocounter ref='counter' :startAmount='0' :endAmount='aboutToExpire' :duration='3' prefix='' suffix=' اشتراك ' separator=',' decimalSeparator='' :decimals='0' :autoinit='true' />
 
             </div>
       
@@ -53,12 +67,12 @@ import Vue3autocounter from 'vue3-autocounter';
                     <div>
                         <span class="block text-red-600 font-medium font-semibold" >الاشتراكات المنتهية صلاحيتها</span>
                     </div>
-                       <DialogCard iconShape="fa-solid fa-circle-xmark" stateCheck="2" />
+                       <DialogCard iconShape="fa-solid fa-circle-xmark" :stateCheck=4 />
                 </div>
             </div>
        
             <div class="text-red-600 font-medium text-xl">
-                <Vue3autocounter ref='counter' :startAmount='0' :endAmount='50' :duration='3' prefix='' suffix=' اشتراك ' separator=',' decimalSeparator='' :decimals='0' :autoinit='true' />
+                <Vue3autocounter ref='counter' :startAmount='0' :endAmount='expired' :duration='3' prefix='' suffix=' اشتراك ' separator=',' decimalSeparator='' :decimals='0' :autoinit='true' />
 
             </div>
       

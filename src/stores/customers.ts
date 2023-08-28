@@ -10,25 +10,28 @@ export const useCustomersStore = defineStore("customer", () => {
   const pageNumber = ref(1);
   const pageSize = ref(10);
   const currentPage = ref(0);
-  const name = ref("");
+  const name = ref<string>("");
 
   onMounted(async () => {
     getCustomers();
   });
   async function searchByName(searchName: string) {
+  
     name.value = searchName;
     await getCustomers(); // Await the getCustomers function to wait for the API call to complete
   }
   async function getCustomers() {
-    
+    if (name.value === undefined || name.value === null) {
+      name.value = '';
+    }
     await customersApi
       .get(pageNumber.value, pageSize.value, name.value)
-      .then(function (response) {
-        
+      .then(function (response) {       
+        name.value = response.data.content.name;
+ 
         customers.value = response.data.content;
         totalPages.value = response.data.totalPages;
         currentPage.value = response.data.currentPage;
-        name.value = response.data.content.name;
       })
       .catch(function (error) {
         console.log(error);

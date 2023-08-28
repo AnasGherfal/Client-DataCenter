@@ -5,5 +5,9 @@ export interface SubscriptionRespons {
     customerName: string ,
     startDate:string,
     endDate:string,
-    subscriptionFileId:null|number
+    subscriptionFileId:null|number,
+    daysRemaining: number,
+    visits:[]
+    file:{fileName: string, docType:string, id:string}
+
   }

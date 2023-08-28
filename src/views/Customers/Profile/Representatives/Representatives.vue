@@ -30,13 +30,54 @@ const representatives = ref<Representatives>({
   phoneNo: "",
   identityType: null, //1 personalId 2-authorized 3-representitive
   customerId: toNumber(userId.value),
+  firstFile: {
+    file: null,
+    docType: 0,
+  },
+  secondFile: {
+    file: null,
+    docType: 0,
+  },
 });
 
 const toast = useToast();
 
+const formData = new FormData();
+
 const onFormSubmit = async (representative: Representatives) => {
+
+  formData.append("firstName", representative.firstName);
+  formData.append("lastName", representative.lastName);
+  formData.append("identityNo", representative.identityNo);
+  formData.append("email", representative.email);
+  formData.append("phoneNo", representative.phoneNo);
+  formData.append("identityType", representative.identityType?.toString() || "");
+  formData.append("customerId", representative.customerId?.toString() || "");
+
+  // Append the first file as FormFile
+  if (representative.firstFile.file instanceof File) {
+    formData.append(
+      "FirstFile.File",
+      representative.firstFile.file,
+      representative.firstFile.file.name
+    );
+    formData.append("firstFile.DocType", representative.firstFile.docType.toString());
+
+  }
+
+  // Append the second file if needed
+  if (representative.secondFile.file instanceof File) {
+    formData.append("SecondFile.File", representative.secondFile.file, representative.secondFile.file.name);
+    formData.append("SecondFile.DocType", representative.secondFile.docType.toString());
+  }
+  const formDataObject: { [key: string]: string } = {};
+  formData.forEach((value, key) => {
+    formDataObject[key] = value.toString();
+  });
+
+  console.log("formData:", formDataObject);
   representativesApi
-    .create(representative)
+    .create(formData)
     .then((response) => {
       emit("getRepresentatives");
       toast.add({
@@ -70,6 +111,12 @@ const resetForm = () => {
   representatives.value.phoneNo = "";
   representatives.value.identityNo = "";
   representatives.value.identityType = null;
+  representatives.value.firstFile.file = null;
+  representatives.value.firstFile.docType = 0;
+  representatives.value.secondFile.file = null;
+  representatives.value.secondFile.docType = 0;
+
+
 };
 const displayModal = ref(false);
 const openModal = () => {
@@ -89,9 +136,8 @@ const openModal = () => {
     </Button>
     <Dialog
       header="اضافة مُخول"
-      contentStyle="max-height: 80vh; max-width: 90vw; min-width:75vw; padding: 20px;"
+      contentStyle="max-height: 70vh; max-width: 40vw; min-width:50vw; padding: 10px;"
       v-model:visible="displayModal"
-      :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
       :modal="true"
     >
       <template #default>

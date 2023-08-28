@@ -53,6 +53,7 @@ import ProgressBar from 'primevue/progressbar';
 import Textarea from 'primevue/textarea';
 
 import Vue3Autocounter from 'vue3-autocounter';
+import  VueSelect  from "vue-select";
 
 const app = createApp(App)
 
@@ -66,7 +67,6 @@ app.provide('axios', app.config.globalProperties.axios)  // provide 'axios'
 
 
 app.use(ToastService);
-
 app.component('ProgressBar', ProgressBar)
 app.component('Sidebar', Sidebar);
 app.component('Button', Button);
@@ -103,6 +103,7 @@ app.component('Column', Column);
 
 //Animated Number Counter
 app.component('vue3autocounter', Vue3Autocounter)
+.component("v-select", VueSelect)
 
 
 app.mount('#app')

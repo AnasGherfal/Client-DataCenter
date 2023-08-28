@@ -4,8 +4,11 @@ import LoginPage from "../views/LoginPage.vue";
 import { isAuthorized } from "../auth";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
+import { ref } from "vue";
 
 NProgress.configure({ showSpinner: false });
+const loading = ref(false);
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -132,12 +135,6 @@ const router = createRouter({
         },
       ],
     },
-    {
-      path: "/test",
-      name: "test",
-
-      component: () => import("../views/test.vue"),
-    },
   ],
 });
 
@@ -155,14 +152,16 @@ router.beforeEach((to, from, next) => {
 });
 router.beforeResolve((to, from, next) => {
   // If this isn't an initial page load.
+  NProgress.start();
   if (to.name) {
+    loading.value = true;
     // Start the route progress bar.
-    NProgress.start();
   }
   next();
 });
 
 router.afterEach(() => {
+  loading.value = false;
   // Complete the animation of the route progress bar.
   NProgress.done();
 });

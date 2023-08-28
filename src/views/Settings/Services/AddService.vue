@@ -63,7 +63,7 @@ const onFormSubmit = (state: Service) => {
       toast.add({
         severity: "success",
         summary: "رسالة نجاح",
-        detail: response.data,
+        detail: response.data.msg,
         life: 3000,
       });
       displayModal.value = false;

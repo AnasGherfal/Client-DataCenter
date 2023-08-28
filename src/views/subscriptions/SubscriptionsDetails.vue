@@ -8,11 +8,10 @@ import { useToast } from "primevue/usetoast";
 import { useSubscriptionsStore } from "@/stores/subscriptions";
 import { subscriptionApi } from "@/api/subscriptions";
 import { serviceApi } from "@/api/service";
-import axios from "axios";
-import Inplace from "primevue/inplace";
 import { useRoute } from "vue-router";
 import CircularProgressBar from "@/assets/style/CircularProgressBar.vue";
-import VisitRecordById from "../Visits/VisitRecordById.vue";
+import VisitBysubsId from "../Visits/VisitBysubsId.vue";
+import router from "@/router";
 
 const loading = ref(false);
 const loading2 = ref(false);
@@ -20,7 +19,6 @@ const cardVis = ref(false);
 const prop = defineProps<{
   nad: number;
 }>();
-const fileView = ref();
 const store = useSubscriptionsStore();
 const toast = useToast();
 const route = useRoute();
@@ -33,6 +31,9 @@ const subs: SubscriptionRespons = reactive({
   startDate: "",
   endDate: "",
   subscriptionFileId: null,
+  daysRemaining: 0,
+  visits: [],
+  file: { id: "", fileName: "", docType: "" },
 });
 
 const servobj: Service = reactive({
@@ -53,9 +54,6 @@ const userId = computed(() => {
   }
 });
 
-const value1 = ref(0);
-const date3 = ref(0);
-
 onMounted(async () => {
   getdata();
 });
@@ -71,12 +69,11 @@ function getdata() {
       subs.startDate = response.data.startDate;
       subs.serviceName = response.data.serviceName;
       subs.subscriptionFileId = response.data.subscriptionFileId;
-
-      const date1 = new Date(subs.endDate);
-      const date2 = new Date();
-      date3.value = Math.trunc(
-        (date1.valueOf() - date2.valueOf()) / 24 / 60 / 60 / 1000
-      );
+      subs.daysRemaining = response.data.daysRemaining;
+      subs.visits = response.data.visits;
+      subs.file.fileName = response.data.file.fileName;
+      subs.file.docType = response.data.file.docType;
+      subs.file.id = response.data.file.id;
     })
     .then(function () {
       serviceApi
@@ -116,63 +113,118 @@ function getdata() {
 }
 
 const customersDialog = ref(false);
+const formData = new FormData();
+
+async function onFileUpload(event: any, index: number) {
+  const fileInput = event.target as HTMLInputElement;
+  const files = fileInput.files;
+
+  if (files && formData) {
+    const fileObject = files[0];
+
+    if (fileObject) {
+      // Store the File object in the ref
+      file.value = fileObject;
+
+      // Append the File object to formData
+      const fieldName = index === 0 ? "File" : "File";
+      formData.append(fieldName, fileObject);
+    }
+  }
+}
+
+const displayedFileName = computed(() => {
+  return file.value?.name  || "ارفق ملف 1";
+});
+
+const file = ref<File | null>();
+const firstFileError = ref<string | null>(null);
 
 const renewalSubscription = () => {
   loading2.value = true;
-  subscriptionApi
-    .renew(subs.id)
-    .then((response) => {
-      console.log(response);
-      loading2.value = false;
-      toast.add({
-        severity: "success",
-        summary: "تم التجديد",
-        detail: response.data.msg,
-        life: 3000,
-      });
-      customersDialog.value = false;
-      getdata();
-    })
-    .catch(function (error) {
-      console.log(error);
-      toast.add({
-        severity: "error",
-        summary: "حدثة مشكلة",
-        detail: error.data.msg,
-        life: 3000,
-      });
-      loading2.value = false;
+
+  if (!formData.get("File")) {
+    firstFileError.value = "الحقل مطلوب";
+    loading2.value = false;
+    return; // Stop further processing
+  } else {
+    firstFileError.value = "";
+    if (file instanceof File) {
+      formData.append("file", file, file.name);
+    }
+
+    const formDataObject: { [key: string]: string } = {};
+    formData.forEach((value, key) => {
+      formDataObject[key] = value.toString();
     });
+
+    console.log("formData:", formDataObject);
+    subscriptionApi
+      .renew(subs.id, formData)
+      .then((response) => {
+        console.log(response);
+        loading2.value = false;
+        toast.add({
+          severity: "success",
+          summary: "تم التجديد",
+          detail: response,
+          life: 3000,
+        });
+        customersDialog.value = false;
+        router.go(-1);
+        store.getSubs();
+      })
+      .catch(function (error) {
+        console.log(error);
+        toast.add({
+          severity: "error",
+          summary: "حدثة مشكلة",
+          detail: error,
+          life: 3000,
+        });
+        loading2.value = false;
+      });
+  }
 };
 
 function car() {
   cardVis.value = !cardVis.value;
 }
-const img = ref();
-onMounted(() => {
-  console.log(prop.nad);
-  axios
-    .get(`https://localhost:7003/api/Subscription/${prop.nad}/fileById`)
-    .then((response) => {
-      console.log(response.data);
-      fileView.value = response.data[0].fileName;
-    })
-    .then(() => {
-      axios
-        .get(
-          `https://localhost:7003/api/Subscription/page?url=${fileView.value}`
-        )
-        .then((response) => {
-          img.value = response.data;
-        });
+
+const downloadFile = async (id: any) => {
+  try {
+    const response = await subscriptionApi.getFile(id, {
+      responseType: "arraybuffer",
     });
-});
 
-const maxDays = ref(400); // Set the maximum value for the knob
+    if (response) {
+      const blob = new Blob([response.data], {
+        type: "application/octet-stream",
+      });
+      const url = URL.createObjectURL(blob);
 
-const calculateProgress = () => {
-  return (date3.value / maxDays.value) * 100;
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "downloaded_file.png"; // Set the desired downloaded filename here
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      URL.revokeObjectURL(url);
+    } else {
+      console.error("Invalid file response");
+    }
+  } catch (error) {
+    console.error("Error downloading file:", error);
+    toast.add({
+      severity: "error",
+      summary: "خطأ",
+      detail: "حدث خطأ أثناء تحميل الملف",
+      life: 3000,
+    });
+  }
 };
+const maxDays = ref(400); // Set the maximum value for the knob
 </script>
 
 <template>
@@ -195,7 +247,7 @@ const calculateProgress = () => {
         </div>
       </div>
 
-      <div class="flex flex-row">
+      <div class="grid p-fluid">
         <div v-if="loading">
           <div class="grid p-fluid">
             <div v-for="n in 1" class="ml-3 mb-2">
@@ -207,20 +259,43 @@ const calculateProgress = () => {
         </div>
 
         <div v-else class="flex-1" style="text-align: center; width: 20rem">
-          
-          <div style="display: inline-block">
-            <CircularProgressBar :percentage="date3" />
+          <div v-if="subs.daysRemaining > 0" style="display: inline-block">
+            <CircularProgressBar :percentage="subs.daysRemaining" />
+          </div>
+          <div v-else style="display: inline-block">
+            <CircularProgressBar :percentage="0" />
           </div>
 
           <div>
             <h2>الأيام المتبقية</h2>
             <!-- <h3 v-else class="text-red-800">انتهت صلاحية هذه الخدمة</h3> -->
 
-            <div v-if="date3 < 30 && date3 !== 0 ">
+            <div
+              v-if="
+                subs.daysRemaining < 30 &&
+                subs.daysRemaining !== 0 &&
+                subs.daysRemaining > 0
+              "
+            >
               <h3 class="text-red-600">هذا الاشتراك قارب على الانتهاء</h3>
               <div v-if="subs.status !== 5">
-              <h5  class="text-red-600" style="margin-bottom: 5px">
-                
+                <h5 class="text-red-600" style="margin-bottom: 5px">
+                  اضغط على الأيقونة للتجديد
+                </h5>
+                <Button
+                  icon="fa-solid fa-repeat"
+                  severity="danger"
+                  text
+                  rounded
+                  aria-label="Cancel"
+                  @click="customersDialog = true"
+                />
+              </div>
+            </div>
+            <div v-else-if="subs.daysRemaining <= 0 && subs.status !== 5">
+              <h3 class="text-red-600">هذا الاشتراك انتهى</h3>
+
+              <h5 class="text-red-600" style="margin-bottom: 5px">
                 اضغط على الأيقونة للتجديد
               </h5>
               <Button
@@ -232,8 +307,7 @@ const calculateProgress = () => {
                 @click="customersDialog = true"
               />
             </div>
-            </div>
-            <div v-else-if="date3 <= 0 && subs.status !== 5">
+            <div v-else-if="subs.daysRemaining <= 0 && subs.status !== 5">
               <h3 class="text-red-600">هذا الاشتراك انتهى</h3>
 
               <h5 class="text-red-600" style="margin-bottom: 5px">
@@ -251,16 +325,42 @@ const calculateProgress = () => {
           </div>
           <Dialog
             v-model:visible="customersDialog"
-            :style="{ width: '450px' }"
+            :style="{ width: '450px', height: 'auto', overflow: 'hidden' }"
             header="تجديد الاشتراك"
             :modal="true"
           >
             <div class="confirmation-content">
-              <i
-                class="fa-solid fa-repeat mr-3"
-                style=" color: green"
-              />
+              <i class="fa-solid fa-repeat mr-3" style="color: green" />
               <span>هل انت متأكد من تجديد الاشتراك؟</span>
+            </div>
+            <div class="grid p-fluid">
+              <div class="field col-4 md:col-4 lg:col-6">
+                <label class="file-input-label" for="fileInput">
+                  <div class="file-input-content">
+                    <div class="file-input-icon"></div>
+
+                    <div class="file-input-text">
+                      <i class="pi pi-upload"></i>
+
+                      {{ displayedFileName }}
+                    </div>
+                  </div>
+
+                  <input
+                    id="fileInput"
+                    style="display: none"
+                    type="file"
+                    @change="(event) => onFileUpload(event, 0)"
+                    accept="*"
+                  />
+                </label>
+                <div
+                  v-if="firstFileError"
+                  style="color: red; font-weight: bold; font-size: small"
+                >
+                  {{ firstFileError }}
+                </div>
+              </div>
             </div>
             <template #footer>
               <Button
@@ -377,23 +477,58 @@ const calculateProgress = () => {
 
           <Divider class="p-divider-solid" layout="horizontal" />
 
-          <h4 style="margin: 0">عقد الاشتراك :</h4>
+          <h4 style="margin: 0; margin-bottom: 2rem">عقد الاشتراك :</h4>
           <Skeleton v-if="loading" width="50%" height="1rem"></Skeleton>
 
-          <img :src="fileView" />
+          <div class="grid p-fluid">
+            <div class="field col-4 md:col-4 lg:col-6">
+              <span class="p-float-label">
+                <InputText
+                  class="p-inputtext p-component"
+                  v-model="subs.file.fileName"
+                  :disabled="true"
+                />
 
-          <Inplace>
-            <template #display>
-              <span class="pi pi-search" style="vertical-align: middle"></span>
-              <span style="margin-left: 0.5rem; vertical-align: middle"
-                >View Picture</span
+                <label for="secondaryPhone">اسم الملف</label>
+              </span>
+            </div>
+            <!-- <div class="field col-4 md:col-4 lg:col-4">
+              <span class="p-float-label">
+                <Dropdown
+                  id="docType"
+                  class="custom-dropdown"
+                  v-model="subs.file.docType"
+                  :disabled="true"
+                />
+                <label for="secondaryPhone">نوع الملف</label>
+              </span>
+            </div> -->
+            <div class="file-actions field col-4 md:col-4 lg:col-6">
+              <Button
+                v-if="subs.status == 5"
+                @click="downloadFile(subs.file.id)"
+                icon="fa-solid fa-download"
+                class="p-button-text p-button-info"
+                disabled="true"
               >
-            </template>
-            <template #content>
-              {{ img }}
-              <img class="w-full" alt="Nature" :src="img" />
-            </template>
-          </Inplace>
+                تحميل
+              </Button>
+              <Button
+                v-else
+                @click="downloadFile(subs.file.id)"
+                icon="fa-solid fa-download"
+                class="p-button-text p-button-info"
+              >
+                تحميل
+              </Button>
+              <Button
+                icon="fa-solid fa-eye"
+                class="p-button-text p-button-info"
+              >
+                عرض
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </template>
@@ -406,7 +541,7 @@ const calculateProgress = () => {
               <i class="fa-solid fa-book mr-2"></i>
               <span> سجل زيارات هذا الاشتراك </span>
             </template>
-            <VisitRecordById></VisitRecordById>
+            <VisitBysubsId :visits="subs.visits"></VisitBysubsId>
           </TabPanel>
 
           <!-- <TabPanel>
@@ -417,20 +552,18 @@ const calculateProgress = () => {
             سجل زيارات هذه الخدمة
           </TabPanel> -->
 
-          <TabPanel>
+          <!-- <TabPanel>
             <template #header>
               <i class="fa-solid fa-circle-plus ml-2"></i>
               <span>اضافة Acp Port</span>
             </template>
-            <!-- Acp Poret الاضافية -->
           </TabPanel>
           <TabPanel>
             <template #header>
               <i class="fa-solid fa-circle-plus mr-2"></i>
               <span>اضافة DNS</span>
             </template>
-            <!-- DNS الاضافية -->
-          </TabPanel>
+          </TabPanel> -->
         </TabView>
       </div>
     </template>
@@ -495,5 +628,28 @@ const calculateProgress = () => {
   to {
     opacity: 1;
   }
+}
+
+.file-input-label {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  font-family: tajawal;
+  width: 100%;
+  height: 45px;
+  border-radius: 10px;
+  background-color: rgb(255, 255, 255);
+  color: #708da9;
+  border: 1px solid #d3dbe3;
+  text-align: center;
+  padding: 0.7rem;
+  cursor: pointer;
+}
+.file-input-label::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
 }
 </style>

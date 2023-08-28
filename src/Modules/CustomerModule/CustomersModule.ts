@@ -15,7 +15,8 @@ export interface Customer {
     docType: number;
     }
       ];
-    subsicrptions: string
+    subsicrptions: string;
+    representative:[]
 
 
 }

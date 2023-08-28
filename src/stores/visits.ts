@@ -5,7 +5,7 @@ import { representativesApi } from "@/api/representatives";
 
 export const useVistisStore = defineStore("visit", () => {
   const visits = ref();
-  const representatives = ref();
+  const representatives = ref([{}]);
   const loading = ref(true);
   const totalPages = ref(1);
   const pageNumber = ref(1);
@@ -37,6 +37,7 @@ export const useVistisStore = defineStore("visit", () => {
     try {
       const response = await representativesApi.get();
       representatives.value = response.data.content;
+
     } catch (error) {
       console.log(error);
     }

@@ -1,4 +1,3 @@
-// auth.ts
 
 // Function to store the token in localStorage
 export const storeToken = (token: string) => {

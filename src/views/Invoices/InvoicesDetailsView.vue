@@ -5,7 +5,7 @@ import moment from "moment";
 import { computed, onMounted, reactive, ref } from "vue";
 import { invoiceApi } from "@/api/invoice";
 import { useRoute } from "vue-router";
-
+import { formatTotalMin } from "@/tools/formatTime";
 const invoicesStore = useInvoicesStore();
 const loading = ref(false);
 const route = useRoute();
@@ -55,10 +55,8 @@ const invoices = reactive({
 });
 
 onMounted(() => {
-  invoiceApi
-  .getById(userId.value)
-  .then ((response) => {
-    console.log(response)
+  invoiceApi.getById(userId.value).then((response) => {
+    console.log(response);
     invoices.id = response.data.id;
     invoices.status = response.data.status;
     invoices.date = response.data.date;
@@ -188,24 +186,19 @@ function convertToDate(dateString: string): string {
         </div>
       </div>
 
-      <DataTable
-        v-else
-        :value="invoices.visits"
-        style="text-align: right"
-        stripedRows
-        tableStyle="min-width: 50rem"
-      >
+      <DataTable v-else :value="invoices.visits">
+        <Column style="min-width: 2rem" field="totalMin" header=" الوقت">
+          <template #body="{ data }">
+            {{ formatTotalMin(data.totalMin) }}
+          </template></Column
+        >
         <Column
-          style="text-align: right"
-          field="totalMin"
-          header="اجمالي الوقت"
+          style="text-align: right; min-width: 2rem"
+          field="price"
+          header="السعر"
+          tableStyle="min-width: 2rem"
         ></Column>
-        <Column style="text-align: right" field="price" header="السعر"></Column>
-        <Column
-          style="text-align: right"
-          field="notes"
-          header="ملحوظات"
-        ></Column>
+        <Column style="min-width: 2rem" field="notes" header="ملحوظات"></Column>
       </DataTable>
     </template>
   </Card>

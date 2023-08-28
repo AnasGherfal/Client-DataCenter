@@ -8,16 +8,22 @@ import Representative from "./Representatives/Representatives.vue";
 import DeleteRepresentives from "./Representatives/DeleteRepresentatives.vue";
 import EditRepresentatives from "./Representatives/EditRepresentatives.vue";
 import { useCustomersStore } from "@/stores/customers";
-import SubscriptionRecordById from "@/views/subscriptions/SubscriptionRecordById.vue";
+import SubscriptionByCustomerId from "@/views/subscriptions/SubscriptionByCustomerId.vue";
 import LockButton from "@/components/LockButton.vue";
 import { customersApi } from "@/api/customers";
 import { representativesApi } from "@/api/representatives";
 import type { Customer } from "@/Modules/CustomerModule/CustomersModule";
 import { formattedPhoneNumber } from "@/tools/phoneUtils";
+import { useToast } from "primevue/usetoast";
 
 const route = useRoute();
 const store = useCustomersStore();
 const loading = ref(false);
+const hide1 = ref(false);
+const hide2 = ref(false);
+const displayDialog = ref(false);
+const reprefileType1 = ref();
+const reprefileType2 = ref();
 
 const userId = computed(() => {
   if (route && route.params && route.params.id) {
@@ -37,19 +43,29 @@ const customerId: Customer = reactive({
     { file: null, docType: 0 },
   ],
   subsicrptions: "",
+  representative: [],
 });
 
+const openDialog = () => {
+  displayDialog.value = true;
+};
+const closeDialog = () => {
+  displayDialog.value = false;
+};
 const representativeId = ref();
 const representatives = ref();
 
 onMounted(async () => {
+  await getCustomers();
+});
+
+function getCustomers() {
   store.loading = true;
   loading.value = true;
 
   customersApi
     .getById(userId.value)
     .then((response) => {
-      console.log(response.data.subsicrptions);
       customerId.id = response.data.id;
       customerId.name = response.data.name;
       customerId.address = response.data.address;
@@ -59,8 +75,12 @@ onMounted(async () => {
       customerId.status = response.data.status;
       customerId.subsicrptions = response.data.subsicrptions;
       customerId.files = response.data.files;
+      customerId.representative = response.data.representative;
+      representativesLength.value = customerId.representative.length;
+      console.log(customerId.representative);
+      representativeId.value = customerId.representative;
 
-      getRepresentatives();
+      // getRepresentatives();
     })
     .catch(function (error) {
       console.log(error);
@@ -69,21 +89,25 @@ onMounted(async () => {
       store.loading = false;
       loading.value = false;
     });
-});
+}
 
 const representativesLength = ref();
 
 // needs an update with getbyId
-function getRepresentatives() {
-  representativesApi.get().then((response) => {
-    representativeId.value = response.data.content.filter(
-      (users: { customerName: string }) => users.customerName == customerId.name
-    );
+// function getRepresentatives() {
+//   representativesApi.get().then((response) => {
+//     representativeId.value = response.data.content.filter(
+//       (users: { customerName: string }) => users.customerName == customerId.name
+//     );
+//     console.log( representativeId.value)
 
-    representatives.value = response.data.content;
-    representativesLength.value = representativeId.value.length;
-  });
-}
+//     representatives.value = response.data.content;
+//     reprefileType1.value = response.data.content[0]?.files[0].docType;
+//     reprefileType2.value = response.data.content[1]?.files[1].docType;
+
+//     representativesLength.value = representativeId.value.length;
+//   });
+// }
 
 // Define a method to get the text based on the number
 const getIdentityTypeText = (type: number) => {
@@ -95,6 +119,53 @@ const getIdentityTypeText = (type: number) => {
     // Add more cases for other identity types
     default:
       return "Unknown identity type";
+  }
+};
+const getDocTypeText = (type: string) => {
+  switch (type) {
+    case "1":
+      return "بطاقة شخصية";
+    case "2":
+      return "رخصة من الشركة";
+    // Add more cases for other doc types
+    default:
+      return "Unknown doc type";
+  }
+};
+
+const toast = useToast();
+
+const downloadFile = async (id: any) => {
+  try {
+    const response = await representativesApi.getFile(id, {
+      responseType: "arraybuffer",
+    });
+
+    if (response) {
+      const blob = new Blob([response.data], {
+        type: "application/octet-stream",
+      });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "downloaded_file.png"; // Set the desired downloaded filename here
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      URL.revokeObjectURL(url);
+    } else {
+      console.error("Invalid file response");
+    }
+  } catch (error) {
+    console.error("Error downloading file:", error);
+    toast.add({
+      severity: "error",
+      summary: "خطأ",
+      detail: "حدث خطأ أثناء تحميل ملف المخول",
+      life: 3000,
+    });
   }
 };
 </script>
@@ -117,7 +188,7 @@ const getIdentityTypeText = (type: number) => {
 
           <!-- المخولون الخاصون بالعميل -->
           <Representative
-            @getRepresentatives="getRepresentatives()"
+            @getRepresentatives="getCustomers()"
             :customerStatus="customerId.status"
             :representatives-length="representativesLength"
           />
@@ -133,7 +204,7 @@ const getIdentityTypeText = (type: number) => {
 
           <div v-else class="grid">
             <div
-              class="col-12 sm:col-6 md:col-4 representative-card"
+              class="col-12 sm:col-8 md:col-5 representative-card"
               v-for="representative in representativeId"
               :key="representative.id"
             >
@@ -143,13 +214,21 @@ const getIdentityTypeText = (type: number) => {
               >
                 <template #header>
                   <div class="flex">
-                    <!-- Delete button on the left -->
+                    <Button
+                      @click="openDialog()"
+                      v-tooltip="{ value: 'ملفات المخول' }"
+                      icon="fa-regular fa-file-lines"
+                      class="p-button-primary"
+                      text
+                    >
+                    </Button>
+
                     <div class="ml-auto">
                       <div v-if="representative.status !== 5">
                         <EditRepresentatives
                           :name="representative"
                           :key="representative.id"
-                          @get-representatives="getRepresentatives"
+                          @get-representatives="getCustomers"
                         >
                         </EditRepresentatives>
                       </div>
@@ -165,7 +244,7 @@ const getIdentityTypeText = (type: number) => {
                           representative.lastName
                         "
                         :status="representative.status"
-                        @getdata="getRepresentatives()"
+                        @getdata="getCustomers"
                       />
                     </div>
 
@@ -173,7 +252,7 @@ const getIdentityTypeText = (type: number) => {
                       <DeleteRepresentives
                         :name="representative"
                         :key="representative.id"
-                        @getRepresentatives="getRepresentatives()"
+                        @getRepresentatives="getCustomers()"
                       />
                     </div>
                   </div>
@@ -215,25 +294,174 @@ const getIdentityTypeText = (type: number) => {
                         {{ formattedPhoneNumber(representative.phoneNo) }}
                       </div>
                     </div>
+                    <Dialog
+                      header="ملفات المخول"
+                      contentStyle="max-height: 80vh; max-width: 40vw; padding: 5px;"
+                      v-model:visible="displayDialog"
+                      :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
+                      :modal="true"
+                    >
+                      <div class="grid p-fluid mt-1 ml-1">
+                        <div class="field col-12 md:col-6 lg:col-4">
+                          <div class="grid p-fluid">
+                            <div class="file-container">
+                              <ul class="file-list">
+                                <div class="file-item mb-4">
+                                  <div class="file-input flex">
+                                    <span class="p-float-label">
+                                      <InputText
+                                        style="width: auto"
+                                        class="p-inputtext p-component"
+                                        v-model="
+                                          representative.files[0].fileName
+                                        "
+                                        :disabled="true"
+                                      />
+
+                                      <label for="secondaryPhone"
+                                        >اسم الملف</label
+                                      >
+                                    </span>
+                                    <span class="p-float-label">
+                                      <InputText
+                                        style="width: auto"
+                                        class="p-inputtext p-component"
+                                        v-model="
+                                          representative.files[0].docType
+                                        "
+                                        :value="
+                                          getDocTypeText(
+                                            representative.files[0].docType
+                                          )
+                                        "
+                                        :disabled="true"
+                                      />
+                                      <label for="secondaryPhone"
+                                        >نوع الملف</label
+                                      >
+                                    </span>
+                                    <div class="file-actions">
+                                      <Button
+                                        style="
+                                          color: #007bff;
+                                          font-size: small;
+                                          font-weight: bold;
+                                        "
+                                        @click="
+                                          downloadFile(
+                                            representative.files[0].id
+                                          )
+                                        "
+                                        icon="fa-solid fa-download"
+                                        class="p-button-text p-button-info"
+                                      >
+                                        تحميل
+                                      </Button>
+                                      <Button
+                                        style="
+                                          color: #007bff;
+                                          font-size: small;
+                                          font-weight: bold;
+                                        "
+                                        icon="fa-solid fa-eye"
+                                        class="p-button-text p-button-info"
+                                      >
+                                        عرض
+                                      </Button>
+                                    </div>
+                                  </div>
+                                  <div class="file-input flex mt-5">
+                                    <span class="p-float-label">
+                                      <InputText
+                                        style="width: auto"
+                                        class="p-inputtext p-component"
+                                        v-model="
+                                          representative.files[1].fileName
+                                        "
+                                        :disabled="true"
+                                      />
+
+                                      <label for="secondaryPhone"
+                                        >اسم الملف</label
+                                      >
+                                    </span>
+                                    <span class="p-float-label">
+                                      <InputText
+                                        style="width: auto"
+                                        class="p-inputtext p-component"
+                                        v-model="
+                                          representative.files[1].docType
+                                        "
+                                        :value="
+                                          getDocTypeText(
+                                            representative.files[1].docType
+                                          )
+                                        "
+                                        :disabled="true"
+                                      />
+                                      <label for="secondaryPhone"
+                                        >نوع الملف</label
+                                      >
+                                    </span>
+                                    <div class="file-actions">
+                                      <Button
+                                        style="
+                                          color: #007bff;
+                                          font-size: small;
+                                          font-weight: bold;
+                                        "
+                                        @click="
+                                          downloadFile(
+                                            representative.files[1].id
+                                          )
+                                        "
+                                        icon="fa-solid fa-download"
+                                        class="p-button-text p-button-info"
+                                      >
+                                        تحميل
+                                      </Button>
+                                      <Button
+                                        style="
+                                          color: #007bff;
+                                          font-size: small;
+                                          font-weight: bold;
+                                        "
+                                        icon="fa-solid fa-eye"
+                                        class="p-button-text p-button-info"
+                                      >
+                                        عرض
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <Toast position="bottom-left" />
+
+                    </Dialog>
                   </div>
                 </template>
               </Card>
             </div>
           </div>
         </TabPanel>
-        <TabPanel>
+        <!-- <TabPanel>
           <template #header>
             <i class="ml-2 pi pi-calendar"></i>
             <span>جدول الزيارات</span>
           </template>
-          <!-- الزيارات الخاصة بالعميل -->
-        </TabPanel>
+           {{ customerId }} -->
+        <!-- الزيارات الخاصة بالعميل -->
+        <!-- </TabPanel>  -->
         <TabPanel>
           <template #header>
             <i class="ml-2 pi pi-cog"></i>
-            <span>جدول الاشتراكات</span> </template
-          >{{ customerId.subsicrptions }}
-          <SubscriptionRecordById
+            <span>جدول الاشتراكات</span>
+          </template>
+          <SubscriptionByCustomerId
             :key="customerId.subsicrptions"
             :subsId="customerId.subsicrptions"
           />
@@ -264,5 +492,9 @@ const getIdentityTypeText = (type: number) => {
 .representative-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 16px rgba(9, 9, 198, 0.2); /* Blueish shadow */
+}
+.file-actions {
+  display: flex;
+  gap: 0.5rem;
 }
 </style>

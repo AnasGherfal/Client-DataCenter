@@ -15,11 +15,11 @@ export const serviceApi = {
     return response;
   },
   remove: async function (id: string ) {
-    const response = await httpClient.delete(`/Service?id=${id}`);
+    const response = await httpClient.delete(`/Service/${id}`);
     return response;
   },
   edit: async function (id: string | null, service: Service) {
-    const response = await httpClient.put(`/Service?id=${id}`, service);
+    const response = await httpClient.put(`/Service/${id}`, service);
     return response;
   },
 };

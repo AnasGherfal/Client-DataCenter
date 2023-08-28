@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import {  ref } from "vue";
 import { FilterMatchMode } from "primevue/api";
 import moment from "moment";
-import { subscriptionApi } from "@/api/subscriptions";
 import type { SubscriptionRespons } from "@/Modules/SubscriptionModule/SubscriptionsResponseModule";
 import { useRoute } from "vue-router";
 
@@ -13,18 +12,8 @@ const props = defineProps<{
   subsId: any;
 }>();
 const route = useRoute();
-console.log(props.subsId)
-onMounted(async () => {
-  subscriptionApi
-    .getById(props.subsId)
-    .then(function (response) {
-      console.log(response.data);
-      subDeta.value = [response.data]; // Wrap the response data in an array
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-});
+console.log(props.subsId);
+
 
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -62,13 +51,26 @@ const trans = (value: string) => {
   else if (value == "5") return " مقفل";
 };
 
+const getDaysRemainingData = (endDate: Date) => {
+  const now = moment();
+  const end = moment(endDate);
+  const daysRemaining = end.diff(now, "days");
+
+  if (daysRemaining <= 0) {
+    return { label: "منتهي", color: "red" };
+  } else if (daysRemaining <= 30) {
+    return { label: "قريباً من الانتهاء", color: "orange" };
+  } else {
+    return { label: "صالح", color: "green" };
+  }
+};
 </script>
 
-<template>{{ subDeta }}
+<template>
   <DataTable
-    v-if="subDeta"
+    v-if="props.subsId"
     ref="dt"
-    :value="subDeta"
+    :value="props.subsId"
     dataKey="id"
     :paginator="true"
     :rows="5"
@@ -79,23 +81,71 @@ const trans = (value: string) => {
     currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} عميل"
     responsiveLayout="scroll"
   >
+  <template #empty>
+            <div
+              class="no-data-message"
+              style="
+                height: 100px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+                background-color: #f9f9f9;
+                border-radius: 5px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+              "
+            >
+              <p style="font-size: 18px; font-weight: bold; color: #888">
+                لا يوجد بيانات
+              </p>
+            </div>
+          </template>
     <Column
       field="customerName"
       header="اسم العميل"
-      style="min-width: 8rem"
+      style="min-width: 6rem"
       class="font-bold"
     ></Column>
 
-    <Column
-      field="status"
-      header="الحالة"
-      dataType="date"
-      style="min-width:6rem"
-    >
+    <Column field="daysRemaining" header="الصلاحية" style="min-width: 4rem">
       <template #body="{ data }">
-        {{ status(data.status) }}
+        <span :style="{ color: getDaysRemainingData(data.endDate).color }">
+          {{ getDaysRemainingData(data.endDate).label }}
+        </span>
       </template>
     </Column>
+
+    <Column
+            field="status"
+            header="  الحاله "
+            filterField="status"
+            style="width: 6rem"
+            :showFilterMenu="false"
+            :filterMenuStyle="{ width: '12rem' }"
+          >
+            <template #body="{ data }">
+              <Tag
+                :value="status(data.status)"
+                :severity="getSeverity(data.status)"
+              />
+            </template>
+            <template #filter="{ filterModel, filterCallback }">
+              <Dropdown
+                v-model="filterModel.value"
+                @change="filterCallback()"
+                :options="['warning', '']"
+                placeholder="Select One"
+                class="p-column-filter"
+                style="min-width: 12rem"
+                :showClear="true"
+              >
+                <template #option="slotProps">
+                  <Tag :value="slotProps.option" :severity="slotProps.option" />
+                </template>
+              </Dropdown>
+            </template>
+          </Column>
 
     <Column
       v-for="(col, index) of selectedColumns"
@@ -107,7 +157,7 @@ const trans = (value: string) => {
 
     <Column
       field="startDate"
-      header="تاريخ بداية الاشتراك"
+      header="تاريخ البداية "
       dataType="date"
       style="min-width: 10rem"
     >
@@ -118,7 +168,7 @@ const trans = (value: string) => {
 
     <Column
       field="endDate"
-      header="تاريخ نهاية الاشتراك"
+      header="تاريخ النهاية "
       dataType="date"
       style="min-width: 10rem"
     >

@@ -49,7 +49,7 @@ const onFormSubmit = async (state: Service) => {
       emit("getList");
       toast.add({
         severity: "success",
-        summary: "Success Message",
+        summary: "تم التعديل",
         detail: Response.data.msg,
         life: 3000,
       });
@@ -58,7 +58,7 @@ const onFormSubmit = async (state: Service) => {
     .catch((e) => {
         toast.add({
         severity: "error",
-        summary: "error Message",
+        summary: "بم يتم التعديل",
         detail: e.data.msg,
         life: 3000,
       });    });

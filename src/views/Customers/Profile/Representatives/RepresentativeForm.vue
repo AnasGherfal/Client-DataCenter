@@ -19,12 +19,47 @@ const props = defineProps({
 });
 const toast = useToast();
 const loading = ref(false);
+const rule = ref(false);
+const firstFileError = ref<string | null>(null);
+const secondFileError = ref<string | null>(null);
 
 const representatives = ref(props.representatives);
+
+async function onFileUpload(event: any, index: number) {
+  const file = event.target.files[0];
+
+  if (file) {
+    const docType = index === 0 ? 1 : 2;
+
+    if (index === 0) {
+      props.representatives.firstFile = {
+        file: file,
+        docType: docType,
+      };
+    } else if (index === 1) {
+      props.representatives.secondFile = {
+        file: file,
+        docType: docType,
+      };
+    }
+  }
+}
 
 const instance = getCurrentInstance();
 const onSubmitForm = async () => {
   const result = await v$.value.$validate();
+  if (!props.representatives.firstFile?.file) {
+    firstFileError.value = "الحقل مطلوب";
+  } else {
+    firstFileError.value = "";
+  }
+
+  // Validate the second file
+  if (!props.representatives.secondFile?.file) {
+    secondFileError.value = "الحقل مطلوب";
+  } else {
+    secondFileError.value = "";
+  
   try {
     if (result) {
       loading.value = true;
@@ -44,6 +79,7 @@ const onSubmitForm = async () => {
   } catch (error) {
     console.log(error);
   }
+}
 };
 
 const rules = computed(() => {
@@ -82,8 +118,16 @@ const rules = computed(() => {
         isLibyanPhoneNumber
       ),
     },
+    identityType: {
+      required: helpers.withMessage("الحقل مطلوب", required),
+    },
+    identityNo: {
+      required: helpers.withMessage("الحقل مطلوب", required),
+    },
   };
 });
+
+
 const v$ = useVuelidate(rules, representatives);
 
 // const displayModal = ref(false);
@@ -100,26 +144,44 @@ const identityTypeOptions: IdentityTypeOption[] = [
   { value: 2, text: "جواز سفر" },
 ];
 
-// const selectedIdentityTypeText = computed(() => {
-//   const selectedValue = representatives.value.identityType;
-//   const selectedOption = identityTypeOptions.find(
-//     (option) => option.value === selectedValue
-//   );
-//   return selectedOption ? selectedOption.text : "";
-// });
+const docTypeOptions = ref([
+  { value: 1, label: "ملف شخصي" },
+  { value: 2, label: "تخويل الشركة" },
+]);
+
+function filteredDocTypeOptions(index: number) {
+  const firstFileDocType = props.representatives.firstFile?.docType;
+  const secondFileDocType = props.representatives.secondFile?.docType;
+
+  if (index === 0) {
+    if (secondFileDocType) {
+      return docTypeOptions.value.filter(
+        (option) => option.value !== secondFileDocType
+      );
+    }
+  } else if (index === 1) {
+    if (firstFileDocType) {
+      return docTypeOptions.value.filter(
+        (option) => option.value !== firstFileDocType
+      );
+    }
+  }
+
+  return docTypeOptions.value;
+}
 </script>
 <template>
   <form @submit.prevent="onSubmitForm">
-    <div class="grid p-fluid">
-      <div class="field col-12 md:col-6 lg:col-4">
+    <div class="grid p-fluid mt-1">
+      <div class="field col-12 md:col-4 lg:col-4">
         <span class="p-float-label">
           <InputText
-            id="name"
+            id="firstName"
             type="text"
             v-model="representatives.firstName"
           />
-          <label for="name">الاسم </label>
-          <div style="height: 2px">
+          <label for="firstName">الاسم </label>
+          <div v-if="rule" style="height: 2px; margin-bottom: 1rem">
             <span
               v-for="error in v$.firstName.$errors"
               :key="error.$uid"
@@ -130,11 +192,11 @@ const identityTypeOptions: IdentityTypeOption[] = [
           </div>
         </span>
       </div>
-      <div class="field col-12 md:col-6 lg:col-4">
+      <div class="field col-12 md:col-4 lg:col-4">
         <span class="p-float-label">
-          <InputText id="name" type="text" v-model="representatives.lastName" />
-          <label for="name">اللقب </label>
-          <div style="height: 2px">
+          <InputText id="lastName" type="text" v-model="representatives.lastName" />
+          <label for="lastName">اللقب </label>
+          <div v-if="rule" style="height: 2px; margin-bottom: 1rem">
             <span
               v-for="error in v$.lastName.$errors"
               :key="error.$uid"
@@ -145,7 +207,7 @@ const identityTypeOptions: IdentityTypeOption[] = [
           </div>
         </span>
       </div>
-      <div class="field col-12 md:col-6 lg:col-4">
+      <div class="field col-12 md:col-4 lg:col-4">
         <span class="p-float-label">
           <InputText id="email" type="text" v-model="representatives.email" />
           <label for="email">البريد الإلكتروني</label>
@@ -160,7 +222,7 @@ const identityTypeOptions: IdentityTypeOption[] = [
           </div>
         </span>
       </div>
-      <div class="field col-12 md:col-6 lg:col-4">
+      <div class="field col-12 md:col-4 lg:col-4">
         <span class="p-float-label">
           <InputMask
             v-model="representatives.phoneNo"
@@ -168,7 +230,7 @@ const identityTypeOptions: IdentityTypeOption[] = [
             style="direction: ltr"
           />
           <label for="inputtext">رقم هاتف </label>
-          <div style="height: 2px">
+          <div v-if="rule" style="height: 2px; margin-bottom: 1rem">
             <span
               v-for="error in v$.phoneNo.$errors"
               :key="error.$uid"
@@ -179,7 +241,7 @@ const identityTypeOptions: IdentityTypeOption[] = [
           </div>
         </span>
       </div>
-      <div class="field col-12 md:col-6 lg:col-4">
+      <div class="field col-12 md:col-4 lg:col-4">
         <span class="p-float-label">
           <Dropdown
             v-model="representatives.identityType"
@@ -191,11 +253,93 @@ const identityTypeOptions: IdentityTypeOption[] = [
           <label for="identityType">نوع الاثبات </label>
         </span>
       </div>
-      <div class="field col-12 md:col-6 lg:col-4">
+      <div class="field col-12 md:col-4 lg:col-4">
         <span class="p-float-label">
           <InputText id="inputtext" v-model="representatives.identityNo" />
           <label for="inputtext">رقم الاثبات </label>
         </span>
+      </div>
+      <!-- First File Input and DocType MultiSelect -->
+      <div class="field col-12 md:col-6 lg:col-5">
+        <label class="file-input-label" for="fileInput1">
+          <div class="file-input-content">
+            <div
+              class="file-input-icon"
+              v-if="!representatives.firstFile?.file?.name"
+            ></div>
+
+            <div class="file-input-text">
+              <i class="pi pi-upload"></i>
+
+              {{ representatives.firstFile?.file?.name || "ارفق ملف  1 " }}
+            </div>
+          </div>
+
+          <input
+            id="fileInput1"
+            style="display: none"
+            type="file"
+            @change="(event) => onFileUpload(event, 0)"
+            accept="*"
+          />
+        </label>
+        <div
+          v-if="firstFileError"
+          style="color: red; font-weight: bold; font-size: small"
+        >
+          {{ firstFileError }}
+        </div>
+        <Dropdown
+          v-if="representatives.firstFile?.file"
+          :modelValue="representatives.firstFile.docType"
+          :options="filteredDocTypeOptions(0)"
+          optionValue="value"
+          optionLabel="label"
+          placeholder="Select a Document Type"
+          :visible="false"
+          @update:modelValue="(value: number) => (representatives.firstFile.docType = value)"
+        />
+      </div>
+
+      <!-- Second File Input and DocType MultiSelect -->
+      <div class="field col-12 md:col-6 lg:col-5">
+        <label class="file-input-label" for="fileInput2">
+          <div class="file-input-content">
+            <div
+              class="file-input-icon"
+              v-if="!representatives.secondFile?.file?.name"
+            ></div>
+
+            <div class="file-input-text">
+              <i class="pi pi-upload"></i>
+
+              {{ representatives.secondFile?.file?.name || "ارفق ملف 2 " }}
+            </div>
+          </div>
+          <input
+            id="fileInput2"
+            style="display: none"
+            type="file"
+            @change="(event) => onFileUpload(event, 1)"
+            accept="*"
+          />
+        </label>
+        <div
+          v-if="firstFileError"
+          style="color: red; font-weight: bold; font-size: small"
+        >
+          {{ secondFileError }}
+        </div>
+        <Dropdown
+          v-if="representatives.secondFile?.file"
+          :modelValue="representatives.secondFile.docType"
+          :options="filteredDocTypeOptions(1)"
+          optionValue="value"
+          optionLabel="label"
+          placeholder="Select a Document Type"
+          :visible="false"
+          @update:modelValue="(value: number) => (representatives.secondFile.docType = value)"
+        />
       </div>
     </div>
     <Button
@@ -204,5 +348,33 @@ const identityTypeOptions: IdentityTypeOption[] = [
       :label="value"
       :loading="loading"
     />
+    <Toast position="bottom-left" />
+
   </form>
 </template>
+
+<style scoped>
+.file-input-label {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  font-family: tajawal;
+  width: 100%;
+  height: 45px;
+  border-radius: 10px;
+  background-color: rgb(255, 255, 255);
+  color: #708da9;
+  border: 1px solid #d3dbe3;
+  text-align: center;
+  padding: 0.7rem;
+  cursor: pointer;
+}
+
+.file-input-label::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+</style>
