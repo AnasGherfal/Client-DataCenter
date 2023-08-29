@@ -212,7 +212,6 @@ const submitForm = async () => {
         <DataTable
           :value="invoices"
           dataKey="id"
-          filterDisplay="row"
           :globalFilterFields="['customerName', 'visitReason']"
           :paginator="true"
           :rows="10"
