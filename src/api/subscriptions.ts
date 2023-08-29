@@ -1,5 +1,6 @@
 import {httpClient} from "./index";
 import type { Subscription } from "../Modules/SubscriptionModule/SubscriptionsRequestModule";
+import {secondHttpClient} from "./index";
 
 export const subscriptionApi = {
   get: async function () {
@@ -31,7 +32,7 @@ export const subscriptionApi = {
     return response;
   },
   renew: async function (id: string | null, subscription: FormData) {
-    const response = await httpClient.put(`/subscription/${id}/Renew`, subscription);
+    const response = await httpClient.put(`/subscription/${id}/Renew`);
     return response;
   },
   edit: async function (id: string, service: Subscription) {
