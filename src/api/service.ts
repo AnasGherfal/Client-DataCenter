@@ -4,7 +4,7 @@ import {secondHttpClient} from "./index";
 
 export const serviceApi = {
   get: async function () {
-    const response = await secondHttpClient.get(`/Service`);
+    const response = await httpClient.get(`/Service`);
     return response;
   },
   getById: async function (id:string) {
@@ -12,7 +12,7 @@ export const serviceApi = {
     return response;
   },
   create: async function (service: Service) {
-    const response = await secondHttpClient.post(`/Service`, service);
+    const response = await httpClient.post(`/Service`, service);
     return response;
   },
   remove: async function (id: string ) {
