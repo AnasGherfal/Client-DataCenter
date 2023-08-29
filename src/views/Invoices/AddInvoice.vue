@@ -22,7 +22,7 @@ const invoices: InvoiceResponde = reactive({
   description: "",
   startDate: "",
   endDate: "",
-  subscriptionId: 0,
+  subscriptionId: null,
 });
 
 const rules = computed(() => {
@@ -129,7 +129,7 @@ const resetForm = () => {
   invoices.description = "";
   invoices.startDate = "";
   invoices.endDate = "";
-  invoices.subscriptionId = 0;
+  invoices.subscriptionId = null;
 };
 
 const search = async (query: string) => {
@@ -190,13 +190,14 @@ const searchOnEnter = (event: KeyboardEvent, query: string) => {
                 />
                 <label for="startDate">تاريخ بداية الاشتراك</label>
                 <div style="height: 2px">
-                  <error
-                    v-for="error in v$.startDate.$errors"
-                    :key="error.$uid"
-                    class="p-error"
-                    >{{ error.$message }}</error
-                  >
-                </div>
+                    <span
+                      v-for="error in v$.startDate.$errors"
+                      :key="error.$uid"
+                      style="color: red; font-weight: bold; font-size: small"
+                    >
+                      {{ error.$message }}</span
+                    >
+                  </div>
               </span>
             </div>
 
@@ -213,13 +214,14 @@ const searchOnEnter = (event: KeyboardEvent, query: string) => {
                 />
                 <label for="endtDate">تاريخ انتهاء الاشتراك</label>
                 <div style="height: 2px">
-                  <error
-                    v-for="error in v$.endDate.$errors"
-                    :key="error.$uid"
-                    class="p-error"
-                    >{{ error.$message }}</error
-                  >
-                </div>
+                    <span
+                      v-for="error in v$.endDate.$errors"
+                      :key="error.$uid"
+                      style="color: red; font-weight: bold; font-size: small"
+                    >
+                      {{ error.$message }}</span
+                    >
+                  </div>
               </span>
             </div>
             <div class="field col-12 md:col-6 lg:col-4">
@@ -234,14 +236,15 @@ const searchOnEnter = (event: KeyboardEvent, query: string) => {
                   :selectionLimit="1"
                 />
                 <label for="subscriptionType">اشتراكات</label>
-                <div style="height: 2px">
-                  <error
-                    v-for="error in v$.subscriptionId.$errors"
-                    :key="error.$uid"
-                    class="p-error"
-                    >{{ error.$message }}</error
-                  >
-                </div>
+                  <div style="height: 2px">
+                    <span
+                      v-for="error in v$.subscriptionId.$errors"
+                      :key="error.$uid"
+                      style="color: red; font-weight: bold; font-size: small"
+                    >
+                      {{ error.$message }}</span
+                    >
+                  </div>
               </span>
             </div>
 
