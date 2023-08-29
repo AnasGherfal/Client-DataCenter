@@ -15,7 +15,7 @@ export const serviceApi = {
     const response = await httpClient.post(`/Service`, service);
     return response;
   },
-  remove: async function (id: string ) {
+  remove: async function (id: any ) {
     const response = await httpClient.delete(`/Service/${id}`);
     return response;
   },

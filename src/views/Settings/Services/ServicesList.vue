@@ -52,7 +52,7 @@ function getList() {
         <template #header>
           <editservice
             v-if="servic.status !== 5"
-            :pakge="servic"
+            :pakage="servic"
             @getList="getList"
           />
 

@@ -19,6 +19,7 @@ const cardVis = ref(false);
 const prop = defineProps<{
   nad: number;
 }>();
+
 const store = useSubscriptionsStore();
 const toast = useToast();
 const route = useRoute();
@@ -32,6 +33,8 @@ const subs: SubscriptionRespons = reactive({
   endDate: "",
   subscriptionFileId: null,
   daysRemaining: 0,
+  monthlyVisits:0,
+
   visits: [],
   file: { id: "", fileName: "", docType: "" },
 });
@@ -71,9 +74,11 @@ function getdata() {
       subs.subscriptionFileId = response.data.subscriptionFileId;
       subs.daysRemaining = response.data.daysRemaining;
       subs.visits = response.data.visits;
+      subs.monthlyVisits = response.data.monthlyVisits;
       subs.file.fileName = response.data.file.fileName;
       subs.file.docType = response.data.file.docType;
       subs.file.id = response.data.file.id;
+      
     })
     .then(function () {
       serviceApi
@@ -140,6 +145,8 @@ const displayedFileName = computed(() => {
 const file = ref<File | null>();
 const firstFileError = ref<string | null>(null);
 
+
+
 const renewalSubscription = () => {
   loading2.value = true;
 
@@ -190,7 +197,14 @@ const renewalSubscription = () => {
 function car() {
   cardVis.value = !cardVis.value;
 }
+function visitPercent (){
+ if(servobj.monthlyVisits ){
+  return(subs.monthlyVisits / servobj.monthlyVisits )* 100;
+ }
+  return 0; // Default value in case servobj.monthlyVisits is falsy
 
+
+} 
 const downloadFile = async (id: any) => {
   try {
     const response = await subscriptionApi.getFile(id, {
@@ -224,6 +238,7 @@ const downloadFile = async (id: any) => {
     });
   }
 };
+
 const maxDays = ref(400); // Set the maximum value for the knob
 </script>
 
@@ -472,7 +487,7 @@ const maxDays = ref(400); // Set the maximum value for the knob
           <h4 style="margin: 0">عدد الزيارات المتبقية بالساعة</h4>
           <Skeleton v-if="loading" width="50%" height="1rem"></Skeleton>
           <ProgressBar class="mt-2" v-else :value="servobj.monthlyVisits">
-            {{ servobj.monthlyVisits }}
+            {{ subs.monthlyVisits }}
           </ProgressBar>
 
           <Divider class="p-divider-solid" layout="horizontal" />

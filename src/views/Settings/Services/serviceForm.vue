@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, getCurrentInstance, reactive, ref } from "vue";
+import { computed, getCurrentInstance, onUnmounted, reactive, ref } from "vue";
 import { required, helpers } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
@@ -65,13 +65,17 @@ const toast = useToast();
 
 const v$ = useVuelidate(rules, service);
 
+
+
 const resetForm = () => {
+
   service.name = "";
   service.acpPort = "";
   service.amountOfPower = "";
   service.dns = "";
   service.monthlyVisits = null;
   service.price = null;
+  
 };
 </script>
 
@@ -187,7 +191,7 @@ const resetForm = () => {
     <Button
       @click="resetForm"
       icon="fa-solid fa-delete-left"
-      label="مسح"
+      label="تفريغ الحقول"
       class="p-button-danger"
       style="margin-right: 0.5em"
     />

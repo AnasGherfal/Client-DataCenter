@@ -6,18 +6,27 @@ import { computed, reactive, ref } from 'vue';
 import Password from 'primevue/password';
 const displayModal=ref(false)
 const state=reactive({
-password:null
+previousPassword:"",
+newPassword:"",
+confirmPassword:""
 })
 
 const rules = computed(() => {
-    return {
-
-        Password: { required: helpers.withMessage(' الحقل مطلوب', required)},
-
-    }
-})
+  return {
+    previousPassword: { required: helpers.withMessage('الحقل مطلوب', required) },
+    newPassword: { required: helpers.withMessage('الحقل مطلوب', required) },
+    confirmPassword: {
+      required: helpers.withMessage('الحقل مطلوب', required),
+      sameAsPassword: helpers.withMessage('يجب أن تتطابق مع كلمة المرور', (value) => value === state.newPassword),
+    },
+  };
+});
 
 const v$ = useVuelidate(rules, state);
+ 
+const submitForm = async ()  =>{
+
+}
 
 </script>
 
@@ -35,10 +44,10 @@ style="margin-right: .5em;"
 
     <div class="field col-12 md:col-6 lg:col-4">
         <span class="p-float-label ">
-        <Password model="state.Password" toggle-mask dir="ltr"/>  
+            <Password v-model="state.previousPassword" toggle-mask dir="ltr" />
             <label style="right:40px;" for="subscriptionType">كلمة المرور السابقة</label>
             <div style="height: 2px;"> 
-            <error v-for="error in v$.Password.$errors" :key="error.$uid" class="p-error">{{
+            <error v-for="error in v$.previousPassword.$errors" :key="error.$uid" class="p-error">{{
                 error.$message }}</error>
                 </div>
         </span>
@@ -46,10 +55,10 @@ style="margin-right: .5em;"
 
     <div class="field col-12 md:col-6 lg:col-4">
         <span class="p-float-label ">
-        <Password model="state.Password" toggle-mask dir="ltr"/>  
+            <Password v-model="state.newPassword" toggle-mask dir="ltr" />
             <label style="right:40px;" for="subscriptionType">كلمة المرور</label>
             <div style="height: 2px;"> 
-            <error v-for="error in v$.Password.$errors" :key="error.$uid" class="p-error">{{
+            <error v-for="error in v$.newPassword.$errors" :key="error.$uid" class="p-error">{{
                 error.$message }}</error>
                 </div>
         </span>
@@ -57,10 +66,10 @@ style="margin-right: .5em;"
 
     <div class="field col-12 md:col-6 lg:col-4">
         <span class="p-float-label ">
-        <Password model="state.Password" toggle-mask dir="ltr"/>  
+            <Password v-model="state.confirmPassword" toggle-mask dir="ltr" />
             <label style="right:40px;" for="subscriptionType">تأكيد كلمة المرور</label>
             <div style="height: 2px;"> 
-            <error v-for="error in v$.Password.$errors" :key="error.$uid" class="p-error">{{
+            <error v-for="error in v$.confirmPassword.$errors" :key="error.$uid" class="p-error">{{
                 error.$message }}</error>
                 </div>
         </span>
@@ -73,13 +82,14 @@ style="margin-right: .5em;"
     class="p-button-danger" style="margin-right: .5em;" />
  </form>
 </Dialog>
-
-<Button icon="fa-solid fa-lock"
+<!-- <Button icon="fa-solid fa-key"
  label="تغيير كلمة المرور" 
 @click="displayModal = true"
 class="mr-2"
-style="width: 13rem;"
- />
+style="  background-color: white;  color:#043d75; border-color:white 
+;
+
+ /> -->
 
 </template>
 

@@ -296,14 +296,14 @@ const downloadFile = async (id: any) => {
                     </div>
                     <Dialog
                       header="ملفات المخول"
-                      contentStyle="max-height: 80vh; max-width: 40vw; padding: 5px;"
+                      contentStyle="max-height: 80vh;  padding: 0px;"
                       v-model:visible="displayDialog"
-                      :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
+                      :breakpoints="{ '960px': '100vw', '640px': '70vw' }"
                       :modal="true"
                     >
                       <div class="grid p-fluid mt-1 ml-1">
+                        
                         <div class="field col-12 md:col-6 lg:col-4">
-                          <div class="grid p-fluid">
                             <div class="file-container">
                               <ul class="file-list">
                                 <div class="file-item mb-4">
@@ -357,17 +357,6 @@ const downloadFile = async (id: any) => {
                                       >
                                         تحميل
                                       </Button>
-                                      <Button
-                                        style="
-                                          color: #007bff;
-                                          font-size: small;
-                                          font-weight: bold;
-                                        "
-                                        icon="fa-solid fa-eye"
-                                        class="p-button-text p-button-info"
-                                      >
-                                        عرض
-                                      </Button>
                                     </div>
                                   </div>
                                   <div class="file-input flex mt-5">
@@ -420,17 +409,6 @@ const downloadFile = async (id: any) => {
                                       >
                                         تحميل
                                       </Button>
-                                      <Button
-                                        style="
-                                          color: #007bff;
-                                          font-size: small;
-                                          font-weight: bold;
-                                        "
-                                        icon="fa-solid fa-eye"
-                                        class="p-button-text p-button-info"
-                                      >
-                                        عرض
-                                      </Button>
                                     </div>
                                   </div>
                                 </div>
@@ -438,9 +416,7 @@ const downloadFile = async (id: any) => {
                             </div>
                           </div>
                         </div>
-                      </div>
                       <Toast position="bottom-left" />
-
                     </Dialog>
                   </div>
                 </template>

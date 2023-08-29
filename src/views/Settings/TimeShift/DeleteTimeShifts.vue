@@ -45,7 +45,7 @@ const deleteTimeShift = () => {
   <Dialog
     v-model:visible="deleteProductDialog"
     :style="{ width: '450px' }"
-    header="Confirm"
+    header="تأكيد"
     :modal="true"
   >
     <div class="confirmation-content">
@@ -61,6 +61,7 @@ const deleteTimeShift = () => {
       <Button
         label="نعم"
         icon="pi pi-check"
+        style="color:green"
         text
         @click="deleteTimeShift"
         :loading="loading"
@@ -68,6 +69,8 @@ const deleteTimeShift = () => {
 
       <Button
         label="لا"
+        style="color:red"
+
         icon="pi pi-times"
         text
         @click="deleteProductDialog = false"
@@ -77,10 +80,13 @@ const deleteTimeShift = () => {
 
   <Button
     @click="deleteProductDialog = true"
-    style="display:inline-block; margin-bottom:0.5rem"
+    style="display:inline-block; "
+    
+    label="حذف"
+    
     
     icon="fa-solid fa-trash"
-    class="p-button-text p-button-danger"
+    class=" p-button-danger"
     v-tooltip.left="{ value: 'حذف الساعه', fitContent: true }"
   />
 </template>

@@ -31,7 +31,7 @@ const deleteCustomer = () => {
       toast.add({
         severity: "success",
         summary: "تم الحذف",
-        detail: response.data,
+        detail: response.data.msg,
         life: 3000,
       });
       dialog.value = false;

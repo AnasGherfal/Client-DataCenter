@@ -7,6 +7,7 @@ export interface SubscriptionRespons {
     endDate:string,
     subscriptionFileId:null|number,
     daysRemaining: number,
+    monthlyVisits:number,
     visits:[]
     file:{fileName: string, docType:string, id:string}
 

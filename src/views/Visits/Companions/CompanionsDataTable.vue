@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import addCompanion from "./addCompanion.vue";
-const props = defineProps(["compList", "editable"]);
+const props = defineProps(["compList", "editable","compId"]);
 const dialog = ref(false);
 const selectedCompanion = ref(); // Store the selected companion for editing
 
@@ -15,20 +15,28 @@ type IdentityTypeOption = {
   text: string;
 };
 // Array of identity type options
-const identityTypeOptions: IdentityTypeOption[] = [
-  { value: 1, text: "اثبات هويه" },
-  { value: 2, text: "جواز سفر" },
-];
+const getIdentityTypeText = (type: number) => {
+  switch (type) {
+    case 1:
+      return "اثبات هويه";
+    case 2:
+      return "جواز سفر";
+    // Add more cases for other identity types
 
-const submitForm = () => {
-  const index = props.compList.findIndex(
-    (companion: any) => companion.id === selectedCompanion.value.id
-  );
-  if (index !== -1) {
-    props.compList[index] = { ...selectedCompanion.value }; // Update the companion in the compList
   }
-  dialog.value = false;
 };
+
+
+function deleteCompanion(companion: any) {
+
+  const index = props.compList.findIndex((c: any) => c.id === companion.data.id);
+  console.log(companion)
+  console.log(index)
+  if (index !== -1) {
+    props.compList.splice(index, 1);
+  }
+
+}
 </script>
 
 <template>
@@ -37,157 +45,27 @@ const submitForm = () => {
     <Column field="lastName" header="لقب المرافق"></Column>
 
     <Column field="jobTitle" header="صفة المرافق"></Column>
-    <Column field="identityType" header="نوع الاثبات"> </Column>
+    <Column field="identityType" header="نوع الاثبات">
+    <template #body="{data}">
+      {{ getIdentityTypeText(data.identityType) }}
+      
+
+    </template></Column>
     <Column field="identityNo" header="رقم الاثبات"></Column>
-    <Column>
+    <Column header="  الاجراءات ">
       <template #body="slotProps">
+        
         <Button
-          @click="openDialog(slotProps.data)"
-          icon="fa-solid fa-circle-info"
-          severity="info"
+          class="btn btn-danger"
+          @click="deleteCompanion(slotProps)"
+          v-tooltip.top="{ value: 'حذف', fitContent: true }"
+          icon="fa-solid fa-trash"
+          severity="danger"
           text
           rounded
-          v-tooltip="{ value: 'التفاصيل', fitContent: true }"
-          style="width: 2rem; height: 1rem; margin-left: 0.5rem"
-        />
-        <div v-if="dialog">
-          <Dialog
-            header="تعديل المُرافق"
-            contentStyle="height: 200px; padding: 20px;"
-            v-model:visible="dialog"
-            :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
-            :style="{ width: '60vw' }"
-            :modal="true"
-          >
-            <form @submit.prevent="submitForm">
-              <div class="grid p-fluid">
-                <div class="field col-12 md:col-4">
-                  <span class="p-float-label">
-                    <InputText
-                      id="firstName"
-                      type="text"
-                      v-model="selectedCompanion.firstName"
-                    />
-                    <label for="firstName">الاسم </label>
-                    <!-- <div style="height: 2px">
-                      <span
-                        style="color: red; font-weight: bold; font-size: small"
-                        v-for="error in v$.fullName.$errors"
-                        :key="error.$uid"
-                        class="p-error"
-                      >
-                        {{ error.$message }}
-                      </span>
-                    </div> -->
-                  </span>
-                </div>
-
-                <div class="field col-12 md:col-4">
-                  <span class="p-float-label">
-                    <InputText
-                      id="firstName"
-                      type="text"
-                      v-model="selectedCompanion.lastName"
-                    />
-                    <label for="firstName">اللقب </label>
-                    <!-- <div style="height: 2px">
-                      <span
-                        style="color: red; font-weight: bold; font-size: small"
-                        v-for="error in v$.fullName.$errors"
-                        :key="error.$uid"
-                        class="p-error"
-                      >
-                        {{ error.$message }}
-                      </span>
-                    </div> -->
-                  </span>
-                </div>
-
-                <div class="field col-12 md:col-4">
-                  <span class="p-float-label">
-                    <InputText
-                      id="jobTitle"
-                      type="text"
-                      v-model="slotProps.data.jobTitle"
-                    />
-                    <label for="jobTitle">صفة المرافق</label>
-                    <!-- <div style="height: 2px">
-                      <span
-                        style="color: red; font-weight: bold; font-size: small"
-                        v-for="error in v$.jobTitle.$errors"
-                        :key="error.$uid"
-                        class="p-error"
-                      >
-                        {{ error.$message }}
-                      </span>
-                    </div> -->
-                  </span>
-                </div>
-
-                <div class="field col-12 md:col-4">
-                  <span class="p-float-label">
-                    <Dropdown
-                      id="identityType"
-                      v-model="slotProps.data.identityType"
-                      placeholder="اختر نوع الاثبات"
-                      emptyMessage="لاتوجد انواع"
-                      :options="identityTypeOptions"
-                      optionValue="value"
-                      optionLabel="text"
-                    />
-                    <!-- <div style="height: 2px">
-                      <span
-                        style="color: red; font-weight: bold; font-size: small"
-                        v-for="error in v$.identityType.$errors"
-                        :key="error.$uid"
-                        class="p-error"
-                      >
-                        {{ error.$message }}
-                      </span>
-                    </div> -->
-                    <label for="identityType">نوع الاثبات</label>
-                  </span>
-                </div>
-
-                <div class="field col-12 md:col-4">
-                  <span class="p-float-label">
-                    <InputText
-                      id="identityNo"
-                      type="text"
-                      v-model="slotProps.data.identityNo"
-                    />
-                    <label for="identityNo">رقم الاثبات</label>
-                    <!-- <div style="height: 2px">
-                      <span
-                        style="color: red; font-weight: bold; font-size: small"
-                        v-for="error in v$.identityNo.$errors"
-                        :key="error.$uid"
-                        class="p-error"
-                      >
-                        {{ error.$message }}
-                      </span>
-                    </div> -->
-                  </span>
-                </div>
-              </div>
-            </form>
-            <template #footer>
-              <Button
-                @click="submitForm"
-                class="p-button-primry"
-                icon="fa-solid fa-plus"
-                label="تعديل"
-                type="submit"
-                :disabled="props.editable"
-              />
-
-              <Toast position="bottom-left" />
-
-              <!-- <Button label="No" icon="pi pi-times" @click="closeModal" class="p-button-text"/>
-                  <Button label="Yes" icon="pi pi-check" @click="closeModal" autofocus /> -->
-            </template>
-          </Dialog>
-        </div>
+          aria-label="Cancel"
+          :disabled="props.editable"
+        ></Button>
       </template>
     </Column>
   </DataTable>

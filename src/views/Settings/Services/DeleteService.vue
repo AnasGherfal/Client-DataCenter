@@ -49,28 +49,31 @@ const delet = () => {
   <Dialog
     v-model:visible="deleteProductDialog"
     :style="{ width: '450px' }"
-    header="Confirm"
+    header="تأكيد"
     :modal="true"
   >
     <div class="confirmation-content">
-      <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+      <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem; color:red" />
       <span v-if="pakge"
-        >هل انت متأكد من حدف <b>{{ pakge.name }}</b> ؟</span
+        >هل انت متأكد من حذف <b>{{ pakge.name }}</b> ؟</span
       >
     </div>
     <template #footer>
+      
       <Button
-        label="No"
-        icon="pi pi-times"
-        text
-        @click="deleteProductDialog = false"
-      />
-      <Button
-        label="Yes"
+        label="نعم"
+        style="color:green"
         icon="pi pi-check"
         :loading="loading"
         text
         @click="delet"
+      />
+      <Button
+        label="لا"
+        style="color:red"
+        icon="pi pi-times"
+        text
+        @click="deleteProductDialog = false"
       />
     </template>
   </Dialog>

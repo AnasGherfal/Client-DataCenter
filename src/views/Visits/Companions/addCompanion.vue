@@ -108,8 +108,9 @@ if (
       jobTitle: companion.jobTitle,
     };
     props.compList.push(newItem);
+    resetForm()
     closeModal();
-  }
+  }else
   toast.add({
     severity: "warn",
     summary: "فشل",

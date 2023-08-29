@@ -59,7 +59,6 @@ const docTypes = [
 ];
 
 onMounted(() => {
-
   if (dataClinet.customer.files[1]?.docType) {
     customer.files[1].docType = dataClinet.customer.files[1].docType;
   }
@@ -466,21 +465,7 @@ const downloadFile = async (id: any) => {
                       :value="displayedFileName[0]"
                       :disabled="true"
                     />
-                    <label for="secondaryPhone">اسم الملف</label>
-                  </span>
-                </div>
-                <div class="field col-4 md:col-4 lg:col-3">
-                  <span class="p-float-label">
-                    <Dropdown
-                      id="docType"
-                      class="custom-dropdown"
-                      v-model="customer.files[0].docType"
-                      :options="docTypes"
-                      optionValue="value"
-                      optionLabel="text"
-                      :disabled="actEdit"
-                    />
-                    <label for="secondaryPhone">نوع الملف</label>
+                    <label for="secondaryPhone">تعريف شخصي</label>
                   </span>
                 </div>
 
@@ -495,12 +480,7 @@ const downloadFile = async (id: any) => {
                   >
                     تحميل
                   </Button>
-                  <Button
-                    icon="fa-solid fa-eye"
-                    class="p-button-text p-button-info"
-                  >
-                    عرض
-                  </Button>
+
                   <Button
                     v-if="!actEdit"
                     icon="fa-solid fa-upload"
@@ -525,15 +505,6 @@ const downloadFile = async (id: any) => {
                       fitContent: true,
                     }"
                   />
-                  <Button
-                    icon="fa-solid fa-eye"
-                    class="p-button-icon-only p-button-info ml-2"
-                    text
-                    v-tooltip.top="{
-                      value: 'عرض',
-                      fitContent: true,
-                    }"
-                  />
 
                   <Button
                     v-if="!actEdit"
@@ -548,7 +519,8 @@ const downloadFile = async (id: any) => {
                   >
                   </Button>
                 </div>
-
+              </div>
+              <div class="grid p-fluid">
                 <div class="field col-4 md:col-4 lg:col-4">
                   <span class="p-float-label">
                     <InputText
@@ -565,21 +537,7 @@ const downloadFile = async (id: any) => {
                       :value="displayedFileName[1]"
                       :disabled="true"
                     />
-                    <label for="fileName">اسم الملف</label>
-                  </span>
-                </div>
-                <div class="field col-4 md:col-4 lg:col-3">
-                  <span class="p-float-label">
-                    <Dropdown
-                      id="docType"
-                      class="custom-dropdown"
-                      v-model="customer.files[1].docType"
-                      :options="docTypes"
-                      optionValue="value"
-                      optionLabel="text"
-                      :disabled="actEdit"
-                    />
-                    <label for="docType">نوع الملف</label>
+                    <label for="fileName">تخويل من الشركة</label>
                   </span>
                 </div>
 
@@ -594,12 +552,7 @@ const downloadFile = async (id: any) => {
                   >
                     تحميل
                   </Button>
-                  <Button
-                    icon="fa-solid fa-eye"
-                    class="p-button-text p-button-info"
-                  >
-                    عرض
-                  </Button>
+
                   <Button
                     v-if="!actEdit"
                     icon="fa-solid fa-upload"
@@ -620,15 +573,6 @@ const downloadFile = async (id: any) => {
                     text
                     v-tooltip.top="{
                       value: 'تحميل',
-                      fitContent: true,
-                    }"
-                  />
-                  <Button
-                    icon="fa-solid fa-eye"
-                    class="p-button-icon-only p-button-info ml-2"
-                    text
-                    v-tooltip.top="{
-                      value: 'عرض',
                       fitContent: true,
                     }"
                   />

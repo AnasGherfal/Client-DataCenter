@@ -260,7 +260,12 @@ function filteredDocTypeOptions(index: number) {
         </span>
       </div>
       <!-- First File Input and DocType MultiSelect -->
-      <div class="field col-12 md:col-6 lg:col-5">
+      <div class="field col-12 md:col-4 lg:col-4">
+        <div
+        class="file-input-label-text"
+      >
+        تعريف شخصي
+      </div>
         <label class="file-input-label" for="fileInput1">
           <div class="file-input-content">
             <div
@@ -289,20 +294,16 @@ function filteredDocTypeOptions(index: number) {
         >
           {{ firstFileError }}
         </div>
-        <Dropdown
-          v-if="representatives.firstFile?.file"
-          :modelValue="representatives.firstFile.docType"
-          :options="filteredDocTypeOptions(0)"
-          optionValue="value"
-          optionLabel="label"
-          placeholder="Select a Document Type"
-          :visible="false"
-          @update:modelValue="(value: number) => (representatives.firstFile.docType = value)"
-        />
+
       </div>
 
       <!-- Second File Input and DocType MultiSelect -->
-      <div class="field col-12 md:col-6 lg:col-5">
+      <div class="field col-12 md:col-4 lg:col-4">
+        <div
+                      class="file-input-label-text"
+                    >
+                      تخويل من الشركة
+                    </div>
         <label class="file-input-label" for="fileInput2">
           <div class="file-input-content">
             <div
@@ -330,16 +331,7 @@ function filteredDocTypeOptions(index: number) {
         >
           {{ secondFileError }}
         </div>
-        <Dropdown
-          v-if="representatives.secondFile?.file"
-          :modelValue="representatives.secondFile.docType"
-          :options="filteredDocTypeOptions(1)"
-          optionValue="value"
-          optionLabel="label"
-          placeholder="Select a Document Type"
-          :visible="false"
-          @update:modelValue="(value: number) => (representatives.secondFile.docType = value)"
-        />
+
       </div>
     </div>
     <Button
@@ -368,6 +360,11 @@ function filteredDocTypeOptions(index: number) {
   text-align: center;
   padding: 0.7rem;
   cursor: pointer;
+}
+.file-input-label-text {
+  font-size: small;
+  color:#9aafc3;
+  margin-bottom: 0.1rem;
 }
 
 .file-input-label::after {

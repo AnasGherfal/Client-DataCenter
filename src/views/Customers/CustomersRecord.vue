@@ -140,7 +140,6 @@ const onSearch = (event: KeyboardEvent) => {
           </div>
           <DataTable
             v-else
-            filterDisplay="row"
             ref="dt"
             :value="store.customers"
             dataKey="id"
@@ -153,7 +152,6 @@ const onSearch = (event: KeyboardEvent) => {
             :pageLinkSize="store.totalPages"
             :currentPage="store.currentPage - 1"
             paginatorTemplate="  "
-            :globalFilter="store.name"
           >
             <template #paginatorstart>
               <Button
@@ -176,7 +174,7 @@ const onSearch = (event: KeyboardEvent) => {
             </template>
 
             <template #header>
-              <div class="grid p-fluid">
+              <div class="grid p-fluid mt-1">
                 <div class="field col-12 md:col-6 lg:col-4">
                   <div
                     class="table-header flex flex-column md:flex-row justiify-content-between"
@@ -266,7 +264,10 @@ const onSearch = (event: KeyboardEvent) => {
               style="min-width: 6rem"
             ></Column>
 
-            <Column style="min-width: 11rem">
+            <Column style="min-width: 11rem"
+            header="  الاجراءات "
+>
+              
               <template #body="slotProps">
                 <span v-if="slotProps.data.status !== 5">
                   <DeleteCustomer

@@ -27,7 +27,6 @@ export const useCustomersStore = defineStore("customer", () => {
     await customersApi
       .get(pageNumber.value, pageSize.value, name.value)
       .then(function (response) {       
-        name.value = response.data.content.name;
  
         customers.value = response.data.content;
         totalPages.value = response.data.totalPages;
