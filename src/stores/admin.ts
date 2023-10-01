@@ -2,7 +2,7 @@ import { ref, onMounted } from "vue";
 import { defineStore } from "pinia";
 import { admin } from "@/api/admin";
 
-export const useUserStore = defineStore("user", () => {
+export const useAdminStore = defineStore("user", () => {
   const userData = ref();
   const loading = ref(true);
   const data = ref(null);
@@ -11,10 +11,10 @@ export const useUserStore = defineStore("user", () => {
   const pageSize = ref(10);
   const currentPage = ref(0);
   onMounted(async () => {
-    getUsers();
+    getAdmins();
   });
 
-  function getUsers() {
+  function getAdmins() {
     admin
       .get(pageNumber.value, pageSize.value)
       .then(function (response) {
@@ -29,7 +29,7 @@ export const useUserStore = defineStore("user", () => {
   }
   return {
     userData,
-    getUsers,
+    getAdmins,
     loading,
     data,
     totalPages,

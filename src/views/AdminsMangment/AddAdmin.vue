@@ -3,20 +3,20 @@ import { computed, reactive, ref } from "vue";
 import { required, helpers, email, minLength } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
-import BackButton from "@/components/BackButton.vue";
-import router from "@/router";
-import { user } from "@/api/user";
-import type { ResponseUserModel } from "../../Modules/UserModule/UserModuleResponse";
-import { useUserStore } from "@/stores/user";
+import BackButton from "../../components/BackButton.vue"
+import router from "../../router";
+import { admin } from "../../api/admin";
+import type { ResponseAdminModel } from "../../Modules/AdminModule/AdminModuleResponse";
+import { useAdminStore } from "../../stores/admin";
 
 const loading = ref(false);
-const store = useUserStore();
+const store = useAdminStore();
 
-const state: ResponseUserModel = reactive({
+const state: ResponseAdminModel = reactive({
   fullName: "",
   email: "",
-  empId: null,
-  permissions: "",
+  empId: 0,
+  permissions: 0,
 });
 
 
@@ -75,10 +75,10 @@ const submitForm = async () => {
     console.log(state.permissions);
     console.log(state);
 
-    user
+    admin
       .create(state)
       .then(function (response) {
-        store.getUser();
+        store.getAdmins();
         console.log(response);
 
         toast.add({

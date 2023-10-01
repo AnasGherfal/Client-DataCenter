@@ -1,9 +1,15 @@
 import type { ResponseAdminModel } from "@/Modules/AdminModule/AdminModuleResponse";
 import {httpClient} from "./index";
+import {isAuthorized, getToken} from "@/auth"
 
+const token = getToken();
 export const admin = {
   get: async function (pageNumber: number, pageSize: number) {
-    const response = await httpClient.get(`/Admins?PageNumber=${pageNumber}&PageSize=${pageSize}`);
+    const response = await httpClient.get(`/Admins?PageNumber=${pageNumber}&PageSize=${pageSize}`, {
+      headers: {
+          Authorization:` Bearer ${token}`,
+      }
+    });
     return response;
   },
   getById: async function (id: any) {

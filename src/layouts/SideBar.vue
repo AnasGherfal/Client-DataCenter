@@ -47,7 +47,7 @@ const items = ref([
       {
         label: "سجل المشرفين",
         icon: "fa-solid fa-users-gear",
-        to: "/UsersRecord",
+        to: "/AdminsRecord",
       },
     ],
   },

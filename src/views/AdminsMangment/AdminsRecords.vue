@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { user } from "../../api/user";
-import AddButtonF from "../../components/AddButton.vue";
-import { useUserStore } from "@/stores/user";
+import { admin } from "../../api/admin";
+import AddButton from "../../components/AddButton.vue";
+import { useAdminStore } from "@/stores/admin";
 import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
 import LockButton from "@/components/LockButton.vue";
 import DeleteCustomer from "../../components/DeleteButton.vue";
 
-const store = useUserStore();
+const store = useAdminStore();
 const toast = useToast();
 
 const rotName = ref();
@@ -21,10 +21,10 @@ function getId(index: {}) {
 const deleteUser = () => {
   loading.value = true;
 
-  user
+  admin
     .remove(rotName.value.id)
     .then((response) => {
-      store.getUsers();
+      store.getAdmins();
       toast.add({
         severity: "success",
         summary: "تم الحذف",
@@ -69,7 +69,7 @@ const goToNextPage = () => {
     store.currentPage += 1;
     store.pageNumber += 1; // Increment the pageNumber value
     store.loading = true;
-    store.getUsers();
+    store.getAdmins();
   }
 };
 
@@ -79,7 +79,7 @@ const goToPreviousPage = () => {
     store.pageNumber -= 1; // Decrement the pageNumber value
     store.loading = true;
 
-    store.getUsers();
+    store.getAdmins();
   }
 };
 </script>
@@ -91,7 +91,7 @@ const goToPreviousPage = () => {
     <card>
       <template #title>
         سجل المستخدمين
-        <AddButton name-button="اضافة عميل" rout-name="/UsersRecord/AddUser" />
+        <AddButton name-button="اضافة عميل" rout-name="/AdminRecord/AddAdmin" />
 
         <Divider />
       </template>
@@ -250,7 +250,7 @@ const goToPreviousPage = () => {
                 :id="slotProps.data.id"
                 :name="slotProps.data.id"
                 :status="slotProps.data.status"
-                @getdata="store.getUsers()"
+                @getdata="store.getAdmins()"
               />
             </template>
           </Column>

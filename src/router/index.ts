@@ -30,19 +30,19 @@ const router = createRouter({
       component: () => import("../views/NotFound.vue"),
     },
     {
-      path: "/UsersRecord",
-      name: "UsersRecord",
-      component: () => import("../views/UsersMangment/UserRecords.vue"),
+      path: "/AdminsRecord",
+      name: "AdminsRecord",
+      component: () => import("../views/AdminsMangment/AdminsRecords.vue"),
       children: [
         {
-          path: "AddUser",
+          path: "AddAdmin",
           props: true,
-          component: () => import("../views/UsersMangment/AddUser.vue"),
+          component: () => import("../views/AdminsMangment/AddAdmin.vue"),
         },
         {
-          path: "UsersProfile/:id",
+          path: "AdminsProfile/:id",
           props: true,
-          component: () => import("../views/UsersMangment/ProfileUser.vue"),
+          component: () => import("../views/AdminsMangment/ProfileAdmin.vue"),
         },
       ],
     },

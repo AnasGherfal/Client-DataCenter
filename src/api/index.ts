@@ -21,6 +21,7 @@ const config: CreateAxiosDefaults = {
 };
 
 const httpClient = axios.create(config);
+const secondHttpClient = axios.create(config);
 
 // Add interceptor to set authorization token
 httpClient.interceptors.request.use((config) => {
@@ -31,4 +32,4 @@ httpClient.interceptors.request.use((config) => {
   return config;
 });
 
-export { httpClient };
+export { httpClient, secondHttpClient };

@@ -1,6 +1,6 @@
 export interface ResponseAdminModel {
     fullName :string ,
-    empId :number | null,
+    empId :number ,
     email :  string,
-    permissions:  any
+    permissions:  number
   }
