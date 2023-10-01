@@ -8,19 +8,19 @@ import type { Service } from '../../../Modules/ServicesModule/ServicesModule';
 import ServiceForm from "./serviceForm.vue";
 import { serviceApi } from "../../../api/service";
 
-const pakgeInfo = defineProps<{
-  pakge: Service;
+const props = defineProps<{
+  pakage: Service;
 }>();
 const emit = defineEmits(["getList"]);
 
 const state: Service = reactive({
-  id: pakgeInfo.pakge.id,
-  name: pakgeInfo.pakge.name,
-  amountOfPower: pakgeInfo.pakge.amountOfPower,
-  acpPort: pakgeInfo.pakge.acpPort,
-  dns: pakgeInfo.pakge.dns,
-  monthlyVisits: pakgeInfo.pakge.monthlyVisits,
-  price: pakgeInfo.pakge.price,
+  id: props.pakage.id,
+  name: props.pakage.name,
+  amountOfPower: props.pakage.amountOfPower,
+  acpPort: props.pakage.acpPort,
+  dns: props.pakage.dns,
+  monthlyVisits: props.pakage.monthlyVisits,
+  price: props.pakage.price,
 });
 
 const rules = computed(() => {
@@ -44,7 +44,7 @@ const v$ = useVuelidate(rules, state);
 
 const onFormSubmit = async (state: Service) => {
   serviceApi
-    .edit(pakgeInfo.pakge.id, state)
+    .edit(props.pakage.id, state)
     .then((Response) => {
       emit("getList");
       toast.add({
@@ -68,6 +68,13 @@ const displayModal = ref(false);
 
 const openModal = () => {
   displayModal.value = true;
+  state.id= props.pakage.id,
+  state.name= props.pakage.name,
+  state.amountOfPower=props.pakage.amountOfPower,
+  state.acpPort=props.pakage.acpPort,
+  state.dns = props.pakage.dns,
+  state.monthlyVisits = props.pakage.monthlyVisits,
+  state.price = props.pakage.price;
 };
 const closeModal = () => {
   displayModal.value = false;
@@ -82,6 +89,7 @@ const closeModal = () => {
     :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
     :style="{ width: '60vw' }"
     :modal="true"
+    
   >
     <ServiceForm
       @form-submit="onFormSubmit"

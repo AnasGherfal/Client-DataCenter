@@ -108,7 +108,7 @@ const closeModal = () => {
   <Button
     @click="openModal"
     icon="fa-solid fa-plus"
-    class="p-button-primary p-button"
+    class="p-button-primary p-button mb-4"
     label="إضافة ساعة جديده"
   >
   </Button>

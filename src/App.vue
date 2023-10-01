@@ -31,8 +31,8 @@ const authorized = isAuthorized();
         class="content"
         style="
           transition: all 0.5s ease;
-          width: 73%;
-          margin-right: 26%;
+          width: 78%;
+          margin-right: 22%;
           padding: 25px;
         "
       >

@@ -109,7 +109,12 @@ const onCalendarClick = () => {
 
 <template>
   <div>
+
+    <AddTimeShifts @getTimeShifts="getTimeShifts"> </AddTimeShifts>
+
+    
     <form @submit.prevent="submitForm">
+      
       <div class="grid p-fluid">
         <div class="field col-12 md:col-4 mt-2">
           <span class="p-float-label">
@@ -128,6 +133,7 @@ const onCalendarClick = () => {
           </span>
         </div>
       </div>
+      
 
       <div v-if="selectedHours">
         <!-- <LockButton @getdata="getTimeShifts()" :name="selectedHours.name" :id="selectedHours.id"
@@ -136,13 +142,6 @@ const onCalendarClick = () => {
         <h3 style="display: inline-block">
           {{ selectedHours.name }}
         </h3>
-
-        <DeleteTimeShifts
-          v-if="selectedHours.status !== 5"
-          :name="selectedHours"
-          @getTimeShifts="getTimeShifts()"
-        >
-        </DeleteTimeShifts>
 
         <div class="grid p-fluid">
           <div class="field col-12 md:col-4 mt-2">
@@ -188,7 +187,7 @@ const onCalendarClick = () => {
             <InputNumber
               inputId="priceForFirstHour"
               v-model="selectedHours.priceForFirstHour"
-              suffix=" دينار"
+              suffix=" د.ل"
               :step="0.25"
               :min="0"
               :allowEmpty="false"
@@ -201,7 +200,7 @@ const onCalendarClick = () => {
             <InputNumber
               inputId="priceForRemainingHour"
               v-model="selectedHours.priceForRemainingHour"
-              suffix=" دينار"
+              suffix=" د.ل"
               :step="0.25"
               :min="0"
               :allowEmpty="false"
@@ -210,23 +209,27 @@ const onCalendarClick = () => {
             />
           </div>
         </div>
+        <Button
+          @click="openSave('bottom')"
+          :disabled="!formChanged"
+          icon="fa-solid fa-floppy-disk fa-flip fa-flip-hover"
+          style="
+            --fa-animation-duration: 2s;
+            --fa-animation-delay: 5s;
+            --fa-animation-iteration-count: 5;
+          "
+          label="تخزين"
+          class="ml-2"
+        />
+        <DeleteTimeShifts
+          v-if="selectedHours.status !== 5"
+          :name="selectedHours"
+          @getTimeShifts="getTimeShifts()"
+        >
+        </DeleteTimeShifts>
       </div>
 
       <Divider />
-
-      <Button
-        @click="openSave('bottom')"
-        :disabled="!formChanged"
-        icon="fa-solid fa-floppy-disk fa-flip fa-flip-hover"
-        style="
-          --fa-animation-duration: 2s;
-          --fa-animation-delay: 5s;
-          --fa-animation-iteration-count: 5;
-        "
-        label="تخزين"
-        class="ml-2"
-      />
-      <AddTimeShifts @getTimeShifts="getTimeShifts"> </AddTimeShifts>
 
       <Dialog
         v-model:visible="dialog"
@@ -245,13 +248,14 @@ const onCalendarClick = () => {
         <template #footer>
           <Button
             label="نعم"
+            style="color:green"
             icon="pi pi-check"
             text
             @click="submitForm"
             :loading="loading"
           />
 
-          <Button label="لا" icon="pi pi-times" text @click="dialog = false" />
+          <Button label="لا" style="color:red" icon="pi pi-times" text @click="dialog = false" />
         </template>
       </Dialog>
       <Toast position="bottom-left" />

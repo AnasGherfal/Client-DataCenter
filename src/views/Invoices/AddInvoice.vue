@@ -20,10 +20,9 @@ const customerSelected = ref(false); // Flag to track whether a customer is sele
 
 const invoices: InvoiceResponde = reactive({
   description: "",
-  invoiceNo: "",
   startDate: "",
   endDate: "",
-  subscriptionId: 0,
+  subscriptionId: null,
 });
 
 const rules = computed(() => {
@@ -37,7 +36,6 @@ const rules = computed(() => {
         minValue(invoices.startDate)
       ),
     },
-
   };
 });
 
@@ -67,7 +65,6 @@ watch(customerselect, async (newValue) => {
       // Update the representatives and subscriptions using data from the selected customer
       subscriptions.value = customerStore.customers[0].subsicrptions;
 
-
       customerSubscriptions.value = subscriptions.value;
 
       loading.value = false;
@@ -78,7 +75,6 @@ watch(customerselect, async (newValue) => {
     }
   }
 });
-
 
 const convertedStartDate = computed(() => {
   if (!invoices.startDate) return undefined; // Return undefined if startDate is empty
@@ -99,7 +95,6 @@ const submitForm = async () => {
       endDate: invoices.endDate,
       description: invoices.description,
       subscriptionId: subscriptionId,
-      invoiceNo: invoices.invoiceNo,
     });
 
     console.log(data);
@@ -134,15 +129,13 @@ const resetForm = () => {
   invoices.description = "";
   invoices.startDate = "";
   invoices.endDate = "";
-  invoices.subscriptionId = 0;
-  invoices.invoiceNo = "";
+  invoices.subscriptionId = null;
 };
-
 
 const search = async (query: string) => {
   await customerStore.searchByName(query); // Call the searchByName function
   filteredCustomer.value = customerStore.customers; // Use the updated customers list
-  customerSelected.value = true
+  customerSelected.value = true;
 };
 const searchOnEnter = (event: KeyboardEvent, query: string) => {
   if (event.key === "Enter") {
@@ -197,13 +190,14 @@ const searchOnEnter = (event: KeyboardEvent, query: string) => {
                 />
                 <label for="startDate">تاريخ بداية الاشتراك</label>
                 <div style="height: 2px">
-                  <error
-                    v-for="error in v$.startDate.$errors"
-                    :key="error.$uid"
-                    class="p-error"
-                    >{{ error.$message }}</error
-                  >
-                </div>
+                    <span
+                      v-for="error in v$.startDate.$errors"
+                      :key="error.$uid"
+                      style="color: red; font-weight: bold; font-size: small"
+                    >
+                      {{ error.$message }}</span
+                    >
+                  </div>
               </span>
             </div>
 
@@ -220,13 +214,14 @@ const searchOnEnter = (event: KeyboardEvent, query: string) => {
                 />
                 <label for="endtDate">تاريخ انتهاء الاشتراك</label>
                 <div style="height: 2px">
-                  <error
-                    v-for="error in v$.endDate.$errors"
-                    :key="error.$uid"
-                    class="p-error"
-                    >{{ error.$message }}</error
-                  >
-                </div>
+                    <span
+                      v-for="error in v$.endDate.$errors"
+                      :key="error.$uid"
+                      style="color: red; font-weight: bold; font-size: small"
+                    >
+                      {{ error.$message }}</span
+                    >
+                  </div>
               </span>
             </div>
             <div class="field col-12 md:col-6 lg:col-4">
@@ -241,21 +236,15 @@ const searchOnEnter = (event: KeyboardEvent, query: string) => {
                   :selectionLimit="1"
                 />
                 <label for="subscriptionType">اشتراكات</label>
-                <div style="height: 2px">
-                  <error
-                    v-for="error in v$.subscriptionId.$errors"
-                    :key="error.$uid"
-                    class="p-error"
-                    >{{ error.$message }}</error
-                  >
-                </div>
-              </span>
-            </div>
-
-            <div class="field col-12 md:col-6 lg:col-4">
-              <span class="p-float-label">
-                <InputText v-model="invoices.invoiceNo" rows="5" cols="77" />
-                <label for="notes"> invoiceNo</label>
+                  <div style="height: 2px">
+                    <span
+                      v-for="error in v$.subscriptionId.$errors"
+                      :key="error.$uid"
+                      style="color: red; font-weight: bold; font-size: small"
+                    >
+                      {{ error.$message }}</span
+                    >
+                  </div>
               </span>
             </div>
 

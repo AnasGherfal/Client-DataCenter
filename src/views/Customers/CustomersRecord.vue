@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, watch } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
 import { FilterMatchMode } from "primevue/api";
 import { useCustomersStore } from "@/stores/customers";
 import { useToast } from "primevue/usetoast";
@@ -9,6 +9,13 @@ import { customersApi } from "@/api/customers";
 import DeleteCustomer from "../../components/DeleteButton.vue";
 
 const toast = useToast();
+const customers = ref();
+  const loading = ref(true);
+  const totalPages = ref(1);
+  const pageNumber = ref(1);
+  const pageSize = ref(10);
+  const currentPage = ref(0);
+  const name = ref<string>("");
 const store = useCustomersStore();
 interface Filters {
   [key: string]: { value: string; matchMode: string };
@@ -81,29 +88,56 @@ const getSelectedStatusLabel = (value: any) => {
 //     store.loading = false;
 //   }
 // });
+
+onMounted(async () => {
+    getCustomers();
+  });
+  async function searchByName(searchName: string) {
+  
+    name.value = searchName;
+    await getCustomers(); // Await the getCustomers function to wait for the API call to complete
+  }
+  async function getCustomers() {
+    if (name.value === undefined || name.value === null) {
+      name.value = '';
+    }
+    await customersApi
+      .get(pageNumber.value, pageSize.value, name.value)
+      .then(function (response) {       
+ 
+        customers.value = response.data.content;
+        totalPages.value = response.data.totalPages;
+        currentPage.value = response.data.currentPage;
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+      .finally(() => {
+        loading.value = false;
+      });
+  }
 const goToNextPage = () => {
-  if (store.currentPage < store.totalPages) {
-    store.currentPage += 1;
-    store.pageNumber += 1; // Increment the pageNumber value
-    store.loading = true;
-    store.getCustomers();
-    console.log(store.name)
+  if (currentPage < totalPages) {
+    currentPage.value += 1;
+    pageNumber.value += 1; // Increment the pageNumber value
+    loading.value = true;
+    getCustomers();
   }
 };
 
 const goToPreviousPage = () => {
-  if (store.currentPage > 1) {
-    store.currentPage -= 1;
-    store.pageNumber -= 1; // Decrement the pageNumber value
-    store.loading = true;
+  if (currentPage.value > 1) {
+    currentPage.value -= 1;
+    pageNumber.value -= 1; // Decrement the pageNumber value
+    loading.value = true;
 
-    store.getCustomers();
+    getCustomers();
   }
 };
 // Function to handle the Enter key press and trigger the search
 const onSearch = (event: KeyboardEvent) => {
   if (event.key === "Enter") {
-    store.searchByName(store.name); // Call the searchByName function with the provided name
+    searchByName(name.value); // Call the searchByName function with the provided name
   }
 };
 </script>
@@ -122,7 +156,7 @@ const onSearch = (event: KeyboardEvent) => {
       <template #content>
         <div>
           <div
-            v-if="store.loading"
+            v-if="loading"
             class="border-round border-1 surface-border p-4 surface-card"
           >
             <div class="grid p-fluid">
@@ -140,9 +174,8 @@ const onSearch = (event: KeyboardEvent) => {
           </div>
           <DataTable
             v-else
-            filterDisplay="row"
             ref="dt"
-            :value="store.customers"
+            :value="customers"
             dataKey="id"
             :paginator="true"
             :rows="10"
@@ -150,33 +183,32 @@ const onSearch = (event: KeyboardEvent) => {
             :globalFilterFields="['name', 'status']"
             :rowsPerPageOptions="[5, 10, 25]"
             currentPageReportTemplate="  عرض {first} الى {last} من {totalRecords} عميل"
-            :pageLinkSize="store.totalPages"
-            :currentPage="store.currentPage - 1"
+            :pageLinkSize="totalPages"
+            :currentPage="currentPage - 1"
             paginatorTemplate="  "
-            :globalFilter="store.name"
           >
             <template #paginatorstart>
               <Button
                 icon="pi pi-angle-right"
                 class="p-button-rounded p-button-primary p-paginator-element"
-                :disabled="store.currentPage === 1"
+                :disabled="currentPage === 1"
                 @click="goToPreviousPage"
               />
               <span class="p-paginator-pages">
-                الصفحة {{ store.currentPage }} من {{ store.totalPages }}
+                الصفحة {{ currentPage }} من {{ totalPages }}
               </span>
             </template>
             <template #paginatorend>
               <Button
                 icon="pi pi-angle-left"
                 class="p-button-rounded p-button-primary p-paginator-element"
-                :disabled="store.currentPage === store.totalPages"
+                :disabled="currentPage === totalPages"
                 @click="goToNextPage"
               />
             </template>
 
             <template #header>
-              <div class="grid p-fluid">
+              <div class="grid p-fluid mt-1">
                 <div class="field col-12 md:col-6 lg:col-4">
                   <div
                     class="table-header flex flex-column md:flex-row justiify-content-between"
@@ -185,7 +217,7 @@ const onSearch = (event: KeyboardEvent) => {
                       <i class="fa-solid fa-magnifying-glass" />
                       <InputText
                       ref="searchInput"
-                        v-model="store.name"
+                        v-model="name"
                         placeholder="البحث"
                         @keydown.enter="onSearch"
                       />
@@ -266,7 +298,10 @@ const onSearch = (event: KeyboardEvent) => {
               style="min-width: 6rem"
             ></Column>
 
-            <Column style="min-width: 11rem">
+            <Column style="min-width: 11rem"
+            header="  الاجراءات "
+>
+              
               <template #body="slotProps">
                 <span v-if="slotProps.data.status !== 5">
                   <DeleteCustomer
@@ -295,7 +330,7 @@ const onSearch = (event: KeyboardEvent) => {
                   :id="slotProps.data.id"
                   :name="slotProps.data.name"
                   :status="slotProps.data.status"
-                  @getdata="store.getCustomers"
+                  @getdata="getCustomers"
                 />
               </template>
             </Column>

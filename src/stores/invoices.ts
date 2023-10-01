@@ -30,6 +30,9 @@ export const useInvoicesStore = defineStore("visit", () => {
   //   invoice.name = searchName;
   //   await getInvoices(); // Await the getCustomers function to wait for the API call to complete
   // }
+  onMounted(async () => {
+    getInvoices();
+  });
    function searchByDateAndName(
     searchName: string,
     serachStartDate: any,

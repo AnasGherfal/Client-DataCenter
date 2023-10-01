@@ -126,7 +126,6 @@ const goToPreviousPage = () => {
           :value="store.visits"
           dataKey="id"
           ref="dt"
-          filterDisplay="row"
           :globalFilterFields="['customerName', 'visitReason']"
           :paginator="true"
           :rows="10"
@@ -217,7 +216,10 @@ const goToPreviousPage = () => {
           </template>
         
         </Column>
-          <Column field="price" header="السعر" style="min-width: 8rem"></Column>
+          <Column field="price" header="السعر" style="min-width: 8rem;direction: revert">
+                      <template #body="slotProps">
+                {{ (slotProps.data.price) }} د.ل
+            </template></Column>
           <Column field="status" header="الحاله" style="min-width: 1rem">
             <template #body="{ data }">
               <Tag

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, watch } from "vue";
-import { required, helpers } from "@vuelidate/validators";
+import { required, helpers, minValue } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import { useVistisStore } from "@/stores/visits";
@@ -56,6 +56,14 @@ const rules = computed(() => {
     },
     representatives: {
       required: helpers.withMessage(" المخول مطلوب", required),
+    },
+    startTime: { required: helpers.withMessage("  الحقل مطلوب", required) },
+    endTime: {
+      required: helpers.withMessage(" الحقل مطلوب", required),
+      minValue: helpers.withMessage(
+        "تاريخ انتهاء الزياره يجب ان يكون بعد تاريخ البدايه",
+        minValue(visit.startTime)
+      ),
     },
   };
 });
@@ -149,7 +157,7 @@ const submitForm = async () => {
         loading.value = false;
       });
   } else {
-    console.log("empty");
+    console.log("not valid");
   }
 };
 
@@ -330,6 +338,16 @@ function openDialog(representives: any) {
                     :disabled="editable"
                   />
                   <label for="startTime">تاريخ بداية الزيارة </label>
+                  <div style="height: 2px">
+                  <span
+                    style="color: red; font-weight: bold; font-size: small"
+                    v-for="error in v$.startTime.$errors"
+                    :key="error.$uid"
+                    class="p-error"
+                  >
+                    {{ error.$message }}</span
+                  >
+                </div>
                 </span>
               </div>
 
@@ -349,6 +367,16 @@ function openDialog(representives: any) {
                     :disabled="editable"
                   />
                   <label for="endTime">تاريخ انتهاء الزيارة </label>
+                  <div style="height: 2px">
+                  <span
+                    style="color: red; font-weight: bold; font-size: small"
+                    v-for="error in v$.endTime.$errors"
+                    :key="error.$uid"
+                    class="p-error"
+                  >
+                    {{ error.$message }}</span
+                  >
+                </div>
                 </span>
               </div>
 
@@ -491,6 +519,7 @@ function openDialog(representives: any) {
             <div v-else>
               <ComapanionsDataTable
                 :comp-list="visit.companions"
+                :comp-id = "visit.companions.id"
                 :editable="editable"
               >
               </ComapanionsDataTable>

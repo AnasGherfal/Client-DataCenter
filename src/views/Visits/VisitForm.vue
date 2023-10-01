@@ -21,13 +21,19 @@ import { visitApi } from "@/api/visits";
 import { representativesApi } from "@/api/representatives";
 import { subscriptionApi } from "@/api/subscriptions";
 import router from "@/router";
+import { customersApi } from "@/api/customers";
 const store = useVistisStore();
 const storeubscriptions = useSubscriptionsStore();
 
 const storeCustomers = useCustomersStore();
 const loading = ref(false);
 const disableValidation = ref(false);
-
+const name = ref<string>("");
+const customers = ref();
+const totalPages = ref(1);
+const pageNumber = ref(1);
+const pageSize = ref(10);
+const currentPage = ref(0);
 const visit: Visit = reactive({
   expectedStartTime: "2023-05-24T08:26:49.160Z",
   expectedEndTime: "2023-05-24T08:26:49.160Z",
@@ -100,7 +106,33 @@ function invalidDate() {
   }
 }
 
-const customerselect = ref(storeCustomers.name);
+onMounted(async () => {
+  getCustomers();
+});
+async function searchByName(searchName: string) {
+  name.value = searchName;
+  await getCustomers(); // Await the getCustomers function to wait for the API call to complete
+}
+async function getCustomers() {
+  if (name.value === undefined || name.value === null) {
+    name.value = "";
+  }
+  await customersApi
+    .get(pageNumber.value, pageSize.value, name.value)
+    .then(function (response) {
+      customers.value = response.data.content;
+      totalPages.value = response.data.totalPages;
+      currentPage.value = response.data.currentPage;
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+}
+
+const customerselect = ref(name.value);
 const customerRepresentatives = ref();
 const representatives = ref();
 const customerSubscriptions = ref();
@@ -113,8 +145,8 @@ watch(customerselect, async (newValue) => {
       loading.value = true;
 
       // Update the representatives and subscriptions using data from the selected customer
-      representatives.value = storeCustomers.customers[0].representative;
-      subscriptions.value = storeCustomers.customers[0].subsicrptions;
+      representatives.value = customers.value[0].representative;
+      subscriptions.value = customers.value[0].subsicrptions;
 
       console.log(representatives.value);
 
@@ -172,7 +204,7 @@ const submitForm = async () => {
         console.log(response);
         store.getVisits();
         setTimeout(() => {
-          router.go(-1)
+          router.go(-1);
           resetForm();
         }, 500);
       })
@@ -195,9 +227,9 @@ const resetForm = () => {
 const filteredCustomer = ref();
 
 const search = async (query: string) => {
-  await storeCustomers.searchByName(query); // Call the searchByName function
-  filteredCustomer.value = storeCustomers.customers; // Use the updated customers list
-  customerSelected.value = true
+  await searchByName(query); // Call the searchByName function
+  filteredCustomer.value = customers.value; // Use the updated customers list
+  customerSelected.value = true;
 };
 const searchOnEnter = (event: KeyboardEvent, query: string) => {
   if (event.key === "Enter") {
@@ -394,7 +426,6 @@ const searchOnEnter = (event: KeyboardEvent, query: string) => {
             style="margin-right: 0.5rem"
           />
           <Toast position="bottom-left" />
-
         </form>
       </template>
     </Card>

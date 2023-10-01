@@ -29,6 +29,7 @@ const customer: Customer = reactive({
     { file: null, docType: 0 }, // Add a second file
   ],
   subsicrptions: "",
+  representative: [],
 });
 
 const rules = computed(() => {
@@ -71,81 +72,81 @@ const onFormSubmit = async () => {
     secondFileError.value = "الحقل مطلوب";
   } else {
     secondFileError.value = "";
-  
-  if (result) {
-    formData.append("name", customer.name);
-    formData.append("email", customer.email);
-    formData.append("primaryPhone", customer.primaryPhone);
-    formData.append("secondaryPhone", customer.secondaryPhone);
-    formData.append("address", customer.address);
 
-    // Append the first file as FormFile
-    if (customer.files[0].file instanceof File) {
-      formData.append(
-        "FirstFile.File",
-        customer.files[0].file,
-        customer.files[0].file.name
-      );
-      formData.append(
-        "FirstFile.DocType",
-        customer.files[0].docType.toString()
-      );
-    }
+    if (result) {
+      formData.append("name", customer.name);
+      formData.append("email", customer.email);
+      formData.append("primaryPhone", customer.primaryPhone);
+      formData.append("secondaryPhone", customer.secondaryPhone);
+      formData.append("address", customer.address);
 
-    // Append the second file if needed
-    if (customer.files[1] && customer.files[1].file instanceof File) {
-      formData.append(
-        "SecondFile.File",
-        customer.files[1].file,
-        customer.files[1].file.name
-      );
-      formData.append(
-        "SecondFile.DocType",
-        customer.files[1].docType.toString()
-      );
-    }
-    const formDataObject: { [key: string]: string } = {};
-    formData.forEach((value, key) => {
-      formDataObject[key] = value.toString();
-    });
+      // Append the first file as FormFile
+      if (customer.files[0].file instanceof File) {
+        formData.append(
+          "FirstFile.File",
+          customer.files[0].file,
+          customer.files[0].file.name
+        );
+        formData.append(
+          "FirstFile.DocType",
+          customer.files[0].docType.toString()
+        );
+      }
 
-    console.log("formData:", formDataObject);
-
-    // store.loading = true;
-    //   customerForm.forEach((value, key) => {
-    //   console.log(key, value);
-    // });
-
-    customersApi
-      .create(formData)
-      .then((response) => {
-        store.getCustomers();
-        toast.add({
-          severity: "success",
-          summary: "رسالة نجاح",
-          detail: response.data.msg,
-          life: 2000,
-        });
-        setTimeout(() => {
-          router.go(-1);
-          resetForm();
-        }, 1);
-      })
-      .catch((e) => {
-        console.log(e.response.data.msg);
-
-        toast.add({
-          severity: "error",
-          summary: "خطأ",
-          detail: e.response.data.msg,
-          life: 3000,
-        });
-      })
-      .finally(() => {
-        loading.value = false;
+      // Append the second file if needed
+      if (customer.files[1] && customer.files[1].file instanceof File) {
+        formData.append(
+          "SecondFile.File",
+          customer.files[1].file,
+          customer.files[1].file.name
+        );
+        formData.append(
+          "SecondFile.DocType",
+          customer.files[1].docType.toString()
+        );
+      }
+      const formDataObject: { [key: string]: string } = {};
+      formData.forEach((value, key) => {
+        formDataObject[key] = value.toString();
       });
+
+      console.log("formData:", formDataObject);
+
+      // store.loading = true;
+      //   customerForm.forEach((value, key) => {
+      //   console.log(key, value);
+      // });
+
+      customersApi
+        .create(formData)
+        .then((response) => {
+          store.getCustomers();
+          toast.add({
+            severity: "success",
+            summary: "رسالة نجاح",
+            detail: response.data.msg,
+            life: 2000,
+          });
+          setTimeout(() => {
+            router.go(-1);
+            resetForm();
+          }, 1);
+        })
+        .catch((e) => {
+          console.log(e.response.data.msg);
+
+          toast.add({
+            severity: "error",
+            summary: "خطأ",
+            detail: e.response.data.msg,
+            life: 3000,
+          });
+        })
+        .finally(() => {
+          loading.value = false;
+        });
+    }
   }
-}
 };
 
 const docTypeOptions = ref([
@@ -293,54 +294,52 @@ const resetForm = () => {
                     id="secondaryPhone"
                     v-model="customer.secondaryPhone"
                     mask="+218999999999"
+                    style="direction: ltr; text-align: end"
+
                   />
                   <label for="secondaryPhone">رقم هاتف 2</label>
                 </span>
               </div>
             </div>
+            <div for="files" style="margin-bottom: 0.5rem">الملفات</div>
             <div class="grid p-fluid">
-              <!-- First File Input and DocType MultiSelect -->
+              <!-- First File Input -->
               <div class="field col-12 md:col-6 lg:col-4">
-                <label class="file-input-label" for="fileInput1">
-                  <div class="file-input-content">
-                    <div
-                      class="file-input-icon"
-                      v-if="!customer.files[0]?.file?.name"
-                    ></div>
+                <div
+        class="file-input-label-text"
+      >
+        تعريف شخصي
+      </div>
+  <label class="file-input-label" for="fileInput1">
+    <div class="file-input-content">
+      <div class="file-input-icon" v-if="!customer.files[0]?.file?.name"></div>
+      <div class="file-input-text">
+        <i class="pi pi-upload"></i>
+        {{ customer.files[0]?.file?.name || "ارفق ملف" }}
+      </div>
 
-                    <div class="file-input-text">
-                      <i class="pi pi-upload"></i>
+    </div>
+    <input
+      id="fileInput1"
+      style="display: none"
+      type="file"
+      @change="(event) => onFileUpload(event, 0)"
+      accept="*"
+    />
+  </label>
+  <div v-if="firstFileError" class="error-message">
+    {{ firstFileError }}
+  </div>
+</div>
 
-                      {{ customer.files[0]?.file?.name || "ارفق ملف  1 " }}
+
+              <!-- Second File Input -->
+              <div class="field col-12 md:col-6 lg:col-4">
+                <div
+                      class="file-input-label-text"
+                    >
+                      تخويل من الشركة
                     </div>
-                  </div>
-
-                  <input
-                    id="fileInput1"
-                    style="display: none"
-                    type="file"
-                    @change="(event) => onFileUpload(event, 0)"
-                    accept="*"
-                  />
-                </label>
-                <div v-if="firstFileError" class="error-message">
-                  {{ firstFileError }}
-                </div>
-
-                <Dropdown
-                  v-if="customer.files[0]?.file"
-                  :modelValue="customer.files[0].docType"
-                  :options="filteredDocTypeOptions(1)"
-                  optionValue="value"
-                  optionLabel="label"
-                  placeholder="Select a Document Type"
-                  :visible="false"
-                  @update:modelValue="(value: number) => (customer.files[0].docType = value)"
-                />
-              </div>
-
-              <!-- Second File Input and DocType MultiSelect -->
-              <div class="field col-12 md:col-6 lg:col-4">
                 <label class="file-input-label" for="fileInput2">
                   <div class="file-input-content">
                     <div
@@ -350,9 +349,9 @@ const resetForm = () => {
 
                     <div class="file-input-text">
                       <i class="pi pi-upload"></i>
-
-                      {{ customer.files[1]?.file?.name || "ارفق ملف 2 " }}
+                      {{ customer.files[1]?.file?.name || "ارفق ملف" }}
                     </div>
+
                   </div>
                   <input
                     id="fileInput2"
@@ -362,22 +361,9 @@ const resetForm = () => {
                     accept="*"
                   />
                 </label>
-                <div
-                  v-if="secondFileError"
-                  style="color: red; font-weight: bold; font-size: small"
-                >
+                <div v-if="secondFileError" class="error-message">
                   {{ secondFileError }}
                 </div>
-                <Dropdown
-                  v-if="customer.files[1]?.file"
-                  :modelValue="customer.files[1].docType"
-                  :options="filteredDocTypeOptions(2)"
-                  optionValue="value"
-                  optionLabel="label"
-                  placeholder="Select a Document Type"
-                  :visible="false"
-                  @update:modelValue="(value: number) => (customer.files[1].docType = value)"
-                />
               </div>
             </div>
             <Button
@@ -394,7 +380,7 @@ const resetForm = () => {
     </Card>
   </div>
 </template>
-<style scoped >
+<style scoped>
 .file-input-label {
   display: inline-block;
   position: relative;
@@ -410,6 +396,27 @@ const resetForm = () => {
   padding: 0.7rem;
   cursor: pointer;
 }
+.file-input-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.file-input-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%; /* Maintain the same height for the container */
+}
+
+.file-input-label-text {
+  font-size: small;
+  color:#9aafc3;
+  margin-bottom: 0.1rem;
+}
+
+/* Your existing styling for other elements can go here */
+
 
 /* Adjust vertical alignment for the text */
 

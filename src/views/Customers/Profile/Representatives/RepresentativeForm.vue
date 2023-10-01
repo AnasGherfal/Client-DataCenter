@@ -19,7 +19,6 @@ const props = defineProps({
 });
 const toast = useToast();
 const loading = ref(false);
-const rule = ref(false);
 const firstFileError = ref<string | null>(null);
 const secondFileError = ref<string | null>(null);
 
@@ -181,7 +180,7 @@ function filteredDocTypeOptions(index: number) {
             v-model="representatives.firstName"
           />
           <label for="firstName">الاسم </label>
-          <div v-if="rule" style="height: 2px; margin-bottom: 1rem">
+          <div style="height: 2px; margin-bottom: 1rem">
             <span
               v-for="error in v$.firstName.$errors"
               :key="error.$uid"
@@ -196,7 +195,7 @@ function filteredDocTypeOptions(index: number) {
         <span class="p-float-label">
           <InputText id="lastName" type="text" v-model="representatives.lastName" />
           <label for="lastName">اللقب </label>
-          <div v-if="rule" style="height: 2px; margin-bottom: 1rem">
+          <div  style="height: 2px; margin-bottom: 1rem">
             <span
               v-for="error in v$.lastName.$errors"
               :key="error.$uid"
@@ -230,7 +229,7 @@ function filteredDocTypeOptions(index: number) {
             style="direction: ltr"
           />
           <label for="inputtext">رقم هاتف </label>
-          <div v-if="rule" style="height: 2px; margin-bottom: 1rem">
+          <div  style="height: 2px; margin-bottom: 1rem">
             <span
               v-for="error in v$.phoneNo.$errors"
               :key="error.$uid"
@@ -251,16 +250,39 @@ function filteredDocTypeOptions(index: number) {
             placeholder=" نوع الاثبات"
           />
           <label for="identityType">نوع الاثبات </label>
+          <div  style="height: 2px; margin-bottom: 1rem">
+            <span
+              v-for="error in v$.identityType.$errors"
+              :key="error.$uid"
+              style="color: red; font-weight: bold; font-size: small"
+            >
+              {{ error.$message }}
+            </span>
+          </div>
         </span>
       </div>
       <div class="field col-12 md:col-4 lg:col-4">
         <span class="p-float-label">
           <InputText id="inputtext" v-model="representatives.identityNo" />
           <label for="inputtext">رقم الاثبات </label>
+          <div  style="height: 2px; margin-bottom: 1rem">
+            <span
+              v-for="error in v$.identityNo.$errors"
+              :key="error.$uid"
+              style="color: red; font-weight: bold; font-size: small"
+            >
+              {{ error.$message }}
+            </span>
+          </div>
         </span>
       </div>
       <!-- First File Input and DocType MultiSelect -->
-      <div class="field col-12 md:col-6 lg:col-5">
+      <div class="field col-12 md:col-4 lg:col-4">
+        <div
+        class="file-input-label-text"
+      >
+        تعريف شخصي
+      </div>
         <label class="file-input-label" for="fileInput1">
           <div class="file-input-content">
             <div
@@ -289,20 +311,16 @@ function filteredDocTypeOptions(index: number) {
         >
           {{ firstFileError }}
         </div>
-        <Dropdown
-          v-if="representatives.firstFile?.file"
-          :modelValue="representatives.firstFile.docType"
-          :options="filteredDocTypeOptions(0)"
-          optionValue="value"
-          optionLabel="label"
-          placeholder="Select a Document Type"
-          :visible="false"
-          @update:modelValue="(value: number) => (representatives.firstFile.docType = value)"
-        />
+
       </div>
 
       <!-- Second File Input and DocType MultiSelect -->
-      <div class="field col-12 md:col-6 lg:col-5">
+      <div class="field col-12 md:col-4 lg:col-4">
+        <div
+                      class="file-input-label-text"
+                    >
+                      تخويل من الشركة
+                    </div>
         <label class="file-input-label" for="fileInput2">
           <div class="file-input-content">
             <div
@@ -330,20 +348,11 @@ function filteredDocTypeOptions(index: number) {
         >
           {{ secondFileError }}
         </div>
-        <Dropdown
-          v-if="representatives.secondFile?.file"
-          :modelValue="representatives.secondFile.docType"
-          :options="filteredDocTypeOptions(1)"
-          optionValue="value"
-          optionLabel="label"
-          placeholder="Select a Document Type"
-          :visible="false"
-          @update:modelValue="(value: number) => (representatives.secondFile.docType = value)"
-        />
+
       </div>
     </div>
     <Button
-      type="submit"
+    @click="onSubmitForm"
       icon="pi pi-check"
       :label="value"
       :loading="loading"
@@ -368,6 +377,11 @@ function filteredDocTypeOptions(index: number) {
   text-align: center;
   padding: 0.7rem;
   cursor: pointer;
+}
+.file-input-label-text {
+  font-size: small;
+  color:#9aafc3;
+  margin-bottom: 0.1rem;
 }
 
 .file-input-label::after {

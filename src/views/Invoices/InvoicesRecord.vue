@@ -15,20 +15,29 @@ const loading = ref(false);
 const store = useInvoicesStore();
 
 const storeCustomers = useCustomersStore();
-const startDate = ref(new Date());
-const endDate = ref(new Date());
+// const startDate = ref(new Date());
+// const endDate = ref(new Date());
 const invoice = reactive({
     name: "",
     startDate: "",
     endDate: "",
   });
+  const invoices = ref([]);
+  const visits = ref();
+  const totalPages = ref(1);
+  const pageNumber = ref(1);
+  const pageSize = ref(10);
+  const currentPage = ref(0);
+  // const name = ref("");
+  // const startDate = ref("");
+  // const endDate = ref("");
   const length = ref<number|null>(null)
 
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
 const isEndDateRequired = () => {
-  return !!store.startDate; // Return true if startDate has a value
+  return !!invoice.startDate; // Return true if startDate has a value
 };
 const rules = computed(() => {
   return {
@@ -36,7 +45,7 @@ const rules = computed(() => {
     endDate: {
       requiredIf: helpers.withMessage(
         "الحقل مطلوب",
-        requiredIf(() => store.startDate !== "")
+        requiredIf(() => invoice.startDate !== "")
       ),
       minValue: helpers.withMessage(
         "تاريخ انتهاء الزياره يجب ان يكون بعد تاريخ البدايه",
@@ -48,6 +57,53 @@ const rules = computed(() => {
 });
 const v$ = useVuelidate(rules, invoice);
 
+
+onMounted(async () => {
+    getInvoices();
+  });
+   function searchByDateAndName(
+    searchName: string,
+    serachStartDate: any,
+    searchEndDate: any
+  ) {
+    invoice.name = searchName;
+    invoice.startDate = serachStartDate;
+    invoice.endDate = searchEndDate;
+     getInvoices(); // Await the getCustomers function to wait for the API call to complete
+  }
+
+  function getInvoices() {
+    loading.value = true;
+    if (
+      (invoice.startDate === undefined && invoice.endDate === undefined) ||
+      (invoice.startDate === null && invoice.endDate == null)
+    ) {
+      invoice.startDate = "";
+      invoice.endDate = "";
+    }
+
+    invoiceApi
+      .get(
+        pageNumber.value,
+        pageSize.value,
+        invoice.name,
+        invoice.startDate,
+        invoice.endDate
+      )
+      .then(function (response) {
+        console.log(response);
+        invoices.value = response.data.content;
+        visits.value = response.data.content;
+        totalPages.value = response.data.totalPages;
+        currentPage.value = response.data.currentPage;
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+      .finally(function () {
+        loading.value = false;
+      });
+  }
 // Computed property to display the payment status
 const getPaymentStatus = (isPaid: boolean) => {
   return isPaid ? "مدفوعه" : "غير مدفوعه";
@@ -59,21 +115,21 @@ function convertToDate(dateString: string): string {
 }
 
 const goToNextPage = () => {
-  if (store.currentPage < store.totalPages) {
-    store.currentPage += 1;
-    store.pageNumber += 1; // Increment the pageNumber value
-    store.loading = true;
-    store.getInvoices();
+  if (currentPage.value < totalPages.value) {
+    currentPage.value += 1;
+    pageNumber.value += 1; // Increment the pageNumber value
+    loading.value = true;
+    getInvoices();
   }
 };
 
 const goToPreviousPage = () => {
-  if (store.currentPage > 1) {
-    store.currentPage -= 1;
-    store.pageNumber -= 1; // Decrement the pageNumber value
-    store.loading = true;
+  if (currentPage.value > 1) {
+    currentPage.value -= 1;
+    pageNumber.value -= 1; // Decrement the pageNumber value
+    loading.value = true;
 
-    store.getInvoices();
+    getInvoices();
   }
 };
 
@@ -95,32 +151,31 @@ function formatDateToYYYYMMDD(date: any) {
 }
 
 const submitForm = async () => {
-  store.name = invoice.name
-  store.startDate = invoice.startDate;
-  store.endDate = invoice.endDate;
+  invoice.name = invoice.name
+  invoice.startDate = invoice.startDate;
+  invoice.endDate = invoice.endDate;
 
   const result = await v$.value.$validate();
   if (result) {
-    console.log(store.name, store.startDate, store.endDate)
+    console.log(invoice.name, invoice.startDate, invoice.endDate)
 
     // Convert start and end dates to ISO string format
-    if (store.startDate) {
-      const startDate = new Date(store.startDate);
-      store.startDate = formatDateToYYYYMMDD(startDate);
+    if (invoice.startDate) {
+      const startDate = new Date(invoice.startDate);
+      invoice.startDate = formatDateToYYYYMMDD(startDate);
     }
 
-    if (store.endDate) {
-      const endDate = new Date(store.endDate);
-      store.endDate = formatDateToYYYYMMDD(endDate);
+    if (invoice.endDate) {
+      const endDate = new Date(invoice.endDate);
+      invoice.endDate = formatDateToYYYYMMDD(endDate);
     }
 
-    store.searchByDateAndName(
-      store.name,
-      store.startDate,
-      store.endDate
+    searchByDateAndName(
+      invoice.name,
+      invoice.startDate,
+      invoice.endDate
     );
 
-    console.log(store.name, store.startDate, store.endDate)
   }
 };
 </script>
@@ -155,15 +210,14 @@ const submitForm = async () => {
           </div>
         </div> -->
         <DataTable
-          :value="store.invoices"
+          :value="invoices"
           dataKey="id"
-          filterDisplay="row"
           :globalFilterFields="['customerName', 'visitReason']"
           :paginator="true"
           :rows="10"
           :filters="filters"
-          :pageLinkSize="store.totalPages"
-          :currentPage="store.currentPage - 1"
+          :pageLinkSize="totalPages"
+          :currentPage="currentPage - 1"
           paginatorTemplate="  "
           :rowsPerPageOptions="[5, 10, 25]"
           currentPageReportTemplate="  عرض {first} الى {last} من {totalRecords} عميل"
@@ -173,24 +227,24 @@ const submitForm = async () => {
             <Button
               icon="pi pi-angle-right"
               class="p-button-rounded p-button-primary p-paginator-element"
-              :disabled="store.currentPage === 1"
+              :disabled="currentPage === 1"
               @click="goToPreviousPage"
             />
             <span class="p-paginator-pages">
-              الصفحة {{ store.currentPage }} من {{ store.totalPages }}
+              الصفحة {{ currentPage }} من {{ totalPages }}
             </span>
           </template>
           <template #paginatorend>
             <Button
               icon="pi pi-angle-left"
               class="p-button-rounded p-button-primary p-paginator-element"
-              :disabled="store.currentPage === store.totalPages"
+              :disabled="currentPage === totalPages"
               @click="goToNextPage"
             />
           </template>
           <template #header>
             <form @submit.prevent="submitForm">
-              <div class="grid p-fluid">
+              <div class="grid p-fluid mt-1">
                 <div class="field col-12 md:col-6 lg:col-4">
                   <div
                     class="table-header flex flex-column md:flex-row justiify-content-between"
@@ -289,6 +343,11 @@ const submitForm = async () => {
 
             </div>
           </template>
+          <Column
+            field="customerName"
+            header="اسم العميل"
+            style="min-width: 8rem"
+          ></Column>
           <Column field="date" header="التاريخ" style="min-width: 12rem">
             <template #body="slotProps">
               {{ convertToDate(slotProps.data.date) }}
@@ -305,7 +364,7 @@ const submitForm = async () => {
             style="min-width: 8rem; direction: revert"
           >
             <template #body="slotProps">
-              {{ slotProps.data.totalAmount }} دينار
+              {{ slotProps.data.totalAmount }} د.ل
             </template>
           </Column>
           <Column field="isPaid" header="الحاله" style="min-width: 8rem">

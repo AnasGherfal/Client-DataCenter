@@ -25,7 +25,6 @@ const userId = computed(() => {
     return null; // or return a default value if id is not available
   }
 });
-console.log(props.name);
 
 const representatives = reactive({
   firstName: props.name.firstName,
@@ -48,8 +47,7 @@ const representatives = reactive({
     },
   ],
 });
-console.log(representatives.identityType);
-console.log(props.name);
+
 const toast = useToast();
 const rules = computed(() => {
   return {
@@ -161,7 +159,14 @@ const onSubmitForm = async () => {
 const displayModal = ref(false);
 
 const openModal = () => {
+  representatives
   displayModal.value = true;
+  representatives.firstName = props.name.firstName;
+  representatives.lastName = props.name.lastName;
+  representatives.identityNo = props.name.identityNo;
+  representatives.email = props.name.email;
+  representatives.phoneNo = props.name.phoneNo;
+  representatives.identityType = props.name.identityType;
 };
 const closeModal = () => {
   displayModal.value = false;
@@ -223,7 +228,7 @@ const displayedSecondFileName = computed(() => {
 
     <Dialog
       header="تعديل المخول"
-      contentStyle="max-height: 73vh; max-width: 40vw; min-width:50vw; padding: 20px;"
+      contentStyle="max-height: 73vh; max-width: 70vw; min-width:50vw; padding: 20px;"
       v-model:visible="displayModal"
       :modal="true"
     >
@@ -345,22 +350,11 @@ const displayedSecondFileName = computed(() => {
                   :value="displayedFirstFileName"
                   :disabled="true"
                 />
-                <label for="secondaryPhone">اسم الملف</label>
+                <label for="secondaryPhone">تعريف شخصي</label>
               </span>
             </div>
-            <div class="field col-4 md:col-4 lg:col-4">
-              <span class="p-float-label">
-                <Dropdown
-                  id="docType"
-                  v-model="representatives.files[0].docType"
-                  :options="docTypes"
-                  optionValue="value"
-                  optionLabel="text"
-                />
-                <label for="secondaryPhone">نوع الملف</label>
-              </span>
-            </div>
-            <div class="field col-4 md:col-3 lg:col-4">
+
+            <div class="field col-5 md:col-5 lg:col-5">
               <div class="grid p-fluid">
                 <Button
                   icon="fa-solid fa-upload"
@@ -388,21 +382,10 @@ const displayedSecondFileName = computed(() => {
 
                   :disabled="true"
                 />
-                <label for="secondaryPhone">اسم الملف</label>
+                <label for="secondaryPhone">تخويل من الشركة</label>
               </span>
             </div>
-            <div class="field col-4 md:col-4 lg:col-4">
-              <span class="p-float-label">
-                <Dropdown
-                  id="docType"
-                  v-model="representatives.files[1].docType"
-                  :options="docTypes"
-                  optionValue="value"
-                  optionLabel="text"
-                />
-                <label for="secondaryPhone">نوع الملف</label>
-              </span>
-            </div>
+
           <div class="field col-4 md:col-3 lg:col-4">
             <div class="grid p-fluid">
               <Button
@@ -418,7 +401,6 @@ const displayedSecondFileName = computed(() => {
 
 
           <Button
-            type="submit"
             icon="pi pi-check"
             :loading="loading"
             label="تعديل"

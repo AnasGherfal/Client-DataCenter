@@ -33,7 +33,6 @@ const rules = computed(() => {
   //       minLength(3)
   //     ),
   //   },
-
   //   jobTitle: { required: helpers.withMessage("يجب ادخال الصفة", required) },
   //   identityType: {
   //     required: helpers.withMessage("اختر نوع اثبات الهوية", required),
@@ -47,47 +46,41 @@ const toast = useToast();
 const v$ = useVuelidate(rules, companion);
 
 const submitFormCom = async () => {
-
   const nameRegex = /^[^\d]+$/; // Regex to match names without numbers
-const numberRegex = /^\d+$/; // Regex to match numbers without letters
+  const numberRegex = /^\d+$/; // Regex to match numbers without letters
 
-if (
-  !companion.firstName ||
-  !companion.lastName ||
-  !companion.identityType ||
-  !companion.identityNo ||
-  !companion.jobTitle
-) {
-  toast.add({
-    severity: "warn",
-    summary: "فشل",
-    detail: "يرجى تعبئة جميع الحقول المطلوبة",
-    life: 3000,
-  });
-  return;
-} else if (!nameRegex.test(companion.firstName) || !nameRegex.test(companion.lastName)) {
-  toast.add({
-    severity: "warn",
-    summary: "فشل",
-    detail: "الاسم يجب أن يحتوي على أحرف فقط",
-    life: 3000,
-  });
-  return;
-} else if (!numberRegex.test(companion.identityNo)) {
-  toast.add({
-    severity: "warn",
-    summary: "فشل",
-    detail: "رقم الاثبات يجب أن يحتوي على أرقام فقط",
-    life: 3000,
-  });
-  return;
-} else {
-  // Valid input, proceed with further actions
-}
+  if (
+    !companion.firstName ||
+    !companion.lastName ||
+    !companion.identityType ||
+    !companion.identityNo ||
+    !companion.jobTitle
+  ) {
+    toast.add({
+      severity: "warn",
+      summary: "فشل",
+      detail: "يرجى تعبئة جميع الحقول المطلوبة",
+      life: 3000,
+    });
+    return;
+  } else if (
+    !nameRegex.test(companion.firstName) ||
+    !nameRegex.test(companion.lastName)
+  ) {
+    toast.add({
+      severity: "warn",
+      summary: "فشل",
+      detail: "الاسم يجب أن يحتوي على أحرف فقط",
+      life: 3000,
+    });
+    return;
+  } else {
+    // Valid input, proceed with further actions
+  }
 
-  let result = null
+  let result = null;
 
-   if (!props.disableValidation) {
+  if (!props.disableValidation) {
     // Only validate if disableValidation is false
     result = await v$.value.$validate();
     console.log(props.disableValidation, result);
@@ -108,14 +101,15 @@ if (
       jobTitle: companion.jobTitle,
     };
     props.compList.push(newItem);
+    resetForm();
     closeModal();
-  }
-  toast.add({
-    severity: "warn",
-    summary: "فشل",
-    detail: "لم يتم اضافة المرافق",
-    life: 3000,
-  });
+  } else
+    toast.add({
+      severity: "warn",
+      summary: "فشل",
+      detail: "لم يتم اضافة المرافق",
+      life: 3000,
+    });
 };
 
 const resetForm = () => {
@@ -163,7 +157,6 @@ const getIdentityTypeLabel = (value: number) => {
     :modal="true"
   >
     <form @submit.prevent="submitFormCom">
-
       <div class="grid p-fluid">
         <div class="field col-12 md:col-4">
           <span class="p-float-label">
@@ -292,10 +285,15 @@ const getIdentityTypeLabel = (value: number) => {
   <Button
     @click="openModal"
     class="p-button-primary p-button-sm p-button-rounded"
-    style="display: flex; justify-content: center; align-items: center; width: 6rem; "
+    style="
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 6rem;
+    "
     icon="fa-solid fa-plus"
     label=" مُرافق"
   >
   </Button>
-  <ComapanionsDataTable :compList="props.compList" > </ComapanionsDataTable>
+  <ComapanionsDataTable :compList="props.compList"> </ComapanionsDataTable>
 </template>

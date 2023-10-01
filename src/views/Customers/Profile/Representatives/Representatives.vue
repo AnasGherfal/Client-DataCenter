@@ -42,9 +42,9 @@ const representatives = ref<Representatives>({
 
 const toast = useToast();
 
-const formData = new FormData();
 
 const onFormSubmit = async (representative: Representatives) => {
+  const formData = new FormData();
 
   formData.append("firstName", representative.firstName);
   formData.append("lastName", representative.lastName);

@@ -12,16 +12,6 @@ const items = ref([
       },
     ],
   },
-  {
-    label: "ادارة المستخدمين",
-    items: [
-      {
-        label: "سجل المستخدمين",
-        icon: "fa-solid fa-users-gear",
-        to: "/UsersRecord",
-      },
-    ],
-  },
 
   {
     label: "السجلات",
@@ -49,7 +39,25 @@ const items = ref([
         to: "/invoices",
       },
     ],
+    
   },
+  {
+    label: "ادارة المشرفين",
+    items: [
+      {
+        label: "سجل المشرفين",
+        icon: "fa-solid fa-users-gear",
+        to: "/UsersRecord",
+      },
+    ],
+  },
+
+      {
+        label: "اعدادات النظام",
+        icon: "fa-solid fa-gear",
+        to: "/SettingsView",
+      },
+
 ]);
 
 const menu = ref();
@@ -65,7 +73,7 @@ const toggle = (event: any) => {
     :model="items"
     :popup="false"
     class="sidebar overflow-auto fixed mt-4 fadeinright animation-duration-500"
-    style="border-radius: 15px; width: 25%; height: calc(100vh - 7.6rem)"
+    style="border-radius: 15px; width: 20%; height: calc(100vh - 7.6rem)"
   >
   </Menu>
 

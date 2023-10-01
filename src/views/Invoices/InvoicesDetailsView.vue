@@ -138,7 +138,7 @@ function convertToDate(dateString: string): string {
       </div>
       <div v-else class="flex justify-content-between flex-wrap card-container">
         <div class="align-items-center justify-content-center border-round m-3">
-          <h2 class="m-0">فاتورة #{{ invoices.id }}</h2>
+          <h2 class="m-0">الفاتورة رقم  {{ invoices.invoiceNo }}</h2>
           <h5 class="text-600 m-0">مركز ادارة الخدمات والبيانات</h5>
           <div
             class="border-green-500 border-round-md text-center justify-content-center"
