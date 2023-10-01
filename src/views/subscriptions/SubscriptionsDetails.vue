@@ -39,6 +39,7 @@ const subs: SubscriptionRespons = reactive({
   file: { id: "", fileName: "", docType: "" },
 });
 
+
 const servobj: Service = reactive({
   id: null,
   name: "",
@@ -118,28 +119,25 @@ function getdata() {
 }
 
 const customersDialog = ref(false);
-const formData = new FormData();
+
+const fileRenew = ref({ file: null });
+const formData = new FormData(); // Initialize formData as a new FormData object
 
 async function onFileUpload(event: any, index: number) {
-  const fileInput = event.target as HTMLInputElement;
-  const files = fileInput.files;
+  const file = event.target.files[0];
 
-  if (files && formData) {
-    const fileObject = files[0];
-
-    if (fileObject) {
-      // Store the File object in the ref
-      file.value = fileObject;
-
-      // Append the File object to formData
-      const fieldName = index === 0 ? "File" : "File";
-      formData.append(fieldName, fileObject);
-    }
+  if (file && formData) {
+    // Append the File object to formData using the fileName property as the field name
+    const fileObject = index === 0 ? "File" : "file";
+    formData.append(fileObject, file);
   }
 }
 
+
+
+
 const displayedFileName = computed(() => {
-  return file.value?.name  || "ارفق ملف 1";
+  return file.value || "ارفق ملف 1";
 });
 
 const file = ref<File | null>();
@@ -150,20 +148,24 @@ const firstFileError = ref<string | null>(null);
 const renewalSubscription = () => {
   loading2.value = true;
 
-  if (!formData.get("File")) {
+  if (!fileRenew) {
     firstFileError.value = "الحقل مطلوب";
     loading2.value = false;
     return; // Stop further processing
   } else {
     firstFileError.value = "";
-    if (file instanceof File) {
-      formData.append("file", file, file.name);
+    if (fileRenew.value instanceof File) {
+
+      formData.append("file", fileRenew.value ,fileRenew.value.name);
     }
+
 
     const formDataObject: { [key: string]: string } = {};
     formData.forEach((value, key) => {
       formDataObject[key] = value.toString();
     });
+
+
 
     console.log("formData:", formDataObject);
     subscriptionApi

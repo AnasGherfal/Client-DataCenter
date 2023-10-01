@@ -294,6 +294,8 @@ const resetForm = () => {
                     id="secondaryPhone"
                     v-model="customer.secondaryPhone"
                     mask="+218999999999"
+                    style="direction: ltr; text-align: end"
+
                   />
                   <label for="secondaryPhone">رقم هاتف 2</label>
                 </span>

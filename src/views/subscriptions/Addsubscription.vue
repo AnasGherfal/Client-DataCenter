@@ -11,6 +11,7 @@ import type { Subscription } from "../../Modules/SubscriptionModule/Subscription
 import moment from "moment";
 import { subscriptionApi } from "@/api/subscriptions";
 import { serviceApi } from "@/api/service";
+import { customersApi } from "@/api/customers";
 
 const store = useSubscriptionsStore();
 const storeCustomer = useCustomersStore();
@@ -18,6 +19,12 @@ const storeCustomer = useCustomersStore();
 const loading = ref(false);
 const ServicesList = ref();
 const firstFileError = ref<string | null>(null);
+  const totalPages = ref(1);
+  const pageNumber = ref(1);
+  const pageSize = ref(10);
+  const currentPage = ref(0);
+  const name = ref<string>("");
+    const customers = ref();
 
 const state: Subscription = reactive({
   serviceId: null,
@@ -47,6 +54,33 @@ onMounted(async () => {
       console.log(error);
     });
 });
+onMounted(async () => {
+    getCustomers();
+  });
+  async function searchByName(searchName: string) {
+  
+    name.value = searchName;
+    await getCustomers(); // Await the getCustomers function to wait for the API call to complete
+  }
+  async function getCustomers() {
+    if (name.value === undefined || name.value === null) {
+      name.value = '';
+    }
+    await customersApi
+      .get(pageNumber.value, pageSize.value, name.value)
+      .then(function (response) {       
+ 
+        customers.value = response.data.content;
+        totalPages.value = response.data.totalPages;
+        currentPage.value = response.data.currentPage;
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+      .finally(() => {
+        loading.value = false;
+      });
+  }
 
 const rules = computed(() => {
   return {
@@ -173,9 +207,9 @@ const filteredCustomer = ref();
 const search = (event: any) => {
   setTimeout(() => {
     if (!event.query.trim().length) {
-      filteredCustomer.value = [...storeCustomer.customers];
+      filteredCustomer.value = [...customers.value];
     } else {
-      filteredCustomer.value = storeCustomer.customers.filter(
+      filteredCustomer.value = customers.value.filter(
         (users: { name: String }) => {
           return users.name.toLowerCase().startsWith(event.query.toLowerCase());
         }

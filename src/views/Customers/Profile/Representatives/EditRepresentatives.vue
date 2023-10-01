@@ -25,7 +25,6 @@ const userId = computed(() => {
     return null; // or return a default value if id is not available
   }
 });
-console.log(props.name);
 
 const representatives = reactive({
   firstName: props.name.firstName,
@@ -48,8 +47,7 @@ const representatives = reactive({
     },
   ],
 });
-console.log(representatives.identityType);
-console.log(props.name);
+
 const toast = useToast();
 const rules = computed(() => {
   return {
@@ -403,7 +401,6 @@ const displayedSecondFileName = computed(() => {
 
 
           <Button
-            type="submit"
             icon="pi pi-check"
             :loading="loading"
             label="تعديل"

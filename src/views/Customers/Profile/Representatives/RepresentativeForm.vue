@@ -19,7 +19,6 @@ const props = defineProps({
 });
 const toast = useToast();
 const loading = ref(false);
-const rule = ref(false);
 const firstFileError = ref<string | null>(null);
 const secondFileError = ref<string | null>(null);
 
@@ -181,7 +180,7 @@ function filteredDocTypeOptions(index: number) {
             v-model="representatives.firstName"
           />
           <label for="firstName">الاسم </label>
-          <div v-if="rule" style="height: 2px; margin-bottom: 1rem">
+          <div style="height: 2px; margin-bottom: 1rem">
             <span
               v-for="error in v$.firstName.$errors"
               :key="error.$uid"
@@ -196,7 +195,7 @@ function filteredDocTypeOptions(index: number) {
         <span class="p-float-label">
           <InputText id="lastName" type="text" v-model="representatives.lastName" />
           <label for="lastName">اللقب </label>
-          <div v-if="rule" style="height: 2px; margin-bottom: 1rem">
+          <div  style="height: 2px; margin-bottom: 1rem">
             <span
               v-for="error in v$.lastName.$errors"
               :key="error.$uid"
@@ -230,7 +229,7 @@ function filteredDocTypeOptions(index: number) {
             style="direction: ltr"
           />
           <label for="inputtext">رقم هاتف </label>
-          <div v-if="rule" style="height: 2px; margin-bottom: 1rem">
+          <div  style="height: 2px; margin-bottom: 1rem">
             <span
               v-for="error in v$.phoneNo.$errors"
               :key="error.$uid"
@@ -251,12 +250,30 @@ function filteredDocTypeOptions(index: number) {
             placeholder=" نوع الاثبات"
           />
           <label for="identityType">نوع الاثبات </label>
+          <div  style="height: 2px; margin-bottom: 1rem">
+            <span
+              v-for="error in v$.identityType.$errors"
+              :key="error.$uid"
+              style="color: red; font-weight: bold; font-size: small"
+            >
+              {{ error.$message }}
+            </span>
+          </div>
         </span>
       </div>
       <div class="field col-12 md:col-4 lg:col-4">
         <span class="p-float-label">
           <InputText id="inputtext" v-model="representatives.identityNo" />
           <label for="inputtext">رقم الاثبات </label>
+          <div  style="height: 2px; margin-bottom: 1rem">
+            <span
+              v-for="error in v$.identityNo.$errors"
+              :key="error.$uid"
+              style="color: red; font-weight: bold; font-size: small"
+            >
+              {{ error.$message }}
+            </span>
+          </div>
         </span>
       </div>
       <!-- First File Input and DocType MultiSelect -->
@@ -335,7 +352,7 @@ function filteredDocTypeOptions(index: number) {
       </div>
     </div>
     <Button
-      type="submit"
+    @click="onSubmitForm"
       icon="pi pi-check"
       :label="value"
       :loading="loading"

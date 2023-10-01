@@ -423,7 +423,7 @@ const downloadFile = async (id: any) => {
                       style="direction: ltr; text-align: end"
                       :disabled="actEdit"
                     />
-                    <label for="phoneNum1">رقم هاتف </label>
+                    <label for="phoneNum1">رقم هاتف 1</label>
                     <div style="height: 10px">
                       <span
                         v-for="error in v$.primaryPhone.$errors"
@@ -441,6 +441,7 @@ const downloadFile = async (id: any) => {
                       id="secondaryPhone"
                       v-model="customer.secondaryPhone"
                       mask="+218999999999"
+                      style="direction: ltr; text-align: end"
                       :disabled="actEdit"
                     />
                     <label for="secondaryPhone">رقم هاتف 2</label>
