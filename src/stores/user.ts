@@ -1,6 +1,6 @@
 import { ref, onMounted } from "vue";
 import { defineStore } from "pinia";
-import { user } from "@/api/user";
+import { admin } from "@/api/admin";
 
 export const useUserStore = defineStore("user", () => {
   const userData = ref();
@@ -15,7 +15,7 @@ export const useUserStore = defineStore("user", () => {
   });
 
   function getUsers() {
-    user
+    admin
       .get(pageNumber.value, pageSize.value)
       .then(function (response) {
         userData.value = response.data.content;

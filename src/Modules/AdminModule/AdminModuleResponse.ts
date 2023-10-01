@@ -1,4 +1,4 @@
-export interface ResponseUserModel {
+export interface ResponseAdminModel {
     fullName :string ,
     empId :number | null,
     email :  string,

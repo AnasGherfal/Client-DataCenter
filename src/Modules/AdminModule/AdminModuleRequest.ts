@@ -1,4 +1,4 @@
-export interface RequestUserModel {
+export interface RequestAdminModel {
     id:string,
     fullName :string,
     empId :number | null,
