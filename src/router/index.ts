@@ -46,6 +46,11 @@ const router = createRouter({
         },
       ],
     },
+    {
+      path: "/AuditsRecord",
+      props: true,
+      component: () => import("../views/Audits/AuditsRecord.vue"),
+    },
 
     {
       path: "/customersRecord",

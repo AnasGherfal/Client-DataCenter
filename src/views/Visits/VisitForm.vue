@@ -35,11 +35,9 @@ const pageNumber = ref(1);
 const pageSize = ref(10);
 const currentPage = ref(0);
 const visit: Visit = reactive({
-  expectedStartTime: "2023-05-24T08:26:49.160Z",
-  expectedEndTime: "2023-05-24T08:26:49.160Z",
-  startTime: "",
-  endTime: "",
-  visitTypeId: null,
+  expectedStartTime: "",
+  expectedEndTime: "",
+  visitType: 1,
   notes: "",
   subscriptionId: null,
   representatives: [],
@@ -52,14 +50,14 @@ interface visitReason {
 }
 
 const visitReasons: visitReason[] = [
-  { value: "7adbcf6d-e06f-410c-8a41-5857dadb0792", text: "صيانه" }, // Ensure the value is in quotes
-  { value: "be05cdb1-03e4-4899-a910-662a79d8653e", text: "انهاء عمل" }, // Make sure other values are also strings if needed
+  { value: "1", text: "صيانه" }, // Ensure the value is in quotes
+  { value: "2", text: "انهاء عمل" }, // Make sure other values are also strings if needed
 ];
 
 const startDate = ref(new Date());
 const endDate = ref(new Date());
 
-const date = new Date(moment(visit.startTime).format("hh:mm a"));
+const date = new Date(moment(visit.expectedStartTime).format("hh:mm a"));
 const minDate = ref(date);
 
 const updateEndDate = () => {
@@ -77,13 +75,15 @@ const searchUsers = () => {};
 const rules = computed(() => {
   return {
     subscriptionId: { required: helpers.withMessage(" الحقل مطلوب", required) },
-    visitTypeId: { required: helpers.withMessage("الحقل مطلوب", required) },
-    startTime: { required: helpers.withMessage("  الحقل مطلوب", required) },
-    endTime: {
+    visitType: { required: helpers.withMessage("الحقل مطلوب", required) },
+    expectedStartTime: {
+      required: helpers.withMessage("  الحقل مطلوب", required),
+    },
+    expectedEndTime: {
       required: helpers.withMessage(" الحقل مطلوب", required),
       minValue: helpers.withMessage(
         "تاريخ انتهاء الزياره يجب ان يكون بعد تاريخ البدايه",
-        minValue(visit.startTime)
+        minValue(visit.expectedStartTime)
       ),
     },
     representatives: {
@@ -94,17 +94,17 @@ const rules = computed(() => {
 const v$ = useVuelidate(rules, visit);
 
 // Validate that end date is not before start date
-const isEndDateValid = computed(() => {
-  return !visit.endTime || !visit.startTime || visit.endTime >= visit.startTime;
-});
+// const isEndDateValid = computed(() => {
+//   return !visit.expectedEndTime || !visit.startTime || visit.endTime >= visit.startTime;
+// });
 
 const toast = useToast();
 
-function invalidDate() {
-  if (visit.endTime <= visit.startTime) {
-    alert("error");
-  }
-}
+// function invalidDate() {
+//   if (visit.endTime <= visit.startTime) {
+//     alert("error");
+//   }
+// }
 
 onMounted(async () => {
   getCustomers();
@@ -178,11 +178,9 @@ const submitForm = async () => {
       subscriptionIds.length > 0 ? subscriptionIds[0] : null; // Take the first subscription ID from the array
 
     const data = reactive({
-      expectedStartTime: "2023-05-24T08:26:49.160Z",
-      expectedEndTime: "2023-05-24T08:26:49.160Z",
-      startTime: visit.startTime,
-      endTime: visit.endTime,
-      visitTypeId: visit.visitTypeId,
+      expectedStartTime: visit.expectedStartTime,
+      expectedEndTime: visit.expectedEndTime,
+      visitType: visit.visitType,
       notes: visit.notes,
       subscriptionId: subscriptionId,
       representatives: representativeIds,
@@ -216,9 +214,9 @@ const submitForm = async () => {
   }
 };
 const resetForm = () => {
-  visit.startTime = "";
-  (visit.endTime = ""),
-    (visit.visitTypeId = null),
+  visit.expectedStartTime = "";
+  (visit.expectedEndTime = ""),
+    (visit.visitType = 0),
     (visit.notes = ""),
     (visit.subscriptionId = null),
     (visit.representatives = []),
@@ -325,7 +323,7 @@ const searchOnEnter = (event: KeyboardEvent, query: string) => {
               <span class="p-float-label">
                 <Dropdown
                   id="visitType"
-                  v-model="visit.visitTypeId"
+                  v-model="visit.visitType"
                   :options="visitReasons"
                   optionValue="value"
                   optionLabel="text"
@@ -334,7 +332,7 @@ const searchOnEnter = (event: KeyboardEvent, query: string) => {
                 <div style="height: 2px">
                   <span
                     style="color: red; font-weight: bold; font-size: small"
-                    v-for="error in v$.visitTypeId.$errors"
+                    v-for="error in v$.visitType.$errors"
                     :key="error.$uid"
                     class="p-error"
                   >
@@ -348,7 +346,7 @@ const searchOnEnter = (event: KeyboardEvent, query: string) => {
               <span class="p-float-label">
                 <Calendar
                   inputId="startTime"
-                  v-model="visit.startTime"
+                  v-model="visit.expectedStartTime"
                   dateFormat="yy/mm/dd"
                   :showTime="true"
                   selectionMode="single"
@@ -363,7 +361,7 @@ const searchOnEnter = (event: KeyboardEvent, query: string) => {
                 <div style="height: 2px">
                   <span
                     style="color: red; font-weight: bold; font-size: small"
-                    v-for="error in v$.startTime.$errors"
+                    v-for="error in v$.expectedStartTime.$errors"
                     :key="error.$uid"
                     class="p-error"
                   >
@@ -377,7 +375,7 @@ const searchOnEnter = (event: KeyboardEvent, query: string) => {
               <span class="p-float-label">
                 <Calendar
                   inputId="endTime"
-                  v-model="visit.endTime"
+                  v-model="visit.expectedEndTime"
                   dateFormat="yy/mm/dd"
                   :showTime="true"
                   selectionMode="single"
@@ -391,7 +389,7 @@ const searchOnEnter = (event: KeyboardEvent, query: string) => {
                 <div style="height: 2px">
                   <span
                     style="color: red; font-weight: bold; font-size: small"
-                    v-for="error in v$.endTime.$errors"
+                    v-for="error in v$.expectedEndTime.$errors"
                     :key="error.$uid"
                     class="p-error"
                   >

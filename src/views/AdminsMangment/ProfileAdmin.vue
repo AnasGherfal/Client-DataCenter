@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import TabView from 'primevue/tabview';
-import TabPanel from 'primevue/tabpanel';
-import { computed, onMounted, reactive, ref } from 'vue';
-import {  useRoute } from 'vue-router';
-import { user } from '../../api/user';
-import { toNumber } from '@vue/shared';
-import type { RequestUserModel } from '../../Modules/UserModule/UserModuleRequest';
-import { useUserStore } from "../../stores/user"
-import InfoUser from './InfoUser.vue';
+import TabView from "primevue/tabview";
+import TabPanel from "primevue/tabpanel";
+import { computed, onMounted, reactive, ref } from "vue";
+import { useRoute } from "vue-router";
+import { admin } from "../../api/admin";
+import { toNumber } from "@vue/shared";
+import type { ResponseAdminModel } from "../../Modules/AdminModule/AdminModuleResponse";
+import { useAdminStore } from "../../stores/admin";
+import InfoAdmin from "./InfoAdmin.vue";
 
 const route = useRoute();
 
-const store = useUserStore();
+const store = useAdminStore();
+const isEditModeEnabled = ref(false);
 
 const userId = computed(() => {
   if (route && route.params && route.params.id) {
@@ -21,38 +22,96 @@ const userId = computed(() => {
   }
 });
 
-console.log(userId.value);
-
-const userDate: RequestUserModel = reactive({
+const adminData: ResponseAdminModel = reactive({
   id: "",
-  fullName: "",
-  empId: null,
-  permisssions: null,
-  status: null,
-  password: "",
+  displayName: "",
+  email: "",
+  permissions: 0,
+  isActive: true,
+  createdOn: "",
 });
 
-onMounted(async () => {
-  user
+function getAdminById() {
+  admin
     .getById(userId.value)
     .then(function (response) {
-      console.log(response.data);
-      userDate.id = response.data.id;
-      userDate.empId = response.data.empId;
-      userDate.fullName = response.data.fullName;
-      userDate.password = response.data.password;
-      userDate.status = response.data.status;
-      userDate.permisssions = response.data.permisssions;
+      const filterdAdmins = response.data.content;
+      Object.assign(adminData, filterdAdmins);
+      // adminData.id = response.data.content.id;
+      // adminData.displayName = response.data.content.displayName;
+      // adminData.email = response.data.content.email;
+
+      // adminData.isActive = response.data.content.isActive;
+      // adminData.permissions = response.data.content.permissions;
     })
     .catch(function (error) {
       console.log(error);
     });
+}
+onMounted(async () => {
+  getAdminById();
+  getPermissions();
 });
-console.log(userDate);
+
+const avaliblePrem = ref<UserPermission[]>([]);
+
+function getPermissions() {
+  admin.permissions().then(function (response) {
+    avaliblePrem.value = response.data.content;
+    console.log(avaliblePrem.value);
+  });
+}
+
+interface UserPermission {
+  id: number;
+  name: string;
+}
+const hasPermission = (permissions: number[], permissionToCheck: number) => {
+  // Iterate through each individual permission bit in permissionToCheck
+  for (let i = 0; i < permissions.length; i++) {
+    const permissionBit = permissions[i];
+    // Check if the user has this specific permission bit
+    if ((permissionToCheck & permissionBit) === permissionBit) {
+      return true; // User has this permission bit
+    }
+  }
+  return false; // User doesn't have any of the specified permission bits
+};
+
+const selectedPermissions = ref([]);
+
+const editPermissions = () => {
+  const totalPermissions = selectedPermissions.value.reduce((acc, id) => {
+    // Sum the selected permission values or perform any other desired logic
+    return acc + id;
+  }, 0);
+
+  // You can now use 'totalPermissions' as needed (e.g., send it to a server)
+  console.log('Total Permissions:', totalPermissions);
+
+  // Clear the selected permissions
+  selectedPermissions.value = [];
+};
+// const togglePermission = (id) => {
+//   if (!isEditModeEnabled.value) {
+//     // Provide the required arguments to the hasPermission function
+//     if (hasPermission(id,adminData.permissions)) {
+//       adminData.permissions = adminData.permissions.filter((p) => p !== id);
+//     } else {
+//       adminData.permissions.push(id);
+//     }
+//   }
+// };
+
+
 </script>
 
 <template>
-  <InfoUser :user="userDate" :key="userId" @getUser="store.getUser" />
+  <InfoAdmin
+    :admin="adminData"
+    :key="adminData.id"
+    @getAdmins="store.getAdmins"
+  />
   <card class="shadow-2 p-3 mt-3 border-round-2xl">
     <template #content>
       <TabView class="tabview-custom" ref="tabview4">
@@ -62,35 +121,62 @@ console.log(userDate);
             <span>الصلاحيات</span>
           </template>
           <h3>الصلاحيات:</h3>
-          <div class="grid">
-            <div class="col-2">اسم البيانات</div>
-            <div class="col text-center">انشاء</div>
-            <div class="col text-center">تعديل</div>
-            <div class="col text-center">قفل/إلغاء</div>
-            <div class="col text-center">عرض</div>
-            <div class="col text-center">حذف</div>
-            <div class="col text-center">تجديد</div>
-          </div>
-          <div v-for="r in 3" class="grid mb-2">
-            <div class="col-2 font-semibold">العملاء</div>
-            <div class="col text-center">
-              <i class="fa-regular fa-circle-xmark" style="color: #e90c0c"></i>
-            </div>
-            <div class="col text-center">
-              <i class="fa-regular fa-circle-check" style="color: #2cbd0f"></i>
-            </div>
-            <div class="col text-center">
-              <i class="fa-regular fa-circle-check" style="color: #2cbd0f"></i>
-            </div>
-            <div class="col text-center">
-              <i class="fa-regular fa-circle-check" style="color: #2cbd0f"></i>
-            </div>
-            <div class="col text-center">
-              <i class="fa-regular fa-circle-xmark" style="color: #e90c0c"></i>
-            </div>
-            <div class="col text-center">
-              <i class="fa-solid fa-minus" style="color: #616161"></i>
-            </div>
+          <Button
+            @click="isEditModeEnabled = !isEditModeEnabled"
+            icon=" fa-solid fa-pen"
+            label="تعديل"
+            text
+            rounded
+            class="p-button-primary p-button-text"
+            v-tooltip.top="{
+              value: 'تعديل البيانات الشخصية',
+              fitContent: true,
+            }"
+          />
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>اسم الصلاحية</th>
+                  <th>لديه اذن</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="r in avaliblePrem" :key="r.id">
+                  <template
+                    v-if="r.name !== 'None' && r.name !== 'Super Admin'"
+                  >
+                    <td>{{ r.name }}</td>
+                    <td v-if="hasPermission([r.id], adminData.permissions)">
+                      <button
+                      :disabled="isEditModeEnabled"
+
+                        style="background: none; border: none; cursor: pointer"
+                      >
+                        <i
+                          class="fa-regular fa-circle-check"
+                          style="color: #2cbd0f"
+                        ></i>
+                      </button>
+                    </td>
+                    <td v-else>
+                      <button
+                      :disabled="isEditModeEnabled"
+
+                        style="background: none; border: none; cursor: pointer"
+                      >
+                        <i
+                          class="fa-regular fa-circle-xmark"
+                          style="color: red"
+                        ></i>
+                      </button>
+                    </td>
+                  </template>
+                </tr>
+                <td>
+    </td>
+              </tbody>
+            </table>
           </div>
         </TabPanel>
         <TabPanel>
@@ -105,4 +191,28 @@ console.log(userDate);
   </card>
 </template>
 
-<style></style>
+<style>
+.table-responsive {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+.fa-regular {
+  font-size: 20px;
+}
+</style>

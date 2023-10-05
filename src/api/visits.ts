@@ -20,15 +20,15 @@ export const visitApi = {
     return response;
   },
   getById: async function (id: any) {
-    const response = await httpClient.get(`/Visit/${id}`);
+    const response = await httpClient.get(`/Visits/${id}`);
     return response;
   },
   create: async function (visit: Visit) {
-    const response = await httpClient.post(`/Visit`, visit);
+    const response = await httpClient.post(`/Visits`, visit);
     return response;
   },
   remove: async function (id: string) {
-    const response = await httpClient.delete(`/Visit/${id}`);
+    const response = await httpClient.delete(`/Visits/${id}`);
     return response;
   },
   edit: async function (id: string, visit: VisitEdit) {

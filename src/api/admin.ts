@@ -7,7 +7,7 @@ export const admin = {
   get: async function (pageNumber: number, pageSize: number) {
     const response = await httpClient.get(`/Admins?PageNumber=${pageNumber}&PageSize=${pageSize}`, {
       headers: {
-          Authorization:` Bearer ${token}`,
+          Authorization:` bearer ${token}`,
       }
     });
     return response;
@@ -24,8 +24,14 @@ export const admin = {
     const response = await httpClient.put(`/Admins/${id}`);
     return response;
   },
+
   remove: async function (id: string) {
     const response = await httpClient.delete(`/Admins/${id}`);
     return response;
   },
+
+  permissions: async function (){
+    const response = await httpClient.get(`/Lists/admin-permissions`);
+    return response;
+  }
 };

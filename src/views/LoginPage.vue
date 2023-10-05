@@ -27,6 +27,7 @@ const submitForm = async () => {
         if (response.status == 200) {
           const token = response.data.content.accessToken;
           storeToken(token);
+          console.log((token));
 
           window.location.href = "/";
         }

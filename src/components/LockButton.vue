@@ -8,7 +8,7 @@ import LockButton from "@/components/LockButton.vue";
 const prop = defineProps<{
   id: number;
   name: string;
-  status: number;
+  status: boolean;
   typeLock: string;
 }>();
 
@@ -25,18 +25,18 @@ const toast = useToast();
 const status = reactive({ value: prop.status });
 
 const lockedIcon = computed(() =>
-  status.value === 5 ? "fa-solid fa-lock" : "fa-solid fa-lock-open"
+  status.value === false ? "fa-solid fa-lock" : "fa-solid fa-lock-open"
 );
 
-const buttonColor = computed(() => (status.value === 5 ? "green" : "red"));
+const buttonColor = computed(() => (status.value === false ? "green" : "red"));
 const tooltipValue = computed(() =>
-  status.value === 5 ? "الغاء تقييد" : "تقييد "
+  status.value === false ? "الغاء تقييد" : "تقييد "
 );
 function lockButton() {
   loading.value = true;
 
   axios
-    .put(`https://localhost:7003/api/${prop.typeLock}/${prop.id}/lock`)
+    .put(`https://localhost:7030/v1.0/management/${prop.typeLock}/${prop.id}/lock`)
     .then((response) => {
       toast.add({
         severity: "success",
@@ -44,7 +44,7 @@ function lockButton() {
         detail: response.data.msg,
         life: 3000,
       });
-      status.value = 5;
+      status.value = false;
       emit("getdata");
       dialog.value = false;
       loading.value = false;
@@ -55,7 +55,7 @@ function unlockButton() {
   loading.value = true;
 
   axios
-    .put(`https://localhost:7003/api/${prop.typeLock}/${prop.id}/unlock`)
+    .put(`https://localhost:7030/v1.0/management/${prop.typeLock}/${prop.id}/unlock`)
     .then((response) => {
       toast.add({
         severity: "success",
@@ -63,7 +63,7 @@ function unlockButton() {
         detail: response.data.msg,
         life: 3000,
       });
-      status.value = 1;
+      status.value = true;
       emit("getdata");
     })
     .catch((e) => {
@@ -100,7 +100,7 @@ function unlockButton() {
         icon="pi pi-check"
         text
         :loading="loading"
-        @click="status.value === 5 ? unlockButton() : lockButton()"
+        @click="status.value === false ? unlockButton() : lockButton()"
       />
       <Button label="لا" icon="pi pi-times" text @click="dialog = false" />
     </template>

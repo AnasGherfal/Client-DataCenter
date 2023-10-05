@@ -3,6 +3,4 @@ export interface RequestAdminModel {
     fullName :string,
     empId :number | null,
     permisssions : null|number,
-    status:null|number,
-    password:string,
   }

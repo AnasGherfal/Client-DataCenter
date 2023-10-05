@@ -60,7 +60,6 @@ onMounted(async () => {
 });
 
 function getCustomers() {
-  store.loading = true;
   loading.value = true;
 
   customersApi
@@ -86,7 +85,6 @@ function getCustomers() {
       console.log(error);
     })
     .finally(() => {
-      store.loading = false;
       loading.value = false;
     });
 }
@@ -174,7 +172,7 @@ const downloadFile = async (id: any) => {
   <InfoCustomer
     :customer="customerId"
     :key="customerId.id"
-    @getCustomers="store.getCustomers"
+    @getCustomers="getCustomers"
   />
 
   <card class="shadow-2 p-3 mt-3 border-round-2xl">

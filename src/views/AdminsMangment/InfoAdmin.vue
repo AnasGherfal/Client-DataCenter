@@ -5,29 +5,28 @@ import useVuelidate from "@vuelidate/core";
 import { helpers, required, minLength } from "@vuelidate/validators";
 import { useToast } from "primevue/usetoast";
 import { computed, reactive, ref } from "vue";
-import type { RequestUserModel } from "../../Modules/UserModule/UserModuleRequest";
+import type { ResponseAdminModel } from "../../Modules/AdminModule/AdminModuleResponse";
 import BackButton from "../../components/BackButton.vue";
-import ChangePasswordUser from '../../components/User/ChangePasswordUser.vue';
+import ChangePasswordUser from "../../components/User/ChangePasswordUser.vue";
 
-const store = useSubscriptionsStore();
+// const store = useSubscriptionsStore();
 const actEdit = ref(true);
 const props = defineProps<{
-  user: RequestUserModel;
+  admin: any;
 }>();
 const loading = ref(false);
-
-const state: RequestUserModel = reactive({
-  id: props.user.id,
-  fullName: props.user.fullName,
-  empId: props.user.empId,
-  permisssions: props.user.permisssions,
-  status: props.user.status,
-  password: props.user.password,
+const state: ResponseAdminModel = reactive({
+  id: props.admin.id,
+  displayName: props.admin.displayName,
+  email: props.admin.email,
+  permissions: props.admin.permissions,
+  isActive: props.admin.isActive,
+  createdOn: props.admin.createdOn,
 });
 
 const rules = computed(() => {
   return {
-    fullName: {
+    displayName: {
       required: helpers.withMessage("الحقل مطلوب", required),
       validateText: helpers.withMessage(
         ", حروف عربيه او انجليزيه فقط",
@@ -38,20 +37,17 @@ const rules = computed(() => {
         minLength(3)
       ),
     },
-    password: { required: helpers.withMessage(" الحقل مطلوب", required) },
-    empId: { required: helpers.withMessage("الحقل مطلوب", required) },
   };
 });
 
-console.log(state);
 
 const toast = useToast();
 
 const v$ = useVuelidate(rules, state);
 
-const resetForm = () => {
-  (state.empId = null), (state.fullName = ""), (state.password = "");
-};
+// const resetForm = () => {
+//   (state.empId = null), (state.fullName = ""), (state.password = "");
+// };
 </script>
 
 <template>
@@ -62,22 +58,19 @@ const resetForm = () => {
 
         <BackButton style="float: left" />
 
-
         <Divider />
-        
       </template>
       <template #content>
-
-        <div v-if="user.status == 5" class="mb-5">
-        <div class="warning-message">
-          <div class="warning-message-icon"></div>
-          <div class="warning-message-text">
-            هذا المستخدم  مقفل لا يمكن التعديل عليه
+        <div v-if="admin.isActive == false" class="mb-5">
+          <div class="warning-message">
+            <div class="warning-message-icon"></div>
+            <div class="warning-message-text">
+              هذا المستخدم مقفل لا يمكن التعديل عليه
+            </div>
           </div>
         </div>
-      </div>
 
-        <div v-if="store.loading">
+        <div v-if="loading">
           <div class="grid p-fluid">
             <div class="field col-12 md:col-6 lg:col-4">
               <span class="p-float-label">
@@ -122,15 +115,15 @@ const resetForm = () => {
             <div class="field col-12 md:col-6 lg:col-4">
               <span class="p-float-label">
                 <InputText
-                  id="fullName"
+                  id="displayName"
                   :disabled="true"
-                  v-model="user.fullName"
+                  v-model="admin.displayName"
                   style="direction: ltr; text-align: end"
                 />
-                <label for="FullName">اسم الموظف</label>
+                <label for="FullName">اسم المستخدم</label>
                 <div style="height: 2px">
                   <error
-                    v-for="error in v$.fullName.$errors"
+                    v-for="error in v$.displayName.$errors"
                     :key="error.$uid"
                     class="p-error"
                     >{{ error.$message }}</error
@@ -139,11 +132,11 @@ const resetForm = () => {
               </span>
             </div>
 
-            <div class="field col-12 md:col-6 lg:col-4">
+            <!-- <div class="field col-12 md:col-6 lg:col-4">
               <span class="p-float-label">
                 <InputNumber
                   id="EmpId"
-                  v-model="user.empId"
+                  v-model="admin.empId"
                   :disabled="true"
                   style="direction: rtl; text-align: end"
                 />
@@ -157,26 +150,26 @@ const resetForm = () => {
                   >
                 </div>
               </span>
-            </div>
+            </div> -->
 
             <div class="field col-12 md:col-6 lg:col-4">
               <span class="p-float-label">
-                <InputNumber
+                <InputText
                   id="EmpId"
                   mask="9999999"
-                  v-model="user.empId"
+                  v-model="admin.email"
                   :disabled="true"
                   style="direction: rtl; text-align: end"
                 />
                 <label for="EmpId">البريد الإلكتروني</label>
-                <div style="height: 2px">
+                <!-- <div style="height: 2px">
                   <error
                     v-for="error in v$.empId.$errors"
                     :key="error.$uid"
                     class="p-error"
                     >{{ error.$message }}</error
                   >
-                </div>
+                </div> -->
               </span>
             </div>
           </div>
