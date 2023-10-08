@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import router from "@/router";
 import BackButton from "@/components/BackButton.vue";
-import CustomerForm from "../Customers/CustomerForm.vue";
 import { customersApi } from "@/api/customers";
 import { computed, getCurrentInstance, reactive, ref } from "vue";
 import { email, required, helpers, minLength } from "@vuelidate/validators";
@@ -24,12 +23,12 @@ const customer: Customer = reactive({
   primaryPhone: "",
   secondaryPhone: "",
   address: "",
+  city:"",
   files: [
-    { file: null, docType: 0 },
-    { file: null, docType: 0 }, // Add a second file
+    { file: null, fileType: 0 },
+    { file: null, fileType: 0 }, // Add a second file
   ],
-  subsicrptions: "",
-  representative: [],
+
 });
 
 const rules = computed(() => {
@@ -47,6 +46,7 @@ const rules = computed(() => {
       email: helpers.withMessage(" ليس عنوان بريد إلكتروني صالح", email),
     },
     address: { required: helpers.withMessage("الحقل مطلوب", required) },
+    city:{ required: helpers.withMessage("الحقل مطلوب", required) },
     primaryPhone: {
       required: helpers.withMessage("الحقل مطلوب", required),
       isLibyanPhoneNumber: helpers.withMessage(
@@ -79,30 +79,31 @@ const onFormSubmit = async () => {
       formData.append("primaryPhone", customer.primaryPhone);
       formData.append("secondaryPhone", customer.secondaryPhone);
       formData.append("address", customer.address);
+      formData.append("city", customer.city)
 
       // Append the first file as FormFile
       if (customer.files[0].file instanceof File) {
         formData.append(
-          "FirstFile.File",
+          "identityDocument.file",
           customer.files[0].file,
           customer.files[0].file.name
         );
         formData.append(
-          "FirstFile.DocType",
-          customer.files[0].docType.toString()
+          "identityDocument.fileType",
+          customer.files[0].fileType.toString()
         );
       }
 
       // Append the second file if needed
       if (customer.files[1] && customer.files[1].file instanceof File) {
         formData.append(
-          "SecondFile.File",
+          "companyDocuments",
           customer.files[1].file,
           customer.files[1].file.name
         );
         formData.append(
-          "SecondFile.DocType",
-          customer.files[1].docType.toString()
+          "companyDocuments",
+          customer.files[1].fileType.toString()
         );
       }
       const formDataObject: { [key: string]: string } = {};
@@ -155,7 +156,7 @@ const docTypeOptions = ref([
 ]);
 const filteredDocTypeOptions = (index: number) => {
   const selectedFile = customer.files[index]?.file;
-  const selectedDocType = customer.files[index]?.docType;
+  const selectedDocType = customer.files[index]?.fileType;
 
   if (selectedFile) {
     const availableOptions = docTypeOptions.value.filter(
@@ -176,13 +177,13 @@ async function onFileUpload(event: any, index: number) {
   const file = event.target.files[0];
 
   if (file && formData) {
-    const docType = index === 0 ? 1 : 2;
-    customer.files[index] = { file: file, docType }; // Store the File object in the array
+    const fileType = index === 0 ? 1 : 2;
+    customer.files[index] = { file: file, fileType }; // Store the File object in the array
 
-    const fieldName = index === 0 ? "FirstFile.File" : "SecondFile.File";
-    const docTypeNumber = Number(docType); // Convert docType to a number
+    const fieldName = index === 0 ? "identityDocument" : "companyDocuments";
+    const docTypeNumber = Number(fileType); // Convert docType to a number
     formData.append(fieldName, file); // Append the File object to formData
-    formData.append(fieldName + ".DocType", docTypeNumber.toString()); // Append the docType as a string
+    formData.append(fieldName + ".fileType", docTypeNumber.toString()); // Append the docType as a string
   }
 }
 
@@ -193,8 +194,8 @@ const resetForm = () => {
   customer.secondaryPhone = "";
   customer.address = "";
   customer.files = [
-    { file: "", docType: 0 },
-    { file: "", docType: 0 },
+    { file: "", fileType: 0 },
+    { file: "", fileType: 0 },
   ];
 };
 </script>
@@ -255,6 +256,25 @@ const resetForm = () => {
                   <div style="height: 2px">
                     <span
                       v-for="error in v$.address.$errors"
+                      :key="error.$uid"
+                      style="color: red; font-weight: bold; font-size: small"
+                    >
+                      {{ error.$message }}</span
+                    >
+                  </div>
+                </span>
+              </div>
+              <div class="field col-12 md:col-6 lg:col-4">
+                <span class="p-float-label">
+                  <InputText
+                    id="address"
+                    type="text"
+                    v-model="customer.city"
+                  />
+                  <label for="address">المدينة</label>
+                  <div style="height: 2px">
+                    <span
+                      v-for="error in v$.city.$errors"
                       :key="error.$uid"
                       style="color: red; font-weight: bold; font-size: small"
                     >

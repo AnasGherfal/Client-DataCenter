@@ -54,10 +54,16 @@ const closeDialog = () => {
 };
 const representativeId = ref();
 const representatives = ref();
+const totalPages = ref(1);
+  const pageNumber = ref(1);
 
+  const pageSize = ref(10);
+  const currentPage = ref(0);
 onMounted(async () => {
   await getCustomers();
+  getRepresentatives();
 });
+
 
 function getCustomers() {
   loading.value = true;
@@ -65,21 +71,16 @@ function getCustomers() {
   customersApi
     .getById(userId.value)
     .then((response) => {
-      customerId.id = response.data.id;
-      customerId.name = response.data.name;
-      customerId.address = response.data.address;
-      customerId.email = response.data.email;
-      customerId.primaryPhone = response.data.primaryPhone;
-      customerId.secondaryPhone = response.data.secondaryPhone;
-      customerId.status = response.data.status;
-      customerId.subsicrptions = response.data.subsicrptions;
-      customerId.files = response.data.files;
-      customerId.representative = response.data.representative;
-      representativesLength.value = customerId.representative.length;
-      console.log(customerId.representative);
-      representativeId.value = customerId.representative;
+      console.log(response)
+      customerId.id = response.data.content.id;
+      customerId.name = response.data.content.name;
+      customerId.address = response.data.content.address;
+      customerId.email = response.data.content.email;
+      customerId.primaryPhone = response.data.content.primaryPhone;
+      customerId.secondaryPhone = response.data.content.secondaryPhone;
+      customerId.status = response.data.content.status;
+      customerId.files = response.data.content.files;
 
-      // getRepresentatives();
     })
     .catch(function (error) {
       console.log(error);
@@ -91,21 +92,16 @@ function getCustomers() {
 
 const representativesLength = ref();
 
-// needs an update with getbyId
-// function getRepresentatives() {
-//   representativesApi.get().then((response) => {
-//     representativeId.value = response.data.content.filter(
-//       (users: { customerName: string }) => users.customerName == customerId.name
-//     );
-//     console.log( representativeId.value)
+console.log
+function getRepresentatives(){
+  representativesApi
+  .get(userId.value)
+  .then((response ) =>{
+    console.log(response)
+    representatives.value=response.data.content;
+  })
 
-//     representatives.value = response.data.content;
-//     reprefileType1.value = response.data.content[0]?.files[0].docType;
-//     reprefileType2.value = response.data.content[1]?.files[1].docType;
-
-//     representativesLength.value = representativeId.value.length;
-//   });
-// }
+}
 
 // Define a method to get the text based on the number
 const getIdentityTypeText = (type: number) => {
@@ -203,7 +199,7 @@ const downloadFile = async (id: any) => {
           <div v-else class="grid">
             <div
               class="col-12 sm:col-8 md:col-5 representative-card"
-              v-for="representative in representativeId"
+              v-for="representative in representatives"
               :key="representative.id"
             >
               <Card
@@ -226,7 +222,7 @@ const downloadFile = async (id: any) => {
                         <EditRepresentatives
                           :name="representative"
                           :key="representative.id"
-                          @get-representatives="getCustomers"
+                          @get-representatives="getRepresentatives"
                         >
                         </EditRepresentatives>
                       </div>

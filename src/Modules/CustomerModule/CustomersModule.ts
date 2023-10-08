@@ -4,19 +4,19 @@ export interface Customer {
     name: string;
     email: string;
     address: string;
+    city:string;
     primaryPhone: string;
     secondaryPhone: string;
     files: [{
       file: File |any;
-      docType: number;
+      fileType: number;
     },
     {
     file: File |any;
-    docType: number;
+    fileType: number;
     }
       ];
-    subsicrptions: string;
-    representative:[]
+
 
 
 }

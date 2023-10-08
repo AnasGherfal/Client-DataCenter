@@ -1,10 +1,9 @@
 import type { Customer } from "../Modules/CustomerModule/CustomersModule";
 import { httpClient } from "./index";
-
 export const customersApi = {
   get: async function (pageNumber: number, pageSize: number, name: string) {
     const response = await httpClient.get(
-      `/Customers?CustomerName=${name}&PageNumber=${pageNumber}&PageSize=${pageSize}`
+      `/Customers?Search=${name}&PageNumber=${pageNumber}&PageSize=${pageSize}`
     );
     return response;
   },

@@ -29,6 +29,8 @@ const hide1 = ref(false);
 const hide2 = ref(false);
 const screenWidth = ref(window.innerWidth);
 const koko = ref("koko");
+
+console.log(dataClinet)
 const customer = reactive({
   name: dataClinet.customer.name,
   email: dataClinet.customer.email,
@@ -38,17 +40,19 @@ const customer = reactive({
   status: dataClinet.customer.status,
   files: [
     {
-      docType: dataClinet.customer.files[0]?.docType,
-      file: dataClinet.customer.files[0]?.fileName,
+      fileType: dataClinet.customer.files[0]?.fileType,
+      createdOn: dataClinet.customer.files[0]?.createdOn,
       id: dataClinet.customer.files[0]?.id,
+      isActive: dataClinet.customer.files[0]?.isActive,
     },
     {
-      docType: dataClinet.customer.files[1]?.docType,
-      file: dataClinet.customer.files[1]?.fileName,
+      fileType: dataClinet.customer.files[1]?.fileType,
+      createdOn: dataClinet.customer.files[1]?.createdOn,
       id: dataClinet.customer.files[1]?.id,
+      isActive: dataClinet.customer.files[1]?.isActive,
     },
   ],
-  subsicrptions: dataClinet.customer.subsicrptions,
+  // subsicrptions: dataClinet.customer.subsicrptions,
 });
 
 const toast = useToast();
@@ -60,7 +64,7 @@ const docTypes = [
 
 onMounted(() => {
   if (dataClinet.customer.files[1]?.docType) {
-    customer.files[1].docType = dataClinet.customer.files[1].docType;
+    customer.files[1].fileType = dataClinet.customer.files[1].docType;
   }
 });
 // Function to handle file upload
@@ -77,9 +81,9 @@ const handleFileChange = (event: any, index: any) => {
   const selectedFile = event.target.files[0];
   if (selectedFile) {
     // customer.files[index].file = selectedFile.name;
-    customer.files[index].file = selectedFile; // Store the file object
+    customer.files[index].id = selectedFile; // Store the file object
     if (selectedFile) {
-      customer.files[index].file = selectedFile;
+      customer.files[index].id = selectedFile;
       hide1.value = index === 0; // Only set hide1 if the first file was selected
       hide2.value = index === 1; // Only set hide2 if the second file was selected
     }
@@ -88,7 +92,7 @@ const handleFileChange = (event: any, index: any) => {
 
 const displayedFileName = computed(() => {
   return customer.files.map((file) =>
-    file.file ? file.file.name : "No file selected"
+    file.id ? file.id.name : "No file selected"
   );
 });
 
@@ -108,8 +112,8 @@ watch(
   () => customer.files,
   (newFiles) => {
     for (let i = 0; i < newFiles.length; i++) {
-      displayedFileName.value[i] = newFiles[i].file
-        ? newFiles[i].file.name
+      displayedFileName.value[i] = newFiles[i].id
+        ? newFiles[i].id.name
         : "No file selected";
     }
   }
@@ -126,26 +130,26 @@ const onFormSubmit = async () => {
   formData.append("address", customer.address);
   formData.append("status", customer.status);
   // Append the first file as FormFile
-  if (customer.files[0].file instanceof File) {
-    formData.append(
-      "FirstFile.File",
-      customer.files[0].file,
-      customer.files[0].file.name
-    );
-    formData.append("FirstFile.DocType", customer.files[0].docType.toString());
-  }
+  // if (customer.files[0].id instanceof File) {
+  //   formData.append(
+  //     "FirstFile.File",
+  //     customer.files[0].id,
+  //     customer.files[0].id.name
+  //   );
+  //   formData.append("FirstFile.fileType", customer.files[0].fileType.toString());
+  // }
 
   // Append the second file if needed
-  if (customer.files[1] && customer.files[1].file instanceof File) {
-    formData.append(
-      "SecondFile.File",
-      customer.files[1].file,
-      customer.files[1].file.name
-    );
-    formData.append("SecondFile.DocType", customer.files[1].docType.toString());
-  }
+  // if (customer.files[1] && customer.files[1].id instanceof File) {
+  //   formData.append(
+  //     "SecondFile.File",
+  //     customer.files[1].id,
+  //     customer.files[1].id.name
+  //   );
+  //   formData.append("SecondFile.DocType", customer.files[1].fileType.toString());
+  // }
 
-  formData.append("subsicrptions", customer.subsicrptions);
+  // formData.append("subsicrptions", customer.subsicrptions);
 
   const formDataObject: { [key: string]: string } = {};
   formData.forEach((value, key) => {
@@ -167,7 +171,7 @@ const onFormSubmit = async () => {
         emit("getCustomers");
       })
       .catch(() => {
-        store.loading = false;
+        loading.value = false;
         toast.add({
           severity: "error",
           summary: "خطأ",
@@ -252,7 +256,7 @@ const downloadFile = async (id: any) => {
 };
 </script>
 
-<template>
+<template>{{ customer.files[0].id }}
   <div>
     <Card>
       <template #title>
@@ -270,7 +274,7 @@ const downloadFile = async (id: any) => {
         </div>
 
         <span
-          v-else-if="customer.status !== 5 && !store.loading"
+          v-else-if="customer.status !== 5 && !loading"
           style="width: 30px; height: 30px; margin-right: 10px; margin-top: 0px"
         >
           <Button
@@ -293,7 +297,7 @@ const downloadFile = async (id: any) => {
         <Divider />
       </template>
       <template #content>
-        <div v-if="store.loading">
+        <div v-if="loading">
           <div class="grid p-fluid">
             <div class="field col-12 md:col-6 lg:col-4">
               <span class="p-float-label">
@@ -455,14 +459,14 @@ const downloadFile = async (id: any) => {
                     <InputText
                       v-if="!hide1"
                       class="p-inputtext p-component"
-                      v-model="customer.files[0].file"
+                      v-model="customer.files[0].createdOn"
                       :disabled="true"
                     />
 
                     <InputText
                       v-else
                       class="p-inputtext p-component"
-                      v-model="customer.files[0].file"
+                      v-model="customer.files[0].createdOn"
                       :value="displayedFileName[0]"
                       :disabled="true"
                     />
@@ -527,14 +531,14 @@ const downloadFile = async (id: any) => {
                     <InputText
                       v-if="!hide2"
                       class="p-inputtext p-component"
-                      v-model="customer.files[1].file"
+                      v-model="customer.files[1].createdOn"
                       :disabled="true"
                     />
 
                     <InputText
                       v-else
                       class="p-inputtext p-component"
-                      v-model="customer.files[1].file"
+                      v-model="customer.files[1].createdOn"
                       :value="displayedFileName[1]"
                       :disabled="true"
                     />
