@@ -1,31 +1,31 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from "vue";
-import Knob from "primevue/knob";
 import type { Service } from "../../Modules/ServicesModule/ServicesModule";
 import BackButton from "@/components/BackButton.vue";
-import type { SubscriptionRespons } from "../../Modules/SubscriptionModule/SubscriptionsResponseModule";
 import { useToast } from "primevue/usetoast";
 import { useSubscriptionsStore } from "@/stores/subscriptions";
 import { subscriptionApi } from "@/api/subscriptions";
 import { serviceApi } from "@/api/service";
 import { useRoute } from "vue-router";
 import CircularProgressBar from "@/assets/style/CircularProgressBar.vue";
-import VisitBysubsId from "../Visits/VisitBysubsId.vue";
+import VisitBysubsId from "../Visits/VisitBySubsId.vue";
 import router from "@/router";
+import moment from "moment";
+import { visitApi } from "@/api/visits";
 
 const loading = ref(false);
 const loading2 = ref(false);
 const cardVis = ref(false);
-const prop = defineProps<{
-  nad: number;
-}>();
+const RenewFile = ref<File>();
+const customersDialog = ref(false);
+const service = ref<Service>();
 
 const store = useSubscriptionsStore();
 const toast = useToast();
 const route = useRoute();
 
-const subs: SubscriptionRespons = reactive({
-  id: null,
+const subs = reactive({
+  id: "",
   status: null,
   serviceName: "",
   customerName: "",
@@ -33,21 +33,18 @@ const subs: SubscriptionRespons = reactive({
   endDate: "",
   subscriptionFileId: null,
   daysRemaining: 0,
-  monthlyVisits:0,
-
-  visits: [],
-  file: { id: "", fileName: "", docType: "" },
-});
-
-
-const servobj: Service = reactive({
-  id: null,
-  name: "",
-  amountOfPower: "",
-  acpPort: "",
-  dns: "",
   monthlyVisits: 0,
-  price: null,
+  visits: [] as any,
+  file: [
+    {
+      createdOn: "",
+      fileType: 0,
+      isActive: true,
+      id: "",
+    },
+  ],
+  totalPrice: 0,
+  createdOn: "",
 });
 
 const userId = computed(() => {
@@ -66,155 +63,101 @@ function getdata() {
   subscriptionApi
     .getById(userId.value)
     .then(function (response) {
-      subs.id = response.data.id;
-      subs.status = response.data.status;
-      subs.customerName = response.data.customerName;
-      subs.endDate = response.data.endDate;
-      subs.startDate = response.data.startDate;
-      subs.serviceName = response.data.serviceName;
-      subs.subscriptionFileId = response.data.subscriptionFileId;
-      subs.daysRemaining = response.data.daysRemaining;
-      subs.visits = response.data.visits;
-      subs.monthlyVisits = response.data.monthlyVisits;
-      subs.file.fileName = response.data.file.fileName;
-      subs.file.docType = response.data.file.docType;
-      subs.file.id = response.data.file.id;
-      
+      const content = response.data.content;
+      subs.id = content.id;
+      subs.status = content.status;
+      subs.customerName = content.customerName;
+      subs.endDate = content.endDate;
+      subs.startDate = content.startDate;
+      subs.serviceName = content.serviceName;
+      subs.file = content.files;
+      subs.createdOn = content.createdOn;
+      subs.totalPrice = content.totalPrice;
+      subs.daysRemaining = moment(content.endDate).diff(moment(), "days");
     })
     .then(function () {
-      serviceApi
-        .get()
-        .then(function (response) {
-          servobj.id = response.data.content.filter(
-            (servic: { name: string }) => servic.name === subs.serviceName
-          )[0].id;
-          servobj.acpPort = response.data.content.filter(
-            (servic: { name: string }) => servic.name === subs.serviceName
-          )[0].acpPort;
-          servobj.dns = response.data.content.filter(
-            (servic: { name: string }) => servic.name === subs.serviceName
-          )[0].dns;
-          servobj.amountOfPower = response.data.content.filter(
-            (servic: { name: string }) => servic.name === subs.serviceName
-          )[0].amountOfPower;
-          servobj.name = response.data.content.filter(
-            (servic: { name: string }) => servic.name === subs.serviceName
-          )[0].name;
-          servobj.monthlyVisits = response.data.content.filter(
-            (servic: { name: string }) => servic.name === subs.serviceName
-          )[0].monthlyVisits;
-          servobj.price = response.data.content.filter(
-            (servic: { name: string }) => servic.name === subs.serviceName
-          )[0].price;
-          loading.value = false;
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      serviceApi.get().then(function (response) {
+        service.value = response.data.content.find(
+          (servic: any) => servic.name === subs.serviceName
+        );
+      });
+      getVisitis();
     })
-    .catch(function (error) {
-      console.log(error);
+    .finally(() => {
       loading.value = false;
     });
 }
 
-const customersDialog = ref(false);
-
-const fileRenew = ref({ file: null });
-const formData = new FormData(); // Initialize formData as a new FormData object
-
-async function onFileUpload(event: any, index: number) {
-  const file = event.target.files[0];
-
-  if (file && formData) {
-    // Append the File object to formData using the fileName property as the field name
-    const fileObject = index === 0 ? "File" : "file";
-    formData.append(fileObject, file);
-  }
+function getVisitis() {
+  loading.value = true;
+  visitApi
+    .get(userId.value, subs.id)
+    .then(function (response) {
+      subs.visits = response.data.content;
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 }
 
+async function onRenewFileUpload(event: any) {
+  const file = event.target.files[0];
 
-
-
-const displayedFileName = computed(() => {
-  return file.value || "ارفق ملف 1";
-});
-
-const file = ref<File | null>();
-const firstFileError = ref<string | null>(null);
-
-
+  RenewFile.value = file;
+}
 
 const renewalSubscription = () => {
   loading2.value = true;
 
-  if (!fileRenew) {
-    firstFileError.value = "الحقل مطلوب";
-    loading2.value = false;
-    return; // Stop further processing
-  } else {
-    firstFileError.value = "";
-    if (fileRenew.value instanceof File) {
+  const formData = new FormData();
+  formData.append("file", RenewFile.value as File);
 
-      formData.append("file", fileRenew.value ,fileRenew.value.name);
-    }
-
-
-    const formDataObject: { [key: string]: string } = {};
-    formData.forEach((value, key) => {
-      formDataObject[key] = value.toString();
-    });
-
-
-
-    console.log("formData:", formDataObject);
-    subscriptionApi
-      .renew(subs.id, formData)
-      .then((response) => {
-        console.log(response);
-        loading2.value = false;
-        toast.add({
-          severity: "success",
-          summary: "تم التجديد",
-          detail: response,
-          life: 3000,
-        });
-        customersDialog.value = false;
-        router.go(-1);
-        store.getSubs();
-      })
-      .catch(function (error) {
-        console.log(error);
-        toast.add({
-          severity: "error",
-          summary: "حدثة مشكلة",
-          detail: error,
-          life: 3000,
-        });
-        loading2.value = false;
+  subscriptionApi
+    .renew(subs.id, formData)
+    .then((response) => {
+      loading2.value = false;
+      toast.add({
+        severity: "success",
+        summary: "تم التجديد",
+        detail: response,
+        life: 3000,
       });
-  }
+      customersDialog.value = false;
+      router.go(-1);
+      store.getSubs();
+    })
+    .catch(function (error) {
+      toast.add({
+        severity: "error",
+        summary: error.response.data.msg || "حدثة مشكلة",
+        detail: error,
+        life: 3000,
+      });
+      loading2.value = false;
+    })
+    .finally(() => {
+      loading2.value = false;
+    });
 };
 
 function car() {
   cardVis.value = !cardVis.value;
 }
-function visitPercent (){
- if(servobj.monthlyVisits ){
-  return(subs.monthlyVisits / servobj.monthlyVisits )* 100;
- }
-  return 0; // Default value in case servobj.monthlyVisits is falsy
-
-
-} 
-const downloadFile = async (id: any) => {
+// function visitPercent() {
+//   if (service && service?.monthlyVisits) {
+//     return (subs.monthlyVisits / service?.monthlyVisits) * 100;
+//   }
+//   return 0; // Default value in case service.monthlyVisits is falsy
+// }
+const downloadFile = async (subId: string, fileId: string) => {
   try {
-    const response = await subscriptionApi.getFile(id, {
-      responseType: "arraybuffer",
-    });
+    const response = await subscriptionApi.getFile(subId, fileId);
 
     if (response) {
-      const blob = new Blob([response.data], {
+      const blob = new Blob([response.data.content], {
         type: "application/octet-stream",
       });
       const url = URL.createObjectURL(blob);
@@ -240,8 +183,6 @@ const downloadFile = async (id: any) => {
     });
   }
 };
-
-const maxDays = ref(400); // Set the maximum value for the knob
 </script>
 
 <template>
@@ -267,7 +208,7 @@ const maxDays = ref(400); // Set the maximum value for the knob
       <div class="grid p-fluid">
         <div v-if="loading">
           <div class="grid p-fluid">
-            <div v-for="n in 1" class="ml-3 mb-2">
+            <div v-for="n in 4" :key="n" class="ml-3 mb-2">
               <span>
                 <Skeleton width="15rem" height="20rem"></Skeleton>
               </span>
@@ -276,11 +217,8 @@ const maxDays = ref(400); // Set the maximum value for the knob
         </div>
 
         <div v-else class="flex-1" style="text-align: center; width: 20rem">
-          <div v-if="subs.daysRemaining > 0" style="display: inline-block">
+          <div style="display: inline-block">
             <CircularProgressBar :percentage="subs.daysRemaining" />
-          </div>
-          <div v-else style="display: inline-block">
-            <CircularProgressBar :percentage="0" />
           </div>
 
           <div>
@@ -359,7 +297,7 @@ const maxDays = ref(400); // Set the maximum value for the knob
                     <div class="file-input-text">
                       <i class="pi pi-upload"></i>
 
-                      {{ displayedFileName }}
+                      {{ RenewFile ? RenewFile.name : "ارفق ملف 1" }}
                     </div>
                   </div>
 
@@ -367,31 +305,25 @@ const maxDays = ref(400); // Set the maximum value for the knob
                     id="fileInput"
                     style="display: none"
                     type="file"
-                    @change="(event) => onFileUpload(event, 0)"
+                    @change="(event) => onRenewFileUpload(event)"
                     accept="*"
                   />
                 </label>
-                <div
-                  v-if="firstFileError"
-                  style="color: red; font-weight: bold; font-size: small"
-                >
-                  {{ firstFileError }}
-                </div>
               </div>
             </div>
             <template #footer>
-              <Button
-                label="لا"
-                icon="pi pi-times"
-                text
-                @click="customersDialog = false"
-              />
               <Button
                 label="نعم"
                 icon="pi pi-check"
                 :loading="loading2"
                 text
                 @click="renewalSubscription"
+              />
+              <Button
+                label="لا"
+                icon="pi pi-times"
+                text
+                @click="customersDialog = false"
               />
             </template>
           </Dialog>
@@ -402,7 +334,7 @@ const maxDays = ref(400); // Set the maximum value for the knob
           <h3 style="margin: 0">اسم العميل</h3>
           <Skeleton v-if="loading" width="100%" height="1rem"></Skeleton>
 
-          <span v-else="loading">
+          <span v-else>
             <p style="margin: 0; display: inline">{{ subs.customerName }}</p>
             <RouterLink
               :key="subs.customerName"
@@ -424,11 +356,11 @@ const maxDays = ref(400); // Set the maximum value for the knob
           <h3 style="margin: 0">اسم الباقة</h3>
           <Skeleton v-if="loading" width="50%" height="1rem"></Skeleton>
 
-          <span v-else="loading">
+          <span v-else>
             <p style="margin: 0; display: inline">{{ subs.serviceName }}</p>
 
             <Button
-              @click="car()"
+              @click="car"
               icon="fa-solid fa-circle-info"
               severity="info"
               text
@@ -442,14 +374,14 @@ const maxDays = ref(400); // Set the maximum value for the knob
                 <div class="justify-content-between">
                   <div>
                     <span class="block text-center text-3xl font-bold">{{
-                      servobj.name
+                      service?.name
                     }}</span>
                     <div class="text-center mb-3">
                       عدد الزيارات المتاحة في هذه الباقة في الشهر :
-                      {{ servobj.monthlyVisits }}
+                      {{ service?.monthlyVisits }}
                     </div>
                     <div class="text-center font-semibold text-4xl">
-                      {{ servobj.price
+                      {{ service?.price
                       }}<span class="text-xs mr-1 text-blue-800">د.ل</span>
                     </div>
                   </div>
@@ -462,12 +394,12 @@ const maxDays = ref(400); // Set the maximum value for the knob
                   class="text-center font-bold text-sm"
                 >
                   <i class="text-green-600 fa-solid fa-circle-check mr-2"></i>
-                  <span>(Acp Port): {{ servobj.acpPort }}</span>
+                  <span>(Acp Port): {{ service?.acpPort }}</span>
                   <span class="font-medium"></span>
                 </div>
 
                 <div class="text-center font-semibold text-sm">
-                  <span>DNS : {{ servobj.dns }}</span>
+                  <span>DNS : {{ service?.dns }}</span>
                   <i class="text-green-600 fa-solid fa-circle-check mr-2"></i>
                   <span class="font-medium"></span>
                 </div>
@@ -477,7 +409,9 @@ const maxDays = ref(400); // Set the maximum value for the knob
                   class="text-center font-bold text-sm"
                 >
                   <i class="text-green-600 fa-solid fa-circle-check mr-1"></i>
-                  <span> (Amount Of Power) : {{ servobj.amountOfPower }} </span>
+                  <span>
+                    (Amount Of Power) : {{ service?.amountOfPower }}
+                  </span>
                   <span class="text-green-500 font-medium"></span>
                 </div>
               </div>
@@ -488,7 +422,7 @@ const maxDays = ref(400); // Set the maximum value for the knob
 
           <h4 style="margin: 0">عدد الزيارات المتبقية بالساعة</h4>
           <Skeleton v-if="loading" width="50%" height="1rem"></Skeleton>
-          <ProgressBar class="mt-2" v-else :value="servobj.monthlyVisits">
+          <ProgressBar class="mt-2" v-else :value="service?.monthlyVisits">
             {{ subs.monthlyVisits }}
           </ProgressBar>
 
@@ -497,52 +431,29 @@ const maxDays = ref(400); // Set the maximum value for the knob
           <h4 style="margin: 0; margin-bottom: 2rem">عقد الاشتراك :</h4>
           <Skeleton v-if="loading" width="50%" height="1rem"></Skeleton>
 
-          <div class="grid p-fluid">
+          <div
+            v-for="(item, index) in subs.file"
+            :key="index"
+            class="grid p-fluid align-items-center"
+          >
             <div class="field col-4 md:col-4 lg:col-6">
-              <span class="p-float-label">
+              <span class="">
+                <label for="secondaryPhone">اسم الملف</label>
                 <InputText
                   class="p-inputtext p-component"
-                  v-model="subs.file.fileName"
+                  :value="item.id"
                   :disabled="true"
                 />
-
-                <label for="secondaryPhone">اسم الملف</label>
               </span>
             </div>
-            <!-- <div class="field col-4 md:col-4 lg:col-4">
-              <span class="p-float-label">
-                <Dropdown
-                  id="docType"
-                  class="custom-dropdown"
-                  v-model="subs.file.docType"
-                  :disabled="true"
-                />
-                <label for="secondaryPhone">نوع الملف</label>
-              </span>
-            </div> -->
+
             <div class="file-actions field col-4 md:col-4 lg:col-6">
               <Button
-                v-if="subs.status == 5"
-                @click="downloadFile(subs.file.id)"
-                icon="fa-solid fa-download"
-                class="p-button-text p-button-info"
-                disabled="true"
-              >
-                تحميل
-              </Button>
-              <Button
-                v-else
-                @click="downloadFile(subs.file.id)"
+                @click="downloadFile(subs.id, item.id)"
                 icon="fa-solid fa-download"
                 class="p-button-text p-button-info"
               >
                 تحميل
-              </Button>
-              <Button
-                icon="fa-solid fa-eye"
-                class="p-button-text p-button-info"
-              >
-                عرض
               </Button>
             </div>
           </div>

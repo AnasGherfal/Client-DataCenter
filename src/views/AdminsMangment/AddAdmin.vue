@@ -3,22 +3,22 @@ import { computed, reactive, ref } from "vue";
 import { required, helpers, email, minLength } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
-import BackButton from "../../components/BackButton.vue"
+import BackButton from "../../components/BackButton.vue";
 import router from "../../router";
 import { admin } from "../../api/admin";
 import type { ResponseAdminModel } from "../../Modules/AdminModule/AdminModuleResponse";
 import { useAdminStore } from "../../stores/admin";
+import { RequestAdminModel } from "../../Modules/AdminModule/AdminModuleRequest";
 
 const loading = ref(false);
 const store = useAdminStore();
 
-const state: ResponseAdminModel = reactive({
+const state = reactive({
   fullName: "",
   email: "",
-  empId: 0,
+  empId: null,
   permissions: 0,
 });
-
 
 const selectedPermissions = ref([]);
 const permissions = ref([
@@ -50,8 +50,6 @@ const rules = computed(() => {
   };
 });
 
-console.log(state);
-
 const toast = useToast();
 
 const v$ = useVuelidate(rules, state);
@@ -72,8 +70,6 @@ const submitForm = async () => {
   if (result) {
     const permissions = calculatePermissions();
     state.permissions = permissions;
-    console.log(state.permissions);
-    console.log(state);
 
     admin
       .create(state)
@@ -87,16 +83,14 @@ const submitForm = async () => {
           detail: response.data.msg,
           life: 3000,
         });
-        console.log(response);
         loading.value = false;
         router.go(-1);
       })
       .catch(function (error) {
-        console.log(error);
         toast.add({
           severity: "error",
           summary: "رسالة فشل",
-          detail: "هنالك مشكلة في الوصول",
+          detail: error.response.data.msg || "هنالك مشكلة في الوصول",
           life: 3000,
         });
       });
@@ -112,10 +106,10 @@ const submitForm = async () => {
 };
 
 const resetForm = () => {
-  (state.empId = null),
-    (state.fullName = ""),
-    (state.email = ""),
-    (state.permissions = 0);
+  state.empId = null;
+  state.fullName = "";
+  state.email = "";
+  state.permissions = 0;
 };
 </script>
 
@@ -133,13 +127,13 @@ const resetForm = () => {
         <form @submit.prevent="submitForm">
           <div class="grid p-fluid">
             <div class="field col-12 md:col-6 lg:col-4">
-              <span class="p-float-label">
+              <span class="">
                 <InputText
                   id="FullName"
                   v-model="state.fullName"
-                  style="direction: ltr; text-align: end"
+                  type="text"
+                  placeholder="أدخل اسم الموظف"
                 />
-                <label for="FullName">اسم الموظف</label>
                 <div style="height: 2px">
                   <error
                     v-for="error in v$.fullName.$errors"
@@ -152,9 +146,13 @@ const resetForm = () => {
             </div>
 
             <div class="field col-12 md:col-6 lg:col-4">
-              <span class="p-float-label">
-                <InputText id="Email" type="text" v-model="state.email" />
-                <label for="Email">البريد الإلكتروني</label>
+              <span class="">
+                <InputText
+                  id="Email"
+                  placeholder="البريد الالكتروني"
+                  type="text"
+                  v-model="state.email"
+                />
                 <div style="height: 2px">
                   <error
                     v-for="error in v$.email.$errors"
@@ -168,14 +166,13 @@ const resetForm = () => {
             </div>
 
             <div class="field col-12 md:col-6 lg:col-4">
-              <span class="p-float-label">
+              <span class="">
                 <InputNumber
                   id="EmpId"
                   mask="99999"
                   v-model="state.empId"
-                  style="text-align: end"
+                  placeholder="الرقم الوظيفي"
                 />
-                <label for="EmpId">الرقم الوظيفي</label>
                 <div style="height: 2px">
                   <error
                     v-for="error in v$.empId.$errors"
@@ -186,22 +183,18 @@ const resetForm = () => {
                 </div>
               </span>
             </div>
-            {{ selectedPermissions }}
             <div class="field col-12 md:col-6 lg:col-4">
-              <span class="p-float-label">
-                <div class="card flex justify-content-center">
+              <span class="">
                   <MultiSelect
                     v-model="selectedPermissions"
                     display="chip"
                     optionValue="value"
                     :options="permissions"
                     optionLabel="name"
-                    placeholder="Select permissions"
                     :maxSelectedLabels="3"
                     class="w-full md:w-20rem"
+                    placeholder="اختر الصلاحيات"
                   />
-                  <label for="startDate">اختر الصلاحيات</label>
-                </div>
                 <!-- <div style="height: 2px">
                   <error
                     v-for="error in v$.selectedCities.$errors"

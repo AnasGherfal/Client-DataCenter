@@ -14,11 +14,13 @@ import type { VisitHours } from "@/Modules/TimeShiftsModule/TimeShiftsModule";
 import axios from "axios";
 import moment from "moment";
 import { timeShiftsApi } from "@/api/timeShifts";
+import { days } from "@/tools/days";
 
 const timeShifts: VisitHours = reactive({
-  name: "",
+  day: "",
+  date: "",
   priceForFirstHour: null,
-  priceForRemainingHour: null,
+  priceForRemainingHours: null,
   startTime: "",
   endTime: "",
 });
@@ -28,11 +30,12 @@ const emits = defineEmits(["getTimeShifts"]);
 
 const rules = computed(() => {
   return {
-    name: { required: helpers.withMessage("الحقل مطلوب", required) },
+    day: { required: helpers.withMessage("الحقل مطلوب", required) },
+    date: { required: helpers.withMessage("الحقل مطلوب", required) },
     priceForFirstHour: {
       required: helpers.withMessage("الحقل مطلوب", required),
     },
-    priceForRemainingHour: {
+    priceForRemainingHours: {
       required: helpers.withMessage("الحقل مطلوب", required),
     },
     startTime: { required: helpers.withMessage("الحقل مطلوب", required) },
@@ -47,13 +50,13 @@ const v$ = useVuelidate(rules, timeShifts);
 const submitForm = async () => {
   const result = await v$.value.$validate();
 
-
   const send = reactive<VisitHours>({
-    name: timeShifts.name,
+    day: timeShifts.day,
+    date: timeShifts.date,
     startTime: moment(timeShifts.startTime).format("HH:mm:ss"),
     endTime: moment(timeShifts.endTime).format("HH:mm:ss"),
     priceForFirstHour: timeShifts.priceForFirstHour,
-    priceForRemainingHour: timeShifts.priceForRemainingHour,
+    priceForRemainingHours: timeShifts.priceForRemainingHours,
   });
 
   if (result) {
@@ -72,9 +75,9 @@ const submitForm = async () => {
       .catch(function (error) {
         console.log(error);
         toast.add({
-          severity: "warn",
+          severity: "error",
           summary: "رسالة تحذير",
-          detail: "هناك مشكلة في عملية الادخال",
+          detail: error.response.data.msg,
           life: 3000,
         });
       })
@@ -87,9 +90,10 @@ const submitForm = async () => {
 };
 
 const resetForm = () => {
-  (timeShifts.name = ""),
+  (timeShifts.date = ""),
+    (timeShifts.day = ""),
     (timeShifts.priceForFirstHour = null),
-    (timeShifts.priceForRemainingHour = null),
+    (timeShifts.priceForRemainingHours = null),
     (timeShifts.startTime = ""),
     (timeShifts.endTime = "");
 };
@@ -121,23 +125,55 @@ const closeModal = () => {
   >
     <form
       @submit.prevent="submitForm"
-      style="height: 100%; display: flex; flex-direction: column"
+      style="height: 100%; display: flex; flex-direction: column; gap: 1.2rem"
     >
       <div class="grid p-fluid flex-grow-1">
         <div class="field col-12 md:col-4 lg:col-4">
           <span class="p-float-label">
-            <InputText id="name" type="text" v-model="timeShifts.name" />
-            <label for="name">اسم الساعه </label>
+            <Dropdown
+              v-model="timeShifts.day"
+              id="day"
+              :options="days"
+              optionLabel="name"
+              optionValue="value"
+              placeholder="اختر اليوم"
+              class="w-full"
+            />
+
+            <label for="day"> اليوم </label>
             <div style="height: 2px">
               <span
-                v-for="error in v$.name.$errors"
+                v-for="error in v$.day.$errors"
                 :key="error.$uid"
                 style="color: red; font-weight: bold; font-size: small"
                 >{{ error.$message }}
-            </span>
+              </span>
             </div>
           </span>
         </div>
+        <div class="field col-12 md:col-4 lg:col-4">
+          <span class="p-float-label">
+            <Calendar
+              id="date"
+              v-model="timeShifts.date"
+              hourFormat="24"
+              selectionMode="single"
+              :manualInput="true"
+            />
+            <label for="date"> الموافق </label>
+            <div style="height: 2px">
+              <span
+                v-for="error in v$.date.$errors"
+                :key="error.$uid"
+                class="p-error"
+                style="color: red; font-weight: bold; font-size: small"
+                >{{ error.$message }}
+              </span>
+            </div>
+          </span>
+        </div>
+      </div>
+      <div class="grid p-fluid flex-grow-1">
         <div class="field col-12 md:col-4 lg:col-4">
           <span class="p-float-label">
             <Calendar
@@ -160,7 +196,7 @@ const closeModal = () => {
                 class="p-error"
                 style="color: red; font-weight: bold; font-size: small"
                 >{{ error.$message }}
-            </span>
+              </span>
             </div>
           </span>
         </div>
@@ -185,7 +221,7 @@ const closeModal = () => {
                 :key="error.$uid"
                 style="color: red; font-weight: bold; font-size: small"
                 >{{ error.$message }}
-            </span>
+              </span>
             </div>
           </span>
         </div>
@@ -214,21 +250,21 @@ const closeModal = () => {
                 :key="error.$uid"
                 style="color: red; font-weight: bold; font-size: small"
                 >{{ error.$message }}
-            </span>
+              </span>
             </div>
           </span>
         </div>
         <div class="field col-12 md:col-4 lg:col-4">
           <span class="flex flex-column gap-2">
             <label
-              for="priceForRemainingHour"
+              for="priceForRemainingHours"
               style="font-size: small; font-weight: 100; color: lightslategray"
             >
               سعر باقي الساعات
             </label>
             <InputNumber
-              inputId="priceForRemainingHour"
-              v-model="timeShifts.priceForRemainingHour"
+              inputId="priceForRemainingHours"
+              v-model="timeShifts.priceForRemainingHours"
               suffix=" دينار"
               :step="0.25"
               :min="0"
@@ -241,7 +277,7 @@ const closeModal = () => {
                 :key="error.$uid"
                 style="color: red; font-weight: bold; font-size: small"
                 >{{ error.$message }}
-            </span>
+              </span>
             </div>
           </span>
         </div>

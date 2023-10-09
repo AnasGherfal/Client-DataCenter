@@ -7,6 +7,7 @@ import { FilterMatchMode } from "primevue/api";
 import LockButton from "@/components/LockButton.vue";
 import { subscriptionApi } from "@/api/subscriptions";
 import { useSubscriptionsStore } from "@/stores/subscriptions";
+import { SubscriptionStatus } from "@/constant/SubscriptionStatus";
 
 const toast = useToast();
 const dialog = ref(false);
@@ -19,12 +20,13 @@ const totalPages = ref(1);
 
 const statusSub = ref(0);
 const props = defineProps<{
-  stateCheck: number;
+  stateCheck: SubscriptionStatus;
   iconShape: string;
 }>();
 const tab1 = ref();
 
 async function filterdSubs() {
+  loading.value = true;
   subscriptionApi
     .getFiltered(pageNumber.value, pageSize.value, props.stateCheck)
     .then((response) => {
@@ -32,8 +34,9 @@ async function filterdSubs() {
       filteredSubs.value = response.data.content;
       totalPages.value = response.data.totalPages;
       currentPage.value = response.data.currentPage;
+    }).finally(() => {
+      loading.value = false;
     });
-  loading.value = false;
 }
 
 const toggleDialog = () => {
@@ -131,17 +134,18 @@ const goToPreviousPage = () => {
     >
       <Card>
         <template #title>
-          <span v-if="props.stateCheck == 1"> سجل الاشتراكات الصالحة </span>
-          <span v-else-if="props.stateCheck == 4">
+          <span v-if="props.stateCheck == SubscriptionStatus.Active">
+            سجل الاشتراكات الصالحة
+          </span>
+          <span v-else-if="props.stateCheck == SubscriptionStatus.Expired">
             الاشتراكات المنتهية صلاحيتها</span
           >
-          <span v-else-if="props.stateCheck == 5">
+          <span
+            v-else-if="props.stateCheck == SubscriptionStatus.ExpireThisMonth"
+          >
             الاشتراكات القريب انتهاء صلاحيتها
           </span>
-          <AddButton
-            name-button="إضافة اشتراك"
-            rout-name="/subscriptionsRecord/addSubsciptions"
-          />
+          <AddButton name-button="إضافة اشتراك" rout-name="/addSubsciptions" />
         </template>
         <template #content>
           <div
@@ -325,10 +329,7 @@ const goToPreviousPage = () => {
 
                 <RouterLink
                   :key="slotProps.data.id"
-                  :to="
-                    '/subscriptionsRecord/SubscriptionsDetaView/' +
-                    slotProps.data.id
-                  "
+                  :to="'/SubscriptionsDetaView/' + slotProps.data.id"
                   style="text-decoration: none"
                 >
                   <Button

@@ -12,7 +12,6 @@ import {
 } from "vue";
 import { useToast } from "primevue/usetoast";
 import BackButton from "@/components/BackButton.vue";
-import type { Customer } from "../../../Modules/CustomerModule/CustomersModule";
 import { email, helpers, minLength, required } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
 import { isLibyanPhoneNumber, validateText } from "@/tools/validations";
@@ -23,36 +22,37 @@ import DeleteCustomer from "../../../components/DeleteButton.vue";
 const actEdit = ref(true);
 const loading = ref(false);
 const store = useCustomersStore();
-const dataClinet = defineProps<{ customer: any }>();
+const props = defineProps<{ customer: any }>();
 const emit = defineEmits(["getCustomers"]);
 const hide1 = ref(false);
 const hide2 = ref(false);
 const screenWidth = ref(window.innerWidth);
 const koko = ref("koko");
 
-console.log(dataClinet)
+console.log("props.customer", props.customer);
+
+
 const customer = reactive({
-  name: dataClinet.customer.name,
-  email: dataClinet.customer.email,
-  primaryPhone: dataClinet.customer.primaryPhone,
-  secondaryPhone: dataClinet.customer.secondaryPhone,
-  address: dataClinet.customer.address,
-  status: dataClinet.customer.status,
+  id: props.customer.id,
+  name: props.customer.name,
+  email: props.customer.email,
+  primaryPhone: props.customer.primaryPhone,
+  secondaryPhone: props.customer.secondaryPhone,
+  address: props.customer.address,
+  status: props.customer.status,
   files: [
     {
-      fileType: dataClinet.customer.files[0]?.fileType,
-      createdOn: dataClinet.customer.files[0]?.createdOn,
-      id: dataClinet.customer.files[0]?.id,
-      isActive: dataClinet.customer.files[0]?.isActive,
+      docType: props.customer.files[0]?.fileType,
+      file: props.customer.files[0]?.fileName ||  props.customer.files[0]?.id,
+      id: props.customer.files[0]?.id,
     },
     {
-      fileType: dataClinet.customer.files[1]?.fileType,
-      createdOn: dataClinet.customer.files[1]?.createdOn,
-      id: dataClinet.customer.files[1]?.id,
-      isActive: dataClinet.customer.files[1]?.isActive,
+      docType: props.customer.files[1]?.fileType,
+      file: props.customer.files[1]?.fileName ||  props.customer.files[1]?.id,
+      id: props.customer.files[1]?.id,
     },
   ],
-  // subsicrptions: dataClinet.customer.subsicrptions,
+  subsicrptions: [],
 });
 
 const toast = useToast();
@@ -63,9 +63,9 @@ const docTypes = [
 ];
 
 onMounted(() => {
-  if (dataClinet.customer.files[1]?.docType) {
-    customer.files[1].fileType = dataClinet.customer.files[1].docType;
-  }
+  // if (props.customer.files[1]?.docType) {
+  //   customer.files[1].docType = props.customer.files[1].docType;
+  // }
 });
 // Function to handle file upload
 
@@ -81,9 +81,9 @@ const handleFileChange = (event: any, index: any) => {
   const selectedFile = event.target.files[0];
   if (selectedFile) {
     // customer.files[index].file = selectedFile.name;
-    customer.files[index].id = selectedFile; // Store the file object
+    customer.files[index].file = selectedFile; // Store the file object
     if (selectedFile) {
-      customer.files[index].id = selectedFile;
+      customer.files[index].file = selectedFile;
       hide1.value = index === 0; // Only set hide1 if the first file was selected
       hide2.value = index === 1; // Only set hide2 if the second file was selected
     }
@@ -92,7 +92,7 @@ const handleFileChange = (event: any, index: any) => {
 
 const displayedFileName = computed(() => {
   return customer.files.map((file) =>
-    file.id ? file.id.name : "No file selected"
+    file.file ? file.file.name : "No file selected"
   );
 });
 
@@ -112,8 +112,8 @@ watch(
   () => customer.files,
   (newFiles) => {
     for (let i = 0; i < newFiles.length; i++) {
-      displayedFileName.value[i] = newFiles[i].id
-        ? newFiles[i].id.name
+      displayedFileName.value[i] = newFiles[i].file
+        ? newFiles[i].file.name
         : "No file selected";
     }
   }
@@ -130,24 +130,24 @@ const onFormSubmit = async () => {
   formData.append("address", customer.address);
   formData.append("status", customer.status);
   // Append the first file as FormFile
-  // if (customer.files[0].id instanceof File) {
-  //   formData.append(
-  //     "FirstFile.File",
-  //     customer.files[0].id,
-  //     customer.files[0].id.name
-  //   );
-  //   formData.append("FirstFile.fileType", customer.files[0].fileType.toString());
-  // }
+  if (customer.files[0].file instanceof File) {
+    formData.append(
+      "FirstFile.File",
+      customer.files[0].file,
+      customer.files[0].file.name
+    );
+    formData.append("FirstFile.DocType", customer.files[0].docType.toString());
+  }
 
   // Append the second file if needed
-  // if (customer.files[1] && customer.files[1].id instanceof File) {
-  //   formData.append(
-  //     "SecondFile.File",
-  //     customer.files[1].id,
-  //     customer.files[1].id.name
-  //   );
-  //   formData.append("SecondFile.DocType", customer.files[1].fileType.toString());
-  // }
+  if (customer.files[1] && customer.files[1].file instanceof File) {
+    formData.append(
+      "SecondFile.File",
+      customer.files[1].file,
+      customer.files[1].file.name
+    );
+    formData.append("SecondFile.DocType", customer.files[1].docType.toString());
+  }
 
   // formData.append("subsicrptions", customer.subsicrptions);
 
@@ -159,7 +159,7 @@ const onFormSubmit = async () => {
   console.log("formData:", formDataObject);
   if (result) {
     customersApi
-      .edit(dataClinet.customer.id, formData)
+      .edit(props.customer.id, formData)
       .then((response) => {
         toast.add({
           severity: "success",
@@ -171,7 +171,6 @@ const onFormSubmit = async () => {
         emit("getCustomers");
       })
       .catch(() => {
-        loading.value = false;
         toast.add({
           severity: "error",
           summary: "خطأ",
@@ -221,11 +220,9 @@ const v$ = useVuelidate(rules, customer);
 
 const fileUrl = ref<string | null>(null);
 
-const downloadFile = async (id: any) => {
+const downloadFile = async (id: any, fileId: string) => {
   try {
-    const response = await customersApi.getFile(id, {
-      responseType: "arraybuffer",
-    });
+    const response = await customersApi.getDocument(id, fileId);
 
     if (response) {
       const blob = new Blob([response.data], {
@@ -256,7 +253,7 @@ const downloadFile = async (id: any) => {
 };
 </script>
 
-<template>{{ customer.files[0].id }}
+<template>
   <div>
     <Card>
       <template #title>
@@ -274,7 +271,7 @@ const downloadFile = async (id: any) => {
         </div>
 
         <span
-          v-else-if="customer.status !== 5 && !loading"
+          v-else-if="customer.status !== 5"
           style="width: 30px; height: 30px; margin-right: 10px; margin-top: 0px"
         >
           <Button
@@ -290,8 +287,8 @@ const downloadFile = async (id: any) => {
           />
 
           <!-- <DeleteCustomer
-            :name="dataClinet.customer.name"
-            :id="dataClinet.customer.id"
+            :name="props.customer.name"
+            :id="props.customer.id"
           ></DeleteCustomer> -->
         </span>
         <Divider />
@@ -459,14 +456,14 @@ const downloadFile = async (id: any) => {
                     <InputText
                       v-if="!hide1"
                       class="p-inputtext p-component"
-                      v-model="customer.files[0].createdOn"
+                      v-model="customer.files[0].file"
                       :disabled="true"
                     />
 
                     <InputText
                       v-else
                       class="p-inputtext p-component"
-                      v-model="customer.files[0].createdOn"
+                      v-model="customer.files[0].file"
                       :value="displayedFileName[0]"
                       :disabled="true"
                     />
@@ -479,7 +476,7 @@ const downloadFile = async (id: any) => {
                   v-if="screenWidth >= 768"
                 >
                   <Button
-                    @click="downloadFile(customer.files[0].id)"
+                    @click="downloadFile(customer.id, customer.files[0].id)"
                     icon="fa-solid fa-download"
                     class="p-button-text p-button-info"
                   >
@@ -501,7 +498,7 @@ const downloadFile = async (id: any) => {
                   v-else
                 >
                   <Button
-                    @click="downloadFile(customer.files[0].id)"
+                    @click="downloadFile(customer.id, customer.files[0].id)"
                     icon="fa-solid fa-download"
                     class="p-button-icon-only p-button-info"
                     text
@@ -531,14 +528,14 @@ const downloadFile = async (id: any) => {
                     <InputText
                       v-if="!hide2"
                       class="p-inputtext p-component"
-                      v-model="customer.files[1].createdOn"
+                      v-model="customer.files[1].file"
                       :disabled="true"
                     />
 
                     <InputText
                       v-else
                       class="p-inputtext p-component"
-                      v-model="customer.files[1].createdOn"
+                      v-model="customer.files[1].file"
                       :value="displayedFileName[1]"
                       :disabled="true"
                     />
@@ -551,7 +548,7 @@ const downloadFile = async (id: any) => {
                   v-if="screenWidth >= 768"
                 >
                   <Button
-                    @click="downloadFile(customer.files[1].id)"
+                    @click="downloadFile(customer.id, customer.files[1].id)"
                     icon="fa-solid fa-download"
                     class="p-button-text p-button-info"
                   >
@@ -572,7 +569,7 @@ const downloadFile = async (id: any) => {
                   v-else
                 >
                   <Button
-                    @click="downloadFile(customer.files[1].id)"
+                    @click="downloadFile(customer.id, customer.files[1].id)"
                     icon="fa-solid fa-download"
                     class="p-button-icon-only p-button-info"
                     text

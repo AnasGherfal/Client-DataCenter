@@ -1,5 +1,8 @@
-import { httpClient } from "./index";
 import type { InvoiceResponde } from "../Modules/Invoices/InvoicesRespondeModule";
+
+import { useHttpClient } from "@/network/httpClient";
+
+const httpClient = useHttpClient();
 
 export const invoiceApi = {
   get: async function (
@@ -9,9 +12,15 @@ export const invoiceApi = {
     startDate: any,
     endDate: any
   ) {
-    const response = await httpClient.get(
-      `/Invoices?CustomerName=${name}&StartDate=${startDate}&EndDate=${endDate}&PageSize=${pageSize}&PageNumber=${pageNumber}`
-    );
+    const response = await httpClient.get(`/Invoices`, {
+      params: {
+        PageNumber: pageNumber,
+        PageSize: pageSize,
+        CustomerName: name,
+        StartDate: startDate,
+        EndDate: endDate,
+      },
+    });
 
     return response;
   },
@@ -21,6 +30,16 @@ export const invoiceApi = {
   },
   create: async function (invoice: InvoiceResponde) {
     const response = await httpClient.post(`/Invoices`, invoice);
+    return response;
+  },
+  paid: async function (
+    id: string,
+    payload: {
+      id: string;
+      adminPassword: string;
+    }
+  ) {
+    const response = await httpClient.put(`/Invoices/${id}/paid`, payload);
     return response;
   },
 };

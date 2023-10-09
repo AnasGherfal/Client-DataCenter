@@ -2,7 +2,7 @@
 import { admin } from "../../api/admin";
 import AddButton from "../../components/AddButton.vue";
 import { useAdminStore } from "@/stores/admin";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 import LockButton from "@/components/LockButton.vue";
 import DeleteAdmin from "../../components/DeleteButton.vue";
@@ -18,26 +18,10 @@ function getId(index: {}) {
   userDialog.value = true;
 }
 
-const deleteUser = () => {
-  loading.value = true;
+onMounted(() => {
+  store.getAdmins();
+});
 
-  admin
-    .remove(rotName.value.id)
-    .then((response) => {
-      store.getAdmins();
-      toast.add({
-        severity: "success",
-        summary: "تم الحذف",
-        detail: response.data,
-        life: 3000,
-      });
-      userDialog.value = false;
-    })
-    .catch(() => {})
-    .finally(() => {
-      loading.value = false;
-    });
-};
 const statuses = ref([
   { value: true, label: "نشط" },
   { value: false, label: "غير نشط" },
@@ -54,12 +38,10 @@ const getSeverity = (status: any) => {
       return "success";
     case "غير نشط":
       return "danger";
-
   }
 };
 const getSelectedStatusLabel = (value: any) => {
   return trans(value);
-
 };
 
 const goToNextPage = () => {
@@ -80,16 +62,94 @@ const goToPreviousPage = () => {
     store.getAdmins();
   }
 };
+
+const deleteAdmin = (id: string) => {
+  loading.value = true;
+  admin
+    .remove(id)
+    .then((response) => {
+      toast.add({
+        severity: "success",
+        summary: "تم الحذف",
+        detail: response.data.msg,
+        life: 3000,
+      });
+      store.getAdmins();
+    })
+    .catch((e) => {
+      toast.add({
+        severity: "error",
+        summary: "رسالة خطأ",
+        detail: e.response.data.msg,
+        life: 3000,
+      });
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+};
+
+function lockButton(id: string) {
+  loading.value = true;
+
+  admin
+    .block(id)
+    .then((response) => {
+      toast.add({
+        severity: "success",
+        summary: "رسالة تأكيد",
+        detail: response.data.msg,
+        life: 3000,
+      });
+      store.getAdmins();
+    })
+    .catch((e) => {
+      toast.add({
+        severity: "error",
+        summary: "رسالة خطأ",
+        detail: e.response.data.msg,
+        life: 3000,
+      });
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+}
+
+function unlockButton(id: string) {
+  loading.value = true;
+
+  admin
+    .unblock(id)
+    .then((response) => {
+      toast.add({
+        severity: "success",
+        summary: "رسالة تأكيد",
+        detail: response.data.msg,
+        life: 3000,
+      });
+      store.getAdmins();
+    })
+    .catch((e) => {
+      toast.add({
+        severity: "error",
+        summary: "رسالة خطأ",
+        detail: e.response.data.msg,
+        life: 3000,
+      });
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+}
 </script>
 
 <template>
-  <RouterView></RouterView>
-
-  <div v-if="$route.path === '/AdminsRecord'">
+  <div>
     <card>
       <template #title>
         سجل المستخدمين
-        <AddButton name-button="اضافة عميل" rout-name="/AdminRecord/AddAdmin" />
+        <AddButton name-button="اضافة عميل" rout-name="/AddAdmin" />
 
         <Divider />
       </template>
@@ -125,25 +185,25 @@ const goToPreviousPage = () => {
           :pageLinkSize="store.totalPages"
           :currentPage="store.currentPage - 1"
         >
-        <template #paginatorstart>
-              <Button
-                icon="pi pi-angle-right"
-                class="p-button-rounded p-button-primary p-paginator-element"
-                :disabled="store.currentPage === 1"
-                @click="goToPreviousPage"
-              />
-              <span class="p-paginator-pages">
-                الصفحة {{ store.currentPage }} من {{ store.totalPages }}
-              </span>
-            </template>
-            <template #paginatorend>
-              <Button
-                icon="pi pi-angle-left"
-                class="p-button-rounded p-button-primary p-paginator-element"
-                :disabled="store.currentPage === store.totalPages"
-                @click="goToNextPage"
-              />
-            </template>
+          <template #paginatorstart>
+            <Button
+              icon="pi pi-angle-right"
+              class="p-button-rounded p-button-primary p-paginator-element"
+              :disabled="store.currentPage === 1"
+              @click="goToPreviousPage"
+            />
+            <span class="p-paginator-pages">
+              الصفحة {{ store.currentPage }} من {{ store.totalPages }}
+            </span>
+          </template>
+          <template #paginatorend>
+            <Button
+              icon="pi pi-angle-left"
+              class="p-button-rounded p-button-primary p-paginator-element"
+              :disabled="store.currentPage === store.totalPages"
+              @click="goToNextPage"
+            />
+          </template>
           <template #empty>
             <div
               class="no-data-message"
@@ -224,15 +284,16 @@ const goToPreviousPage = () => {
             <template #body="slotProps">
               <span v-if="slotProps.data.status !== 5">
                 <DeleteAdmin
-                  :name="slotProps.data.fullName"
+                  :name="slotProps.data.displayName"
                   :id="slotProps.data.id"
+                  @submit="() => deleteAdmin(slotProps.data.id)"
                   type="User"
                 >
                 </DeleteAdmin>
               </span>
               <RouterLink
                 :key="slotProps.data.id"
-                :to="'/AdminsRecord/AdminsProfile/' + slotProps.data.id"
+                :to="'/AdminsProfile/' + slotProps.data.id"
                 style="text-decoration: none"
               >
                 <Button
@@ -248,7 +309,13 @@ const goToPreviousPage = () => {
                 :id="slotProps.data.id"
                 :name="slotProps.data.id"
                 :status="slotProps.data.isActive"
-                @getdata="store.getAdmins()"
+                @getdata="() => store.getAdmins()"
+                @submit="
+                  () =>
+                    slotProps.data.isActive
+                      ? unlockButton(slotProps.data.id)
+                      : lockButton(slotProps.data.id)
+                "
               />
             </template>
           </Column>

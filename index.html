@@ -1,16 +1,64 @@
 <!DOCTYPE html>
 <html lang="en" dir="rtl">
-  <head>
-    <meta charset="UTF-8">
-    <link rel="icon" href="/favicon.ico">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Center</title>
-    <link href="/src/assets/fontAwesome/css/fontawesome.css" rel="stylesheet">
-    <link href="/src/assets/fontAwesome/css/solid.css" rel="stylesheet">
 
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Center</title>
+  <link href="/src/assets/fontAwesome/css/fontawesome.css" rel="stylesheet">
+  <link href="/src/assets/fontAwesome/css/solid.css" rel="stylesheet">
+  <style>
+    #InitScreenDOM {
+      height: 100vh;
+      background-color: #f6fbff;
+      position: fixed;
+      z-index: 9999;
+      inset: 0;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #InitScreenDOM>div {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      padding: 0px 3rem;
+      margin: auto;
+    }
+
+    #InitScreenDOM>div>img {
+      width: 100%;
+      max-width: 200px;
+      height: auto;
+    }
+
+    #InitScreenDOM>div>svg {
+      color: #005caa;
+      font-size: 3rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="InitScreenDOM">
+    <div class="w-full sm:w-3/4 lg:w-1/2">
+      <img alt="logo" src="http://ltt.ly/img/logo.png" loading="lazy" />
+      <svg xmlns="http://www.w3.org/2000/svg" class="animate-spin spinner-border spinner-border-sm text-center"
+        width="44" height="44" viewBox="0 0 24 24" style="fill: currentColor; ">
+        <path
+          d="M12 22c5.421 0 10-4.579 10-10h-2c0 4.337-3.663 8-8 8s-8-3.663-8-8c0-4.336 3.663-8 8-8V2C6.579 2 2 6.58 2 12c0 5.421 4.579 10 10 10z">
+        </path>
+      </svg>
+    </div>
+  </div>
+  <div id="app"></div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
 </html>

@@ -7,8 +7,9 @@ import type { VisitHours } from "@/Modules/TimeShiftsModule/TimeShiftsModule";
 import DeleteTimeShifts from "./DeleteTimeShifts.vue";
 import AddTimeShifts from "./AddTimeShiftsView.vue";
 import { timeShiftsApi } from "@/api/timeShifts";
+import { days } from "@/tools/days";
 
-const getVisitsHours = ref();
+const timeShifts = ref([]);
 const selectedHours = ref();
 const loading = ref(false);
 
@@ -26,13 +27,19 @@ const getTimeShifts = async () => {
   timeShiftsApi
     .get()
     .then((response) => {
-      getVisitsHours.value = response.data.content;
+      timeShifts.value = response.data.content.map((item:any) => {
+        return {
+          ...item,
+          day: days.find((day) => day.value === item.day)?.name,
+          date: item.date ? moment(item.date).format("YYYY-MM-DD") : "-",
+        }
+      });
     })
     .catch(function (error) {
       toast.add({
         severity: "error",
         summary: "حدث خطأ",
-        detail: "لم يتم جلب البيانات",
+        detail: error.response.data?.msg || "لم يتم الحصول على الساعات",
         life: 3000,
       });
     })
@@ -41,224 +48,94 @@ const getTimeShifts = async () => {
       selectedHours.value = null;
     });
 };
-const send = reactive<VisitHours>({
-  name: "",
-  startTime: "",
-  endTime: "",
-  priceForFirstHour: 0,
-  priceForRemainingHour: 0,
-});
-const submitForm = async () => {
-  dialog.value = true;
-  loading.value = true;
 
-  if (formChanged) {
-    send.startTime = moment(selectedHours.value.startTime, "HH:mm").format(
-      "HH:mm:ss"
-    );
-    send.endTime = moment(selectedHours.value.endTime, "HH:mm").format(
-      "HH:mm:ss"
-    );
-  } else {
-    send.startTime = selectedHours.value.startTime;
-    send.endTime = selectedHours.value.endTime;
-  }
-  (send.name = selectedHours.value.name),
-    (send.priceForFirstHour = selectedHours.value.priceForFirstHour),
-    (send.priceForRemainingHour = selectedHours.value.priceForRemainingHour),
-    timeShiftsApi
-      .edit(selected, send)
-      .then((response) => {
-        toast.add({
-          severity: "success",
-          summary: "نجاح العمليه",
-          detail: `${response.data.msg}`,
-          life: 3000,
-        });
-      })
-      .catch(function (error) {
-        toast.add({
-          severity: "error",
-          summary: "حدث خطأ",
-          detail: "لم يتم التعديل",
-          life: 3000,
-        });
-      })
-      .finally(() => {
-        loading.value = false;
-        dialog.value = false;
-      });
-};
 let selected = 1;
 const getIndex = (index: any) => {
   selected = index;
-};
-
-const position = ref("center");
-const dialog = ref(false);
-
-const openSave = (pos: string) => {
-  position.value = pos;
-  dialog.value = true;
-};
-
-const onCalendarClick = () => {
-  formChanged.value = true;
 };
 </script>
 
 <template>
   <div>
-
     <AddTimeShifts @getTimeShifts="getTimeShifts"> </AddTimeShifts>
 
-    
-    <form @submit.prevent="submitForm">
-      
-      <div class="grid p-fluid">
-        <div class="field col-12 md:col-4 mt-2">
-          <span class="p-float-label">
-            <Skeleton width="15rem" height="3rem" v-if="loading"></Skeleton>
-            <Dropdown
-              v-else
-              @change="getIndex(selectedHours.id)"
-              v-model="selectedHours"
-              :options="getVisitsHours"
-              optionLabel="name"
-              placeholder="اختر ساعات للتعديل"
-              class="w-full md:w-14rem"
-              emptyMessage="لاتوجد ساعات, قم بإضافة ساعة"
-            />
-            <label for="hoursName">الساعات</label>
-          </span>
-        </div>
-      </div>
-      
-
-      <div v-if="selectedHours">
-        <!-- <LockButton @getdata="getTimeShifts()" :name="selectedHours.name" :id="selectedHours.id"
-                                :status="selectedHours.status" type-lock="VisitTimeShift"></LockButton> -->
-
-        <h3 style="display: inline-block">
-          {{ selectedHours.name }}
-        </h3>
-
-        <div class="grid p-fluid">
-          <div class="field col-12 md:col-4 mt-2">
-            <span class="p-float-label">
-              <Calendar
-                inputId="startTime"
-                v-model="selectedHours.startTime"
-                :showTime="true"
-                :timeOnly="true"
-                hourFormat="24"
-                selectionMode="single"
-                :manualInput="true"
-                :stepMinute="15"
-                :show-seconds="true"
-                @click="onCalendarClick"
-                :step-second="60"
-              />
-              <label for="startTime">من </label>
-            </span>
-          </div>
-          <div class="field col-12 md:col-4 mt-2">
-            <span class="p-float-label">
-              <Calendar
-                inputId="endTime"
-                v-model="selectedHours.endTime"
-                :showTime="true"
-                :timeOnly="true"
-                selectionMode="single"
-                :manualInput="true"
-                :stepMinute="15"
-                hourFormat="24"
-                @click="onCalendarClick"
-                :show-seconds="true"
-                :step-second="60"
-              />
-              <label for="endTime">الى</label>
-            </span>
-          </div>
-        </div>
-        <div class="grid p-fluid">
-          <div class="field col-12 md:col-4">
-            <label for="priceFirstHour"> سعر الساعه الاولى </label>
-            <InputNumber
-              inputId="priceForFirstHour"
-              v-model="selectedHours.priceForFirstHour"
-              suffix=" د.ل"
-              :step="0.25"
-              :min="0"
-              :allowEmpty="false"
-              :highlightOnFocus="true"
-              @input="formChanged = true"
-            />
-          </div>
-          <div class="field col-12 md:col-4">
-            <label for="priceAfter">سعر باقي الساعات </label>
-            <InputNumber
-              inputId="priceForRemainingHour"
-              v-model="selectedHours.priceForRemainingHour"
-              suffix=" د.ل"
-              :step="0.25"
-              :min="0"
-              :allowEmpty="false"
-              :highlightOnFocus="true"
-              @input="formChanged = true"
-            />
-          </div>
-        </div>
-        <Button
-          @click="openSave('bottom')"
-          :disabled="!formChanged"
-          icon="fa-solid fa-floppy-disk fa-flip fa-flip-hover"
-          style="
-            --fa-animation-duration: 2s;
-            --fa-animation-delay: 5s;
-            --fa-animation-iteration-count: 5;
-          "
-          label="تخزين"
-          class="ml-2"
-        />
-        <DeleteTimeShifts
-          v-if="selectedHours.status !== 5"
-          :name="selectedHours"
-          @getTimeShifts="getTimeShifts()"
+      <div>
+        <div
+          v-if="loading"
+          class="border-round border-1 surface-border p-4 surface-card"
         >
-        </DeleteTimeShifts>
-      </div>
+          <div class="grid p-fluid">
+            <div v-for="n in 9" class="field col-12 md:col-6 lg:col-4">
+              <span class="p-float-label">
+                <Skeleton width="100%" height="2rem"></Skeleton>
+              </span>
+            </div>
+          </div>
 
-      <Divider />
-
-      <Dialog
-        v-model:visible="dialog"
-        :style="{ width: '450px' }"
-        header="تأكيد"
-        :modal="true"
-        :draggable="false"
-      >
-        <div class="confirmation-content">
-          <i
-            class="pi pi-exclamation-triangle mr-3"
-            style="font-size: 2rem; color: red"
-          />
-          <span>هل انت متأكد من تغيير وقت الساعات ؟</span>
+          <Skeleton width="100%" height="100px"></Skeleton>
+          <div class="flex justify-content-between mt-3">
+            <Skeleton width="100%" height="2rem"></Skeleton>
+          </div>
         </div>
-        <template #footer>
-          <Button
-            label="نعم"
-            style="color:green"
-            icon="pi pi-check"
-            text
-            @click="submitForm"
-            :loading="loading"
-          />
+        <DataTable
+          :value="timeShifts"
+          dataKey="id"
+          :paginator="true"
+          :rows="10"
+          :globalFilterFields="[
+            'day',
+            'startTime',
+            'End Time',
+            'date',
+            'Price For First Hour',
+            'Price For Remaining Hours',
+          ]"
+          :rowsPerPageOptions="[5, 10, 25]"
+          currentPageReportTemplate="  عرض {first} الى {last} من {totalRecords} عميل"
+          paginatorTemplate="  "
+        >
+          <template #empty>
+            <div
+              class="no-data-message"
+              style="
+                height: 100px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+                background-color: #f9f9f9;
+                border-radius: 5px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+              "
+            >
+              <p style="font-size: 18px; font-weight: bold; color: #888">
+                لا يوجد بيانات
+              </p>
+            </div>
+          </template>
 
-          <Button label="لا" style="color:red" icon="pi pi-times" text @click="dialog = false" />
-        </template>
-      </Dialog>
-      <Toast position="bottom-left" />
-    </form>
+          <!-- <Column field="id" header="ID" class="font-bold"></Column> -->
+
+          <Column
+            v-for="(head, index) in [
+              {key: 'day', label: 'اليوم'},
+              {key: 'startTime', label: 'تاريخ البداية'},
+              {key: 'endTime', label: 'تاريخ النهاية'},
+              {key: 'date', label: 'التاريخ'},
+              {key: 'priceForFirstHour', label: 'السعر مقابل الساعة الاولى'},
+              {key: 'priceForRemainingHours', label: 'السعر مقابل باقي الساعات'},
+            ]"
+            :key="index"
+            :field="head.key"
+            :header="head.label"
+            style="min-width: 6rem"
+            class="font-bold"
+            frozen
+          ></Column>
+
+          <Toast position="bottom-left" />
+        </DataTable>
+      </div>
   </div>
 </template>

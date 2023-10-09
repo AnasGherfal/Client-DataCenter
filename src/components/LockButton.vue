@@ -4,11 +4,12 @@ import { useToast } from "primevue/usetoast";
 import { computed, ref, reactive } from "vue";
 import { useCustomersStore } from "@/stores/customers";
 import LockButton from "@/components/LockButton.vue";
+import { admin } from "@/api/admin";
 
 const prop = defineProps<{
-  id: number;
+  id: string;
   name: string;
-  status: boolean;
+  status: number;
   typeLock: string;
 }>();
 
@@ -18,67 +19,20 @@ const loading = ref(false);
 
 const dialog = ref(false);
 
-const emit = defineEmits(["getdata"]);
+const emit = defineEmits(["getdata", "submit"]);
 
 const toast = useToast();
 
 const status = reactive({ value: prop.status });
 
 const lockedIcon = computed(() =>
-  status.value === false ? "fa-solid fa-lock" : "fa-solid fa-lock-open"
+  status.value === 1 ? "fa-solid fa-lock" : "fa-solid fa-lock-open"
 );
 
-const buttonColor = computed(() => (status.value === false ? "green" : "red"));
+const buttonColor = computed(() => (status.value === 2 ? "green" : "red"));
 const tooltipValue = computed(() =>
-  status.value === false ? "الغاء تقييد" : "تقييد "
+  status.value === 2 ? "الغاء تقييد" : "تقييد "
 );
-function lockButton() {
-  loading.value = true;
-
-  axios
-    .put(`https://localhost:7030/v1.0/management/${prop.typeLock}/${prop.id}/lock`)
-    .then((response) => {
-      toast.add({
-        severity: "success",
-        summary: "رسالة تأكيد",
-        detail: response.data.msg,
-        life: 3000,
-      });
-      status.value = false;
-      emit("getdata");
-      dialog.value = false;
-      loading.value = false;
-    });
-}
-
-function unlockButton() {
-  loading.value = true;
-
-  axios
-    .put(`https://localhost:7030/v1.0/management/${prop.typeLock}/${prop.id}/unlock`)
-    .then((response) => {
-      toast.add({
-        severity: "success",
-        summary: "رسالة تأكيد",
-        detail: response.data.msg,
-        life: 3000,
-      });
-      status.value = true;
-      emit("getdata");
-    })
-    .catch((e) => {
-      toast.add({
-        severity: "error",
-        summary: "رسالة خطأ",
-        detail: e.data,
-        life: 3000,
-      });
-    })
-    .finally(() => {
-      dialog.value = false;
-      loading.value = false;
-    });
-}
 </script>
 
 <template>
@@ -100,7 +54,10 @@ function unlockButton() {
         icon="pi pi-check"
         text
         :loading="loading"
-        @click="status.value === false ? unlockButton() : lockButton()"
+        @click="
+          $emit('submit');
+          dialog = false;
+        "
       />
       <Button label="لا" icon="pi pi-times" text @click="dialog = false" />
     </template>
@@ -112,6 +69,8 @@ function unlockButton() {
     :class="buttonColor"
     text
   />
+
+  <Toast />
 </template>
 <style>
 .fa-solid.fa-lock {

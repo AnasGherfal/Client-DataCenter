@@ -1,18 +1,23 @@
 <script setup lang="ts">
 import TabView from "primevue/tabview";
 import TabPanel from "primevue/tabpanel";
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { admin } from "../../api/admin";
 import { toNumber } from "@vue/shared";
 import type { ResponseAdminModel } from "../../Modules/AdminModule/AdminModuleResponse";
 import { useAdminStore } from "../../stores/admin";
 import InfoAdmin from "./InfoAdmin.vue";
+import { useToast } from "primevue/usetoast";
 
 const route = useRoute();
+const toast = useToast();
 
 const store = useAdminStore();
 const isEditModeEnabled = ref(false);
+const loading = ref(false);
+const selectedPermissions = ref<UserPermission[]>([]);
+const permissionsList = ref<UserPermission[]>([]);
 
 const userId = computed(() => {
   if (route && route.params && route.params.id) {
@@ -35,14 +40,11 @@ function getAdminById() {
   admin
     .getById(userId.value)
     .then(function (response) {
-      const filterdAdmins = response.data.content;
-      Object.assign(adminData, filterdAdmins);
-      // adminData.id = response.data.content.id;
-      // adminData.displayName = response.data.content.displayName;
-      // adminData.email = response.data.content.email;
-
-      // adminData.isActive = response.data.content.isActive;
-      // adminData.permissions = response.data.content.permissions;
+      adminData.id = response.data.content.id;
+      adminData.displayName = response.data.content.displayName;
+      adminData.email = response.data.content.email;
+      adminData.isActive = response.data.content.isActive;
+      adminData.permissions = response.data.content.permissions;
     })
     .catch(function (error) {
       console.log(error);
@@ -53,12 +55,9 @@ onMounted(async () => {
   getPermissions();
 });
 
-const avaliblePrem = ref<UserPermission[]>([]);
-
 function getPermissions() {
   admin.permissions().then(function (response) {
-    avaliblePrem.value = response.data.content;
-    console.log(avaliblePrem.value);
+    permissionsList.value = response.data.content;
   });
 }
 
@@ -78,32 +77,53 @@ const hasPermission = (permissions: number[], permissionToCheck: number) => {
   return false; // User doesn't have any of the specified permission bits
 };
 
-const selectedPermissions = ref([]);
+watch(isEditModeEnabled, () => {
+  if (isEditModeEnabled.value) {
+    selectedPermissions.value = [];
+    permissionsList.value.forEach((perm) => {
+      if ((adminData.permissions & perm.id) === perm.id) {
+        selectedPermissions.value.push(perm);
+      }
+    });
+  }
+});
 
-const editPermissions = () => {
-  const totalPermissions = selectedPermissions.value.reduce((acc, id) => {
-    // Sum the selected permission values or perform any other desired logic
-    return acc + id;
-  }, 0);
+const onEditPermissions = () => {
+  loading.value = true;
+  let perm = 0;
+  if (selectedPermissions.value.some((p) => p.name === "Super Admin")) {
+    perm =
+      selectedPermissions.value.find((p) => p.name === "Super Admin")?.id || 0;
+  } else {
+    perm = selectedPermissions.value.reduce((sum, perm) => sum + perm.id, 0);
+  }
 
-  // You can now use 'totalPermissions' as needed (e.g., send it to a server)
-  console.log('Total Permissions:', totalPermissions);
-
-  // Clear the selected permissions
-  selectedPermissions.value = [];
+  // update admin permissions
+  admin
+    .edit(userId.value, perm)
+    .then(function (response) {
+      toast.add({
+        severity: "success",
+        summary: "رسالة نجاح",
+        detail: response.data.msg,
+        life: 3000,
+      });
+      isEditModeEnabled.value = false;
+      getAdminById();
+    })
+    .catch(function (error) {
+      console.log(error);
+      toast.add({
+        severity: "error",
+        summary: "رسالة فشل",
+        detail: error.response.data.msg || "هنالك مشكلة في الوصول",
+        life: 3000,
+      });
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 };
-// const togglePermission = (id) => {
-//   if (!isEditModeEnabled.value) {
-//     // Provide the required arguments to the hasPermission function
-//     if (hasPermission(id,adminData.permissions)) {
-//       adminData.permissions = adminData.permissions.filter((p) => p !== id);
-//     } else {
-//       adminData.permissions.push(id);
-//     }
-//   }
-// };
-
-
 </script>
 
 <template>
@@ -120,19 +140,21 @@ const editPermissions = () => {
             <i class="fa-solid fa-key ml-2"></i>
             <span>الصلاحيات</span>
           </template>
-          <h3>الصلاحيات:</h3>
-          <Button
-            @click="isEditModeEnabled = !isEditModeEnabled"
-            icon=" fa-solid fa-pen"
-            label="تعديل"
-            text
-            rounded
-            class="p-button-primary p-button-text"
-            v-tooltip.top="{
-              value: 'تعديل البيانات الشخصية',
-              fitContent: true,
-            }"
-          />
+          <div class="flex align-items-center justify-content-between">
+            <h3>الصلاحيات:</h3>
+            <Button
+              @click="isEditModeEnabled = !isEditModeEnabled"
+              icon=" fa-solid fa-pen"
+              label="تعديل"
+              text
+              rounded
+              class="p-button-primary p-button-text"
+              v-tooltip.top="{
+                value: 'تعديل صلاحيات المستخدم',
+                fitContent: true,
+              }"
+            />
+          </div>
           <div class="table-responsive">
             <table class="table">
               <thead>
@@ -142,15 +164,14 @@ const editPermissions = () => {
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="r in avaliblePrem" :key="r.id">
+                <tr v-for="r in permissionsList" :key="r.id">
                   <template
                     v-if="r.name !== 'None' && r.name !== 'Super Admin'"
                   >
                     <td>{{ r.name }}</td>
                     <td v-if="hasPermission([r.id], adminData.permissions)">
                       <button
-                      :disabled="isEditModeEnabled"
-
+                        :disabled="isEditModeEnabled"
                         style="background: none; border: none; cursor: pointer"
                       >
                         <i
@@ -161,8 +182,7 @@ const editPermissions = () => {
                     </td>
                     <td v-else>
                       <button
-                      :disabled="isEditModeEnabled"
-
+                        :disabled="isEditModeEnabled"
                         style="background: none; border: none; cursor: pointer"
                       >
                         <i
@@ -173,8 +193,7 @@ const editPermissions = () => {
                     </td>
                   </template>
                 </tr>
-                <td>
-    </td>
+                <td></td>
               </tbody>
             </table>
           </div>
@@ -189,6 +208,39 @@ const editPermissions = () => {
       </TabView>
     </template>
   </card>
+
+  <Dialog
+    :modal="true"
+    v-model:visible="isEditModeEnabled"
+    style="width: 50rem"
+    header="تعديل صلاحيات المستخدم"
+    :breakpoints="{ '600px': '100vw' }"
+  >
+    <div>
+      <MultiSelect
+        v-model="selectedPermissions"
+        display="chip"
+        optionValue="id"
+        :options="permissionsList"
+        optionLabel="name"
+        placeholder="اختر الصلاحيات"
+      />
+    </div>
+    <div class="flex items-center gap-3 mt-5">
+      <Button
+        class="p-button-primry"
+        label="تعديل"
+        type="submit"
+        @click="onEditPermissions"
+        :loading="loading"
+      />
+      <Button
+        @click="isEditModeEnabled = false"
+        label="الغاء"
+        class="p-button-danger"
+      />
+    </div>
+  </Dialog>
 </template>
 
 <style>

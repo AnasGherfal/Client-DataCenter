@@ -1,22 +1,26 @@
 export interface Customer {
-    id?: string;
-    status?: number;
-    name: string;
-    email: string;
-    address: string;
-    city:string;
-    primaryPhone: string;
-    secondaryPhone: string;
-    files: [{
-      file: File |any;
-      fileType: number;
+  city: string;
+  numberOfFiles: 0;
+  numberOfSubscriptions: 0;
+  numberOfRepresentatives: 0;
+  createdOn: string;
+  id: string;
+  status?: number;
+  name: string;
+  email: string;
+  address: string;
+  primaryPhone: string;
+  secondaryPhone: string;
+  files: [
+    {
+      file: File | any;
+      docType: number;
     },
     {
-    file: File |any;
-    fileType: number;
+      file: File | any;
+      docType: number;
     }
-      ];
-
-
-
+  ];
+  subsicrptions: string;
+  representative: [];
 }

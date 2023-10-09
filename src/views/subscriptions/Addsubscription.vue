@@ -19,30 +19,25 @@ const storeCustomer = useCustomersStore();
 const loading = ref(false);
 const ServicesList = ref();
 const firstFileError = ref<string | null>(null);
-  const totalPages = ref(1);
-  const pageNumber = ref(1);
-  const pageSize = ref(10);
-  const currentPage = ref(0);
-  const name = ref<string>("");
-    const customers = ref();
+const totalPages = ref(1);
+const pageNumber = ref(1);
+const pageSize = ref(10);
+const currentPage = ref(0);
+const name = ref<string>("");
+const customers = ref();
 
-const state: Subscription = reactive({
+const state = reactive({
   serviceId: null,
-  customerId: null,
+  customerId: null as any,
   startDate: "",
   endDate: "",
-  file: null,
+  file: null as File | null,
 });
 
 type DocTypeOption = {
   value: number;
   text: string;
 };
-// Array of identity type options
-const docTypeTypeOptions: DocTypeOption[] = [
-  { value: 1, text: "تخويل" },
-  { value: 2, text: "اثبات شخصي" },
-];
 
 onMounted(async () => {
   serviceApi
@@ -55,32 +50,26 @@ onMounted(async () => {
     });
 });
 onMounted(async () => {
-    getCustomers();
-  });
-  async function searchByName(searchName: string) {
-  
-    name.value = searchName;
-    await getCustomers(); // Await the getCustomers function to wait for the API call to complete
+  getCustomers();
+});
+async function getCustomers() {
+  if (name.value === undefined || name.value === null) {
+    name.value = "";
   }
-  async function getCustomers() {
-    if (name.value === undefined || name.value === null) {
-      name.value = '';
-    }
-    await customersApi
-      .get(pageNumber.value, pageSize.value, name.value)
-      .then(function (response) {       
- 
-        customers.value = response.data.content;
-        totalPages.value = response.data.totalPages;
-        currentPage.value = response.data.currentPage;
-      })
-      .catch(function (error) {
-        console.log(error);
-      })
-      .finally(() => {
-        loading.value = false;
-      });
-  }
+  await customersApi
+    .get(pageNumber.value, pageSize.value, name.value)
+    .then(function (response) {
+      customers.value = response.data.content;
+      totalPages.value = response.data.totalPages;
+      currentPage.value = response.data.currentPage;
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+}
 
 const rules = computed(() => {
   return {
@@ -104,96 +93,63 @@ const v$ = useVuelidate(rules, state);
 async function onFileUpload(event: any, index: number) {
   const file = event.target.files[0];
 
-  if (file && formData) {
-    state.file = { file: file }; // Store the File object in the array
-
-    const fieldName = index === 0 ? "File" : "File";
-    formData.append(fieldName, file); // Append the File object to formData
+  if (file) {
+    state.file = file;
   }
 }
-const docTypeOptions = ref([
-  { value: 0, label: "اختر نوع الملف" },
-  { value: 1, label: "نوع الملف 1" },
-  { value: 2, label: "نوع الملف 2" },
-]);
-const formData = new FormData();
 
 const submitForm = async () => {
   const result = await v$.value.$validate();
-  if (!state.file) {
-    firstFileError.value = "الحقل مطلوب";
-  } else {
-    firstFileError.value = "";
-  
-  if (result) {
-    loading.value = true;
-    if (state.file === null) {
-      // File is null, do not proceed with the submission
-      console.log("File is null");
-      return;
-    }
-    // const subrequest: Subscription = reactive({
-    //   serviceId: state.serviceId,
-    //   customerId: state.customerId,
-    //   startDate: moment(state.startDate).format("YYYY/MM/DD"),
-    //   endDate: moment(state.endDate).format("YYYY/MM/DD"),
 
-    //   file: state.file.file,
-    //   docType: state.file.docType,
-    // });
+  if (!state.file) return (firstFileError.value = "الحقل مطلوب");
 
-    console.log(typeof state.file);
+  const formData = new FormData();
+  firstFileError.value = "";
 
-    const customerId = state.customerId?.id ?? 0;
+  if (!result) return;
+  loading.value = true;
+  if (state.file === null) {
+    // File is null, do not proceed with the submission
+    console.log("File is null");
+    return;
+  }
 
-    formData.append("serviceId", String(state.serviceId));
-    formData.append("customerId", String(customerId));
-    formData.append("startDate", moment(state.startDate).format("YYYY/MM/DD"));
-    formData.append("endDate", moment(state.endDate).format("YYYY/MM/DD"));
-    // Append the first file as FormFile
-    if (state.file instanceof File) {
-      formData.append("file", state.file, state.file.name);
-    }
+  formData.append("serviceId", String(state.serviceId));
+  formData.append("customerId", String(state.customerId?.id ?? 0));
+  formData.append("startDate", moment(state.startDate).format("YYYY/MM/DD"));
+  formData.append("endDate", moment(state.endDate).format("YYYY/MM/DD"));
+  formData.append("file", state.file);
 
-    const formDataObject: { [key: string]: string } = {};
-    formData.forEach((value, key) => {
-      formDataObject[key] = value.toString();
+  subscriptionApi
+    .create(formData)
+    .then((Response) => {
+      toast.add({
+        severity: "success",
+        summary: "تمت اضافة اشتراك",
+        detail: Response.data.msg,
+        life: 3000,
+      });
+      console.log(Response);
+      loading.value = false;
+      store.getSubs();
+      router.go(-1);
+    })
+    .catch(function (error) {
+      console.log(error);
+      toast.add({
+        severity: "error",
+        summary: "هناك مشكلة",
+        detail: error.response.data.msg || "هنالك مشكلة في الوصول",
+        life: 3000,
+      });
     });
 
-    console.log("formData:", formDataObject);
-    subscriptionApi
-      .create(formData)
-      .then((Response) => {
-        toast.add({
-          severity: "success",
-          summary: "تمت اضافة اشتراك",
-          detail: Response.data.msg,
-          life: 3000,
-        });
-        console.log(Response);
-        loading.value = false;
-        store.getSubs();
-        router.go(-1);
-      })
-      .catch(function (error) {
-        console.log(error);
-        toast.add({
-          severity: "error",
-          summary: "هناك مشكلة",
-          detail: "هنالك مشكلة في الوصول",
-          life: 3000,
-        });
-      });
-  } else {
-    console.log("empty");
-  }
-}
   loading.value = false;
 };
 
 const resetForm = () => {
   (state.serviceId = null),
-    (state.customerId = 0),
+    (state.customerId = null),
     (state.startDate = ""),
     (state.endDate = ""),
     (state.file = null);
@@ -201,7 +157,6 @@ const resetForm = () => {
 
 const minDate = ref(new Date());
 
-const selectedCustomer = ref();
 const filteredCustomer = ref();
 
 const search = (event: any) => {
@@ -332,7 +287,7 @@ const search = (event: any) => {
                   <div class="file-input-text">
                     <i class="pi pi-upload"></i>
 
-                    {{ state.file?.file?.name || "ارفق ملف  1 " }}
+                    {{ state.file?.name || "ارفق ملف  1 " }}
                   </div>
                 </div>
 
@@ -345,12 +300,11 @@ const search = (event: any) => {
                 />
               </label>
               <div
-                  v-if="firstFileError"
-                  style="color: red; font-weight: bold; font-size: small"
-                >
+                v-if="firstFileError"
+                style="color: red; font-weight: bold; font-size: small"
+              >
                 {{ firstFileError }}
-
-                </div>
+              </div>
             </div>
           </div>
           <Button
@@ -374,8 +328,6 @@ const search = (event: any) => {
   </div>
 </template>
 <style>
-
-
 .p-dropdown {
   border-radius: 10px;
 }

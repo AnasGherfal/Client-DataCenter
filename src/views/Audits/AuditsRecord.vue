@@ -82,43 +82,36 @@ const goToPreviousPage = () => {
           <Skeleton width="100%" height="2rem"></Skeleton>
         </div>
       </div>
-      <DataTable
-        v-else
-        ref="dt"
-        :value="data"
-        dataKey="id"
-        :paginator="true"
-        :rows="5"
-        paginatorTemplate=""
-        :rowsPerPageOptions="[5, 10, 25]"
-        currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} عميل"
-        responsiveLayout="scroll"
-        :pageLinkSize="totalPages"
-        :currentPage="currentPage - 1"
-      >
-        <template #paginatorstart>
-          <Button
-            icon="pi pi-angle-right"
-            class="p-button-rounded p-button-primary p-paginator-element"
-            :disabled="currentPage === 1"
-            @click="goToPreviousPage"
-          />
-          <span class="p-paginator-pages">
-            الصفحة {{ currentPage }} من {{ totalPages }}
-          </span>
-        </template>
-        <template #paginatorend>
-          <Button
-            icon="pi pi-angle-left"
-            class="p-button-rounded p-button-primary p-paginator-element"
-            :disabled="currentPage === totalPages"
-            @click="goToNextPage"
-          />
-        </template>
-        <template #empty>
-          <div
-            class="no-data-message"
-            style="
+      <DataTable v-else
+                 ref="dt"
+                 :value="data"
+                 dataKey="id"
+                 :paginator="true"
+                 :rows="5"
+                 paginatorTemplate=""
+                 :rowsPerPageOptions="[5, 10, 25]"
+                 currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} عميل"
+                 responsiveLayout="scroll"
+                 :pageLinkSize="totalPages"
+                 :currentPage="currentPage - 1">
+          <template #paginatorstart>
+              <Button icon="pi pi-angle-right"
+                      class="p-button-rounded p-button-primary p-paginator-element"
+                      :disabled="currentPage === 1"
+                      @click="goToPreviousPage" />
+              <span class="p-paginator-pages">
+                  الصفحة {{ currentPage }} من {{ totalPages }}
+              </span>
+          </template>
+          <template #paginatorend>
+              <Button icon="pi pi-angle-left"
+                      class="p-button-rounded p-button-primary p-paginator-element"
+                      :disabled="currentPage === totalPages"
+                      @click="goToNextPage" />
+          </template>
+          <template #empty>
+              <div class="no-data-message"
+                   style="
               height: 100px;
               display: flex;
               flex-direction: column;
@@ -128,31 +121,31 @@ const goToPreviousPage = () => {
               background-color: #f9f9f9;
               border-radius: 5px;
               box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            "
-          >
-            <p style="font-size: 18px; font-weight: bold; color: #888">
-              لا يوجد بيانات
-            </p>
-          </div>
-        </template>
-
-        <Column
-          field="type"
-          header="الحركة"
-          style="width: 2rem"
-          class="font-bold"
-        ></Column>
-
-        <Column
-          field="occuredOn"
-          header="  حدث في "
-          style="width: 4rem"
-          :showFilterMenu="false"
-        >
-          <template #body="slotProps">
-            {{ convertToDate(slotProps.data.occuredOn) }}
+            ">
+                  <p style="font-size: 18px; font-weight: bold; color: #888">
+                      لا يوجد بيانات
+                  </p>
+              </div>
           </template>
-        </Column>
+
+          <Column field="type"
+                  header="الحركة"
+                  style="width: 2rem"
+                  class="font-bold"></Column>
+
+          <Column field="userName"
+                  header="تمت بواسطة"
+                  style="width: 2rem"
+                  class="font-bold"></Column>
+
+          <Column field="occuredOn"
+                  header="  حدث في "
+                  style="width: 4rem"
+                  :showFilterMenu="false">
+              <template #body="slotProps">
+                  {{ convertToDate(slotProps.data.occuredOn) }}
+              </template>
+          </Column>
       </DataTable>
     </template>
   </card>

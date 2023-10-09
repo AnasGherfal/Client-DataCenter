@@ -7,15 +7,16 @@ import AddButton from "@/components/AddButton.vue";
 import LockButton from "@/components/LockButton.vue";
 import { customersApi } from "@/api/customers";
 import DeleteCustomer from "../../components/DeleteButton.vue";
+import { Customer } from "@/Modules/CustomerModule/CustomersModule";
 
 const toast = useToast();
 const customers = ref();
-  const loading = ref(true);
-  const totalPages = ref(1);
-  const pageNumber = ref(1);
-  const pageSize = ref(10);
-  const currentPage = ref(0);
-  const name = ref<string>("");
+const loading = ref(true);
+const totalPages = ref(1);
+const pageNumber = ref(1);
+const pageSize = ref(10);
+const currentPage = ref(0);
+const name = ref<string>("");
 const store = useCustomersStore();
 interface Filters {
   [key: string]: { value: string; matchMode: string };
@@ -90,32 +91,83 @@ const getSelectedStatusLabel = (value: any) => {
 // });
 
 onMounted(async () => {
+  getCustomers();
+});
+async function searchByName(searchName: string) {
+  name.value = searchName;
+  await getCustomers(); // Await the getCustomers function to wait for the API call to complete
+}
+async function getCustomers() {
+  if (name.value === undefined || name.value === null) {
+    name.value = "";
+  }
+  await customersApi
+    .get(pageNumber.value, pageSize.value, name.value)
+    .then(function (response) {
+      customers.value = response.data.content;
+      totalPages.value = response.data.totalPages;
+      currentPage.value = response.data.currentPage;
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+}
+
+const toggleLockCustomer = async (customer: Customer) => {
+  try {
+    let response;
+    if (customer.status == 1) response = await customersApi.block(customer.id);
+    if (customer.status == 2)
+      response = await customersApi.unblock(customer.id);
+
+    toast.add({
+      severity: "success",
+      summary: "نجحة العملية",
+      detail: response?.data.msg,
+      life: 3000,
+    });
     getCustomers();
-  });
-  async function searchByName(searchName: string) {
-  
-    name.value = searchName;
-    await getCustomers(); // Await the getCustomers function to wait for the API call to complete
+  } catch (error: any) {
+    toast.add({
+      severity: "error",
+      summary: "حدث خطأ",
+      detail: error.response.data.msg || "حدث خطأ",
+      life: 3000,
+    });
+  } finally {
+    getCustomers();
   }
-  async function getCustomers() {
-    if (name.value === undefined || name.value === null) {
-      name.value = '';
-    }
-    await customersApi
-      .get(pageNumber.value, pageSize.value, name.value)
-      .then(function (response) {       
- 
-        customers.value = response.data.content;
-        totalPages.value = response.data.totalPages;
-        currentPage.value = response.data.currentPage;
-      })
-      .catch(function (error) {
-        console.log(error);
-      })
-      .finally(() => {
-        loading.value = false;
+};
+
+const deleteCustomer = (id: string) => {
+  loading.value = true;
+  customersApi
+    .remove(id)
+    .then((response) => {
+      toast.add({
+        severity: "success",
+        summary: "تم الحذف",
+        detail: response.data.msg,
+        life: 3000,
       });
-  }
+      getCustomers();
+    })
+    .catch((e) => {
+      toast.add({
+        severity: "error",
+        summary: "رسالة خطأ",
+        detail: e.response.data.msg,
+        life: 3000,
+      });
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+};
+
 const goToNextPage = () => {
   if (currentPage < totalPages) {
     currentPage.value += 1;
@@ -143,15 +195,11 @@ const onSearch = (event: KeyboardEvent) => {
 </script>
 
 <template>
-  <RouterView></RouterView>
-  <div v-if="$route.path === '/customersRecord'">
+  <div>
     <Card>
       <template #title>
         سجل العملاء
-        <AddButton
-          name-button="اضافة عميل"
-          rout-name="/customersRecord/addCustomer"
-        />
+        <AddButton name-button="اضافة عميل" rout-name="/addCustomer" />
       </template>
       <template #content>
         <div>
@@ -216,7 +264,7 @@ const onSearch = (event: KeyboardEvent) => {
                     <span class="p-input-icon-left p-float-label">
                       <i class="fa-solid fa-magnifying-glass" />
                       <InputText
-                      ref="searchInput"
+                        ref="searchInput"
                         v-model="name"
                         placeholder="البحث"
                         @keydown.enter="onSearch"
@@ -285,9 +333,7 @@ const onSearch = (event: KeyboardEvent) => {
                   :severity="getSeverity(data.status)"
                 />
               </template>
-              <template #filter="{ filterModel, filterCallback }">
-
-              </template>
+              <template #filter="{ filterModel, filterCallback }"> </template>
             </Column>
 
             <Column
@@ -298,23 +344,19 @@ const onSearch = (event: KeyboardEvent) => {
               style="min-width: 6rem"
             ></Column>
 
-            <Column style="min-width: 11rem"
-            header="  الاجراءات "
->
-              
+            <Column style="min-width: 11rem" header="  الاجراءات ">
               <template #body="slotProps">
                 <span v-if="slotProps.data.status !== 5">
                   <DeleteCustomer
                     :name="slotProps.data.name"
                     :id="slotProps.data.id"
+                    @submit="() => deleteCustomer(slotProps.data.id)"
                     type="Customers"
                   >
                   </DeleteCustomer>
                 </span>
 
-                <RouterLink
-                  :to="'customersRecord/CustomerProfile/' + slotProps.data.id"
-                >
+                <RouterLink :to="'CustomerProfile/' + slotProps.data.id">
                   <Button
                     v-tooltip="{ value: 'البيانات الشخصية', fitContent: true }"
                     icon="fa-solid fa-user"
@@ -331,6 +373,7 @@ const onSearch = (event: KeyboardEvent) => {
                   :name="slotProps.data.name"
                   :status="slotProps.data.status"
                   @getdata="getCustomers"
+                  @submit="() => toggleLockCustomer(slotProps.data)"
                 />
               </template>
             </Column>

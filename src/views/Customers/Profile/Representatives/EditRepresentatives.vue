@@ -18,50 +18,36 @@ const loading = ref(false);
 const route = useRoute();
 const hide1 = ref(false);
 const hide2 = ref(false);
-
 const userId = computed(() => {
   if (route && route.params && route.params.id) {
-    return String(route.params.id); // Convert the ID to a number
+    return route.params.id;
   } else {
-    return ""; // or return a default value if id is not available, such as -1
+    return null; // or return a default value if id is not available
   }
 });
 
-const getRepById= ref()
 const representatives = reactive({
-  firstName: "",
-  lastName: "",
-  identityNo: "",
-  email:"",
-  phoneNo: "",
-  identityType:0, //1 personalId 2-authorized 3-representitive
+  firstName: props.name.firstName,
+  lastName: props.name.lastName,
+  identityNo: props.name.identityNo,
+  email: props.name.email,
+  phoneNo: props.name.phoneNo,
+  identityType: props.name.identityType, //1 personalId 2-authorized 3-representitive
   customerId: toNumber(userId.value),
-  // files: [
-  //   {
-  //     fileType: props.name.files[0]?.fileType,
-  //     file: props.name.files[0]?.fileName,
-  //     id: props.name.files[0]?.id,
-  //   },
-  //   {
-  //     fileType: props.name.files[1]?.fileType,
-  //     file: props.name.files[1]?.fileName,
-  //     id: props.name.files[1]?.id,
-  //   },
-  // ],
+  files: [
+    {
+      docType: props.name.files[0]?.docType,
+      file: props.name.files[0]?.fileName,
+      id: props.name.files[0]?.id,
+    },
+    {
+      docType: props.name.files[1]?.docType,
+      file: props.name.files[1]?.fileName,
+      id: props.name.files[1]?.id,
+    },
+  ],
 });
 
-function editRepresentatives(){
-
-  representativesApi
-  .getById(userId.value)
-  .then((response) =>{
-    getRepById.value = response.data.content
-    console.log(response)
-
-
-  })
-
-}
 const toast = useToast();
 const rules = computed(() => {
   return {

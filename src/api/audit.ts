@@ -1,20 +1,20 @@
-import type { ResponseAdminModel } from "@/Modules/AdminModule/AdminModuleResponse";
-import {httpClient} from "./index";
-import {isAuthorized, getToken} from "@/auth"
+import { useHttpClient } from "@/network/httpClient";
 
-const token = getToken();
+const httpClient = useHttpClient();
+
 export const audit = {
-  get: async function (pageNumber: number, pageSize: number) {
-    const response = await httpClient.get(`/Audits?PageNumber=${pageNumber}&PageSize=${pageSize}`, {
-      headers: {
-          Authorization:` bearer ${token}`,
-      }
+  get: async function (pageNumber: number, pageSize: number, recordId: number) {
+    const response = await httpClient.get(`/Audits`, {
+      params: {
+        PageNumber: pageNumber,
+        PageSize: pageSize,
+        RecordId: recordId,
+      },
     });
     return response;
   },
-  // getById: async function (id: any) {
-  //   const response = await httpClient.get(`/Admins/${id}`);
-  //   return response;
-  // },
-
+  getById: async function (id: any) {
+    const response = await httpClient.get(`/Audits/${id}`);
+    return response;
+  },
 };

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import router from "@/router";
 import BackButton from "@/components/BackButton.vue";
+import CustomerForm from "../Customers/CustomerForm.vue";
 import { customersApi } from "@/api/customers";
 import { computed, getCurrentInstance, reactive, ref } from "vue";
 import { email, required, helpers, minLength } from "@vuelidate/validators";
@@ -14,21 +15,18 @@ import { useCustomersStore } from "@/stores/customers";
 const store = useCustomersStore();
 
 const loading = ref(false);
-const firstFileError = ref<string | null>(null);
-const secondFileError = ref<string | null>(null);
+const IdentityDocumentsError = ref<string | null>(null);
+const CompanyDocumentsError = ref<string | null>(null);
 
-const customer: Customer = reactive({
+const customer = reactive({
   name: "",
   email: "",
   primaryPhone: "",
   secondaryPhone: "",
+  city: "",
   address: "",
-  city:"",
-  files: [
-    { file: null, fileType: 0 },
-    { file: null, fileType: 0 }, // Add a second file
-  ],
-
+  CompanyDocuments: null as File | null,
+  IdentityDocuments: null as File | null,
 });
 
 const rules = computed(() => {
@@ -45,8 +43,8 @@ const rules = computed(() => {
       required: helpers.withMessage("الحقل مطلوب", required),
       email: helpers.withMessage(" ليس عنوان بريد إلكتروني صالح", email),
     },
+    city: { required: helpers.withMessage("الحقل مطلوب", required) },
     address: { required: helpers.withMessage("الحقل مطلوب", required) },
-    city:{ required: helpers.withMessage("الحقل مطلوب", required) },
     primaryPhone: {
       required: helpers.withMessage("الحقل مطلوب", required),
       isLibyanPhoneNumber: helpers.withMessage(
@@ -57,118 +55,57 @@ const rules = computed(() => {
   };
 });
 const v$ = useVuelidate(rules, customer);
-const formData = new FormData();
 
 const onFormSubmit = async () => {
   const result = await v$.value.$validate();
-  if (!customer.files[0].file) {
-    firstFileError.value = "الحقل مطلوب";
+  if (!customer.IdentityDocuments) {
+    IdentityDocumentsError.value = "الحقل مطلوب";
   } else {
-    firstFileError.value = "";
+    IdentityDocumentsError.value = "";
   }
 
   // Validate the second file
-  if (!customer.files[1].file) {
-    secondFileError.value = "الحقل مطلوب";
+  if (!customer.CompanyDocuments) {
+    CompanyDocumentsError.value = "الحقل مطلوب";
   } else {
-    secondFileError.value = "";
+    CompanyDocumentsError.value = "";
+  }
+  if (!result) return;
+  const formData = new FormData();
 
-    if (result) {
-      formData.append("name", customer.name);
-      formData.append("email", customer.email);
-      formData.append("primaryPhone", customer.primaryPhone);
-      formData.append("secondaryPhone", customer.secondaryPhone);
-      formData.append("address", customer.address);
-      formData.append("city", customer.city)
+  formData.append("Name", customer.name);
+  formData.append("City", customer.city);
+  formData.append("Address", customer.address);
+  formData.append("Email", customer.email);
+  formData.append("PrimaryPhone", customer.primaryPhone);
+  formData.append("SecondaryPhone", customer.secondaryPhone);
+  formData.append("IdentityDocument", customer.IdentityDocuments as Blob);
+  formData.append("CompanyDocuments", customer.CompanyDocuments as Blob);
 
-      // Append the first file as FormFile
-      if (customer.files[0].file instanceof File) {
-        formData.append(
-          "identityDocument.file",
-          customer.files[0].file,
-          customer.files[0].file.name
-        );
-        formData.append(
-          "identityDocument.fileType",
-          customer.files[0].fileType.toString()
-        );
-      }
-
-      // Append the second file if needed
-      if (customer.files[1] && customer.files[1].file instanceof File) {
-        formData.append(
-          "companyDocuments",
-          customer.files[1].file,
-          customer.files[1].file.name
-        );
-        formData.append(
-          "companyDocuments",
-          customer.files[1].fileType.toString()
-        );
-      }
-      const formDataObject: { [key: string]: string } = {};
-      formData.forEach((value, key) => {
-        formDataObject[key] = value.toString();
+  customersApi
+    .create(formData)
+    .then((response) => {
+      toast.add({
+        severity: "success",
+        summary: "رسالة نجاح",
+        detail: response.data.msg,
+        life: 2000,
       });
-
-      console.log("formData:", formDataObject);
-
-      // store.loading = true;
-      //   customerForm.forEach((value, key) => {
-      //   console.log(key, value);
-      // });
-
-      customersApi
-        .create(formData)
-        .then((response) => {
-          store.getCustomers();
-          toast.add({
-            severity: "success",
-            summary: "رسالة نجاح",
-            detail: response.data.msg,
-            life: 2000,
-          });
-          setTimeout(() => {
-            router.go(-1);
-            resetForm();
-          }, 1);
-        })
-        .catch((e) => {
-          console.log(e.response.data.msg);
-
-          toast.add({
-            severity: "error",
-            summary: "خطأ",
-            detail: e.response.data.msg,
-            life: 3000,
-          });
-        })
-        .finally(() => {
-          loading.value = false;
-        });
-    }
-  }
-};
-
-const docTypeOptions = ref([
-  { value: 1, label: "تعريف شخصي" },
-  { value: 2, label: "ترخيص الشركة" },
-]);
-const filteredDocTypeOptions = (index: number) => {
-  const selectedFile = customer.files[index]?.file;
-  const selectedDocType = customer.files[index]?.fileType;
-
-  if (selectedFile) {
-    const availableOptions = docTypeOptions.value.filter(
-      (option) => option.value !== selectedDocType
-    );
-    return availableOptions.map((option) => ({
-      value: option.value,
-      label: option.label,
-    }));
-  } else {
-    return docTypeOptions.value;
-  }
+      setTimeout(() => {
+        router.go(-1);
+      }, 1);
+    })
+    .catch((e) => {
+      toast.add({
+        severity: "error",
+        summary: "خطأ",
+        detail: e.response.data.msg,
+        life: 3000,
+      });
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 };
 
 const toast = useToast();
@@ -176,14 +113,19 @@ const toast = useToast();
 async function onFileUpload(event: any, index: number) {
   const file = event.target.files[0];
 
-  if (file && formData) {
-    const fileType = index === 0 ? 1 : 2;
-    customer.files[index] = { file: file, fileType }; // Store the File object in the array
+  if (!file) return;
 
-    const fieldName = index === 0 ? "identityDocument" : "companyDocuments";
-    const docTypeNumber = Number(fileType); // Convert docType to a number
-    formData.append(fieldName, file); // Append the File object to formData
-    formData.append(fieldName + ".fileType", docTypeNumber.toString()); // Append the docType as a string
+  if (index === 0) {
+    customer.IdentityDocuments = file;
+  } else {
+    customer.CompanyDocuments = file;
+  }
+
+  // reset the error message
+  if (index === 0) {
+    IdentityDocumentsError.value = "";
+  } else {
+    CompanyDocumentsError.value = "";
   }
 }
 
@@ -193,10 +135,9 @@ const resetForm = () => {
   customer.primaryPhone = "";
   customer.secondaryPhone = "";
   customer.address = "";
-  customer.files = [
-    { file: "", fileType: 0 },
-    { file: "", fileType: 0 },
-  ];
+  customer.city = "";
+  customer.IdentityDocuments = null;
+  customer.CompanyDocuments = null;
 };
 </script>
 
@@ -215,7 +156,8 @@ const resetForm = () => {
           <form @submit.prevent="onFormSubmit()">
             <div class="grid p-fluid">
               <div class="field col-12 md:col-6 lg:col-4">
-                <span class="p-float-label">
+                <span class="">
+                  <label for="name">الاسم </label>
                   <InputText id="name" type="text" v-model="customer.name" />
                   <div style="height: 2px">
                     <span
@@ -226,14 +168,12 @@ const resetForm = () => {
                       {{ error.$message }}</span
                     >
                   </div>
-
-                  <label for="name">اسم </label>
                 </span>
               </div>
               <div class="field col-12 md:col-6 lg:col-4">
-                <span class="p-float-label">
-                  <InputText id="email" type="text" v-model="customer.email" />
+                <span class="">
                   <label for="email">البريد الإلكتروني</label>
+                  <InputText id="email" type="text" v-model="customer.email" />
                   <div style="height: 2px">
                     <span
                       v-for="error in v$.email.$errors"
@@ -246,32 +186,14 @@ const resetForm = () => {
                 </span>
               </div>
               <div class="field col-12 md:col-6 lg:col-4">
-                <span class="p-float-label">
+                <span class="">
+                  <label for="city">المدينة</label>
                   <InputText
-                    id="address"
-                    type="text"
-                    v-model="customer.address"
-                  />
-                  <label for="address">العنوان</label>
-                  <div style="height: 2px">
-                    <span
-                      v-for="error in v$.address.$errors"
-                      :key="error.$uid"
-                      style="color: red; font-weight: bold; font-size: small"
-                    >
-                      {{ error.$message }}</span
-                    >
-                  </div>
-                </span>
-              </div>
-              <div class="field col-12 md:col-6 lg:col-4">
-                <span class="p-float-label">
-                  <InputText
-                    id="address"
+                    id="city"
+                    name="city"
                     type="text"
                     v-model="customer.city"
                   />
-                  <label for="address">المدينة</label>
                   <div style="height: 2px">
                     <span
                       v-for="error in v$.city.$errors"
@@ -284,14 +206,33 @@ const resetForm = () => {
                 </span>
               </div>
               <div class="field col-12 md:col-6 lg:col-4">
-                <span class="p-float-label">
+                <span class="">
+                  <label for="address">العنوان</label>
+                  <InputText
+                    id="address"
+                    name="address"
+                    type="text"
+                    v-model="customer.address"
+                  />
+                  <div style="height: 2px">
+                    <span
+                      v-for="error in v$.address.$errors"
+                      :key="error.$uid"
+                      style="color: red; font-weight: bold; font-size: small"
+                    >
+                      {{ error.$message }}</span
+                    >
+                  </div>
+                </span>
+              </div>
+              <div class="field col-12 md:col-6 lg:col-4">
+                <span class="">
+                  <label for="primaryPhone">رقم هاتف </label>
                   <InputMask
-                    id="phoneNum1"
+                    id="primaryPhone"
                     v-model="customer.primaryPhone"
                     mask="+218999999999"
-                    style="direction: ltr; text-align: end"
                   />
-                  <label for="phoneNum1">رقم هاتف </label>
                   <div style="height: 2px">
                     <span
                       v-for="error in v$.primaryPhone.$errors"
@@ -309,15 +250,13 @@ const resetForm = () => {
                 </span>
               </div>
               <div class="field col-12 md:col-6 lg:col-4">
-                <span class="p-float-label">
+                <span class="">
+                  <label for="secondaryPhone">رقم هاتف 2</label>
                   <InputMask
                     id="secondaryPhone"
                     v-model="customer.secondaryPhone"
                     mask="+218999999999"
-                    style="direction: ltr; text-align: end"
-
                   />
-                  <label for="secondaryPhone">رقم هاتف 2</label>
                 </span>
               </div>
             </div>
@@ -325,53 +264,45 @@ const resetForm = () => {
             <div class="grid p-fluid">
               <!-- First File Input -->
               <div class="field col-12 md:col-6 lg:col-4">
-                <div
-        class="file-input-label-text"
-      >
-        تعريف شخصي
-      </div>
-  <label class="file-input-label" for="fileInput1">
-    <div class="file-input-content">
-      <div class="file-input-icon" v-if="!customer.files[0]?.file?.name"></div>
-      <div class="file-input-text">
-        <i class="pi pi-upload"></i>
-        {{ customer.files[0]?.file?.name || "ارفق ملف" }}
-      </div>
-
-    </div>
-    <input
-      id="fileInput1"
-      style="display: none"
-      type="file"
-      @change="(event) => onFileUpload(event, 0)"
-      accept="*"
-    />
-  </label>
-  <div v-if="firstFileError" class="error-message">
-    {{ firstFileError }}
-  </div>
-</div>
-
+                <div class="file-input-label-text">تعريف شخصي</div>
+                <label class="file-input-label" for="fileInput1">
+                  <div class="file-input-content">
+                    <div
+                      class="file-input-icon"
+                      v-if="!customer.IdentityDocuments?.name"
+                    ></div>
+                    <div class="file-input-text">
+                      <i class="pi pi-upload"></i>
+                      {{ customer.IdentityDocuments?.name || "ارفق ملف" }}
+                    </div>
+                  </div>
+                  <input
+                    id="fileInput1"
+                    style="display: none"
+                    type="file"
+                    @change="(event) => onFileUpload(event, 0)"
+                    accept="*"
+                  />
+                </label>
+                <div v-if="IdentityDocumentsError" class="error-message">
+                  {{ IdentityDocumentsError }}
+                </div>
+              </div>
 
               <!-- Second File Input -->
               <div class="field col-12 md:col-6 lg:col-4">
-                <div
-                      class="file-input-label-text"
-                    >
-                      تخويل من الشركة
-                    </div>
+                <div class="file-input-label-text">تخويل من الشركة</div>
                 <label class="file-input-label" for="fileInput2">
                   <div class="file-input-content">
                     <div
                       class="file-input-icon"
-                      v-if="!customer.files[1]?.file?.name"
+                      v-if="!customer.CompanyDocuments?.name"
                     ></div>
 
                     <div class="file-input-text">
                       <i class="pi pi-upload"></i>
-                      {{ customer.files[1]?.file?.name || "ارفق ملف" }}
+                      {{ customer.CompanyDocuments?.name || "ارفق ملف" }}
                     </div>
-
                   </div>
                   <input
                     id="fileInput2"
@@ -381,8 +312,8 @@ const resetForm = () => {
                     accept="*"
                   />
                 </label>
-                <div v-if="secondFileError" class="error-message">
-                  {{ secondFileError }}
+                <div v-if="CompanyDocumentsError" class="error-message">
+                  {{ CompanyDocumentsError }}
                 </div>
               </div>
             </div>
@@ -431,12 +362,11 @@ const resetForm = () => {
 
 .file-input-label-text {
   font-size: small;
-  color:#9aafc3;
+  color: #9aafc3;
   margin-bottom: 0.1rem;
 }
 
 /* Your existing styling for other elements can go here */
-
 
 /* Adjust vertical alignment for the text */
 
