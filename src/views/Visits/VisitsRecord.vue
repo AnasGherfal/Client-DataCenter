@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
 import { FilterMatchMode } from "primevue/api";
 import AddButton from "@/components/AddButton.vue";
 import { useVistisStore } from "@/stores/visits";
@@ -8,14 +8,37 @@ import { formatTotalMin } from "@/tools/formatTime";
 import moment from "moment";
 import { useToast } from "primevue/usetoast";
 import DeleteAdmin from "../../components/DeleteButton.vue";
+import { subscriptionApi } from "@/api/subscriptions";
+import { useCustomersStore } from "@/stores/customers";
+import { customersApi } from "@/api/customers";
 
 const store = useVistisStore();
 const toast = useToast();
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
+const loading = ref(false);
+
+const filteredVisits = reactive({
+  customerId: "",
+  subscriptionId: "",
+});
+
+const filteredCustomer = ref();
+const customerSubscriptions = ref();
+const name = ref<string>("");
+const customers = ref();
+const totalPages = ref(1);
+const pageNumber = ref(1);
+const pageSize = ref(10);
+const currentPage = ref(0);
 
 onMounted(async () => {
+  getVisits();
+  getCustomers();
+});
+
+async function getVisits() {
   try {
     const response = await visitApi.get();
     store.visits = response.data.content;
@@ -24,13 +47,63 @@ onMounted(async () => {
   } finally {
     store.loading = false;
   }
-});
+}
+const search = (event: any) => {
+  setTimeout(() => {
+    if (!event.query.trim().length) {
+      filteredCustomer.value = [...customers.value];
+    } else {
+      filteredCustomer.value = customers.value.filter(
+        (users: { name: String }) => {
+          return users.name.toLowerCase().startsWith(event.query.toLowerCase());
+        }
+      );
+    }
+  }, 250);
+};
 
-// Watch for changes in filters and trigger server-side search
-watch(filters, (newFilters) => {
-  store.currentPage = 1; // Reset currentPage to the first page
-  store.pageNumber = 1; // Reset pageNumber to 1
-  store.getVisits();
+async function getCustomers() {
+  if (name.value === undefined || name.value === null) {
+    name.value = "";
+  }
+  await customersApi
+    .get(pageNumber.value, pageSize.value, name.value)
+    .then(function (response) {
+      customers.value = response.data.content;
+      totalPages.value = response.data.totalPages;
+      currentPage.value = response.data.currentPage;
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+}
+
+const getSubscriptions = (id: string) => {
+  subscriptionApi
+    .get(1, 50, id)
+    .then(function (response) {
+      customerSubscriptions.value = response.data.content;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+};
+
+const customerselect = ref();
+
+watch(customerselect, async (newValue) => {
+  if (newValue) {
+    try {
+      loading.value = true;
+      await getSubscriptions(newValue.id);
+      loading.value = false;
+    } catch (error) {
+      console.error("Error fetching representatives:", error);
+    }
+  }
 });
 const goToNextPage = () => {
   if (store.currentPage < store.totalPages) {
@@ -70,6 +143,33 @@ async function deleteVisit(id: string) {
     });
   }
 }
+
+const statuses = ref([
+  { value: "Not Started", label: "لم تبدأ" },
+  { value: "Started", label: "بدأت" },
+]);
+
+// Declare the trans function before getSeverity
+const trans = (value: any) => {
+  if (value == "not Started") return "لم تبدأ";
+  else if (value == "Started") return "بدأت";
+};
+
+const getSelectedStatusLabel = (value: any) => {
+  const status = statuses.value.find((s) => s.value === value);
+  return status ? status.label : "";
+};
+
+const getSeverity = (status: any) => {
+  switch (trans(status)) {
+    case "بدأت":
+      return "success";
+    case "لم تبدأ":
+      return "danger";
+    default:
+      return ""; // Return an empty string for other cases
+  }
+};
 </script>
 
 <template>
@@ -130,19 +230,45 @@ async function deleteVisit(id: string) {
             />
           </template>
           <template #header>
-            <div class="grid p-fluid">
+            <div class="grid p-fluid mt-1">
               <div class="field col-12 md:col-6 lg:col-4">
-                <!-- <span class="p-input-icon-left p-float-label"> -->
-                <!-- <i class="fa-solid fa-magnifying-glass" /> -->
-                <!-- <InputText
-                    v-model="filters['global'].value"
-                    placeholder="Search..."
-                  />
-                  <label for="search" style="font-weight: lighter">
-                    البحث
-                  </label> -->
-                <!-- </span> -->
+                <div
+                  class="table-header flex flex-column md:flex-row justiify-content-between"
+                >
+                  <span class="p-input-icon-left p-float-label">
+                    <i class="fa-solid fa-magnifying-glass" />
+                    <AutoComplete
+                      v-model="customerselect"
+                      optionLabel="name"
+                      :suggestions="filteredCustomer"
+                      @complete="search"
+                    />
+                    <label for="customerName">العملاء</label>
+                  </span>
+                </div>
               </div>
+
+              <div class="field col-12 md:col-6 lg:col-4">
+                <span class="p-float-label">
+                  <MultiSelect
+                    v-model="filteredVisits.subscriptionId"
+                    :options="customerSubscriptions"
+                    optionLabel="serviceName"
+                    emptyMessage="هاذا العميل ليس لديه اشتراكات"
+                    placeholder=" اختر اشتراك"
+                    :selectionLimit="1"
+                    :loading="loading"
+                  />
+                  <label for="customerName">اشتراكات</label>
+                </span>
+              </div>
+
+              <div class="field col-12 md:col-6 lg:col-4">
+                <Button label="بحث" @click="getVisits" />
+              </div>
+            </div>
+            <div class="grid p-fluid">
+              <div class="field col-12 md:col-6 lg:col-4"></div>
             </div>
           </template>
           <template #empty>
@@ -177,7 +303,11 @@ async function deleteVisit(id: string) {
             header="سبب الزياره"
             style="min-width: 8rem"
             frozen
-          />
+          >
+            <template #body="{ data }">
+              <Tag :value="(store.visitReasons && store.visitReasons[data.visitType-1] ? store.visitReasons[data.visitType-1].name : '')">  </Tag>
+            </template>
+          </Column>
 
           <Column
             field="totalMinutes"
@@ -199,7 +329,15 @@ async function deleteVisit(id: string) {
               {{ slotProps.data.price }} د.ل
             </template></Column
           >
-          <Column field="visitStatus" header="الحاله" style="min-width: 1rem" />
+          <Column field="visitStatus" header="الحاله" style="min-width: 1rem">
+            <template #body="{ data }">
+              <Tag
+                :value="getSelectedStatusLabel(data.visitStatus)"
+                :severity="getSeverity(data.visitStatus)"
+              />
+            </template>
+            <template #filter="{ filterModel, filterCallback }"> </template>
+          </Column>
 
           <Column
             field="expectedStartTime"

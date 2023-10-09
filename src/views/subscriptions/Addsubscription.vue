@@ -122,14 +122,14 @@ const submitForm = async () => {
 
   subscriptionApi
     .create(formData)
-    .then((Response) => {
+    .then((response) => {
       toast.add({
         severity: "success",
         summary: "تمت اضافة اشتراك",
-        detail: Response.data.msg,
+        detail: response.data.msg,
         life: 3000,
       });
-      console.log(Response);
+      console.log(response);
       loading.value = false;
       store.getSubs();
       router.go(-1);
