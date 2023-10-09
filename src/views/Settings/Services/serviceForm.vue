@@ -23,7 +23,6 @@ const instance = getCurrentInstance();
 const service: Service = reactive(props.service);
 
 const onSubmitForm = async () => {
-  loading.value = true;
   const result = await v$.value.$validate();
   try {
     if (result) {

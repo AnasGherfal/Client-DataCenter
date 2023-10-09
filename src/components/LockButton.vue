@@ -26,7 +26,7 @@ const toast = useToast();
 const status = reactive({ value: prop.status });
 
 const lockedIcon = computed(() =>
-  status.value === 1 ? "fa-solid fa-lock" : "fa-solid fa-lock-open"
+  status.value === 2 ? "fa-solid fa-lock" : "fa-solid fa-lock-open"
 );
 
 const buttonColor = computed(() => (status.value === 2 ? "green" : "red"));
@@ -70,7 +70,6 @@ const tooltipValue = computed(() =>
     text
   />
 
-  <Toast />
 </template>
 <style>
 .fa-solid.fa-lock {

@@ -41,7 +41,7 @@ const onToggle = (val: any) => {
 
 const statuses = ref([
   { value: 1, label: "نشط" },
-  { value: 5, label: "مقفل" },
+  { value: 2, label: "مقفل" },
 ]);
 
 const getSeverity = (status: any) => {
