@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, reactive, ref } from "vue";
 import Password from "primevue/password";
-import { loginApi } from "@/api/login";
+import { authApi } from "@/api/auth";
 import { useRouter } from "vue-router";
-import { storeToken } from "@/auth";
 import { email, helpers, required } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
@@ -15,25 +14,22 @@ const credentials = reactive({
 const toast = useToast();
 const router = useRouter();
 const loading = ref(false);
-console.log(credentials);
+
+
 const submitForm = async () => {
   const result = await v$.value.$validate();
   if (result) {
-    loginApi
-      .create(credentials)
+    loading.value = true;
+    authApi
+      .login(credentials)
       .then((response) => {
-        console.log(response);
         // Store the token if the login is successful
-        if (response.status == 200) {
-          const token = response.data.content.accessToken;
-          storeToken(token);
+        const token = response.data.content.accessToken;
+        localStorage.setItem("token",token)
 
-          window.location.href = "/";
-        }
+        router.push({ name: "home" });
       })
       .catch((error) => {
-        console.log(error);
-        console.log(credentials);
         toast.add({
           severity: "error",
           summary: "رسالة خطأ",
@@ -41,7 +37,9 @@ const submitForm = async () => {
           life: 3000,
         });
       })
-      .finally(() => {});
+      .finally(() => {
+        loading.value = false;
+      });
   }
 };
 
@@ -76,11 +74,12 @@ const v$ = useVuelidate(rules, credentials);
 
       <div class="grid p-fluid">
         <div class="field col-12 md:col-12 lg:col-12">
-          <span class="p-float-label">
+          <span class="p-input-icon-left">
             <InputText
-              style="width: 100%; height: 40px"
-              id="address"
-              type="text"
+              id="email"
+              name="email"
+              placeholder="البريد الالكتروني"
+              type="email"
               v-model="credentials.email"
             />
             <div style="height: 2px">
@@ -92,16 +91,13 @@ const v$ = useVuelidate(rules, credentials);
                 {{ error.$message }}</span
               >
             </div>
-            <label for="address">البريد الالكتروني</label>
           </span>
         </div>
         <div class="field col-12 md:col-12 lg:col-12">
-          <span class="p-float-label">
+          <span class="p-input-icon-left">
             <Password
               v-model="credentials.password"
-              :feedback="false"
-              toggleMask
-              style="width: 100%; height: 40px"
+              placeholder="كلمة المرور"
             />
             <div style="height: 2px">
               <span
@@ -112,12 +108,11 @@ const v$ = useVuelidate(rules, credentials);
                 {{ error.$message }}</span
               >
             </div>
-            <label style="margin-right: 30px" for="address">كلمة المرور</label>
           </span>
         </div>
       </div>
       <Button
-        @click="submitForm()"
+        @click="submitForm"
         class="p-button-primry mt-3"
         style="width: 100%"
         label="تسجيل دخول"
@@ -141,6 +136,10 @@ const v$ = useVuelidate(rules, credentials);
   padding-right: 25%;
   padding-top: 5%;
   padding-bottom: 5%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 h2 {
   color: #1643a0;

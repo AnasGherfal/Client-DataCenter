@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { user } from "../../api/user";
-import AddButtonF from "../../components/AddButton.vue";
-import { useUserStore } from "@/stores/user";
-import { ref } from "vue";
+import { admin } from "../../api/admin";
+import AddButton from "../../components/AddButton.vue";
+import { useAdminStore } from "@/stores/admin";
+import { onMounted, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 import LockButton from "@/components/LockButton.vue";
-import DeleteCustomer from "../../components/DeleteButton.vue";
+import DeleteAdmin from "../../components/DeleteButton.vue";
 
-const store = useUserStore();
+const store = useAdminStore();
 const toast = useToast();
 
 const rotName = ref();
@@ -18,35 +18,18 @@ function getId(index: {}) {
   userDialog.value = true;
 }
 
-const deleteUser = () => {
-  loading.value = true;
+onMounted(() => {
+  store.getAdmins();
+});
 
-  user
-    .remove(rotName.value.id)
-    .then((response) => {
-      store.getUsers();
-      toast.add({
-        severity: "success",
-        summary: "تم الحذف",
-        detail: response.data,
-        life: 3000,
-      });
-      userDialog.value = false;
-    })
-    .catch(() => {})
-    .finally(() => {
-      loading.value = false;
-    });
-};
 const statuses = ref([
-  { value: 1, label: "نشط" },
-  { value: 5, label: "مقفل" },
+  { value: true, label: "نشط" },
+  { value: false, label: "غير نشط" },
 ]);
 
-const trans = (value: string) => {
-  if (value == "1") return "نشط";
-  else if (value == "2") return "غير نشط";
-  else if (value == "5") return "مقفل";
+const trans = (value: boolean) => {
+  if (value == true) return "نشط";
+  else if (value == false) return "غير نشط";
 };
 
 const getSeverity = (status: any) => {
@@ -55,13 +38,10 @@ const getSeverity = (status: any) => {
       return "success";
     case "غير نشط":
       return "danger";
-    case "مقفل":
-      return "danger";
   }
 };
 const getSelectedStatusLabel = (value: any) => {
-  const status = statuses.value.find((s) => s.value === value);
-  return status ? status.label : "";
+  return trans(value);
 };
 
 const goToNextPage = () => {
@@ -69,7 +49,7 @@ const goToNextPage = () => {
     store.currentPage += 1;
     store.pageNumber += 1; // Increment the pageNumber value
     store.loading = true;
-    store.getUsers();
+    store.getAdmins();
   }
 };
 
@@ -79,19 +59,97 @@ const goToPreviousPage = () => {
     store.pageNumber -= 1; // Decrement the pageNumber value
     store.loading = true;
 
-    store.getUsers();
+    store.getAdmins();
   }
 };
+
+const deleteAdmin = (id: string) => {
+  loading.value = true;
+  admin
+    .remove(id)
+    .then((response) => {
+      toast.add({
+        severity: "success",
+        summary: "تم الحذف",
+        detail: response.data.msg,
+        life: 3000,
+      });
+      store.getAdmins();
+    })
+    .catch((e) => {
+      toast.add({
+        severity: "error",
+        summary: "رسالة خطأ",
+        detail: e.response.data.msg,
+        life: 3000,
+      });
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+};
+
+function lockButton(id: string) {
+  loading.value = true;
+
+  admin
+    .block(id)
+    .then((response) => {
+      toast.add({
+        severity: "success",
+        summary: "رسالة تأكيد",
+        detail: response.data.msg,
+        life: 3000,
+      });
+      store.getAdmins();
+    })
+    .catch((e) => {
+      toast.add({
+        severity: "error",
+        summary: "رسالة خطأ",
+        detail: e.response.data.msg,
+        life: 3000,
+      });
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+}
+
+function unlockButton(id: string) {
+  loading.value = true;
+
+  admin
+    .unblock(id)
+    .then((response) => {
+      toast.add({
+        severity: "success",
+        summary: "رسالة تأكيد",
+        detail: response.data.msg,
+        life: 3000,
+      });
+      store.getAdmins();
+    })
+    .catch((e) => {
+      toast.add({
+        severity: "error",
+        summary: "رسالة خطأ",
+        detail: e.response.data.msg,
+        life: 3000,
+      });
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+}
 </script>
 
 <template>
-  <RouterView></RouterView>
-
-  <div v-if="$route.path === '/UsersRecord'">
+  <div>
     <card>
       <template #title>
         سجل المستخدمين
-        <AddButton name-button="اضافة عميل" rout-name="/UsersRecord/AddUser" />
+        <AddButton name-button="اضافة عميل" rout-name="/AddAdmin" />
 
         <Divider />
       </template>
@@ -127,25 +185,25 @@ const goToPreviousPage = () => {
           :pageLinkSize="store.totalPages"
           :currentPage="store.currentPage - 1"
         >
-        <template #paginatorstart>
-              <Button
-                icon="pi pi-angle-right"
-                class="p-button-rounded p-button-primary p-paginator-element"
-                :disabled="store.currentPage === 1"
-                @click="goToPreviousPage"
-              />
-              <span class="p-paginator-pages">
-                الصفحة {{ store.currentPage }} من {{ store.totalPages }}
-              </span>
-            </template>
-            <template #paginatorend>
-              <Button
-                icon="pi pi-angle-left"
-                class="p-button-rounded p-button-primary p-paginator-element"
-                :disabled="store.currentPage === store.totalPages"
-                @click="goToNextPage"
-              />
-            </template>
+          <template #paginatorstart>
+            <Button
+              icon="pi pi-angle-right"
+              class="p-button-rounded p-button-primary p-paginator-element"
+              :disabled="store.currentPage === 1"
+              @click="goToPreviousPage"
+            />
+            <span class="p-paginator-pages">
+              الصفحة {{ store.currentPage }} من {{ store.totalPages }}
+            </span>
+          </template>
+          <template #paginatorend>
+            <Button
+              icon="pi pi-angle-left"
+              class="p-button-rounded p-button-primary p-paginator-element"
+              :disabled="store.currentPage === store.totalPages"
+              @click="goToNextPage"
+            />
+          </template>
           <template #empty>
             <div
               class="no-data-message"
@@ -168,14 +226,14 @@ const goToPreviousPage = () => {
           </template>
 
           <Column
-            field="fullName"
+            field="displayName"
             header="اسم المستخدم"
             style="min-width: 10rem"
             class="font-bold"
           ></Column>
 
           <Column
-            field="status"
+            field="isActive"
             header="  الحاله "
             filterField="status"
             style="width: 2rem"
@@ -184,11 +242,11 @@ const goToPreviousPage = () => {
           >
             <template #body="{ data }">
               <Tag
-                :value="getSelectedStatusLabel(data.status)"
-                :severity="getSeverity(data.status)"
+                :value="getSelectedStatusLabel(data.isActive)"
+                :severity="getSeverity(data.isActive)"
               />
             </template>
-            <template #filter="{ filterModel, filterCallback }">
+            <!-- <template #filter="{ filterModel, filterCallback }">
               <Dropdown
                 v-model="filterModel.value"
                 @change="filterCallback()"
@@ -207,14 +265,14 @@ const goToPreviousPage = () => {
                   />
                 </template>
               </Dropdown>
-            </template>
+            </template> -->
           </Column>
 
-          <Column
-            field="empId"
-            header="الرقم الوظيفي"
+          <!-- <Column
+            field="permissions"
+            header="الاذونات"
             style="min-width: 7rem"
-          ></Column>
+          ></Column> -->
 
           <Column
             field="email"
@@ -225,16 +283,17 @@ const goToPreviousPage = () => {
           <Column style="min-width: 13rem">
             <template #body="slotProps">
               <span v-if="slotProps.data.status !== 5">
-                <DeleteCustomer
-                  :name="slotProps.data.fullName"
+                <DeleteAdmin
+                  :name="slotProps.data.displayName"
                   :id="slotProps.data.id"
+                  @submit="() => deleteAdmin(slotProps.data.id)"
                   type="User"
                 >
-                </DeleteCustomer>
+                </DeleteAdmin>
               </span>
               <RouterLink
                 :key="slotProps.data.id"
-                :to="'/UsersRecord/UsersProfile/' + slotProps.data.id"
+                :to="'/AdminsProfile/' + slotProps.data.id"
                 style="text-decoration: none"
               >
                 <Button
@@ -246,11 +305,17 @@ const goToPreviousPage = () => {
                 />
               </RouterLink>
               <LockButton
-                typeLock="User"
+                typeLock="Admins"
                 :id="slotProps.data.id"
                 :name="slotProps.data.id"
-                :status="slotProps.data.status"
-                @getdata="store.getUsers()"
+                :status="slotProps.data.isActive"
+                @getdata="() => store.getAdmins()"
+                @submit="
+                  () =>
+                    slotProps.data.isActive
+                      ? unlockButton(slotProps.data.id)
+                      : lockButton(slotProps.data.id)
+                "
               />
             </template>
           </Column>

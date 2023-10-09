@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import Button from "primevue/button";
-import { onMounted, ref } from "vue";
-import { removeToken } from "@/auth";
-import ChangePasswordUser from "@/components/User/ChangePasswordUser.vue";
+import { ref } from "vue";
 
-const checked = ref<boolean>(false);
 const menu = ref();
 const items = ref([
   { separator: true },
@@ -19,9 +16,8 @@ const toggle = (event: any) => {
 const isDarkTheme = ref(false);
 
 const logout = () => {
-  removeToken()
+  localStorage.removeItem("token");
   window.location.href = "/Login"; // Replace "/" with the actual home page URL
-
 };
 const toggleThemeMode = () => {
   isDarkTheme.value = !isDarkTheme.value;
@@ -57,9 +53,8 @@ const toggleThemeMode = () => {
       aria-controls="overlay_menu"
       v-tooltip="{ value: 'قائمه', fitContent: true }"
     />
-    <Menu ref="menu" :model="items" :popup="true" >
+    <Menu ref="menu" :model="items" :popup="true">
       <template #start>
-        
         <button
           @click=""
           class="w-full p-link flex align-items-center p-2 pl-3 text-color hover:surface-200 border-noround"
@@ -69,8 +64,6 @@ const toggleThemeMode = () => {
             <span class="font-bold">Admin</span>
           </div>
         </button>
-        
-
       </template>
       <template #end>
         <!-- <ChangePasswordUser></ChangePasswordUser> -->

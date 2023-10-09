@@ -1,21 +1,14 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from "vue";
-import { email, minLength, required, helpers } from "@vuelidate/validators";
-import { useVuelidate } from "@vuelidate/core";
-import { useToast } from "primevue/usetoast";
 import { useVistisStore } from "@/stores/visits";
 import VisitDetails from "./VisitDetails.vue";
-import router from "@/router";
-// import type { Visit } from '@/Modules/VisitModule/VisitModule'
-import axios from "axios";
 import { useRoute } from "vue-router";
 import { visitApi } from "@/api/visits";
-import type { VisitReq } from "@/Modules/VisitModule/VisitRequestModule";
-import { representativesApi } from "@/api/representatives";
+import { VisitModel } from "../../Modules/VisitModule/VisitByIdModel";
 
 const store = useVistisStore();
 const route = useRoute();
-const userId = computed(() => {
+const visitId = computed(() => {
   if (route && route.params && route.params.id) {
     return route.params.id;
   } else {
@@ -23,49 +16,14 @@ const userId = computed(() => {
   }
 });
 
-const visits = reactive({
-  expectedStartTime: "",
-  expectedEndTime: "",
-  startTime: "",
-  endTime: "",
-  customerName: "",
-  id: 0,
-  visitTypeId: "",
-  notes: "",
-  timeShift: "",
-  totalMin: "",
-  price: 0,
-  invoiceId: 0,
-  representatives: [],
-  companions: [  {
-      firstName: "",
-      lastName: "",
-      identityNo: "",
-      identityType: 0,
-      jobTitle: ""
-    }],
-});
-const rep = ref([]);
-
+const visit = ref<VisitModel>();
 
 onMounted(async () => {
-  getRepresentativeData();
   store.loading = true;
   visitApi
-    .getById(userId.value)
+    .getById(visitId.value)
     .then((response) => {
-      // visits.startTime = response.data.startTime;
-      // visits.endTime = response.data.endTime;
-      // visits.customerName = response.data.customerName;
-      // visits.representatives = response.data.representatives;
-      // visits.id = response.data.id;
-      const filteredVisits = response.data
-      console.log(filteredVisits)
-      
-
-      
-        Object.assign(visits, filteredVisits);
-      
+      visit.value = response.data.content;
     })
     .catch((error) => {
       console.log(error);
@@ -74,46 +32,30 @@ onMounted(async () => {
       store.loading = false;
     });
 });
-async function getRepresentativeData() {
-    try {
-      const response = await representativesApi.get();
-      rep.value = response.data.content;
-
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-let today = new Date();
-let month = today.getMonth;
-let year = today.getFullYear;
-let hours = today.getHours();
-
-const minDate = ref(new Date());
-
-const invalidDates = ref();
-
-const filterdUsers = ref();
-
-const searchUsers = () => {};
-
-const toast = useToast();
-
-// const v$ = useVuelidate(rules, visit);
-
-// const submitForm = async () => {
-//     const result = await v$.value.$validate();
-
-//     if (result) {
-//         toast.add({ severity: 'success', summary: 'Success Message', detail: 'تمت إضافة زيارة', life: 3000 });
-//     }
-
-// }
-
 </script>
 
 <template>
-  <VisitDetails :visit="visits" :key="visits.id"  ></VisitDetails>
+  <div
+    v-if="store.loading"
+    class="border-round border-1 surface-border p-4 surface-card"
+  >
+    <div class="grid p-fluid">
+      <div v-for="n in 9" class="field col-12 md:col-6 lg:col-4">
+        <span class="p-float-label">
+          <Skeleton width="100%" height="2rem"></Skeleton>
+        </span>
+      </div>
+    </div>
+
+    <Skeleton width="100%" height="100px"></Skeleton>
+    <div class="flex justify-content-between mt-3">
+      <Skeleton width="100%" height="2rem"></Skeleton>
+    </div>
+  </div>
+  <div v-if="!visit">
+    <h1>لا يوجد زيارة بهذا الرقم</h1>
+  </div>
+  <VisitDetails v-else :visit="visit"></VisitDetails>
 </template>
 <style>
 .p-button-icon {

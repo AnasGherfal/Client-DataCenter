@@ -1,19 +1,31 @@
 {
-  "extends": "@vue/tsconfig/tsconfig.web.json",
-  "include": ["env.d.ts", "src/**/*", "src/**/*.vue", "layouts/IconGroup.vue.ts", "layouts/TopBar.vue.ts", "layouts/SideBar.vue.ts"],
+  "exclude": ["node_modules", ".vscode", "@vue/tsconfig/tsconfig.web.json"],
+  "include": [
+    "components.d.ts",
+    "src/**/*.ts",
+    "env.d.ts",
+    "src/**/*",
+    "src/**/*.vue",
+    "src/**/*.d.ts"
+  ],
   "compilerOptions": {
-    "lib": ["es2022", "DOM"  ],
     "baseUrl": ".",
+    "moduleResolution": "node",
     "paths": {
-      "primevue/*": [
-      ],
       "@/*": ["./src/*"]
-    }
-  },
-
-  "references": [
-    {
-      "path": "./tsconfig.config.json"
-    }
-  ]
+    },
+    "target": "esnext",
+    "module": "esnext",
+    "strict": true,
+    "jsx": "preserve",
+    "importHelpers": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "types": ["vite/client"],
+    "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
+  }
 }

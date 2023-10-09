@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from "vue";
-import { required, helpers, minLength } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import Dialog from "primevue/dialog";

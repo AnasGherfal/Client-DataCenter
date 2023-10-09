@@ -1,38 +1,57 @@
-import {httpClient} from "./index";
 import type { Visit } from "../Modules/VisitModule/VisitResponseModule";
 import type { VisitEdit } from "../Modules/VisitModule/VisitEditModule";
+
+import { useHttpClient } from "@/network/httpClient";
+
+const httpClient = useHttpClient();
+
 export const visitApi = {
-
-
-
-
-  get: async function () {
-    const response = await httpClient.get(
-      `/Visit`
-    );
+  get: async function (CustomerId?: string, SubscriptionId?: string) {
+    const response = await httpClient.get(`/Visits`, {
+      params: {
+        CustomerId: CustomerId,
+        SubscriptionId: SubscriptionId,
+      },
+    });
     return response;
   },
 
   getPages: async function (pageNumber: number, pageSize: number) {
-    const response = await httpClient.get(
-      `/Visit?PageNumber=${pageNumber}&PageSize=${pageSize}`
-    );
+    const response = await httpClient.get(`/Visits`, {
+      params: {
+        PageNumber: pageNumber,
+        PageSize: pageSize,
+      },
+    });
+    return response;
+  },
+  getTypes: async function () {
+    const response = await httpClient.get(`/VisitTypes`);
     return response;
   },
   getById: async function (id: any) {
-    const response = await httpClient.get(`/Visit/${id}`);
+    const response = await httpClient.get(`/Visits/${id}`);
     return response;
   },
   create: async function (visit: Visit) {
-    const response = await httpClient.post(`/Visit`, visit);
+    const response = await httpClient.post(`/Visits`, visit);
     return response;
   },
   remove: async function (id: string) {
-    const response = await httpClient.delete(`/Visit/${id}`);
+    const response = await httpClient.delete(`/Visits/${id}`);
     return response;
   },
-  edit: async function (id: string, visit: VisitEdit) {
-    const response = await httpClient.put(`/Visit/${id}`, visit);
+  start: async function (id: string, startTime: string) {
+    const response = await httpClient.put(`/Visits/${id}/start`, {
+      startTime,
+    });
+    return response;
+  },
+
+  stop: async function (id: string, endTime: string) {
+    const response = await httpClient.put(`/Visits/${id}/stop`, {
+      endTime,
+    });
     return response;
   },
 };

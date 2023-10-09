@@ -12,7 +12,6 @@ import {
 } from "vue";
 import { useToast } from "primevue/usetoast";
 import BackButton from "@/components/BackButton.vue";
-import type { Customer } from "../../../Modules/CustomerModule/CustomersModule";
 import { email, helpers, minLength, required } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
 import { isLibyanPhoneNumber, validateText } from "@/tools/validations";
@@ -23,32 +22,37 @@ import DeleteCustomer from "../../../components/DeleteButton.vue";
 const actEdit = ref(true);
 const loading = ref(false);
 const store = useCustomersStore();
-const dataClinet = defineProps<{ customer: any }>();
+const props = defineProps<{ customer: any }>();
 const emit = defineEmits(["getCustomers"]);
 const hide1 = ref(false);
 const hide2 = ref(false);
 const screenWidth = ref(window.innerWidth);
 const koko = ref("koko");
+
+console.log("props.customer", props.customer);
+
+
 const customer = reactive({
-  name: dataClinet.customer.name,
-  email: dataClinet.customer.email,
-  primaryPhone: dataClinet.customer.primaryPhone,
-  secondaryPhone: dataClinet.customer.secondaryPhone,
-  address: dataClinet.customer.address,
-  status: dataClinet.customer.status,
+  id: props.customer.id,
+  name: props.customer.name,
+  email: props.customer.email,
+  primaryPhone: props.customer.primaryPhone,
+  secondaryPhone: props.customer.secondaryPhone,
+  address: props.customer.address,
+  status: props.customer.status,
   files: [
     {
-      docType: dataClinet.customer.files[0]?.docType,
-      file: dataClinet.customer.files[0]?.fileName,
-      id: dataClinet.customer.files[0]?.id,
+      docType: props.customer.files[0]?.fileType,
+      file: props.customer.files[0]?.fileName ||  props.customer.files[0]?.id,
+      id: props.customer.files[0]?.id,
     },
     {
-      docType: dataClinet.customer.files[1]?.docType,
-      file: dataClinet.customer.files[1]?.fileName,
-      id: dataClinet.customer.files[1]?.id,
+      docType: props.customer.files[1]?.fileType,
+      file: props.customer.files[1]?.fileName ||  props.customer.files[1]?.id,
+      id: props.customer.files[1]?.id,
     },
   ],
-  subsicrptions: dataClinet.customer.subsicrptions,
+  subsicrptions: [],
 });
 
 const toast = useToast();
@@ -59,9 +63,9 @@ const docTypes = [
 ];
 
 onMounted(() => {
-  if (dataClinet.customer.files[1]?.docType) {
-    customer.files[1].docType = dataClinet.customer.files[1].docType;
-  }
+  // if (props.customer.files[1]?.docType) {
+  //   customer.files[1].docType = props.customer.files[1].docType;
+  // }
 });
 // Function to handle file upload
 
@@ -145,7 +149,7 @@ const onFormSubmit = async () => {
     formData.append("SecondFile.DocType", customer.files[1].docType.toString());
   }
 
-  formData.append("subsicrptions", customer.subsicrptions);
+  // formData.append("subsicrptions", customer.subsicrptions);
 
   const formDataObject: { [key: string]: string } = {};
   formData.forEach((value, key) => {
@@ -155,7 +159,7 @@ const onFormSubmit = async () => {
   console.log("formData:", formDataObject);
   if (result) {
     customersApi
-      .edit(dataClinet.customer.id, formData)
+      .edit(props.customer.id, formData)
       .then((response) => {
         toast.add({
           severity: "success",
@@ -167,7 +171,6 @@ const onFormSubmit = async () => {
         emit("getCustomers");
       })
       .catch(() => {
-        store.loading = false;
         toast.add({
           severity: "error",
           summary: "خطأ",
@@ -217,11 +220,9 @@ const v$ = useVuelidate(rules, customer);
 
 const fileUrl = ref<string | null>(null);
 
-const downloadFile = async (id: any) => {
+const downloadFile = async (id: any, fileId: string) => {
   try {
-    const response = await customersApi.getFile(id, {
-      responseType: "arraybuffer",
-    });
+    const response = await customersApi.getDocument(id, fileId);
 
     if (response) {
       const blob = new Blob([response.data], {
@@ -270,7 +271,7 @@ const downloadFile = async (id: any) => {
         </div>
 
         <span
-          v-else-if="customer.status !== 5 && !store.loading"
+          v-else-if="customer.status !== 5"
           style="width: 30px; height: 30px; margin-right: 10px; margin-top: 0px"
         >
           <Button
@@ -286,14 +287,14 @@ const downloadFile = async (id: any) => {
           />
 
           <!-- <DeleteCustomer
-            :name="dataClinet.customer.name"
-            :id="dataClinet.customer.id"
+            :name="props.customer.name"
+            :id="props.customer.id"
           ></DeleteCustomer> -->
         </span>
         <Divider />
       </template>
       <template #content>
-        <div v-if="store.loading">
+        <div v-if="loading">
           <div class="grid p-fluid">
             <div class="field col-12 md:col-6 lg:col-4">
               <span class="p-float-label">
@@ -475,7 +476,7 @@ const downloadFile = async (id: any) => {
                   v-if="screenWidth >= 768"
                 >
                   <Button
-                    @click="downloadFile(customer.files[0].id)"
+                    @click="downloadFile(customer.id, customer.files[0].id)"
                     icon="fa-solid fa-download"
                     class="p-button-text p-button-info"
                   >
@@ -497,7 +498,7 @@ const downloadFile = async (id: any) => {
                   v-else
                 >
                   <Button
-                    @click="downloadFile(customer.files[0].id)"
+                    @click="downloadFile(customer.id, customer.files[0].id)"
                     icon="fa-solid fa-download"
                     class="p-button-icon-only p-button-info"
                     text
@@ -547,7 +548,7 @@ const downloadFile = async (id: any) => {
                   v-if="screenWidth >= 768"
                 >
                   <Button
-                    @click="downloadFile(customer.files[1].id)"
+                    @click="downloadFile(customer.id, customer.files[1].id)"
                     icon="fa-solid fa-download"
                     class="p-button-text p-button-info"
                   >
@@ -568,7 +569,7 @@ const downloadFile = async (id: any) => {
                   v-else
                 >
                   <Button
-                    @click="downloadFile(customer.files[1].id)"
+                    @click="downloadFile(customer.id, customer.files[1].id)"
                     icon="fa-solid fa-download"
                     class="p-button-icon-only p-button-info"
                     text

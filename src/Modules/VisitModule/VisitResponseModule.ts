@@ -6,9 +6,8 @@ export interface Visit {
   expectedStartTime: string;
   expectedEndTime: string;
   companions: Companions[];
-  startTime: string;
-  endTime: string;
-  visitTypeId:number|null;
+
+  visitType:number;
   subscriptionId: number|null;
   representatives:Representatives[];
   notes: string;

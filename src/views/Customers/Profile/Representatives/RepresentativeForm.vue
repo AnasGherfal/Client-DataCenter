@@ -27,58 +27,51 @@ const representatives = ref(props.representatives);
 async function onFileUpload(event: any, index: number) {
   const file = event.target.files[0];
 
-  if (file) {
-    const docType = index === 0 ? 1 : 2;
+  if (!file) return;
 
-    if (index === 0) {
-      props.representatives.firstFile = {
-        file: file,
-        docType: docType,
-      };
-    } else if (index === 1) {
-      props.representatives.secondFile = {
-        file: file,
-        docType: docType,
-      };
-    }
+  if (index === 0) {
+    props.representatives.IdentityDocuments = file;
+  } else {
+    props.representatives.RepresentationDocument = file;
   }
 }
 
 const instance = getCurrentInstance();
+
 const onSubmitForm = async () => {
   const result = await v$.value.$validate();
-  if (!props.representatives.firstFile?.file) {
+  if (!props.representatives.IdentityDocuments) {
     firstFileError.value = "الحقل مطلوب";
   } else {
     firstFileError.value = "";
   }
 
   // Validate the second file
-  if (!props.representatives.secondFile?.file) {
+  if (!props.representatives.RepresentationDocument) {
     secondFileError.value = "الحقل مطلوب";
   } else {
     secondFileError.value = "";
-  
-  try {
-    if (result) {
-      loading.value = true;
-      if (instance) {
-        // Form submission logic here
 
-        instance.emit("form-submit", representatives.value);
+    try {
+      if (result) {
+        loading.value = true;
+        if (instance) {
+          // Form submission logic here
+
+          instance.emit("form-submit", representatives.value);
+        }
+      } else {
+        toast.add({
+          severity: "error",
+          summary: "رسالة خطأ",
+          detail: "يرجى تعبئة الحقول",
+          life: 3000,
+        });
       }
-    } else {
-      toast.add({
-        severity: "error",
-        summary: "رسالة خطأ",
-        detail: "يرجى تعبئة الحقول",
-        life: 3000,
-      });
+    } catch (error) {
+      console.log(error);
     }
-  } catch (error) {
-    console.log(error);
   }
-}
 };
 
 const rules = computed(() => {
@@ -126,7 +119,6 @@ const rules = computed(() => {
   };
 });
 
-
 const v$ = useVuelidate(rules, representatives);
 
 // const displayModal = ref(false);
@@ -147,27 +139,6 @@ const docTypeOptions = ref([
   { value: 1, label: "ملف شخصي" },
   { value: 2, label: "تخويل الشركة" },
 ]);
-
-function filteredDocTypeOptions(index: number) {
-  const firstFileDocType = props.representatives.firstFile?.docType;
-  const secondFileDocType = props.representatives.secondFile?.docType;
-
-  if (index === 0) {
-    if (secondFileDocType) {
-      return docTypeOptions.value.filter(
-        (option) => option.value !== secondFileDocType
-      );
-    }
-  } else if (index === 1) {
-    if (firstFileDocType) {
-      return docTypeOptions.value.filter(
-        (option) => option.value !== firstFileDocType
-      );
-    }
-  }
-
-  return docTypeOptions.value;
-}
 </script>
 <template>
   <form @submit.prevent="onSubmitForm">
@@ -193,9 +164,13 @@ function filteredDocTypeOptions(index: number) {
       </div>
       <div class="field col-12 md:col-4 lg:col-4">
         <span class="p-float-label">
-          <InputText id="lastName" type="text" v-model="representatives.lastName" />
+          <InputText
+            id="lastName"
+            type="text"
+            v-model="representatives.lastName"
+          />
           <label for="lastName">اللقب </label>
-          <div  style="height: 2px; margin-bottom: 1rem">
+          <div style="height: 2px; margin-bottom: 1rem">
             <span
               v-for="error in v$.lastName.$errors"
               :key="error.$uid"
@@ -229,7 +204,7 @@ function filteredDocTypeOptions(index: number) {
             style="direction: ltr"
           />
           <label for="inputtext">رقم هاتف </label>
-          <div  style="height: 2px; margin-bottom: 1rem">
+          <div style="height: 2px; margin-bottom: 1rem">
             <span
               v-for="error in v$.phoneNo.$errors"
               :key="error.$uid"
@@ -250,7 +225,7 @@ function filteredDocTypeOptions(index: number) {
             placeholder=" نوع الاثبات"
           />
           <label for="identityType">نوع الاثبات </label>
-          <div  style="height: 2px; margin-bottom: 1rem">
+          <div style="height: 2px; margin-bottom: 1rem">
             <span
               v-for="error in v$.identityType.$errors"
               :key="error.$uid"
@@ -265,7 +240,7 @@ function filteredDocTypeOptions(index: number) {
         <span class="p-float-label">
           <InputText id="inputtext" v-model="representatives.identityNo" />
           <label for="inputtext">رقم الاثبات </label>
-          <div  style="height: 2px; margin-bottom: 1rem">
+          <div style="height: 2px; margin-bottom: 1rem">
             <span
               v-for="error in v$.identityNo.$errors"
               :key="error.$uid"
@@ -278,22 +253,18 @@ function filteredDocTypeOptions(index: number) {
       </div>
       <!-- First File Input and DocType MultiSelect -->
       <div class="field col-12 md:col-4 lg:col-4">
-        <div
-        class="file-input-label-text"
-      >
-        تعريف شخصي
-      </div>
+        <div class="file-input-label-text">تعريف شخصي</div>
         <label class="file-input-label" for="fileInput1">
           <div class="file-input-content">
             <div
               class="file-input-icon"
-              v-if="!representatives.firstFile?.file?.name"
+              v-if="!representatives.IdentityDocuments?.name"
             ></div>
 
             <div class="file-input-text">
               <i class="pi pi-upload"></i>
 
-              {{ representatives.firstFile?.file?.name || "ارفق ملف  1 " }}
+              {{ representatives.IdentityDocuments?.name || "ارفق ملف  1 " }}
             </div>
           </div>
 
@@ -311,27 +282,22 @@ function filteredDocTypeOptions(index: number) {
         >
           {{ firstFileError }}
         </div>
-
       </div>
 
       <!-- Second File Input and DocType MultiSelect -->
       <div class="field col-12 md:col-4 lg:col-4">
-        <div
-                      class="file-input-label-text"
-                    >
-                      تخويل من الشركة
-                    </div>
+        <div class="file-input-label-text">تخويل من الشركة</div>
         <label class="file-input-label" for="fileInput2">
           <div class="file-input-content">
             <div
               class="file-input-icon"
-              v-if="!representatives.secondFile?.file?.name"
+              v-if="!representatives.RepresentationDocument?.name"
             ></div>
 
             <div class="file-input-text">
               <i class="pi pi-upload"></i>
 
-              {{ representatives.secondFile?.file?.name || "ارفق ملف 2 " }}
+              {{ representatives.RepresentationDocument?.name || "ارفق ملف 2 " }}
             </div>
           </div>
           <input
@@ -348,17 +314,15 @@ function filteredDocTypeOptions(index: number) {
         >
           {{ secondFileError }}
         </div>
-
       </div>
     </div>
     <Button
-    @click="onSubmitForm"
+      @click="onSubmitForm"
       icon="pi pi-check"
       :label="value"
       :loading="loading"
     />
     <Toast position="bottom-left" />
-
   </form>
 </template>
 
@@ -380,7 +344,7 @@ function filteredDocTypeOptions(index: number) {
 }
 .file-input-label-text {
   font-size: small;
-  color:#9aafc3;
+  color: #9aafc3;
   margin-bottom: 0.1rem;
 }
 

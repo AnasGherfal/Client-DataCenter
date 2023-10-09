@@ -7,11 +7,14 @@ import { useRoute } from "vue-router";
 import { toNumber } from "@vue/shared";
 import RepresentativeForm from "./RepresentativeForm.vue";
 import { representativesApi } from "@/api/representatives";
+import { RepresentativeModel } from "../../../../Modules/Representatives/RepresentativesModel";
+import Toast from "primevue/toast";
 
 const route = useRoute();
 const prop = defineProps<{
   customerStatus: number | undefined;
-  representativesLength: number;
+  CustomerId: string;
+  representatives: RepresentativeModel[];
 }>();
 const userId = computed(() => {
   if (route && route.params && route.params.id) {
@@ -30,52 +33,28 @@ const representatives = ref<Representatives>({
   phoneNo: "",
   identityType: null, //1 personalId 2-authorized 3-representitive
   customerId: toNumber(userId.value),
-  firstFile: {
-    file: null,
-    docType: 0,
-  },
-  secondFile: {
-    file: null,
-    docType: 0,
-  },
+  RepresentationDocument: null,
+  IdentityDocuments: null,
 });
 
 const toast = useToast();
 
-
 const onFormSubmit = async (representative: Representatives) => {
   const formData = new FormData();
 
+  formData.append("CustomerId", prop.CustomerId);
   formData.append("firstName", representative.firstName);
   formData.append("lastName", representative.lastName);
   formData.append("identityNo", representative.identityNo);
   formData.append("email", representative.email);
   formData.append("phoneNo", representative.phoneNo);
-  formData.append("identityType", representative.identityType?.toString() || "");
-  formData.append("customerId", representative.customerId?.toString() || "");
+  formData.append(
+    "identityType",
+    representative.identityType?.toString() || ""
+  );
+  formData.append("IdentityDocument", representative.IdentityDocuments as Blob);
+  formData.append("RepresentationDocument", representative.RepresentationDocument as Blob);
 
-  // Append the first file as FormFile
-  if (representative.firstFile.file instanceof File) {
-    formData.append(
-      "FirstFile.File",
-      representative.firstFile.file,
-      representative.firstFile.file.name
-    );
-    formData.append("firstFile.DocType", representative.firstFile.docType.toString());
-
-  }
-
-  // Append the second file if needed
-  if (representative.secondFile.file instanceof File) {
-    formData.append("SecondFile.File", representative.secondFile.file, representative.secondFile.file.name);
-    formData.append("SecondFile.DocType", representative.secondFile.docType.toString());
-  }
-  const formDataObject: { [key: string]: string } = {};
-  formData.forEach((value, key) => {
-    formDataObject[key] = value.toString();
-  });
-
-  console.log("formData:", formDataObject);
   representativesApi
     .create(formData)
     .then((response) => {
@@ -88,14 +67,12 @@ const onFormSubmit = async (representative: Representatives) => {
       });
     })
     .catch((error) => {
-      if (prop.representativesLength > 2) {
-        toast.add({
-          severity: "warn",
-          summary: "هذا العميل لديه الحد الأقصى من عدد المخوليين",
-          detail: error,
-          life: 3000,
-        });
-      }
+      toast.add({
+        severity: "warn",
+        summary: "رسالة تحذير",
+        detail: error.response.data?.msg || "حدث خطأ ما",
+        life: 3000,
+      });
       console.log(error);
     })
     .finally(() => {
@@ -111,12 +88,8 @@ const resetForm = () => {
   representatives.value.phoneNo = "";
   representatives.value.identityNo = "";
   representatives.value.identityType = null;
-  representatives.value.firstFile.file = null;
-  representatives.value.firstFile.docType = 0;
-  representatives.value.secondFile.file = null;
-  representatives.value.secondFile.docType = 0;
-
-
+  representatives.value.RepresentationDocument = null;
+  representatives.value.IdentityDocuments = null;
 };
 const displayModal = ref(false);
 const openModal = () => {
@@ -125,12 +98,12 @@ const openModal = () => {
 </script>
 
 <template>
-  <div style="display: flex; align-items: center;">
+  <div style="display: flex; align-items: center">
     <Button
       @click="openModal"
       class="p-button-primary mb-4"
       style="display: flex"
-      :disabled="prop.customerStatus == 5 || prop.representativesLength >= 2"
+      :disabled="prop.customerStatus == 5 || prop.representatives.length >= 2"
     >
       اضافة مُخول
     </Button>
@@ -151,11 +124,117 @@ const openModal = () => {
       </template>
     </Dialog>
   </div>
-    <div v-if="prop.representativesLength >= 2" class="warning-message" style="margin-bottom: 1rem; margin-top: -1rem;">
-      <div class="warning-message-icon"></div>
-      <div class="warning-message-text">
-        هذا العميل لديه الحد الأقصى من عدد المخوليين      </div>
+
+  <DataTable
+    :value="prop.representatives"
+    dataKey="id"
+    :paginator="true"
+    :rows="10"
+    :rowsPerPageOptions="[5, 10, 25]"
+    paginatorTemplate="  "
+  >
+    <template #header>
+      <div class="grid p-fluid">
+        <div class="field col-12 md:col-6 lg:col-4"></div>
+      </div>
+    </template>
+
+    <template #empty>
+      <div
+        class="no-data-message"
+        style="
+          height: 100px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+          background-color: #f9f9f9;
+          border-radius: 5px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        "
+      >
+        <p style="font-size: 18px; font-weight: bold; color: #888">
+          لا يوجد بيانات
+        </p>
+      </div>
+    </template>
+
+    <Column
+      field="customerName"
+      header="اسم المخول"
+      style="min-width: 6rem"
+      class="font-bold"
+    ></Column>
+    <Column
+      field="email"
+      header="البريد الالكتروني"
+      style="min-width: 6rem"
+      class="font-bold"
+    ></Column>
+    <Column
+      field="firstName"
+      header="الاسم الاول"
+      style="min-width: 6rem"
+      class="font-bold"
+    ></Column>
+    <Column
+      field="lastName"
+      header="الاسم الاخير"
+      style="min-width: 6rem"
+      class="font-bold"
+    ></Column>
+    <Column
+      field="phoneNo"
+      header="رقم الهاتف"
+      style="min-width: 6rem"
+      class="font-bold"
+    ></Column>
+    <Column
+      field="status"
+      header="  الحاله "
+      filterField="status"
+      style="width: 6rem"
+      :showFilterMenu="false"
+      :filterMenuStyle="{ width: '12rem' }"
+    >
+    </Column>
+
+    <Column style="min-width: 11rem">
+      <template #body="slotProps">
+        <span v-if="slotProps.data.status !== 5">
+          <DeleteSubscription
+            :name="slotProps.data.id"
+            :id="slotProps.data.id"
+            type="Subscription"
+          >
+          </DeleteSubscription>
+        </span>
+        <LockButton
+          typeLock="Subscription"
+          :id="slotProps.data.id"
+          :name="slotProps.data.id"
+          :status="slotProps.data.status"
+          @getdata="emit('getRepresentatives')"
+        />
+
+        
+      </template>
+    </Column>
+  </DataTable>
+
+  <div
+    v-if="prop.representatives.length >= 2"
+    class="warning-message"
+    style="margin-bottom: 1rem; margin-top: -1rem"
+  >
+    <div class="warning-message-icon"></div>
+    <div class="warning-message-text">
+      هذا العميل لديه الحد الأقصى من عدد المخوليين
     </div>
+  </div>
+
+  <Toast />
 </template>
 
 <style>

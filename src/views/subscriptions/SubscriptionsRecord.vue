@@ -1,21 +1,29 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { FilterMatchMode } from "primevue/api";
 import AddButton from "@/components/AddButton.vue";
 import LockButton from "@/components/LockButton.vue";
 import { useSubscriptionsStore } from "@/stores/subscriptions";
 import moment from "moment";
 import DeleteSubscription from "../../components/DeleteButton.vue";
+import { Subscription } from "@/Modules/SubscriptionModule/SubscriptionsRequestModule";
+import { subscriptionApi } from "../../api/subscriptions";
+import { useToast } from "primevue/usetoast";
 
 // optional
 
 const store = useSubscriptionsStore();
+const toast = useToast();
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
 
 const columns = ref([{ field: "serviceName", header: "الباقه" }]);
 const selectedColumns = ref(columns.value);
+
+onMounted(() => {
+  store.getSubs();
+});
 
 const formatDate = (value: Date) => {
   return moment(value).format("yy/M/D  hh:mm a");
@@ -82,19 +90,59 @@ const goToPreviousPage = () => {
     store.getSubs();
   }
 };
+
+const toggleLock = async (subs: any) => {
+  try {
+    let response;
+    if (subs.status == 1) response = await subscriptionApi.block(subs.id);
+    if (subs.status == 2) response = await subscriptionApi.unblock(subs.id);
+
+    toast.add({
+      severity: "success",
+      summary: "نجحة العملية",
+      detail: response?.data.msg,
+      life: 3000,
+    });
+    store.getSubs();
+  } catch (error: any) {
+    toast.add({
+      severity: "error",
+      summary: "حدث خطأ",
+      detail: error.response.data.msg || "حدث خطأ",
+      life: 3000,
+    });
+  }
+};
+
+const deleteSubs = (id: string) => {
+  subscriptionApi
+    .remove(id)
+    .then((response) => {
+      toast.add({
+        severity: "success",
+        summary: "تم الحذف",
+        detail: response.data.msg,
+        life: 3000,
+      });
+      store.getSubs();
+    })
+    .catch((e) => {
+      toast.add({
+        severity: "error",
+        summary: "رسالة خطأ",
+        detail: e.response.data.msg,
+        life: 3000,
+      });
+    });
+};
 </script>
 
 <template>
-  <RouterView></RouterView>
-
-  <div v-if="$route.path === '/subscriptionsRecord'">
+  <div>
     <Card>
       <template #title>
         سجل الاشتراكات
-        <AddButton
-          name-button="إضافة اشتراك"
-          rout-name="/subscriptionsRecord/addSubsciptions"
-        />
+        <AddButton name-button="إضافة اشتراك" rout-name="/addSubsciptions" />
       </template>
       <template #content>
         <div
@@ -261,6 +309,7 @@ const goToPreviousPage = () => {
                 <DeleteSubscription
                   :name="slotProps.data.id"
                   :id="slotProps.data.id"
+                  @submit="() => deleteSubs(slotProps.data.id)"
                   type="Subscription"
                 >
                 </DeleteSubscription>
@@ -270,15 +319,13 @@ const goToPreviousPage = () => {
                 :id="slotProps.data.id"
                 :name="slotProps.data.id"
                 :status="slotProps.data.status"
+                @submit="() => toggleLock(slotProps.data)"
                 @getdata="store.getSubs"
               />
 
               <RouterLink
                 :key="slotProps.data.id"
-                :to="
-                  '/subscriptionsRecord/SubscriptionsDetaView/' +
-                  slotProps.data.id
-                "
+                :to="'/SubscriptionsDetaView/' + slotProps.data.id"
                 style="text-decoration: none"
               >
                 <Button

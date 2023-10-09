@@ -10,9 +10,9 @@ export const useSubscriptionsStore = defineStore("Subscription", () => {
   const pageSize = ref(10);
   const currentPage = ref(0);
   const status = ref<number>(0);
-  onMounted(async () => {
-    getSubs();
-  });
+  // onMounted(async () => {
+  //   getSubs();
+  // });
 
 
   function getSubs() {

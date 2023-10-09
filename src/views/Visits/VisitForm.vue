@@ -34,33 +34,34 @@ const totalPages = ref(1);
 const pageNumber = ref(1);
 const pageSize = ref(10);
 const currentPage = ref(0);
-const visit: Visit = reactive({
-  expectedStartTime: "2023-05-24T08:26:49.160Z",
-  expectedEndTime: "2023-05-24T08:26:49.160Z",
-  startTime: "",
-  endTime: "",
-  visitTypeId: null,
+const filteredCustomer = ref();
+
+const customerselect = ref();
+const customerRepresentatives = ref();
+const customerSubscriptions = ref();
+const subscriptions = ref();
+const customerSelected = ref(false); // Flag to track whether a customer is selected
+const toast = useToast();
+
+const visit = reactive({
+  expectedStartTime: "",
+  expectedEndTime: "",
+  visitType: 1,
   notes: "",
-  subscriptionId: null,
+  subscriptionId: null as any,
   representatives: [],
   companions: [],
 });
 
 interface visitReason {
-  value: string; // Change the type to string to accept GUIDs as strings
-  text: string;
+  id: number; // Change the type to string to accept GUIDs as strings
+  name: string;
 }
 
-const visitReasons: visitReason[] = [
-  { value: "7adbcf6d-e06f-410c-8a41-5857dadb0792", text: "صيانه" }, // Ensure the value is in quotes
-  { value: "be05cdb1-03e4-4899-a910-662a79d8653e", text: "انهاء عمل" }, // Make sure other values are also strings if needed
-];
+const visitReasons = ref<visitReason[]>([]);
 
 const startDate = ref(new Date());
 const endDate = ref(new Date());
-
-const date = new Date(moment(visit.startTime).format("hh:mm a"));
-const minDate = ref(date);
 
 const updateEndDate = () => {
   if (startDate.value > endDate.value) {
@@ -68,22 +69,18 @@ const updateEndDate = () => {
   }
 };
 
-const invalidDates = ref();
-
-const filterdUsers = ref();
-
-const searchUsers = () => {};
-
 const rules = computed(() => {
   return {
     subscriptionId: { required: helpers.withMessage(" الحقل مطلوب", required) },
-    visitTypeId: { required: helpers.withMessage("الحقل مطلوب", required) },
-    startTime: { required: helpers.withMessage("  الحقل مطلوب", required) },
-    endTime: {
+    visitType: { required: helpers.withMessage("الحقل مطلوب", required) },
+    expectedStartTime: {
+      required: helpers.withMessage("  الحقل مطلوب", required),
+    },
+    expectedEndTime: {
       required: helpers.withMessage(" الحقل مطلوب", required),
       minValue: helpers.withMessage(
         "تاريخ انتهاء الزياره يجب ان يكون بعد تاريخ البدايه",
-        minValue(visit.startTime)
+        minValue(visit.expectedStartTime)
       ),
     },
     representatives: {
@@ -93,25 +90,20 @@ const rules = computed(() => {
 });
 const v$ = useVuelidate(rules, visit);
 
-// Validate that end date is not before start date
-const isEndDateValid = computed(() => {
-  return !visit.endTime || !visit.startTime || visit.endTime >= visit.startTime;
-});
-
-const toast = useToast();
-
-function invalidDate() {
-  if (visit.endTime <= visit.startTime) {
-    alert("error");
-  }
-}
-
 onMounted(async () => {
   getCustomers();
+  getTypes();
 });
-async function searchByName(searchName: string) {
-  name.value = searchName;
-  await getCustomers(); // Await the getCustomers function to wait for the API call to complete
+
+async function getTypes() {
+  await visitApi
+    .getTypes()
+    .then(function (response) {
+      visitReasons.value = response.data.content;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
 }
 async function getCustomers() {
   if (name.value === undefined || name.value === null) {
@@ -132,29 +124,12 @@ async function getCustomers() {
     });
 }
 
-const customerselect = ref(name.value);
-const customerRepresentatives = ref();
-const representatives = ref();
-const customerSubscriptions = ref();
-const subscriptions = ref();
-const customerSelected = ref(false); // Flag to track whether a customer is selected
-
 watch(customerselect, async (newValue) => {
-  if (newValue && customerSelected.value) {
+  if (newValue) {
     try {
       loading.value = true;
-
-      // Update the representatives and subscriptions using data from the selected customer
-      representatives.value = customers.value[0].representative;
-      subscriptions.value = customers.value[0].subsicrptions;
-
-      console.log(representatives.value);
-
-      customerRepresentatives.value = representatives.value;
-      customerSubscriptions.value = subscriptions.value;
-
-      loading.value = false;
-
+      await getRepresentatives(newValue.id);
+      await getSubscriptions(newValue.id);
       loading.value = false;
     } catch (error) {
       console.error("Error fetching representatives:", error);
@@ -162,37 +137,48 @@ watch(customerselect, async (newValue) => {
   }
 });
 
+const getRepresentatives = (id: string) => {
+  representativesApi
+    .get(id)
+    .then(function (response) {
+      customerRepresentatives.value = response.data.content;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+};
+
+const getSubscriptions = (id: string) => {
+  subscriptionApi
+    .get(1, 50, id)
+    .then(function (response) {
+      customerSubscriptions.value = response.data.content;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+};
+
 const submitForm = async () => {
   const result = await v$.value.$validate();
 
   if (result) {
     // Extract representative IDs
     const representativeIds = visit.representatives.map((rep: any) => rep.id);
-    // Modify the visit object to include only the representative IDs
-    console.log("Extracted Representative IDs:", representativeIds);
 
-    // Extract subscription IDs
-    const subscriptionIds = subscriptions.value.map((sub: any) => sub.id);
-    // Modify the visit object to include only the subscription IDs
-    const subscriptionId =
-      subscriptionIds.length > 0 ? subscriptionIds[0] : null; // Take the first subscription ID from the array
-
-    const data = reactive({
-      expectedStartTime: "2023-05-24T08:26:49.160Z",
-      expectedEndTime: "2023-05-24T08:26:49.160Z",
-      startTime: visit.startTime,
-      endTime: visit.endTime,
-      visitTypeId: visit.visitTypeId,
-      notes: visit.notes,
-      subscriptionId: subscriptionId,
+    const payload = {
+      subscriptionId: visit.subscriptionId ? visit.subscriptionId[0].id : "",
+      visitType: +visit.visitType,
       representatives: representativeIds,
+      expectedStartTime: visit.expectedStartTime,
+      expectedEndTime: visit.expectedEndTime,
+      notes: visit.notes,
       companions: visit.companions,
-    });
+    };
 
     loading.value = true;
-    console.log(data);
     visitApi
-      .create(data)
+      .create(payload)
       .then(function (response) {
         toast.add({
           severity: "success",
@@ -203,38 +189,48 @@ const submitForm = async () => {
 
         console.log(response);
         store.getVisits();
-        setTimeout(() => {
-          router.go(-1);
-          resetForm();
-        }, 500);
+        router.go(-1);
       })
       .catch(function (error) {
-        console.log(error);
+        toast.add({
+          severity: "error",
+          summary: "فشلت الاضافه",
+          detail: error.response.data.msg || "حدث خطأ ما",
+          life: 3000,
+        });
       });
   } else {
     console.log("not valid");
   }
 };
 const resetForm = () => {
-  visit.startTime = "";
-  (visit.endTime = ""),
-    (visit.visitTypeId = null),
+  visit.expectedStartTime = "";
+  (visit.expectedEndTime = ""),
+    (visit.visitType = 0),
     (visit.notes = ""),
     (visit.subscriptionId = null),
     (visit.representatives = []),
     (visit.companions = []);
 };
-const filteredCustomer = ref();
 
-const search = async (query: string) => {
-  await searchByName(query); // Call the searchByName function
-  filteredCustomer.value = customers.value; // Use the updated customers list
-  customerSelected.value = true;
-};
-const searchOnEnter = (event: KeyboardEvent, query: string) => {
-  if (event.key === "Enter") {
-    search(query);
-  }
+// const search = async (query: string) => {
+//   await searchByName(query); // Call the searchByName function
+//   filteredCustomer.value = customers.value; // Use the updated customers list
+//   customerSelected.value = true;
+// };
+
+const search = (event: any) => {
+  setTimeout(() => {
+    if (!event.query.trim().length) {
+      filteredCustomer.value = [...customers.value];
+    } else {
+      filteredCustomer.value = customers.value.filter(
+        (users: { name: String }) => {
+          return users.name.toLowerCase().startsWith(event.query.toLowerCase());
+        }
+      );
+    }
+  }, 250);
 };
 </script>
 
@@ -256,7 +252,7 @@ const searchOnEnter = (event: KeyboardEvent, query: string) => {
                   v-model="customerselect"
                   optionLabel="name"
                   :suggestions="filteredCustomer"
-                  @keyup.enter="searchOnEnter($event, customerselect)"
+                  @complete="search"
                 />
                 <label for="customerName">العملاء</label>
                 <!-- <div style="height: 2px">
@@ -325,16 +321,16 @@ const searchOnEnter = (event: KeyboardEvent, query: string) => {
               <span class="p-float-label">
                 <Dropdown
                   id="visitType"
-                  v-model="visit.visitTypeId"
+                  v-model="visit.visitType"
                   :options="visitReasons"
-                  optionValue="value"
-                  optionLabel="text"
+                  optionValue="id"
+                  optionLabel="name"
                 />
                 <label for="visitType">سبب الزيارة </label>
                 <div style="height: 2px">
                   <span
                     style="color: red; font-weight: bold; font-size: small"
-                    v-for="error in v$.visitTypeId.$errors"
+                    v-for="error in v$.visitType.$errors"
                     :key="error.$uid"
                     class="p-error"
                   >
@@ -348,7 +344,7 @@ const searchOnEnter = (event: KeyboardEvent, query: string) => {
               <span class="p-float-label">
                 <Calendar
                   inputId="startTime"
-                  v-model="visit.startTime"
+                  v-model="visit.expectedStartTime"
                   dateFormat="yy/mm/dd"
                   :showTime="true"
                   selectionMode="single"
@@ -363,7 +359,7 @@ const searchOnEnter = (event: KeyboardEvent, query: string) => {
                 <div style="height: 2px">
                   <span
                     style="color: red; font-weight: bold; font-size: small"
-                    v-for="error in v$.startTime.$errors"
+                    v-for="error in v$.expectedStartTime.$errors"
                     :key="error.$uid"
                     class="p-error"
                   >
@@ -377,7 +373,7 @@ const searchOnEnter = (event: KeyboardEvent, query: string) => {
               <span class="p-float-label">
                 <Calendar
                   inputId="endTime"
-                  v-model="visit.endTime"
+                  v-model="visit.expectedEndTime"
                   dateFormat="yy/mm/dd"
                   :showTime="true"
                   selectionMode="single"
@@ -391,7 +387,7 @@ const searchOnEnter = (event: KeyboardEvent, query: string) => {
                 <div style="height: 2px">
                   <span
                     style="color: red; font-weight: bold; font-size: small"
-                    v-for="error in v$.endTime.$errors"
+                    v-for="error in v$.expectedEndTime.$errors"
                     :key="error.$uid"
                     class="p-error"
                   >
