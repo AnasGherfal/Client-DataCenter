@@ -4,25 +4,27 @@ import { useInvoicesStore } from "@/stores/invoices";
 import type { InvoiceResponde } from "@/Modules/Invoices/InvoicesRespondeModule";
 import { invoiceApi } from "@/api/invoice";
 import BackButton from "@/components/BackButton.vue";
-import { computed, reactive, ref, watch } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import { helpers, minValue, required } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import { subscriptionApi } from "@/api/subscriptions";
 import router from "@/router";
 import moment from "moment";
+import { customersApi } from "@/api/customers";
 
 const customerStore = useCustomersStore();
 const invoicesStore = useInvoicesStore();
 const customerselect = ref();
 const loading = ref(false);
 const customerSelected = ref(false); // Flag to track whether a customer is selected
+const customers = ref([]);
 
-const invoices: InvoiceResponde = reactive({
+const invoices = reactive({
   description: "",
   startDate: "",
   endDate: "",
-  subscriptionId: null,
+  subscriptionId: null as any,
 });
 
 const rules = computed(() => {
@@ -57,49 +59,38 @@ const subscriptions = ref();
 const customerSubscriptions = ref();
 const filteredCustomer = ref();
 
-watch(customerselect, async (newValue) => {
-  if (newValue && customerSelected.value) {
-    try {
-      loading.value = true;
+onMounted(() => {
+  getCustomers();
+});
 
-      // Update the representatives and subscriptions using data from the selected customer
-      subscriptions.value = customerStore.customers[0].subsicrptions;
-
-      customerSubscriptions.value = subscriptions.value;
-
-      loading.value = false;
-
-      loading.value = false;
-    } catch (error) {
-      console.error("Error fetching representatives:", error);
-    }
+watch(customerselect, (value) => {
+  if (value) {
+    getSubscriptions(value.id);
   }
 });
 
-const convertedStartDate = computed(() => {
-  if (!invoices.startDate) return undefined; // Return undefined if startDate is empty
-  return new Date(invoices.startDate);
-});
 const submitForm = async () => {
   const result = await v$.value.$validate();
 
   if (result) {
-    // Extract subscription IDs
-    const subscriptionIds = subscriptions.value.map((sub: any) => sub.id);
-    // Modify the visit object to include only the subscription IDs
-    const subscriptionId =
-      subscriptionIds.length > 0 ? subscriptionIds[0] : null; // Take the first subscription ID from the array
+    const formData = new FormData();
+    formData.append("CustomerId", customerselect.value.id);
+    formData.append(
+      "IncludeVisitsFrom",
+      moment(invoices.startDate).format("YYYY-MM-DD HH:mm:ss")
+    );
+    formData.append(
+      "IncludeVisitsTo",
+      moment(invoices.endDate).format("YYYY-MM-DD HH:mm:ss")
+    );
+    formData.append("Notes", invoices.description);
+    formData.append(
+      "SubscriptionId",
+      invoices.subscriptionId ? invoices.subscriptionId[0].id : ""
+    );
 
-    const data = reactive({
-      startDate: invoices.startDate,
-      endDate: invoices.endDate,
-      description: invoices.description,
-      subscriptionId: subscriptionId,
-    });
-
-    console.log(data);
     invoiceApi
-      .create(data)
+      .create(formData)
       .then(function (response) {
         toast.add({
           severity: "success",
@@ -108,16 +99,14 @@ const submitForm = async () => {
           life: 3000,
         });
         router.go(-1);
-        setTimeout(() => {
-          resetForm();
-        }, 500);
-        console.log(data);
-
-        console.log(response);
-        invoicesStore.getInvoices();
       })
       .catch(function (error) {
-        console.log(error);
+        toast.add({
+          severity: "error",
+          summary: "رسالة فشل",
+          detail: error.response.data.msg || "هنالك مشكلة في الوصول",
+          life: 3000,
+        });
       });
   } else {
     console.log("not valid");
@@ -132,15 +121,43 @@ const resetForm = () => {
   invoices.subscriptionId = null;
 };
 
-const search = async (query: string) => {
-  await customerStore.searchByName(query); // Call the searchByName function
-  filteredCustomer.value = customerStore.customers; // Use the updated customers list
-  customerSelected.value = true;
+async function getCustomers() {
+  await customersApi
+    .get(1, 1000, "")
+    .then(function (response) {
+      customers.value = response.data.content;
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+}
+
+const getSubscriptions = (id: string) => {
+  subscriptionApi
+    .get(1, 50, id)
+    .then(function (response) {
+      customerSubscriptions.value = response.data.content;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
 };
-const searchOnEnter = (event: KeyboardEvent, query: string) => {
-  if (event.key === "Enter") {
-    search(query);
-  }
+
+const search = (event: any) => {
+  setTimeout(() => {
+    if (!event.query.trim().length) {
+      filteredCustomer.value = [...customers.value];
+    } else {
+      filteredCustomer.value = customers.value.filter(
+        (users: { name: String }) => {
+          return users.name.toLowerCase().startsWith(event.query.toLowerCase());
+        }
+      );
+    }
+  }, 250);
 };
 </script>
 
@@ -163,7 +180,7 @@ const searchOnEnter = (event: KeyboardEvent, query: string) => {
                   v-model="customerselect"
                   optionLabel="name"
                   :suggestions="filteredCustomer"
-                  @keyup.enter="searchOnEnter($event, customerselect)"
+                  @complete="search"
                 />
                 <label for="customerName">العملاء</label>
                 <!-- <div style="height: 2px">
@@ -190,14 +207,14 @@ const searchOnEnter = (event: KeyboardEvent, query: string) => {
                 />
                 <label for="startDate">تاريخ بداية الاشتراك</label>
                 <div style="height: 2px">
-                    <span
-                      v-for="error in v$.startDate.$errors"
-                      :key="error.$uid"
-                      style="color: red; font-weight: bold; font-size: small"
-                    >
-                      {{ error.$message }}</span
-                    >
-                  </div>
+                  <span
+                    v-for="error in v$.startDate.$errors"
+                    :key="error.$uid"
+                    style="color: red; font-weight: bold; font-size: small"
+                  >
+                    {{ error.$message }}</span
+                  >
+                </div>
               </span>
             </div>
 
@@ -214,14 +231,14 @@ const searchOnEnter = (event: KeyboardEvent, query: string) => {
                 />
                 <label for="endtDate">تاريخ انتهاء الاشتراك</label>
                 <div style="height: 2px">
-                    <span
-                      v-for="error in v$.endDate.$errors"
-                      :key="error.$uid"
-                      style="color: red; font-weight: bold; font-size: small"
-                    >
-                      {{ error.$message }}</span
-                    >
-                  </div>
+                  <span
+                    v-for="error in v$.endDate.$errors"
+                    :key="error.$uid"
+                    style="color: red; font-weight: bold; font-size: small"
+                  >
+                    {{ error.$message }}</span
+                  >
+                </div>
               </span>
             </div>
             <div class="field col-12 md:col-6 lg:col-4">
@@ -236,15 +253,15 @@ const searchOnEnter = (event: KeyboardEvent, query: string) => {
                   :selectionLimit="1"
                 />
                 <label for="subscriptionType">اشتراكات</label>
-                  <div style="height: 2px">
-                    <span
-                      v-for="error in v$.subscriptionId.$errors"
-                      :key="error.$uid"
-                      style="color: red; font-weight: bold; font-size: small"
-                    >
-                      {{ error.$message }}</span
-                    >
-                  </div>
+                <div style="height: 2px">
+                  <span
+                    v-for="error in v$.subscriptionId.$errors"
+                    :key="error.$uid"
+                    style="color: red; font-weight: bold; font-size: small"
+                  >
+                    {{ error.$message }}</span
+                  >
+                </div>
               </span>
             </div>
 

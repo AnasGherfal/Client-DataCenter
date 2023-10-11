@@ -10,100 +10,84 @@ import moment from "moment";
 import DeleteInvoice from "../../components/DeleteButton.vue";
 import { helpers, minValue, required, requiredIf } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
+import { customersApi } from "@/api/customers";
 
 const loading = ref(false);
-const store = useInvoicesStore();
 
-const storeCustomers = useCustomersStore();
-// const startDate = ref(new Date());
-// const endDate = ref(new Date());
-const invoice = reactive({
-    name: "",
-    startDate: "",
-    endDate: "",
-  });
-  const invoices = ref([]);
-  const visits = ref();
-  const totalPages = ref(1);
-  const pageNumber = ref(1);
-  const pageSize = ref(10);
-  const currentPage = ref(0);
-  // const name = ref("");
-  // const startDate = ref("");
-  // const endDate = ref("");
-  const length = ref<number|null>(null)
+const customerselect = ref<any>();
+const invoices = ref([]);
+const visits = ref();
+const totalPages = ref(1);
+const pageNumber = ref(1);
+const pageSize = ref(10);
+const currentPage = ref(0);
+const filteredCustomer = ref();
+const customers = ref([]);
+
+// const name = ref("");
+// const startDate = ref("");
+// const endDate = ref("");
+const length = ref<number | null>(null);
 
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
-const isEndDateRequired = () => {
-  return !!invoice.startDate; // Return true if startDate has a value
-};
-const rules = computed(() => {
-  return {
-    name: { required: helpers.withMessage("الحقل مطلوب", required) },
-    endDate: {
-      requiredIf: helpers.withMessage(
-        "الحقل مطلوب",
-        requiredIf(() => invoice.startDate !== "")
-      ),
-      minValue: helpers.withMessage(
-        "تاريخ انتهاء الزياره يجب ان يكون بعد تاريخ البدايه",
-        minValue(invoice.startDate)
-      ),
-      
-    },
-  };
-});
-const v$ = useVuelidate(rules, invoice);
-
 
 onMounted(async () => {
-    getInvoices();
-  });
-   function searchByDateAndName(
-    searchName: string,
-    serachStartDate: any,
-    searchEndDate: any
-  ) {
-    invoice.name = searchName;
-    invoice.startDate = serachStartDate;
-    invoice.endDate = searchEndDate;
-     getInvoices(); // Await the getCustomers function to wait for the API call to complete
-  }
+  getInvoices();
+  getCustomers();
+});
 
-  function getInvoices() {
-    loading.value = true;
-    if (
-      (invoice.startDate === undefined && invoice.endDate === undefined) ||
-      (invoice.startDate === null && invoice.endDate == null)
-    ) {
-      invoice.startDate = "";
-      invoice.endDate = "";
+async function getCustomers() {
+  await customersApi
+    .get(1, 10, "")
+    .then(function (response) {
+      customers.value = response.data.content;
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+}
+
+const search = (event: any) => {
+  setTimeout(() => {
+    if (!event.query.trim().length) {
+      filteredCustomer.value = [...customers.value];
+    } else {
+      filteredCustomer.value = customers.value.filter(
+        (users: { name: String }) => {
+          return users.name.toLowerCase().startsWith(event.query.toLowerCase());
+        }
+      );
     }
+  }, 250);
+};
 
-    invoiceApi
-      .get(
-        pageNumber.value,
-        pageSize.value,
-        invoice.name,
-        invoice.startDate,
-        invoice.endDate
-      )
-      .then(function (response) {
-        console.log(response);
-        invoices.value = response.data.content;
-        visits.value = response.data.content;
-        totalPages.value = response.data.totalPages;
-        currentPage.value = response.data.currentPage;
-      })
-      .catch(function (error) {
-        console.log(error);
-      })
-      .finally(function () {
-        loading.value = false;
-      });
+function getInvoices() {
+  loading.value = true;
+
+  if (customerselect.value == null) {
+    return;
   }
+
+  invoiceApi
+    .get(pageNumber.value, pageSize.value, customerselect.value.id)
+    .then(function (response) {
+      invoices.value = response.data.content;
+      visits.value = response.data.content;
+      totalPages.value = response.data.totalPages;
+      currentPage.value = response.data.currentPage;
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
+    .finally(function () {
+      loading.value = false;
+    });
+}
 // Computed property to display the payment status
 const getPaymentStatus = (isPaid: boolean) => {
   return isPaid ? "مدفوعه" : "غير مدفوعه";
@@ -133,64 +117,21 @@ const goToPreviousPage = () => {
   }
 };
 
-// // Function to handle the Enter key press and trigger the search
-// const onSearch = (event: KeyboardEvent) => {
-//   if (event.key === "Enter") {
-//     store.searchByName(store.invoice.name); // Call the searchByName function with the provided name
-//   }
-// };
-function formatDateToYYYYMMDD(date: any) {
-  // Get the date in the local time zone
-  const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-  
-  const year = localDate.getFullYear();
-  const month = String(localDate.getMonth() + 1).padStart(2, "0");
-  const day = String(localDate.getDate()).padStart(2, "0");
-
-  return `${year}/${month}/${day}`;
-}
-
 const submitForm = async () => {
-  invoice.name = invoice.name
-  invoice.startDate = invoice.startDate;
-  invoice.endDate = invoice.endDate;
-
-  const result = await v$.value.$validate();
-  if (result) {
-    console.log(invoice.name, invoice.startDate, invoice.endDate)
-
+  if (customerselect.value) {
     // Convert start and end dates to ISO string format
-    if (invoice.startDate) {
-      const startDate = new Date(invoice.startDate);
-      invoice.startDate = formatDateToYYYYMMDD(startDate);
-    }
 
-    if (invoice.endDate) {
-      const endDate = new Date(invoice.endDate);
-      invoice.endDate = formatDateToYYYYMMDD(endDate);
-    }
-
-    searchByDateAndName(
-      invoice.name,
-      invoice.startDate,
-      invoice.endDate
-    );
-
+    getInvoices();
   }
 };
 </script>
 
 <template>
-  <RouterView></RouterView>
-
-  <div v-if="$route.path === '/invoices'">
+  <div>
     <Card>
       <template #title>
         سجل الفواتير
-        <AddButton
-          name-button="إنشاء فاتورة"
-          rout-name="/invoices/addInvoice"
-        />
+        <AddButton name-button="إنشاء فاتورة" rout-name="/addInvoice" />
       </template>
       <template #content>
         <!-- <div
@@ -251,68 +192,20 @@ const submitForm = async () => {
                   >
                     <span class="p-input-icon-left p-float-label">
                       <i class="fa-solid fa-magnifying-glass" />
-                      <InputText
-                        ref="searchInput"
-                        v-model="invoice.name"
-                        placeholder="البحث"
+                      <AutoComplete
+                        v-model="customerselect"
+                        optionLabel="name"
+                        :suggestions="filteredCustomer"
+                        @complete="search"
                       />
+
                       <label for="search" style="font-weight: lighter">
                         اسم العميل
                       </label>
-                      <div style="height: 2px">
-                        <span
-                          style="
-                            color: red;
-                            font-weight: bold;
-                            font-size: small;
-                          "
-                          v-for="error in v$.name.$errors"
-                          :key="error.$uid"
-                          class="p-error"
-                        >
-                          {{ error.$message }}</span
-                        >
-                      </div>
                     </span>
                   </div>
                 </div>
 
-                <div class="field col-12 md:col-6 lg:col-4">
-                  <span class="p-float-label">
-                    <Calendar
-                      inputId="startTime"
-                      v-model="invoice.startDate"
-                      dateFormat="yy/mm/dd"
-                      selectionMode="single"
-                      :showButtonBar="true"
-                      :manualInput="true"
-                    />
-                    <label for="startTime">تاريخ بداية </label>
-                  </span>
-                </div>
-                <div class="field col-12 md:col-6 lg:col-4">
-                  <span class="p-float-label">
-                    <Calendar
-                      inputId="startTime"
-                      v-model="invoice.endDate"
-                      dateFormat="yy/mm/dd"
-                      selectionMode="single"
-                      :showButtonBar="true"
-                      :manualInput="true"
-                    />
-                    <label for="startTime">تاريخ النهاية </label>
-                    <div style="height: 2px">
-                      <span
-                        style="color: red; font-weight: bold; font-size: small"
-                        v-for="error in v$.endDate.$errors"
-                        :key="error.$uid"
-                        class="p-error"
-                      >
-                        {{ error.$message }}</span
-                      >
-                    </div>
-                  </span>
-                </div>
                 <div class="field col-12 md:col-6 lg:col-4">
                   <Button label="بحث" @click="submitForm" />
                 </div>
@@ -334,13 +227,15 @@ const submitForm = async () => {
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
               "
             >
-              <p v-if="length == 0 " style="font-size: 18px; font-weight: bold; color: #888">
-            اسم العميل مطلوب
+              <p
+                v-if="length == 0"
+                style="font-size: 18px; font-weight: bold; color: #888"
+              >
+                اسم العميل مطلوب
               </p>
               <p v-else style="font-size: 18px; font-weight: bold; color: #888">
-                لايوجد بيانات 
+                لايوجد بيانات
               </p>
-
             </div>
           </template>
           <Column

@@ -75,8 +75,6 @@ const submitForm = async () => {
       .create(state)
       .then(function (response) {
         store.getAdmins();
-        console.log(response);
-
         toast.add({
           severity: "success",
           summary: "رسالة نجاح",

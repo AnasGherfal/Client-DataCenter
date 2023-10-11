@@ -41,24 +41,22 @@ const onToggle = (val: any) => {
 
 const statuses = ref([
   { value: 1, label: "نشط" },
-  { value: 2, label: "مقفل" },
+  { value: 2, label: "مقيد" },
 ]);
 
 const getSeverity = (status: any) => {
   switch (trans(status)) {
     case "نشط":
       return "success";
-    case "غير نشط":
-      return "danger";
-    case "مقفل":
+
+    case "مقيد":
       return "danger";
   }
 };
 
 const trans = (value: string) => {
   if (value == "1") return "نشط";
-  else if (value == "2") return "غير نشط";
-  else if (value == "5") return "مقفل";
+  else if (value == "2") return "مقيد";
 };
 
 const getSelectedStatusLabel = (value: any) => {

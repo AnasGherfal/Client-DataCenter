@@ -17,10 +17,6 @@ const props = defineProps<{ visit: VisitModel }>();
 const editable = ref(true);
 const loading = ref(true);
 const visitReasons = ref<visitReason[]>([]);
-const toast = useToast();
-
-const startDate = ref(new Date());
-const stopDate = ref(new Date());
 
 type visitReason = {
   value: number;
@@ -42,49 +38,6 @@ async function getTypes() {
       console.log(error);
     });
 }
-
-const startVisit = () => {
-  visitApi
-    .start(
-      props.visit.id,
-      moment(startDate.value).format("YYYY-MM-DD HH:mm:ss")
-    )
-    .then((response) => {
-      toast.add({
-        severity: "success",
-        summary: "رسالة نجاح",
-        detail: `${response.data.msg}`,
-      });
-      editable.value = false;
-    })
-    .catch((error) => {
-      toast.add({
-        severity: "success",
-        summary: "رسالة نجاح",
-        detail: error.response.data.msg,
-      });
-    });
-};
-
-const stopVisit = () => {
-  visitApi
-    .stop(props.visit.id, moment(stopDate.value).format("YYYY-MM-DD HH:mm:ss"))
-    .then((response) => {
-      toast.add({
-        severity: "success",
-        summary: "رسالة نجاح",
-        detail: `${response.data.msg}`,
-      });
-      editable.value = false;
-    })
-    .catch((error) => {
-      toast.add({
-        severity: "success",
-        summary: "رسالة نجاح",
-        detail: error.response.data.msg,
-      });
-    });
-};
 </script>
 
 <template>
@@ -158,7 +111,7 @@ const stopVisit = () => {
                 <label for="startTime">تاريخ بداية الزيارة </label>
                 <Calendar
                   inputId="startTime"
-                  v-model="startDate"
+                  v-model="visit.startTime"
                   dateFormat="yy/mm/dd"
                   :showTime="true"
                   selectionMode="single"
@@ -176,11 +129,10 @@ const stopVisit = () => {
                 <label for="stopDate">تاريخ انتهاء الزيارة </label>
                 <Calendar
                   inputId="stopDate"
-                  v-model="stopDate"
+                  v-model="visit.endTime"
                   dateFormat="yy/mm/dd"
                   :showTime="true"
                   selectionMode="single"
-                  :minDate="startDate"
                   :showButtonBar="true"
                   :manualInput="true"
                   :stepMinute="5"
@@ -188,11 +140,6 @@ const stopVisit = () => {
                   :disabled="editable"
                 />
               </span>
-            </div>
-            <div class="field col-12 md:col-6 lg:col-4">
-              <Button severity="info" text @click="editable = !editable">
-                وقت الزبارة
-              </Button>
             </div>
           </div>
           <div class="grid p-fluid">
