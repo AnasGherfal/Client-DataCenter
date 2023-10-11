@@ -20,7 +20,8 @@ const name = ref<string>("");
 const customerSubscriptions = ref();
 let customerId = ""
 let subsId = ""
-let subscriptionId = ""
+const subscriptionSelect = ref()
+let subscriptionId = "";
 const store = useVistisStore();
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -34,10 +35,14 @@ onMounted(async () => {
   getCustomers();
 });
 
-async function getVisits(customerId: string, subscriptionId:string) {
+watch(subscriptionSelect, async ( newValue) => {
+  subscriptionId = newValue[0].id;
+})
+
+async function getVisits(customerId: string, subscriptionId: string) {
   try {
-    console.log( subsId)
-    const response = await visitApi.get(customerId, subscriptionId );
+    console.log(subscriptionId )
+    const response = await visitApi.get(customerId, subscriptionId);
     visits.value = response.data.content;
   } catch (error) {
     console.log(error);
@@ -146,6 +151,7 @@ watch(customerselect, async (newValue) => {
   }
 });
 
+
 const statuses = ref([
   { value: "Not Started", label: "لم تبدأ" },
   { value: "In Progress", label: "بدأت" },
@@ -252,8 +258,8 @@ const getSeverity = (status: any) => {
 
               <div class="field col-12 md:col-6 lg:col-4">
                 <span class="p-float-label">
-                  <MultiSelect
-                    v-model="subscriptionId"
+                  <MultiSelect 
+                    v-model="subscriptionSelect"
                     :options="customerSubscriptions"
                     optionLabel="serviceName"
                     emptyMessage="هاذا العميل ليس لديه اشتراكات"
