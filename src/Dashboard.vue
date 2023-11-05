@@ -9,6 +9,7 @@ const authorized = useAuthStore();
 </script>
 
 <template>
+      <!-- <LoginPage v-if="!authorized.userData" /> -->
 
   <main>
     <TopBar />

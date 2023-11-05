@@ -185,16 +185,13 @@ const getSeverity = (status: any) => {
 </script>
 
 <template>
-  <RouterView></RouterView>
+    <RouterView></RouterView>
 
-  <div v-if="$route.path === '/VisitsRecords'">
+<div v-if="$route.path === '/VisitsRecords'">
     <Card>
       <template #title>
         سجل الزيارات
-        <AddButton
-          name-button="إنشاء زياره"
-          rout-name="/visitsRecords/createVisit"
-        />
+        <AddButton name-button="إنشاء زياره" rout-name="/visitsRecords/createVisit" />
       </template>
       <template #content>
         <div
@@ -322,8 +319,7 @@ const getSeverity = (status: any) => {
             frozen
           >
             <template #body="{ data }">
-              <Tag
-                severity="info"
+              <Tag severity="info"
                 :value="
                   store.visitReasons && store.visitReasons[data.visitType - 1]
                     ? store.visitReasons[data.visitType - 1].name
@@ -386,7 +382,7 @@ const getSeverity = (status: any) => {
             </template>
           </Column>
 
-          <Column style="min-width: 11rem; text-align-last: start">
+          <Column style="min-width: 11rem; text-align-last:start;">
             <template #body="slotProps">
               <DeleteAdmin
                 :name="slotProps.data.customerName"
