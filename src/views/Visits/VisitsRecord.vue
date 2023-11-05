@@ -18,30 +18,31 @@ const customers = ref();
 const visits = ref();
 const name = ref<string>("");
 const customerSubscriptions = ref();
-let customerId = ""
-let subsId = ""
-const subscriptionSelect = ref()
+let customerId = "";
+let subsId = "";
+const subscriptionSelect = ref();
 let subscriptionId = "";
 const store = useVistisStore();
+const totalPages = ref(1);
+const pageNumber = ref(1);
+const pageSize = ref(10);
+const currentPage = ref(0);
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
 const filteredCustomer = ref();
-
-
 
 onMounted(async () => {
   getVisits(customerId, subscriptionId);
   getCustomers();
 });
 
-watch(subscriptionSelect, async ( newValue) => {
+watch(subscriptionSelect, async (newValue) => {
   subscriptionId = newValue[0].id;
-})
+});
 
 async function getVisits(customerId: string, subscriptionId: string) {
   try {
-    console.log(subscriptionId )
     const response = await visitApi.get(customerId, subscriptionId);
     visits.value = response.data.content;
   } catch (error) {
@@ -138,9 +139,9 @@ const getSubscriptions = (id: string) => {
 const customerselect = ref();
 
 watch(customerselect, async (newValue) => {
-   customerId = newValue.id;
+  customerId = newValue.id;
 
-  if (newValue && customerId !== undefined ) {
+  if (newValue && customerId !== undefined) {
     try {
       loading.value = true;
       await getSubscriptions(customerId);
@@ -151,16 +152,17 @@ watch(customerselect, async (newValue) => {
   }
 });
 
-
 const statuses = ref([
   { value: "Not Started", label: "لم تبدأ" },
   { value: "In Progress", label: "بدأت" },
+  { value: "Completed", label: " منتهية" },
 ]);
 
 // Declare the trans function before getSeverity
 const trans = (value: any) => {
   if (value == "not Started") return "لم تبدأ";
   else if (value == "In Progress") return "بدأت";
+  else if (value == "Completed") return " منتهية";
 };
 
 const getSelectedStatusLabel = (value: any) => {
@@ -173,6 +175,8 @@ const getSeverity = (status: any) => {
     case "بدأت":
       return "success";
     case "لم تبدأ":
+      return "warning";
+    case " منتهية":
       return "danger";
     default:
       return ""; // Return an empty string for other cases
@@ -181,11 +185,16 @@ const getSeverity = (status: any) => {
 </script>
 
 <template>
-  <div>
+  <RouterView></RouterView>
+
+  <div v-if="$route.path === '/VisitsRecords'">
     <Card>
       <template #title>
         سجل الزيارات
-        <AddButton name-button="إنشاء زياره" rout-name="/createVisit" />
+        <AddButton
+          name-button="إنشاء زياره"
+          rout-name="/visitsRecords/createVisit"
+        />
       </template>
       <template #content>
         <div
@@ -207,7 +216,7 @@ const getSeverity = (status: any) => {
         </div>
         <DataTable
           v-else
-          :value="visits"
+          :value="store.visits"
           dataKey="id"
           ref="dt"
           :globalFilterFields="['customerName', 'visitReason']"
@@ -258,7 +267,7 @@ const getSeverity = (status: any) => {
 
               <div class="field col-12 md:col-6 lg:col-4">
                 <span class="p-float-label">
-                  <MultiSelect 
+                  <MultiSelect
                     v-model="subscriptionSelect"
                     :options="customerSubscriptions"
                     optionLabel="serviceName"
@@ -272,7 +281,10 @@ const getSeverity = (status: any) => {
               </div>
 
               <div class="field col-12 md:col-6 lg:col-4">
-                <Button label="بحث" @click="getVisits(customerId, subscriptionId)" />
+                <Button
+                  label="بحث"
+                  @click="getVisits(customerId, subscriptionId)"
+                />
               </div>
             </div>
           </template>
@@ -311,6 +323,7 @@ const getSeverity = (status: any) => {
           >
             <template #body="{ data }">
               <Tag
+                severity="info"
                 :value="
                   store.visitReasons && store.visitReasons[data.visitType - 1]
                     ? store.visitReasons[data.visitType - 1].name
@@ -352,7 +365,7 @@ const getSeverity = (status: any) => {
           </Column>
           <Column
             field="expectedStartTime"
-            header="تاريخ بداية الزياره"
+            header=" التاريخ بداية الزياره"
             style="min-width: 8rem"
             class="font-bold"
             frozen
@@ -373,7 +386,7 @@ const getSeverity = (status: any) => {
             </template>
           </Column>
 
-          <Column style="min-width: 11rem">
+          <Column style="min-width: 11rem; text-align-last: start">
             <template #body="slotProps">
               <DeleteAdmin
                 :name="slotProps.data.customerName"
@@ -383,7 +396,7 @@ const getSeverity = (status: any) => {
               >
               </DeleteAdmin>
               <RouterLink
-                :to="'/visitDetails/' + slotProps.data.id"
+                :to="'/visitsRecords/visitDetails/' + slotProps.data.id"
                 style="text-decoration: none"
               >
                 <Button
@@ -394,11 +407,14 @@ const getSeverity = (status: any) => {
                   v-tooltip="{ value: 'التفاصيل', fitContent: true }"
                 />
               </RouterLink>
-
-              <VisitStartPause
-                :id="slotProps.data.id"
-                :visitStatus="slotProps.data.visitStatus"
-              />
+              <span v-if="slotProps.data.visitStatus != 'Completed'">
+                <VisitStartPause
+                  :id="slotProps.data.id"
+                  :startTime="slotProps.data.startTime"
+                  :visitStatus="slotProps.data.visitStatus"
+                  @visits="getVisits(customerId, subscriptionId)"
+                />
+              </span>
             </template>
           </Column>
           <Toast position="bottom-left" />

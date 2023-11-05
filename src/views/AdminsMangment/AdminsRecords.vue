@@ -145,11 +145,12 @@ function unlockButton(id: string) {
 </script>
 
 <template>
-  <div>
-    <card>
+  <RouterView></RouterView>
+
+<div  v-if="$route.path === '/AdminsRecord'">    <card>
       <template #title>
         سجل المستخدمين
-        <AddButton name-button="اضافة عميل" rout-name="/AddAdmin" />
+        <AddButton name-button="اضافة مستخدم" rout-name="/AdminsRecord/AddAdmin" />
 
         <Divider />
       </template>
@@ -293,7 +294,7 @@ function unlockButton(id: string) {
               </span>
               <RouterLink
                 :key="slotProps.data.id"
-                :to="'/AdminsProfile/' + slotProps.data.id"
+                :to="'/AdminsRecord/AdminsProfile/' + slotProps.data.id"
                 style="text-decoration: none"
               >
                 <Button

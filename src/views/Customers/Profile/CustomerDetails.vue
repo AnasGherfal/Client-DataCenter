@@ -29,9 +29,6 @@ const hide2 = ref(false);
 const screenWidth = ref(window.innerWidth);
 const koko = ref("koko");
 
-console.log("props.customer", props.customer);
-
-
 const customer = reactive({
   id: props.customer.id,
   name: props.customer.name,
@@ -39,16 +36,17 @@ const customer = reactive({
   primaryPhone: props.customer.primaryPhone,
   secondaryPhone: props.customer.secondaryPhone,
   address: props.customer.address,
+  city: props.customer.address,
   status: props.customer.status,
   files: [
     {
-      docType: props.customer.files[0]?.fileType,
-      file: props.customer.files[0]?.fileName ||  props.customer.files[0]?.id,
+      fileType: props.customer.files[0]?.fileType,
+      file: props.customer.files[0]?.fileName || props.customer.files[0]?.id,
       id: props.customer.files[0]?.id,
     },
     {
-      docType: props.customer.files[1]?.fileType,
-      file: props.customer.files[1]?.fileName ||  props.customer.files[1]?.id,
+      fileType: props.customer.files[1]?.fileType,
+      file: props.customer.files[1]?.fileName || props.customer.files[1]?.id,
       id: props.customer.files[1]?.id,
     },
   ],
@@ -56,18 +54,6 @@ const customer = reactive({
 });
 
 const toast = useToast();
-
-const docTypes = [
-  { value: "1", text: "بطاقة شخصية" },
-  { value: "2", text: "رخصة من الشركة" },
-];
-
-onMounted(() => {
-  // if (props.customer.files[1]?.docType) {
-  //   customer.files[1].docType = props.customer.files[1].docType;
-  // }
-});
-// Function to handle file upload
 
 const triggerFileInput = (index: any) => {
   const input = document.createElement("input");
@@ -80,12 +66,43 @@ const triggerFileInput = (index: any) => {
 const handleFileChange = (event: any, index: any) => {
   const selectedFile = event.target.files[0];
   if (selectedFile) {
-    // customer.files[index].file = selectedFile.name;
-    customer.files[index].file = selectedFile; // Store the file object
-    if (selectedFile) {
-      customer.files[index].file = selectedFile;
-      hide1.value = index === 0; // Only set hide1 if the first file was selected
-      hide2.value = index === 1; // Only set hide2 if the second file was selected
+    customer.files[index].file = selectedFile;
+    customer.files[index].fileType = Number(customer.files[index].fileType);
+
+    hide1.value = index === 0;
+    hide2.value = index === 1;
+    updateFile(index);
+  }
+};
+
+const updateFile = async (index: any) => {
+  console.log(customer.files[index].fileType);
+  if (customer.files[index].file) {
+    const FormFile = new FormData();
+    FormFile.append(
+      "file",
+      customer.files[index].file,
+      customer.files[index].file.name
+    );
+
+    const formDataObject: { [key: string]: string } = {};
+    FormFile.forEach((value, key) => {
+      formDataObject[key] = value.toString();
+    });
+
+    console.log("formData:", formDataObject);
+    const fileId = customer.files[index].id;
+
+    try {
+      const response = await customersApi.editDocument(
+        customer.id,
+        fileId,
+        FormFile
+      );
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+      // Handle the error
     }
   }
 };
@@ -118,6 +135,20 @@ watch(
     }
   }
 );
+
+const changeFiles = async () => {
+  const FormFile = new FormData();
+
+  // Append the first file as FormFile
+  if (customer.files[0].file instanceof File) {
+    FormFile.append(
+      "File",
+      customer.files[0].file,
+      customer.files[0].file.name
+    );
+    FormFile.append("DocType", customer.files[0].fileType.toString());
+  }
+};
 const onFormSubmit = async () => {
   const result = await v$.value.$validate();
 
@@ -128,29 +159,9 @@ const onFormSubmit = async () => {
   formData.append("primaryPhone", customer.primaryPhone);
   formData.append("secondaryPhone", customer.secondaryPhone);
   formData.append("address", customer.address);
+  formData.append("city", customer.city);
   formData.append("status", customer.status);
-  // Append the first file as FormFile
-  if (customer.files[0].file instanceof File) {
-    formData.append(
-      "FirstFile.File",
-      customer.files[0].file,
-      customer.files[0].file.name
-    );
-    formData.append("FirstFile.DocType", customer.files[0].docType.toString());
-  }
-
-  // Append the second file if needed
-  if (customer.files[1] && customer.files[1].file instanceof File) {
-    formData.append(
-      "SecondFile.File",
-      customer.files[1].file,
-      customer.files[1].file.name
-    );
-    formData.append("SecondFile.DocType", customer.files[1].docType.toString());
-  }
-
-  // formData.append("subsicrptions", customer.subsicrptions);
-
+  changeFiles();
   const formDataObject: { [key: string]: string } = {};
   formData.forEach((value, key) => {
     formDataObject[key] = value.toString();
@@ -207,6 +218,8 @@ const rules = computed(() => {
       email: helpers.withMessage(" ليس عنوان بريد إلكتروني صالح", email),
     },
     address: { required: helpers.withMessage("الحقل مطلوب", required) },
+    city: { required: helpers.withMessage("الحقل مطلوب", required) },
+
     primaryPhone: {
       required: helpers.withMessage("الحقل مطلوب", required),
       isLibyanPhoneNumber: helpers.withMessage(
@@ -260,8 +273,7 @@ const downloadFile = async (id: any, fileId: string) => {
         البيانات الشخصية
 
         <BackButton style="float: left" />
-
-        <div v-if="customer.status === 5">
+        <div v-if="customer.status == 2">
           <div class="warning-message">
             <div class="warning-message-icon"></div>
             <div class="warning-message-text">
@@ -271,7 +283,7 @@ const downloadFile = async (id: any, fileId: string) => {
         </div>
 
         <span
-          v-else-if="customer.status !== 5"
+          v-else-if="customer.status !== 2"
           style="width: 30px; height: 30px; margin-right: 10px; margin-top: 0px"
         >
           <Button
@@ -407,6 +419,26 @@ const downloadFile = async (id: any, fileId: string) => {
                     <div style="height: 10px">
                       <span
                         v-for="error in v$.address.$errors"
+                        :key="error.$uid"
+                        style="color: red; font-weight: bold; font-size: small"
+                      >
+                        {{ error.$message }}</span
+                      >
+                    </div>
+                  </span>
+                </div>
+                <div class="field col-12 md:col-6 lg:col-4">
+                  <span class="p-float-label">
+                    <InputText
+                      id="address"
+                      type="text"
+                      v-model="customer.city"
+                      :disabled="actEdit"
+                    />
+                    <label for="address">المدينة</label>
+                    <div style="height: 10px">
+                      <span
+                        v-for="error in v$.city.$errors"
                         :key="error.$uid"
                         style="color: red; font-weight: bold; font-size: small"
                       >

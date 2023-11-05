@@ -138,11 +138,12 @@ const deleteSubs = (id: string) => {
 </script>
 
 <template>
-  <div>
-    <Card>
+  <RouterView></RouterView>
+
+<div v-if="$route.path === '/subscriptionsRecord'">    <Card>
       <template #title>
         سجل الاشتراكات
-        <AddButton name-button="إضافة اشتراك" rout-name="/addSubsciptions" />
+        <AddButton name-button="إضافة اشتراك" rout-name="/subscriptionsRecord/addSubsciptions" />
       </template>
       <template #content>
         <div
@@ -315,7 +316,7 @@ const deleteSubs = (id: string) => {
                 </DeleteSubscription>
               </span>
               <LockButton
-                typeLock="Subscription"
+                typeLock="Subscriptions"
                 :id="slotProps.data.id"
                 :name="slotProps.data.id"
                 :status="slotProps.data.status"
@@ -325,7 +326,7 @@ const deleteSubs = (id: string) => {
 
               <RouterLink
                 :key="slotProps.data.id"
-                :to="'/SubscriptionsDetaView/' + slotProps.data.id"
+                :to="'/subscriptionsRecord/SubscriptionsDetaView/' + slotProps.data.id"
                 style="text-decoration: none"
               >
                 <Button

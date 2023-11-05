@@ -1,4 +1,5 @@
 export interface Representatives {
+  id:string
   firstName: string;
   lastName: string;
   identityNo: string;

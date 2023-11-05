@@ -29,8 +29,8 @@ const getIdentityTypeText = (type: number) => {
 
 function deleteCompanion(companion: any) {
 
-  const index = props.compList.findIndex((c: any) => c.id === companion.data.id);
-  console.log(companion)
+  const index = props.compList.findIndex((c: any) => c.identityNo === companion.data.identityNo);
+
   console.log(index)
   if (index !== -1) {
     props.compList.splice(index, 1);

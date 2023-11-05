@@ -6,6 +6,7 @@ import { ProfileResponse } from "../Modules/Profile/ProfileResponse";
 
 export const useAuthStore = defineStore("user", () => {
   const userData = ref<ProfileResponse>();
+  const prem = ref()
   const loading = ref(false);
 
   const getProfile = async () => {
@@ -13,6 +14,7 @@ export const useAuthStore = defineStore("user", () => {
       loading.value = true;
       const response = await authApi.profile();
       userData.value = response.data.content;
+      prem.value = response.data;
       return response.data.content;
     } catch (error) {
       console.log(error);
@@ -24,6 +26,7 @@ export const useAuthStore = defineStore("user", () => {
   return {
     userData,
     getProfile,
+    prem,
     loading,
   };
 });

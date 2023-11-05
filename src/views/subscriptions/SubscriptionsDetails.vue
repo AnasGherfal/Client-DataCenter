@@ -26,7 +26,7 @@ const route = useRoute();
 
 const subs = reactive({
   id: "",
-  status: null,
+  status: 0,
   serviceName: "",
   customerName: "",
   startDate: "",
@@ -196,7 +196,7 @@ const downloadFile = async (subId: string, fileId: string) => {
     </template>
 
     <template #content>
-      <div v-if="subs.status == 5">
+      <div v-if="subs.status == 2">
         <div class="warning-message">
           <div class="warning-message-icon"></div>
           <div class="warning-message-text">
@@ -233,7 +233,7 @@ const downloadFile = async (subId: string, fileId: string) => {
               "
             >
               <h3 class="text-red-600">هذا الاشتراك قارب على الانتهاء</h3>
-              <div v-if="subs.status !== 5">
+              <div v-if="subs.status !== 2">
                 <h5 class="text-red-600" style="margin-bottom: 5px">
                   اضغط على الأيقونة للتجديد
                 </h5>
@@ -247,7 +247,7 @@ const downloadFile = async (subId: string, fileId: string) => {
                 />
               </div>
             </div>
-            <div v-else-if="subs.daysRemaining <= 0 && subs.status !== 5">
+            <div v-else-if="subs.daysRemaining <= 0 && subs.status !== 2">
               <h3 class="text-red-600">هذا الاشتراك انتهى</h3>
 
               <h5 class="text-red-600" style="margin-bottom: 5px">
@@ -262,7 +262,7 @@ const downloadFile = async (subId: string, fileId: string) => {
                 @click="customersDialog = true"
               />
             </div>
-            <div v-else-if="subs.daysRemaining <= 0 && subs.status !== 5">
+            <div v-else-if="subs.daysRemaining <= 0 && subs.status !== 2">
               <h3 class="text-red-600">هذا الاشتراك انتهى</h3>
 
               <h5 class="text-red-600" style="margin-bottom: 5px">
@@ -422,8 +422,8 @@ const downloadFile = async (subId: string, fileId: string) => {
 
           <h4 style="margin: 0">عدد الزيارات المتبقية بالساعة</h4>
           <Skeleton v-if="loading" width="50%" height="1rem"></Skeleton>
-          <ProgressBar class="mt-2" v-else :value="service?.monthlyVisits">
-            {{ subs.monthlyVisits }}
+          <ProgressBar class="mt-2" v-else :value="20">
+            {{ service?.monthlyVisits }}
           </ProgressBar>
 
           <Divider class="p-divider-solid" layout="horizontal" />
@@ -463,14 +463,14 @@ const downloadFile = async (subId: string, fileId: string) => {
 
     <template #footer>
       <div class="card">
-        <TabView ref="tabview4" class="tabview-custom">
-          <TabPanel>
+        <!-- <TabView ref="tabview4" class="tabview-custom"> -->
+          <!-- <TabPanel>
             <template #header>
               <i class="fa-solid fa-book mr-2"></i>
               <span> سجل زيارات هذا الاشتراك </span>
             </template>
             <VisitBysubsId :visits="subs.visits"></VisitBysubsId>
-          </TabPanel>
+          </TabPanel> -->
 
           <!-- <TabPanel>
             <template #header>
@@ -492,7 +492,7 @@ const downloadFile = async (subId: string, fileId: string) => {
               <span>اضافة DNS</span>
             </template>
           </TabPanel> -->
-        </TabView>
+        <!-- </TabView> -->
       </div>
     </template>
   </card>

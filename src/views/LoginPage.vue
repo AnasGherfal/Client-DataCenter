@@ -98,6 +98,7 @@ const v$ = useVuelidate(rules, credentials);
             <Password
               v-model="credentials.password"
               placeholder="كلمة المرور"
+              :feedback="false"
             />
             <div style="height: 2px">
               <span

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 import Dialog from "primevue/dialog";
 import type { Representatives } from "../../../../Modules/CustomerModule/RepresentativesModule/Representatives";
@@ -9,10 +9,12 @@ import RepresentativeForm from "./RepresentativeForm.vue";
 import { representativesApi } from "@/api/representatives";
 import { RepresentativeModel } from "../../../../Modules/Representatives/RepresentativesModel";
 import Toast from "primevue/toast";
-
+import DeleteButton from "@/components/DeleteButton.vue";
+import LockButton from "@/components/LockButton.vue";
+import EditRepresentatives from "./EditRepresentatives.vue";
 const route = useRoute();
 const prop = defineProps<{
-  customerStatus: number | undefined;
+  customerStatus: number;
   CustomerId: string;
   representatives: RepresentativeModel[];
 }>();
@@ -24,8 +26,16 @@ const userId = computed(() => {
   }
 });
 
+const loading = ref();
+const totalPages = ref(1);
+const pageNumber = ref(1);
+const pageSize = ref(10);
+const currentPage = ref(0);
+const representativesById = ref();
+
 const emit = defineEmits(["getRepresentatives"]);
 const representatives = ref<Representatives>({
+  id: "",
   firstName: "",
   lastName: "",
   identityNo: "",
@@ -53,7 +63,10 @@ const onFormSubmit = async (representative: Representatives) => {
     representative.identityType?.toString() || ""
   );
   formData.append("IdentityDocument", representative.IdentityDocuments as Blob);
-  formData.append("RepresentationDocument", representative.RepresentationDocument as Blob);
+  formData.append(
+    "RepresentationDocument",
+    representative.RepresentationDocument as Blob
+  );
 
   representativesApi
     .create(formData)
@@ -81,6 +94,33 @@ const onFormSubmit = async (representative: Representatives) => {
     });
 };
 
+const deleteRepresentative = (id: string) => {
+  loading.value = true;
+
+  representativesApi
+    .remove(id)
+    .then((response) => {
+      toast.add({
+        severity: "success",
+        summary: "تم الحذف",
+        detail: response.data.msg,
+        life: 3000,
+      });
+    })
+    .catch((e) => {
+      toast.add({
+        severity: "error",
+        summary: "رسالة خطأ",
+        detail: e.response.data.msg,
+        life: 3000,
+      });
+    })
+    .finally(() => {
+      loading.value = false;
+      emit("getRepresentatives");
+    });
+};
+
 const resetForm = () => {
   representatives.value.firstName = "";
   representatives.value.lastName = "";
@@ -95,6 +135,49 @@ const displayModal = ref(false);
 const openModal = () => {
   displayModal.value = true;
 };
+const statuses = ref([
+  { value: 1, label: "نشط" },
+  { value: 2, label: "مقيد" },
+]);
+
+const getSeverity = (status: any) => {
+  switch (trans(status)) {
+    case "نشط":
+      return "success";
+
+    case "مقيد":
+      return "danger";
+  }
+};
+
+const trans = (value: string) => {
+  if (value == "1") return "نشط";
+  else if (value == "2") return "مقيد";
+};
+
+const getSelectedStatusLabel = (value: any) => {
+  const status = statuses.value.find((s) => s.value === value);
+  return status ? status.label : "";
+};
+
+const goToNextPage = () => {
+  if (currentPage < totalPages) {
+    currentPage.value += 1;
+    pageNumber.value += 1; // Increment the pageNumber value
+    loading.value = true;
+    emit("getRepresentatives");
+  }
+};
+
+const goToPreviousPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value -= 1;
+    pageNumber.value -= 1; // Decrement the pageNumber value
+    loading.value = true;
+
+    emit("getRepresentatives");
+  }
+};
 </script>
 
 <template>
@@ -103,7 +186,7 @@ const openModal = () => {
       @click="openModal"
       class="p-button-primary mb-4"
       style="display: flex"
-      :disabled="prop.customerStatus == 5 || prop.representatives.length >= 2"
+      :disabled="prop.customerStatus == 2 || prop.representatives.length >= 2"
     >
       اضافة مُخول
     </Button>
@@ -124,6 +207,16 @@ const openModal = () => {
       </template>
     </Dialog>
   </div>
+  <div
+    v-if="prop.representatives.length >= 2"
+    class="warning-message"
+    style="margin-bottom: 1rem; margin-top: -1rem"
+  >
+    <div class="warning-message-icon"></div>
+    <div class="warning-message-text">
+      هذا العميل لديه الحد الأقصى من عدد المخوليين
+    </div>
+  </div>
 
   <DataTable
     :value="prop.representatives"
@@ -133,11 +226,25 @@ const openModal = () => {
     :rowsPerPageOptions="[5, 10, 25]"
     paginatorTemplate="  "
   >
-    <template #header>
-      <div class="grid p-fluid">
-        <div class="field col-12 md:col-6 lg:col-4"></div>
-      </div>
-    </template>
+    <!-- <template #paginatorstart>
+              <Button
+                icon="pi pi-angle-right"
+                class="p-button-rounded p-button-primary p-paginator-element"
+                :disabled="currentPage === 1"
+                @click="goToPreviousPage"
+              />
+              <span class="p-paginator-pages">
+                الصفحة {{ currentPage }} من {{ totalPages }}
+              </span>
+            </template>
+            <template #paginatorend>
+              <Button
+                icon="pi pi-angle-left"
+                class="p-button-rounded p-button-primary p-paginator-element"
+                :disabled="currentPage === totalPages"
+                @click="goToNextPage"
+              />
+            </template> -->
 
     <template #empty>
       <div
@@ -161,29 +268,19 @@ const openModal = () => {
     </template>
 
     <Column
-      field="customerName"
-      header="اسم المخول"
+      field="firstName"
+      header="اسم الاول"
       style="min-width: 6rem"
       class="font-bold"
     ></Column>
+
     <Column
       field="email"
       header="البريد الالكتروني"
       style="min-width: 6rem"
       class="font-bold"
     ></Column>
-    <Column
-      field="firstName"
-      header="الاسم الاول"
-      style="min-width: 6rem"
-      class="font-bold"
-    ></Column>
-    <Column
-      field="lastName"
-      header="الاسم الاخير"
-      style="min-width: 6rem"
-      class="font-bold"
-    ></Column>
+
     <Column
       field="phoneNo"
       header="رقم الهاتف"
@@ -198,43 +295,41 @@ const openModal = () => {
       :showFilterMenu="false"
       :filterMenuStyle="{ width: '12rem' }"
     >
+      <template #body="{ data }">
+        <Tag
+          :value="getSelectedStatusLabel(data.status)"
+          :severity="getSeverity(data.status)"
+        />
+      </template>
     </Column>
 
-    <Column style="min-width: 11rem">
+    <Column style="min-width: 11rem" header="الاجراءات">
       <template #body="slotProps">
-        <span v-if="slotProps.data.status !== 5">
-          <DeleteSubscription
+        <span v-if="slotProps.data.status !== 2">
+          <DeleteButton
             :name="slotProps.data.id"
             :id="slotProps.data.id"
-            type="Subscription"
+            @submit="() => deleteRepresentative(slotProps.data.id)"
+            type="Representative"
           >
-          </DeleteSubscription>
+          </DeleteButton>
+
+          <EditRepresentatives
+            :id="slotProps.data.id"
+            :representatives="representativesById"
+            @get-representatives="emit('getRepresentatives')"
+          />
         </span>
         <LockButton
-          typeLock="Subscription"
+          typeLock="Representatives"
           :id="slotProps.data.id"
           :name="slotProps.data.id"
           :status="slotProps.data.status"
           @getdata="emit('getRepresentatives')"
         />
-
-        
       </template>
     </Column>
   </DataTable>
-
-  <div
-    v-if="prop.representatives.length >= 2"
-    class="warning-message"
-    style="margin-bottom: 1rem; margin-top: -1rem"
-  >
-    <div class="warning-message-icon"></div>
-    <div class="warning-message-text">
-      هذا العميل لديه الحد الأقصى من عدد المخوليين
-    </div>
-  </div>
-
-  <Toast />
 </template>
 
 <style>

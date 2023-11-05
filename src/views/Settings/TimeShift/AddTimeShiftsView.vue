@@ -24,14 +24,13 @@ const timeShifts: VisitHours = reactive({
   startTime: "",
   endTime: "",
 });
-
+const ValidateDayOrDate = ref()
 const loading = ref(false);
 const emits = defineEmits(["getTimeShifts"]);
 
 const rules = computed(() => {
   return {
-    day: { required: helpers.withMessage("الحقل مطلوب", required) },
-    date: { required: helpers.withMessage("الحقل مطلوب", required) },
+
     priceForFirstHour: {
       required: helpers.withMessage("الحقل مطلوب", required),
     },
@@ -50,6 +49,12 @@ const v$ = useVuelidate(rules, timeShifts);
 const submitForm = async () => {
   const result = await v$.value.$validate();
 
+  if(!timeShifts.date && !timeShifts.day && timeShifts.day!='0'){
+    ValidateDayOrDate.value = "الحقل مطلوب";
+
+  }else{
+    ValidateDayOrDate.value = "";
+
   const send = reactive<VisitHours>({
     day: timeShifts.day,
     date: timeShifts.date,
@@ -58,6 +63,8 @@ const submitForm = async () => {
     priceForFirstHour: timeShifts.priceForFirstHour,
     priceForRemainingHours: timeShifts.priceForRemainingHours,
   });
+
+  
 
   if (result) {
     loading.value = true;
@@ -87,6 +94,7 @@ const submitForm = async () => {
         resetForm();
       });
   }
+}
 };
 
 const resetForm = () => {
@@ -141,16 +149,14 @@ const closeModal = () => {
             />
 
             <label for="day"> اليوم </label>
-            <div style="height: 2px">
-              <span
-                v-for="error in v$.day.$errors"
-                :key="error.$uid"
-                style="color: red; font-weight: bold; font-size: small"
-                >{{ error.$message }}
-              </span>
-            </div>
+
           </span>
-        </div>
+          <div
+                v-if="ValidateDayOrDate"
+                style="color: red; font-weight: bold; font-size: small"
+              >
+                {{ ValidateDayOrDate }}
+              </div>        </div>
         <div class="field col-12 md:col-4 lg:col-4">
           <span class="p-float-label">
             <Calendar
@@ -161,15 +167,12 @@ const closeModal = () => {
               :manualInput="true"
             />
             <label for="date"> الموافق </label>
-            <div style="height: 2px">
-              <span
-                v-for="error in v$.date.$errors"
-                :key="error.$uid"
-                class="p-error"
+            <div
+                v-if="ValidateDayOrDate"
                 style="color: red; font-weight: bold; font-size: small"
-                >{{ error.$message }}
-              </span>
-            </div>
+              >
+                {{ ValidateDayOrDate }}
+              </div>
           </span>
         </div>
       </div>
