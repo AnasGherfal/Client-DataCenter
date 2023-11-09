@@ -17,20 +17,21 @@ import { timeShiftsApi } from "@/api/timeShifts";
 import { days } from "@/tools/days";
 
 const timeShifts: VisitHours = reactive({
-  day: "",
-  date: "",
+  day: null,
+  date: null,
   priceForFirstHour: null,
   priceForRemainingHours: null,
   startTime: "",
   endTime: "",
 });
-const ValidateDayOrDate = ref()
+
+const selected = ref("");
+const ValidateDayOrDate = ref();
 const loading = ref(false);
 const emits = defineEmits(["getTimeShifts"]);
 
 const rules = computed(() => {
   return {
-
     priceForFirstHour: {
       required: helpers.withMessage("الحقل مطلوب", required),
     },
@@ -49,52 +50,54 @@ const v$ = useVuelidate(rules, timeShifts);
 const submitForm = async () => {
   const result = await v$.value.$validate();
 
-  if(!timeShifts.date && !timeShifts.day && timeShifts.day!='0'){
+  if (
+    !timeShifts.date &&
+    !timeShifts.day &&
+    timeShifts.day != "0" &&
+    selected
+  ) {
     ValidateDayOrDate.value = "الحقل مطلوب";
-
-  }else{
+  } else {
     ValidateDayOrDate.value = "";
 
-  const send = reactive<VisitHours>({
-    day: timeShifts.day,
-    date: timeShifts.date,
-    startTime: moment(timeShifts.startTime).format("HH:mm:ss"),
-    endTime: moment(timeShifts.endTime).format("HH:mm:ss"),
-    priceForFirstHour: timeShifts.priceForFirstHour,
-    priceForRemainingHours: timeShifts.priceForRemainingHours,
-  });
+    const send = reactive<VisitHours>({
+      day: timeShifts.day,
+      date: timeShifts.date,
+      startTime: moment(timeShifts.startTime).format("HH:mm:ss"),
+      endTime: moment(timeShifts.endTime).format("HH:mm:ss"),
+      priceForFirstHour: timeShifts.priceForFirstHour,
+      priceForRemainingHours: timeShifts.priceForRemainingHours,
+    });
 
-  
-
-  if (result) {
-    loading.value = true;
-    timeShiftsApi
-      .create(send)
-      .then(function (response) {
-        emits("getTimeShifts");
-        toast.add({
-          severity: "success",
-          summary: "رسالة نجاح",
-          detail: `${response.data.msg}`,
-          life: 3000,
+    if (result) {
+      loading.value = true;
+      timeShiftsApi
+        .create(send)
+        .then(function (response) {
+          emits("getTimeShifts");
+          toast.add({
+            severity: "success",
+            summary: "رسالة نجاح",
+            detail: `${response.data.msg}`,
+            life: 3000,
+          });
+        })
+        .catch(function (error) {
+          console.log(error);
+          toast.add({
+            severity: "error",
+            summary: "رسالة تحذير",
+            detail: error.response.data.msg,
+            life: 3000,
+          });
+        })
+        .finally(function () {
+          loading.value = false;
+          displayModal.value = false;
+          resetForm();
         });
-      })
-      .catch(function (error) {
-        console.log(error);
-        toast.add({
-          severity: "error",
-          summary: "رسالة تحذير",
-          detail: error.response.data.msg,
-          life: 3000,
-        });
-      })
-      .finally(function () {
-        loading.value = false;
-        displayModal.value = false;
-        resetForm();
-      });
+    }
   }
-}
 };
 
 const resetForm = () => {
@@ -126,7 +129,7 @@ const closeModal = () => {
   </Button>
   <Dialog
     header="اضافة ساعه جديده"
-    contentStyle="max-height: 80vh; max-width: 90vw; min-width:75vw; padding: 20px;"
+    contentStyle="max-height: 80vh; max-width: 90vw; min-width:55vw; padding: 20px;"
     v-model:visible="displayModal"
     :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
     :modal="true"
@@ -135,8 +138,34 @@ const closeModal = () => {
       @submit.prevent="submitForm"
       style="height: 100%; display: flex; flex-direction: column; gap: 1.2rem"
     >
+      <div class="flex flex-wrap gap-3">
+        <div class="flex align-items-center">
+          <RadioButton
+            v-model="selected"
+            inputId="ingredient1"
+            name="pizza"
+            value="day"
+          />
+          <label for="ingredient1" class="ml-2">يوم</label>
+        </div>
+        <div class="flex align-items-center">
+          <RadioButton
+            v-model="selected"
+            inputId="ingredient2"
+            name="pizza"
+            value="date"
+          />
+          <label for="ingredient2" class="ml-2">تاريخ</label>
+        </div>
+        <div
+          v-if="ValidateDayOrDate"
+          style="color: red; font-weight: bold; font-size: small"
+        >
+          {{ ValidateDayOrDate }}
+        </div>
+      </div>
       <div class="grid p-fluid flex-grow-1">
-        <div class="field col-12 md:col-4 lg:col-4">
+        <div v-if="selected == `day`" class="field col-12 md:col-4 lg:col-4">
           <span class="p-float-label">
             <Dropdown
               v-model="timeShifts.day"
@@ -149,15 +178,15 @@ const closeModal = () => {
             />
 
             <label for="day"> اليوم </label>
-
           </span>
           <div
-                v-if="ValidateDayOrDate"
-                style="color: red; font-weight: bold; font-size: small"
-              >
-                {{ ValidateDayOrDate }}
-              </div>        </div>
-        <div class="field col-12 md:col-4 lg:col-4">
+            v-if="ValidateDayOrDate"
+            style="color: red; font-weight: bold; font-size: small"
+          >
+            {{ ValidateDayOrDate }}
+          </div>
+        </div>
+        <div v-if="selected == `date`" class="field col-12 md:col-4 lg:col-4">
           <span class="p-float-label">
             <Calendar
               id="date"
@@ -168,11 +197,11 @@ const closeModal = () => {
             />
             <label for="date"> الموافق </label>
             <div
-                v-if="ValidateDayOrDate"
-                style="color: red; font-weight: bold; font-size: small"
-              >
-                {{ ValidateDayOrDate }}
-              </div>
+              v-if="ValidateDayOrDate"
+              style="color: red; font-weight: bold; font-size: small"
+            >
+              {{ ValidateDayOrDate }}
+            </div>
           </span>
         </div>
       </div>

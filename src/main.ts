@@ -47,7 +47,7 @@ import Dialog from "primevue/dialog";
 import Checkbox from "primevue/checkbox";
 import ProgressBar from "primevue/progressbar";
 import Textarea from "primevue/textarea";
-
+import RadioButton from "primevue/radiobutton";
 import Vue3Autocounter from "vue3-autocounter";
 import VueSelect from "vue-select";
 
@@ -83,7 +83,7 @@ app.component("Skeleton", Skeleton);
 app.component("Dialog", Dialog);
 app.component("Checkbox", Checkbox);
 app.component("Textarea", Textarea);
-
+app.component("RadioButton",RadioButton)
 app.use(ConfirmationService);
 app.directive("tooltip", Tooltip);
 app.directive("ripple", Ripple);

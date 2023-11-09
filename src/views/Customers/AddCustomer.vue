@@ -101,9 +101,9 @@ const onFormSubmit = async () => {
         life: 2000,
       });
 
-      // setTimeout(() => {
-      //   router.go(-1);
-      // }, 1);
+      setTimeout(() => {
+        router.go(-1);
+      }, 1);
     })
     .catch((e) => {
       toast.add({

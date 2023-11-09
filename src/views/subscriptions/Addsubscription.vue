@@ -26,11 +26,13 @@ const currentPage = ref(0);
 const name = ref<string>("");
 const customers = ref();
 
-const state = reactive({
+const state:Subscription = reactive({
   serviceId: null,
   customerId: null as any,
   startDate: "",
   endDate: "",
+  contractNumber:"",
+  contractDate:"",
   file: null as File | null,
 });
 
@@ -115,10 +117,12 @@ const submitForm = async () => {
   }
 
   formData.append("serviceId", String(state.serviceId));
-  formData.append("customerId", String(state.customerId?.id ?? 0));
+  formData.append("customerId", String(state.customerId.id ?? 0));
   formData.append("startDate", moment(state.startDate).format("YYYY/MM/DD"));
   formData.append("endDate", moment(state.endDate).format("YYYY/MM/DD"));
   formData.append("file", state.file);
+  formData.append("contractNumber", state.contractNumber);
+  formData.append("contractDate", moment(state.contractDate).format("YYYY/MM/DD"));
 
   subscriptionApi
     .create(formData)
@@ -188,7 +192,7 @@ const search = (event: any) => {
         <form @submit.prevent="submitForm">
           <div class="grid p-fluid">
             <div class="field col-12 md:col-6 lg:col-4">
-              <span class="p-float-label">
+              <span class="p-float-label">{{  }}
                 <AutoComplete
                   v-model="state.customerId"
                   optionLabel="name"
@@ -271,6 +275,50 @@ const search = (event: any) => {
                   <span
                     style="color: red; font-weight: bold; font-size: small"
                     v-for="error in v$.serviceId.$errors"
+                    :key="error.$uid"
+                    class="p-error"
+                    >{{ error.$message }}</span
+                  >
+                </div>
+              </span>
+            </div>
+
+            <div class="field col-12 md:col-6 lg:col-4">
+              <span class="p-float-label">
+                <InputText
+                  id="number"
+                  v-model="state.contractNumber"
+           
+                />
+                <label for="number">رقم العقد</label>
+                <div style="height: 2px">
+                  <span
+                    style="color: red; font-weight: bold; font-size: small"
+                    v-for="error in v$.serviceId.$errors"
+                    :key="error.$uid"
+                    class="p-error"
+                    >{{ error.$message }}</span
+                  >
+                </div>
+              </span>
+            </div>
+
+            <div class="field col-12 md:col-6 lg:col-4">
+              <span class="p-float-label">
+                <Calendar
+                  inputId="endDate"
+                  v-model="state.contractDate"
+                  dateFormat="yy/mm/dd"
+                  selectionMode="single"
+                  :minDate="minDate"
+                  :showButtonBar="true"
+                  :manualInput="false"
+                />
+                <label for="date">تاريخ العقد</label>
+                <div style="height: 2px">
+                  <span
+                    style="color: red; font-weight: bold; font-size: small"
+                    v-for="error in v$.endDate.$errors"
                     :key="error.$uid"
                     class="p-error"
                     >{{ error.$message }}</span

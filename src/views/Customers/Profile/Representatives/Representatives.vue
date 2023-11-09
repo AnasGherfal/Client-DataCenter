@@ -12,6 +12,7 @@ import Toast from "primevue/toast";
 import DeleteButton from "@/components/DeleteButton.vue";
 import LockButton from "@/components/LockButton.vue";
 import EditRepresentatives from "./EditRepresentatives.vue";
+import moment from "moment";
 const route = useRoute();
 const prop = defineProps<{
   customerStatus: number;
@@ -45,6 +46,9 @@ const representatives = ref<Representatives>({
   customerId: toNumber(userId.value),
   RepresentationDocument: null,
   IdentityDocuments: null,
+  type: null,
+  from: "",
+  to: "",
 });
 
 const toast = useToast();
@@ -58,6 +62,15 @@ const onFormSubmit = async (representative: Representatives) => {
   formData.append("identityNo", representative.identityNo);
   formData.append("email", representative.email);
   formData.append("phoneNo", representative.phoneNo);
+  const typeAsInteger = parseInt(representative.type.value, 10);
+
+  if (!isNaN(typeAsInteger)) {
+    // Only append if the conversion was successful
+    formData.append("type", typeAsInteger.toString());
+  }
+  formData.append("from", moment(representative.from).format("YYYY/MM/DD"));
+  formData.append("to", moment(representative.to).format("YYYY/MM/DD"));
+
   formData.append(
     "identityType",
     representative.identityType?.toString() || ""
@@ -71,6 +84,7 @@ const onFormSubmit = async (representative: Representatives) => {
   representativesApi
     .create(formData)
     .then((response) => {
+      console.log(response);
       emit("getRepresentatives");
       toast.add({
         severity: "success",

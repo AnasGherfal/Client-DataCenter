@@ -38,6 +38,9 @@ const representatives = reactive({
   email: "",
   phoneNo: "",
   identityType: "",
+  type: null,
+  from: "",
+  to: "",
   files: [
     {
       fileType: 0,
@@ -48,6 +51,7 @@ const representatives = reactive({
       id: "",
     },
   ],
+  
 });
 
 async function getRepresentativesById() {
@@ -60,6 +64,9 @@ async function getRepresentativesById() {
     representatives.identityNo = representativesById.value.identityNo;
     representatives.identityType = representativesById.value.identityType;
     representatives.phoneNo = representativesById.value.phoneNo;
+    representatives.type = representativesById.value.type;
+    representatives.from = representativesById.value.from;
+    representatives.to = representativesById.value.to;
     representatives.files[0].fileType =
       representativesById.value.files[0].fileType;
       representatives.files[0].id = representativesById.value.files[0].id;
@@ -235,6 +242,13 @@ const identityTypeOptions = [
   { value: 2, text: "جواز سفر" },
 ];
 
+
+const types = ref([
+  { label: "مره", value: "0" },
+  { label: "من-الى", value: "1" },
+  { label: "طوال فترة العقد", value: "2" },
+]);
+
 // const triggerFileInput = (index: any) => {
 //   const input = document.createElement("input");
 //   input.type = "file";
@@ -391,6 +405,35 @@ const displayedSecondFileName = computed(() => {
               </span>
             </div>
             <!-- First File Input and DocType MultiSelect -->
+
+            <div class="field col-12 md:col-4 lg:col-4">
+        <span class="p-float-label">
+          <Dropdown
+            v-model="representatives.type"
+            :options="types"
+            optionLabel="label"
+            placeholder="Select Period Option"
+          />
+          <label for="periodOption">مدة الصلاحية</label>
+        </span>
+      </div>
+      <!-- Conditionally render the date range input when "From To" is selected -->
+
+        <div  v-if="representatives.type?.value == '1'"
+         class="field col-12 md:col-4 lg:col-4">
+          <span class="p-float-label">
+            <Calendar id="fromDate" type="date" v-model="representatives.from" />
+            <label for="fromDate">من </label>
+          </span>
+        </div>
+        <div
+        v-if="representatives.type?.value == '1'"
+         class="field col-12 md:col-4 lg:col-4">
+        <span class="p-float-label">
+          <Calendar id="fromDate" type="date" v-model="representatives.to" />
+          <label for="fromDate"> الى</label>
+        </span>
+      </div>
 
             <div class="field col-4 md:col-4 lg:col-4">
               <span class="p-float-label">

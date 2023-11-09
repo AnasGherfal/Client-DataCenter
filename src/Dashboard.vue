@@ -9,31 +9,34 @@ const authorized = useAuthStore();
 </script>
 
 <template>
-      <!-- <LoginPage v-if="!authorized.userData" /> -->
+  <!-- <LoginPage v-if="!authorized.userData" /> -->
 
   <main>
-    <TopBar />
+    <div v-if="authorized.userData">
+      <TopBar />
 
-    <div style="width: 100%; margin-top: 75px" class="absolute">
-      <div
-        style="width: 28%; height: 100%; margin-right: 1%; position: absolute"
-      >
-        <SideBar />
+      <div style="width: 100%; margin-top: 75px" class="absolute">
+        <div
+          style="width: 28%; height: 100%; margin-right: 1%; position: absolute"
+        >
+          <SideBar />
+        </div>
+      </div>
       </div>
 
-      <div v-if="authorized.userData"
+      <div
         class="content"
         style="
           transition: all 0.5s ease;
           width: 78%;
           margin-right: 22%;
           padding: 25px;
+          padding-top: 100px;
         "
       >
         <!-- main -->
         <RouterView />
       </div>
-    </div>
   </main>
 </template>
 

@@ -9,4 +9,7 @@ export interface Representatives {
   customerId: number | null;
   RepresentationDocument: File | null;
   IdentityDocuments: File | null;
+  type: number | null,
+  from: string,
+  to: string
 }

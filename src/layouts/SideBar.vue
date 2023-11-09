@@ -37,7 +37,7 @@ const items = ref([
         to: "/subscriptionsRecord",
       },
       {
-        label: " سجل الفواتير",
+        label: " مستخلصات مالية",
         icon: "fa-solid fa-receipt",
         to: "/invoices",
       },
