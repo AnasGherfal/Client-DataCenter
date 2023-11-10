@@ -2,17 +2,26 @@
 import { RouterView } from "vue-router";
 import SideBar from "./layouts/SideBar.vue";
 import TopBar from "./layouts/TopBar.vue";
+
+import LoginPage from "./views/LoginPage.vue";
+import { useAuthStore } from "./stores/auth";
+const authorized = useAuthStore();
 </script>
 
 <template>
-  <main>
-    <TopBar />
+  <!-- <LoginPage v-if="!authorized.userData" /> -->
 
-    <div style="width: 100%; margin-top: 75px" class="absolute">
-      <div
-        style="width: 28%; height: 100%; margin-right: 1%; position: absolute"
-      >
-        <SideBar />
+  <main>
+    <div v-if="authorized.userData">
+      <TopBar />
+
+      <div style="width: 100%; margin-top: 75px" class="absolute">
+        <div
+          style="width: 28%; height: 100%; margin-right: 1%; position: absolute"
+        >
+          <SideBar />
+        </div>
+      </div>
       </div>
 
       <div
@@ -22,12 +31,12 @@ import TopBar from "./layouts/TopBar.vue";
           width: 78%;
           margin-right: 22%;
           padding: 25px;
+          padding-top: 100px;
         "
       >
         <!-- main -->
         <RouterView />
       </div>
-    </div>
   </main>
 </template>
 

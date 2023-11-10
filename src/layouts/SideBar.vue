@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { useAuthStore } from "@/stores/auth";
 import { ref } from "vue";
 
 const items = ref([
@@ -20,6 +21,8 @@ const items = ref([
         label: "سجل العملاء",
         icon: "fa-solid fa-users",
         to: "/customersRecord",
+        key:"2",
+        show: false
       },
 
       {
@@ -34,7 +37,7 @@ const items = ref([
         to: "/subscriptionsRecord",
       },
       {
-        label: " سجل الفواتير",
+        label: " مستخلصات مالية",
         icon: "fa-solid fa-receipt",
         to: "/invoices",
       },
@@ -65,6 +68,21 @@ const items = ref([
 
 ]);
 
+const hasPermission = (permissions: number[], permissionToCheck: number) => {
+  // Iterate through each individual permission bit in permissionToCheck
+  for (let i = 0; i < permissions.length; i++) {
+    const permissionBit = permissions[i];
+    // Check if the user has this specific permission bit
+    if ((permissionToCheck & permissionBit) === permissionBit) {
+      return true; // User has this permission bit
+    }
+  }
+  return false; // User doesn't have any of the specified permission bits
+};
+
+const store = useAuthStore()
+console.log(store.userData)
+// hasPermission(store)
 const menu = ref();
 
 const toggle = (event: any) => {
@@ -73,7 +91,9 @@ const toggle = (event: any) => {
 </script>
 
 <template>
+  
   <Menu
+  
     ref="menu"
     :model="items"
     :popup="false"

@@ -43,9 +43,9 @@ export const customersApi = {
     );
     return response;
   },
-  editDocument: async function (id: string, fileId: string) {
+  editDocument: async function (id: string, fileId: string, data:any) {
     const response = await httpClient.put(
-      `/Customers/${id}/document/${fileId}`
+      `/Customers/${id}/document/${fileId}`,data
     );
     return response;
   },

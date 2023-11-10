@@ -1,8 +1,8 @@
 export interface VisitHours {
-  day: string;
+  day: string | null;
+  date: string | null;
   startTime: string;
   endTime: string;
-  date: string;
   priceForFirstHour: number | null;
   priceForRemainingHours: number | null;
 }

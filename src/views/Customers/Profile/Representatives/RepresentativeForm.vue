@@ -116,6 +116,9 @@ const rules = computed(() => {
     identityNo: {
       required: helpers.withMessage("الحقل مطلوب", required),
     },
+    type: {
+      required: helpers.withMessage("الحقل مطلوب", required),
+    },
   };
 });
 
@@ -139,10 +142,18 @@ const docTypeOptions = ref([
   { value: 1, label: "ملف شخصي" },
   { value: 2, label: "تخويل الشركة" },
 ]);
+
+const fromDate = ref<string | null>(null);
+const toDate = ref<string | null>(null);
+const types = ref([
+  { label: "مره", value: "0" },
+  { label: "من-الى", value: "1" },
+  { label: "طوال فترة العقد", value: "2" },
+]);
 </script>
 <template>
   <form @submit.prevent="onSubmitForm">
-    <div class="grid p-fluid mt-1">
+    <div class="grid p-fluid">
       <div class="field col-12 md:col-4 lg:col-4">
         <span class="p-float-label">
           <InputText
@@ -251,9 +262,38 @@ const docTypeOptions = ref([
           </div>
         </span>
       </div>
+
+      <div class="field col-12 md:col-4 lg:col-4">
+        <span class="p-float-label">
+          <Dropdown
+            v-model="representatives.type"
+            :options="types"
+            optionLabel="label"
+            placeholder="Select Period Option"
+          />
+          <label for="periodOption">مدة الصلاحية</label>
+        </span>
+      </div>
+      <!-- Conditionally render the date range input when "From To" is selected -->
+
+        <div  v-if="representatives.type?.value == '1'"
+         class="field col-12 md:col-4 lg:col-4">
+          <span class="p-float-label">
+            <Calendar id="fromDate" type="date" v-model="representatives.from" />
+            <label for="fromDate">من </label>
+          </span>
+        </div>
+        <div
+        v-if="representatives.type?.value == '1'"
+         class="field col-12 md:col-4 lg:col-4">
+        <span class="p-float-label">
+          <Calendar id="fromDate" type="date" v-model="representatives.to" />
+          <label for="fromDate"> الى</label>
+        </span>
+      </div>
       <!-- First File Input and DocType MultiSelect -->
       <div class="field col-12 md:col-4 lg:col-4">
-        <div class="file-input-label-text">تعريف شخصي</div>
+        <!-- <span class="file-input-label-text ">تعريف شخصي</span> -->
         <label class="file-input-label" for="fileInput1">
           <div class="file-input-content">
             <div
@@ -264,7 +304,7 @@ const docTypeOptions = ref([
             <div class="file-input-text">
               <i class="pi pi-upload"></i>
 
-              {{ representatives.IdentityDocuments?.name || "ارفق ملف  1 " }}
+              {{ representatives.IdentityDocuments?.name || " تعريف شخصي" }}
             </div>
           </div>
 
@@ -284,9 +324,11 @@ const docTypeOptions = ref([
         </div>
       </div>
 
+      
+
       <!-- Second File Input and DocType MultiSelect -->
       <div class="field col-12 md:col-4 lg:col-4">
-        <div class="file-input-label-text">تخويل من الشركة</div>
+        <!-- <div class="file-input-label-text">تخويل من الشركة</div> -->
         <label class="file-input-label" for="fileInput2">
           <div class="file-input-content">
             <div
@@ -297,7 +339,7 @@ const docTypeOptions = ref([
             <div class="file-input-text">
               <i class="pi pi-upload"></i>
 
-              {{ representatives.RepresentationDocument?.name || "ارفق ملف 2 " }}
+              {{ representatives.RepresentationDocument?.name || "تخويل  " }}
             </div>
           </div>
           <input
@@ -315,8 +357,11 @@ const docTypeOptions = ref([
           {{ secondFileError }}
         </div>
       </div>
+
+
     </div>
     <Button
+      style="margin-bottom: 50px"
       @click="onSubmitForm"
       icon="pi pi-check"
       :label="value"
@@ -345,7 +390,6 @@ const docTypeOptions = ref([
 .file-input-label-text {
   font-size: small;
   color: #9aafc3;
-  margin-bottom: 0.1rem;
 }
 
 .file-input-label::after {

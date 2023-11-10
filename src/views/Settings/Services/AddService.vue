@@ -53,14 +53,12 @@ const resetForm = () => {
 
 // submit form
 
-const onFormSubmit = async (state: Service) => {
-  const result = await v$.value.$validate();
-  if (!result) return;
-
-
+const onFormSubmit = (state: Service) => {
+    console.log(state)
   serviceApi
     .create(state)
     .then((response) => {
+      loading.value = false;
       emit("getList");
       toast.add({
         severity: "success",

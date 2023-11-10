@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import RepresentativeForm from "./RepresentativeForm.vue";
 import { toNumber } from "@vue/shared";
-import { computed, reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import type { Representatives } from "../../../../Modules/CustomerModule/RepresentativesModule/Representatives";
 import { useRoute } from "vue-router";
 import axios from "axios";
@@ -11,13 +11,15 @@ import useVuelidate from "@vuelidate/core";
 import { helpers, required, email, minLength } from "@vuelidate/validators";
 import { isLibyanPhoneNumber, validateText } from "@/tools/validations";
 const props = defineProps<{
-  name: any;
+  id: string;
+  representatives: any;
 }>();
 const emit = defineEmits(["getRepresentatives"]);
 const loading = ref(false);
 const route = useRoute();
 const hide1 = ref(false);
 const hide2 = ref(false);
+const representativesById = ref();
 const userId = computed(() => {
   if (route && route.params && route.params.id) {
     return route.params.id;
@@ -25,28 +27,94 @@ const userId = computed(() => {
     return null; // or return a default value if id is not available
   }
 });
-
+onMounted(() => {
+  getRepresentativesById();
+});
 const representatives = reactive({
-  firstName: props.name.firstName,
-  lastName: props.name.lastName,
-  identityNo: props.name.identityNo,
-  email: props.name.email,
-  phoneNo: props.name.phoneNo,
-  identityType: props.name.identityType, //1 personalId 2-authorized 3-representitive
-  customerId: toNumber(userId.value),
+  id:"",
+  firstName: "",
+  lastName: "",
+  identityNo: "",
+  email: "",
+  phoneNo: "",
+  identityType: "",
+  type: null,
+  from: "",
+  to: "",
   files: [
     {
-      docType: props.name.files[0]?.docType,
-      file: props.name.files[0]?.fileName,
-      id: props.name.files[0]?.id,
+      fileType: 0,
+      id: "",
     },
     {
-      docType: props.name.files[1]?.docType,
-      file: props.name.files[1]?.fileName,
-      id: props.name.files[1]?.id,
+      fileType: 0,
+      id: "",
     },
   ],
+  
 });
+
+async function getRepresentativesById() {
+  representativesApi.getById(props.id).then((response) => {
+    representativesById.value = response.data.content;
+    representatives.id = representativesById.value.id
+    representatives.firstName = representativesById.value?.firstName;
+    representatives.lastName = representativesById.value.lastName;
+    representatives.email = representativesById.value.email;
+    representatives.identityNo = representativesById.value.identityNo;
+    representatives.identityType = representativesById.value.identityType;
+    representatives.phoneNo = representativesById.value.phoneNo;
+    representatives.type = representativesById.value.type;
+    representatives.from = representativesById.value.from;
+    representatives.to = representativesById.value.to;
+    representatives.files[0].fileType =
+      representativesById.value.files[0].fileType;
+      representatives.files[0].id = representativesById.value.files[0].id;
+
+      representatives.files[1].id = representativesById.value.files[1].id;
+
+    representatives.files[1].fileType =
+      representativesById.value.files[1].fileType;
+  });
+}
+
+const downloadFile = async (id: any, fileId: string) => {
+  try {
+    console.log(id, fileId)
+    const response = await representativesApi.getFile(id, fileId);
+
+    if (response) {
+      const blob = new Blob([response.data], {
+        type: "application/octet-stream",
+      });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "downloaded_file.png"; // Set the desired downloaded filename here
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      URL.revokeObjectURL(url);
+    } else {
+      console.error("Invalid file response");
+    }
+  } catch (error) {
+    console.error("Error downloading file:", error);
+    toast.add({
+      severity: "error",
+      summary: "خطأ",
+      detail: "حدث خطأ أثناء تحميل الملف",
+      life: 3000,
+    });
+  }
+};
+
+// async function getrepresentativesFiles() {
+//   representativesApi
+//   .getFile()
+// }
 
 const toast = useToast();
 const rules = computed(() => {
@@ -94,49 +162,42 @@ const onSubmitForm = async () => {
 
   const formData = new FormData();
 
-  formData.append("firstName", representatives.firstName);
-  formData.append("lastName", representatives.lastName);
-  formData.append("email", representatives.email);
-  formData.append("phoneNo", representatives.phoneNo);
-  formData.append("identityNo", representatives.identityNo);
-  formData.append(
-    "identityType",
-    representatives.identityType?.toString() || ""
-  );
+  // formData.append("firstName", representatives.firstName);
+  // formData.append("lastName", representatives.lastName);
 
+  const requestBody = {
+  email: representatives.email,
+  phoneNo: representatives.phoneNo,
+  identityNo: representatives.identityNo,
+  identityType: (representatives.identityType)
+};
   // Append the first file as FormFile
-  if (representatives.files[0].file instanceof File) {
-    formData.append(
-      "FirstFile.File",
-      representatives.files[0].file,
-      representatives.files[0].file.name
-    );
-    formData.append(
-      "FirstFile.DocType",
-      representatives.files[0].docType.toString()
-    );
-  }
+  // if (representatives.files[0].file instanceof File) {
+  //   formData.append(
+  //     "FirstFile.File",
+  //     representatives.files[0].file,
+  //     representatives.files[0].file.name
+  //   );
+  //   formData.append(
+  //     "FirstFile.DocType",
+  //     representatives.files[0].docType.toString()
+  //   );
+  // }
 
-  if (representatives.files[1].file instanceof File) {
-    formData.append(
-      "SecondFile.File",
-      representatives.files[1].file,
-      representatives.files[1].file.name
-    );
-    formData.append(
-      "SecondFile.DocType",
-      representatives.files[1].docType.toString()
-    );
-  }
-  const formDataObject: { [key: string]: string } = {};
-  formData.forEach((value, key) => {
-    formDataObject[key] = value.toString();
-  });
-
-  console.log("formData:", formDataObject);
+  // if (representatives.files[1].file instanceof File) {
+  //   formData.append(
+  //     "SecondFile.File",
+  //     representatives.files[1].file,
+  //     representatives.files[1].file.name
+  //   );
+  //   formData.append(
+  //     "SecondFile.DocType",
+  //     representatives.files[1].docType.toString()
+  //   );
+  // }
 
   representativesApi
-    .edit(props.name.id, formData)
+    .edit(props.id, requestBody)
     .then((response) => {
       emit("getRepresentatives");
       toast.add({
@@ -159,14 +220,17 @@ const onSubmitForm = async () => {
 const displayModal = ref(false);
 
 const openModal = () => {
-  representatives
+  representatives;
   displayModal.value = true;
-  representatives.firstName = props.name.firstName;
-  representatives.lastName = props.name.lastName;
-  representatives.identityNo = props.name.identityNo;
-  representatives.email = props.name.email;
-  representatives.phoneNo = props.name.phoneNo;
-  representatives.identityType = props.name.identityType;
+  representatives.firstName = representativesById.value?.firstName;
+  representatives.lastName = representativesById.value.lastName;
+  representatives.email = representativesById.value.email;
+  representatives.identityNo = representativesById.value.identityNo;
+  representatives.identityType = representativesById.value.identityType;
+  representatives.phoneNo = representativesById.value.phoneNo;
+  representatives.files[0].fileType = representativesById.value.files[0].fileType;
+  representatives.files[1].fileType =
+    representativesById.value.files[1].fileType;
 };
 const closeModal = () => {
   displayModal.value = false;
@@ -178,50 +242,56 @@ const identityTypeOptions = [
   { value: 2, text: "جواز سفر" },
 ];
 
-const triggerFileInput = (index: any) => {
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = ".pdf, .doc, .docx, .jpg, .jpeg, .png";
-  input.addEventListener("change", (event) => handleFileChange(event, index));
-  input.click();
-};
 
-const handleFileChange = (event: any, index: any) => {
-  const selectedFile = event.target.files[0];
-  if (selectedFile) {
-    // customer.files[index].file = selectedFile.name;
-    representatives.files[index].file = selectedFile; // Store the file object
-    if (selectedFile) {
-      representatives.files[index].file = selectedFile;
-      hide1.value = index === 0; // Only set hide1 if the first file was selected
-      hide2.value = index === 1; // Only set hide2 if the second file was selected
-    }
-  }
-};
+const types = ref([
+  { label: "مره", value: "0" },
+  { label: "من-الى", value: "1" },
+  { label: "طوال فترة العقد", value: "2" },
+]);
+
+// const triggerFileInput = (index: any) => {
+//   const input = document.createElement("input");
+//   input.type = "file";
+//   input.accept = ".pdf, .doc, .docx, .jpg, .jpeg, .png";
+//   input.addEventListener("change", (event) => handleFileChange(event, index));
+//   input.click();
+// };
+
+// const handleFileChange = (event: any, index: any) => {
+//   const selectedFile = event.target.files[0];
+//   if (selectedFile) {
+//     // customer.files[index].file = selectedFile.name;
+//     representatives.files[index].id = selectedFile; // Store the file object
+//     if (selectedFile) {
+//       representatives.files[index].id = selectedFile;
+//       hide1.value = index === 0; // Only set hide1 if the first file was selected
+//       hide2.value = index === 1; // Only set hide2 if the second file was selected
+//     }
+//   }
+// };
 
 const docTypes = [
   { value: "1", text: "بطاقة شخصية" },
   { value: "2", text: "رخصة من الشركة" },
 ];
 const displayedFirstFileName = computed(() => {
-  return representatives.files[0].file
-    ? representatives.files[0].file.name
-    : "No file selected";
+  return representatives.files[0].fileType
+    ? representatives.files[0].id
+    : "تعريف";
 });
 
 const displayedSecondFileName = computed(() => {
-  return representatives.files[1].file
-    ? representatives.files[1].file.name
-    : "No file selected";
+  return representatives.files[1].fileType
+    ? representatives.files[1].id
+    : "تخويل";
 });
 </script>
 
 <template>
-  <div>
     <Button
       @click="openModal"
       icon=" fa-solid fa-pen"
-      class="mr-2 p-button-primary p-button-text"
+      rounded
       text
       v-tooltip="{ value: 'تعديل ', fitContent: true }"
     />
@@ -241,6 +311,7 @@ const displayedSecondFileName = computed(() => {
                   id="name"
                   type="text"
                   v-model="representatives.firstName"
+                  :disabled="true"
                 />
                 <label for="name">الاسم </label>
                 <div style="height: 2px">
@@ -260,6 +331,7 @@ const displayedSecondFileName = computed(() => {
                   id="name"
                   type="text"
                   v-model="representatives.lastName"
+                  :disabled="true"
                 />
                 <label for="name">اللقب </label>
                 <div style="height: 2px">
@@ -334,78 +406,108 @@ const displayedSecondFileName = computed(() => {
             </div>
             <!-- First File Input and DocType MultiSelect -->
 
+            <div class="field col-12 md:col-4 lg:col-4">
+        <span class="p-float-label">
+          <Dropdown
+            v-model="representatives.type"
+            :options="types"
+            optionLabel="label"
+            placeholder="Select Period Option"
+          />
+          <label for="periodOption">مدة الصلاحية</label>
+        </span>
+      </div>
+      <!-- Conditionally render the date range input when "From To" is selected -->
+
+        <div  v-if="representatives.type?.value == '1'"
+         class="field col-12 md:col-4 lg:col-4">
+          <span class="p-float-label">
+            <Calendar id="fromDate" type="date" v-model="representatives.from" />
+            <label for="fromDate">من </label>
+          </span>
+        </div>
+        <div
+        v-if="representatives.type?.value == '1'"
+         class="field col-12 md:col-4 lg:col-4">
+        <span class="p-float-label">
+          <Calendar id="fromDate" type="date" v-model="representatives.to" />
+          <label for="fromDate"> الى</label>
+        </span>
+      </div>
+
             <div class="field col-4 md:col-4 lg:col-4">
               <span class="p-float-label">
                 <InputText
                   v-if="!hide1"
                   class="p-inputtext p-component"
-                  v-model="representatives.files[0].file"
+                  v-model="representatives.files[0].fileType"
+                  :value="displayedFirstFileName"
+
                   :disabled="true"
                 />
 
-                <InputText
-                  v-else
-                  class="p-inputtext p-component"
-                  v-model="representatives.files[0].file"
-                  :value="displayedFirstFileName"
-                  :disabled="true"
-                />
+
                 <label for="secondaryPhone">تعريف شخصي</label>
               </span>
             </div>
 
             <div class="field col-5 md:col-5 lg:col-5">
               <div class="grid p-fluid">
-                <Button
+                <!-- <Button
                   icon="fa-solid fa-upload"
                   class="p-button-text p-button-info"
                   @click="triggerFileInput(0)"
                 >
                   رفع ملف
-                </Button>
+                </Button> -->
+                <Button
+                    @click="downloadFile(representatives.id, representatives.files[0].id)"
+                    icon="fa-solid fa-download"
+                    class="p-button-text p-button-info"
+                  >
+                    تحميل
+                  </Button>
               </div>
             </div>
             <div class="field col-4 md:col-4 lg:col-4">
               <span class="p-float-label">
                 <InputText
-                  v-if="!hide2"
                   class="p-inputtext p-component"
-                  v-model="representatives.files[1].file"
-                  :disabled="true"
-                />
-
-                <InputText
-                  v-else
-                  class="p-inputtext p-component"
-                  v-model="representatives.files[1].file"
+                  v-model="representatives.files[1].fileType"
                   :value="displayedSecondFileName"
-
                   :disabled="true"
                 />
+
                 <label for="secondaryPhone">تخويل من الشركة</label>
               </span>
             </div>
 
-          <div class="field col-4 md:col-3 lg:col-4">
-            <div class="grid p-fluid">
-              <Button
+            <div class="field col-4 md:col-3 lg:col-4">
+              <div class="grid p-fluid">
+                <!-- <Button
                 icon="fa-solid fa-upload"
                 class="p-button-text p-button-info"
                 @click="triggerFileInput(1)"
               >
                 رفع ملف
-              </Button>
+              </Button> -->
+
+              <Button
+                    @click="downloadFile(representatives.id, representatives.files[1].id)"
+                    icon="fa-solid fa-download"
+                    class="p-button-text p-button-info"
+                  >
+                    تحميل
+                  </Button>
+              </div>
             </div>
           </div>
-        </div>
 
-
-          <Button
-            icon="pi pi-check"
-            :loading="loading"
-            label="تعديل"
+          <Button @click="onSubmitForm" icon="pi pi-check" :loading="loading" label="تعديل"
           ></Button>
         </form>
+
+    
         <!-- <RepresentativeForm
           @form-submit="onFormSubmit"
           :representatives="representatives"
@@ -415,5 +517,4 @@ const displayedSecondFileName = computed(() => {
         </RepresentativeForm> -->
       </template>
     </Dialog>
-  </div>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 import { useVistisStore } from "@/stores/visits";
 import BackButton from "@/components/BackButton.vue";
@@ -7,6 +7,8 @@ import type Textarea from "primevue/textarea";
 import ComapanionsDataTable from "./Companions/CompanionsDataTable.vue";
 import { visitApi } from "@/api/visits";
 import { formatTotalMin } from "@/tools/formatTime";
+
+import { formatTime } from "@/tools/formatTime";
 import "vue-select/dist/vue-select.css";
 
 import { VisitModel } from "../../Modules/VisitModule/VisitByIdModel";
@@ -17,10 +19,6 @@ const props = defineProps<{ visit: VisitModel }>();
 const editable = ref(true);
 const loading = ref(true);
 const visitReasons = ref<visitReason[]>([]);
-const toast = useToast();
-
-const startDate = ref(new Date());
-const stopDate = ref(new Date());
 
 type visitReason = {
   value: number;
@@ -28,63 +26,22 @@ type visitReason = {
 };
 // Array of identity type options
 
-onMounted(async () => {
-  getTypes();
+onMounted(async () => {});
+
+const formattedStartTime = computed({
+  get: () => formatTime(props.visit.startTime),
+  set: (newValue) => {
+    // If you want to update the startTime when the user selects a new value
+    props.visit.startTime = newValue;
+  },
 });
-
-async function getTypes() {
-  await visitApi
-    .getTypes()
-    .then(function (response) {
-      visitReasons.value = response.data.content;
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-}
-
-const startVisit = () => {
-  visitApi
-    .start(
-      props.visit.id,
-      moment(startDate.value).format("YYYY-MM-DD HH:mm:ss")
-    )
-    .then((response) => {
-      toast.add({
-        severity: "success",
-        summary: "رسالة نجاح",
-        detail: `${response.data.msg}`,
-      });
-      editable.value = false;
-    })
-    .catch((error) => {
-      toast.add({
-        severity: "success",
-        summary: "رسالة نجاح",
-        detail: error.response.data.msg,
-      });
-    });
-};
-
-const stopVisit = () => {
-  visitApi
-    .stop(props.visit.id, moment(stopDate.value).format("YYYY-MM-DD HH:mm:ss"))
-    .then((response) => {
-      toast.add({
-        severity: "success",
-        summary: "رسالة نجاح",
-        detail: `${response.data.msg}`,
-      });
-      editable.value = false;
-    })
-    .catch((error) => {
-      toast.add({
-        severity: "success",
-        summary: "رسالة نجاح",
-        detail: error.response.data.msg,
-      });
-    });
-};
+const formattedEndTime = computed({
+  get: () => formatTime(props.visit.endTime),
+  set: (newValue) => {
+    // If you want to update the startTime when the user selects a new value
+    props.visit.endTime = newValue;
+  },
+});
 </script>
 
 <template>
@@ -156,16 +113,10 @@ const stopVisit = () => {
             <div class="field col-12 md:col-6 lg:col-4">
               <span class="">
                 <label for="startTime">تاريخ بداية الزيارة </label>
-                <Calendar
+                <InputText
                   inputId="startTime"
-                  v-model="startDate"
-                  dateFormat="yy/mm/dd"
-                  :showTime="true"
-                  selectionMode="single"
-                  :showButtonBar="true"
-                  :manualInput="true"
-                  :stepMinute="5"
-                  hourFormat="12"
+                  :value=" visit.startTime ? formatTime(visit.startTime): 'الزيارة لم تبدأ'"
+    
                   :disabled="editable"
                 />
               </span>
@@ -174,25 +125,13 @@ const stopVisit = () => {
             <div class="field col-12 md:col-6 lg:col-4">
               <span class="">
                 <label for="stopDate">تاريخ انتهاء الزيارة </label>
-                <Calendar
+                <InputText
                   inputId="stopDate"
-                  v-model="stopDate"
-                  dateFormat="yy/mm/dd"
-                  :showTime="true"
-                  selectionMode="single"
-                  :minDate="startDate"
-                  :showButtonBar="true"
-                  :manualInput="true"
-                  :stepMinute="5"
-                  hourFormat="12"
+                  :value="visit.endTime ? formatTime(visit.endTime): 'الزيارة غير منتهية'"
                   :disabled="editable"
+
                 />
               </span>
-            </div>
-            <div class="field col-12 md:col-6 lg:col-4">
-              <Button severity="info" text @click="editable = !editable">
-                وقت الزبارة
-              </Button>
             </div>
           </div>
           <div class="grid p-fluid">
@@ -206,12 +145,12 @@ const stopVisit = () => {
                 />
               </span>
             </div>
-            <div class="field col-4 md:col-3 lg:col-4">
+            <div class="field col-12 md:col-6 lg:col-4">
               <span class="">
-                <label for="totalTime"> وقت الزيارة </label>
+                <label for="customerName">الاشتراك</label>
                 <InputText
-                  id="totalTime"
-                  :value="visit.startTime"
+                  v-model="visit.service"
+                  optionLabel="customerName"
                   :disabled="true"
                 />
               </span>
@@ -223,7 +162,7 @@ const stopVisit = () => {
                 <InputText
                   id="companionName"
                   :value="
-                    visit.totalTime ? formatTotalMin(visit.totalTime) : ''
+                    visit.totalTime ? formatTotalMin(visit.totalTime) : 'الزيارة غير منتهة'
                   "
                   :readonly="true"
                   :disabled="true"
@@ -252,7 +191,7 @@ const stopVisit = () => {
                 <Dropdown
                   id="visitType"
                   v-model="visit.visitType"
-                  :options="visitReasons"
+                  :options="store.visitReasons"
                   optionValue="id"
                   optionLabel="name"
                   :disabled="true"

@@ -35,6 +35,7 @@ const customer = reactive({
   id: "",
   address: "",
   city: "",
+  status:0,
   name: "",
   email: "",
   primaryPhone: "",
@@ -68,6 +69,7 @@ function getCustomers() {
       customer.address = content.address;
       customer.city = content.city;
       customer.createdOn = content.createdOn;
+      customer.status = content.status;
       customer.email = content.email;
       customer.files = content.files;
       customer.name = content.name;
@@ -173,8 +175,8 @@ const downloadFile = async (fileId: any) => {
 
           <!-- المخولون الخاصون بالعميل -->
           <Representative
-            @getRepresentatives="getCustomers()"
-            :customerStatus="1"
+            @getRepresentatives="getRepresentatives()"
+            :customerStatus="customer.status"
             :CustomerId="customer.id"
             :representatives="customer.representative"
           />

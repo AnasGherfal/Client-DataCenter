@@ -12,9 +12,9 @@ const expired = ref();
 
 onMounted(async () => {
   analyticsApi.DashboardCounters().then((response) => {
-    active.value = response.data.totalActiveSubscriptions;
-    aboutToExpire.value = response.data.totalSubscriptionsExpireThisMonth;
-    expired.value = response.data.totalExpiredSubscriptions;
+    active.value = response.data.content.totalOccuring;
+    aboutToExpire.value = response.data.content.totalExpireThisMonth;
+    expired.value = response.data.content.totalExpired;
   });
 });
 </script>

@@ -8,17 +8,13 @@ export const invoiceApi = {
   get: async function (
     pageNumber: number,
     pageSize: number,
-    name: string,
-    startDate: any,
-    endDate: any
+    CustomerId: string
   ) {
     const response = await httpClient.get(`/Invoices`, {
       params: {
         PageNumber: pageNumber,
         PageSize: pageSize,
-        CustomerName: name,
-        StartDate: startDate,
-        EndDate: endDate,
+        CustomerId: CustomerId,
       },
     });
 
@@ -28,8 +24,12 @@ export const invoiceApi = {
     const response = await httpClient.get(`/Invoices/${id}`);
     return response;
   },
-  create: async function (invoice: InvoiceResponde) {
-    const response = await httpClient.post(`/Invoices`, invoice);
+  create: async function (invoice: FormData) {
+    const response = await httpClient.post(`/Invoices`, invoice, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response;
   },
   paid: async function (

@@ -51,20 +51,20 @@ function getList() {
       <card>
         <template #header>
           <editservice
-            v-if="servic.status !== 5"
+            v-if="servic.status !== 2"
             :pakage="servic"
             @getList="getList"
           />
 
           <LockButton
-            typeLock="Service"
+            typeLock="Services"
             :id="servic.id"
             :name="servic.name"
             :status="servic.status"
             @getdata="getList"
           />
           <DeletService
-            v-if="servic.status !== 5"
+            v-if="servic.status !== 2"
             :pakge="servic"
             :key="servic.id"
             @getList="getList"

@@ -19,7 +19,7 @@ const state = reactive({
   empId: null,
   permissions: 0,
 });
-
+const errorMessage = ref()
 const selectedPermissions = ref([]);
 const permissions = ref([
   { name: "من غير صلاحيه", value: 0 },
@@ -67,6 +67,13 @@ const calculatePermissions = () => {
 const submitForm = async () => {
   const result = await v$.value.$validate();
 
+  // At least one of the documents is null, so we should not make the API call
+  if (!selectedPermissions) {
+    errorMessage.value = "الحقل مطلوب";
+  } else {
+    errorMessage.value = "";
+  }
+
   if (result) {
     const permissions = calculatePermissions();
     state.permissions = permissions;
@@ -75,8 +82,6 @@ const submitForm = async () => {
       .create(state)
       .then(function (response) {
         store.getAdmins();
-        console.log(response);
-
         toast.add({
           severity: "success",
           summary: "رسالة نجاح",
@@ -127,7 +132,7 @@ const resetForm = () => {
         <form @submit.prevent="submitForm">
           <div class="grid p-fluid">
             <div class="field col-12 md:col-6 lg:col-4">
-              <span class="">
+              <span class="p-float-label">
                 <InputText
                   id="FullName"
                   v-model="state.fullName"
@@ -146,10 +151,9 @@ const resetForm = () => {
             </div>
 
             <div class="field col-12 md:col-6 lg:col-4">
-              <span class="">
+              <span class="p-float-label">
                 <InputText
                   id="Email"
-                  placeholder="البريد الالكتروني"
                   type="text"
                   v-model="state.email"
                 />
@@ -162,16 +166,17 @@ const resetForm = () => {
                     {{ error.$message }}</error
                   >
                 </div>
+                <label for="emil"> البريد الالكتروني</label>
+
               </span>
             </div>
 
             <div class="field col-12 md:col-6 lg:col-4">
-              <span class="">
+              <span class="p-float-label">
                 <InputNumber
                   id="EmpId"
                   mask="99999"
                   v-model="state.empId"
-                  placeholder="الرقم الوظيفي"
                 />
                 <div style="height: 2px">
                   <error
@@ -181,10 +186,12 @@ const resetForm = () => {
                     >{{ error.$message }}</error
                   >
                 </div>
+                <label for="empId">الرقم الوظيفي</label>
+
               </span>
             </div>
             <div class="field col-12 md:col-6 lg:col-4">
-              <span class="">
+              <span class="p-float-label">
                   <MultiSelect
                     v-model="selectedPermissions"
                     display="chip"
@@ -192,18 +199,13 @@ const resetForm = () => {
                     :options="permissions"
                     optionLabel="name"
                     :maxSelectedLabels="3"
-                    class="w-full md:w-20rem"
                     placeholder="اختر الصلاحيات"
                   />
-                <!-- <div style="height: 2px">
-                  <error
-                    v-for="error in v$.selectedCities.$errors"
-                    :key="error.$uid"
-                    class="p-error"
-                  >
-                    {{ error.$message }}</error
-                  >
-                </div> -->
+                  <label for="empId">الصلاحيات</label>
+
+                  <div v-if="errorMessage" class="error-message">
+                  {{ errorMessage }}
+                </div>
               </span>
             </div>
           </div>

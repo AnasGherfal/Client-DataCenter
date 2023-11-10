@@ -1,8 +1,9 @@
 export interface Subscription {
-  serviceId: number | null;
-  customerId: number |null;
-  startDate: string;
-  endDate: string;
-
-  file: any ;
+  serviceId: null,
+  customerId: null ,
+  startDate: string,
+  endDate: string,
+  contractNumber:string,
+  contractDate: string,
+  file:  File | null,
 }

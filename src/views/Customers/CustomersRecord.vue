@@ -41,24 +41,22 @@ const onToggle = (val: any) => {
 
 const statuses = ref([
   { value: 1, label: "نشط" },
-  { value: 2, label: "مقفل" },
+  { value: 2, label: "مقيد" },
 ]);
 
 const getSeverity = (status: any) => {
   switch (trans(status)) {
     case "نشط":
       return "success";
-    case "غير نشط":
-      return "danger";
-    case "مقفل":
+
+    case "مقيد":
       return "danger";
   }
 };
 
 const trans = (value: string) => {
   if (value == "1") return "نشط";
-  else if (value == "2") return "غير نشط";
-  else if (value == "5") return "مقفل";
+  else if (value == "2") return "مقيد";
 };
 
 const getSelectedStatusLabel = (value: any) => {
@@ -66,38 +64,17 @@ const getSelectedStatusLabel = (value: any) => {
   return status ? status.label : "";
 };
 
-// // Watch for changes in filters and trigger server-side search
-// watch(filters, async (newFilters) => {
-//   store.currentPage = 1; // Reset currentPage to the first page
-//   store.pageNumber = 1; // Reset pageNumber to 1
-//   store.getCustomers();
-
-//   try {
-//     store.loading = true;
-//     // Make the API request to fetch filtered data based on the search criteria
-//     const response = await customersApi.getById(id);
-//     store.customers = response.data; // Update the table data with the filtered results
-//   } catch (error) {
-//     // Handle the error
-//     console.error(error);
-//     toast.add({
-//       severity: "error",
-//       summary: "Error",
-//       detail: "Failed to fetch customers.",
-//     });
-//   } finally {
-//     store.loading = false;
-//   }
-// });
-
 onMounted(async () => {
   getCustomers();
 });
 async function searchByName(searchName: string) {
+  console.log("hi")
   name.value = searchName;
   await getCustomers(); // Await the getCustomers function to wait for the API call to complete
 }
 async function getCustomers() {
+  console.log('getCustomers method called from child');
+
   if (name.value === undefined || name.value === null) {
     name.value = "";
   }
@@ -119,17 +96,21 @@ async function getCustomers() {
 const toggleLockCustomer = async (customer: Customer) => {
   try {
     let response;
-    if (customer.status == 1) response = await customersApi.block(customer.id);
-    if (customer.status == 2)
+    if (customer.status === 1) {
+      response = await customersApi.block(customer.id);
+      customer.status = 2; // Update the status immediately
+    } else if (customer.status === 2) {
       response = await customersApi.unblock(customer.id);
-
+      customer.status = 1; // Update the status immediately
+    }
     toast.add({
       severity: "success",
       summary: "نجحة العملية",
       detail: response?.data.msg,
       life: 3000,
     });
-    getCustomers();
+  
+
   } catch (error: any) {
     toast.add({
       severity: "error",
@@ -195,11 +176,14 @@ const onSearch = (event: KeyboardEvent) => {
 </script>
 
 <template>
-  <div>
+    <RouterView></RouterView>
+
+  <div  v-if="$route.path === '/customersRecord'">
     <Card>
       <template #title>
         سجل العملاء
-        <AddButton name-button="اضافة عميل" rout-name="/addCustomer" />
+        <AddButton @getCustomers="getCustomers" name-button="اضافة عميل"  rout-name="/customersRecord/addCustomer"
+ />
       </template>
       <template #content>
         <div>
@@ -346,7 +330,7 @@ const onSearch = (event: KeyboardEvent) => {
 
             <Column style="min-width: 11rem" header="  الاجراءات ">
               <template #body="slotProps">
-                <span v-if="slotProps.data.status !== 5">
+                <span v-if="slotProps.data.status !== 2">
                   <DeleteCustomer
                     :name="slotProps.data.name"
                     :id="slotProps.data.id"
@@ -356,7 +340,7 @@ const onSearch = (event: KeyboardEvent) => {
                   </DeleteCustomer>
                 </span>
 
-                <RouterLink :to="'CustomerProfile/' + slotProps.data.id">
+                <RouterLink :to="'customersRecord/CustomerProfile/' + slotProps.data.id">
                   <Button
                     v-tooltip="{ value: 'البيانات الشخصية', fitContent: true }"
                     icon="fa-solid fa-user"

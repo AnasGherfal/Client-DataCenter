@@ -17,6 +17,7 @@ const store = useCustomersStore();
 const loading = ref(false);
 const IdentityDocumentsError = ref<string | null>(null);
 const CompanyDocumentsError = ref<string | null>(null);
+  const emit = defineEmits(["getCustomers"]);
 
 const customer = reactive({
   name: "",
@@ -57,21 +58,28 @@ const rules = computed(() => {
 const v$ = useVuelidate(rules, customer);
 
 const onFormSubmit = async () => {
+  const formData = new FormData();
+
   const result = await v$.value.$validate();
+  if (!customer.IdentityDocuments || !customer.CompanyDocuments) {
+  // At least one of the documents is null, so we should not make the API call
   if (!customer.IdentityDocuments) {
     IdentityDocumentsError.value = "الحقل مطلوب";
   } else {
     IdentityDocumentsError.value = "";
   }
 
-  // Validate the second file
   if (!customer.CompanyDocuments) {
     CompanyDocumentsError.value = "الحقل مطلوب";
   } else {
     CompanyDocumentsError.value = "";
   }
+} else {
+    // Both documents are not null, so proceed with the API call
+
+  IdentityDocumentsError.value = "";
+  CompanyDocumentsError.value = "";
   if (!result) return;
-  const formData = new FormData();
 
   formData.append("Name", customer.name);
   formData.append("City", customer.city);
@@ -85,12 +93,14 @@ const onFormSubmit = async () => {
   customersApi
     .create(formData)
     .then((response) => {
+      emit("getCustomers")
       toast.add({
         severity: "success",
         summary: "رسالة نجاح",
         detail: response.data.msg,
         life: 2000,
       });
+
       setTimeout(() => {
         router.go(-1);
       }, 1);
@@ -105,8 +115,11 @@ const onFormSubmit = async () => {
     })
     .finally(() => {
       loading.value = false;
+      emit("getCustomers")
     });
+  }
 };
+
 
 const toast = useToast();
 
@@ -156,62 +169,61 @@ const resetForm = () => {
           <form @submit.prevent="onFormSubmit()">
             <div class="grid p-fluid">
               <div class="field col-12 md:col-6 lg:col-4">
-                <span class="">
-                  <label for="name">الاسم </label>
+                <span class="p-float-label">
                   <InputText id="name" type="text" v-model="customer.name" />
                   <div style="height: 2px">
                     <span
-                      v-for="error in v$.name.$errors"
-                      :key="error.$uid"
-                      style="color: red; font-weight: bold; font-size: small"
+                    v-for="error in v$.name.$errors"
+                    :key="error.$uid"
+                    style="color: red; font-weight: bold; font-size: small"
                     >
-                      {{ error.$message }}</span
+                    {{ error.$message }}</span
                     >
                   </div>
+                  <label for="name">الاسم </label>
                 </span>
               </div>
               <div class="field col-12 md:col-6 lg:col-4">
-                <span class="">
-                  <label for="email">البريد الإلكتروني</label>
+                <span class="p-float-label">
                   <InputText id="email" type="text" v-model="customer.email" />
                   <div style="height: 2px">
                     <span
-                      v-for="error in v$.email.$errors"
+                    v-for="error in v$.email.$errors"
                       :key="error.$uid"
                       style="color: red; font-weight: bold; font-size: small"
                     >
                       {{ error.$message }}</span
-                    >
-                  </div>
+                      >
+                    </div>
+                    <label for="email">البريد الإلكتروني</label>
                 </span>
               </div>
               <div class="field col-12 md:col-6 lg:col-4">
-                <span class="">
-                  <label for="city">المدينة</label>
+                <span class="p-float-label">
                   <InputText
-                    id="city"
+                  id="city"
                     name="city"
                     type="text"
                     v-model="customer.city"
-                  />
-                  <div style="height: 2px">
-                    <span
+                    />
+                    <div style="height: 2px">
+                      <span
                       v-for="error in v$.city.$errors"
                       :key="error.$uid"
                       style="color: red; font-weight: bold; font-size: small"
-                    >
+                      >
                       {{ error.$message }}</span
-                    >
-                  </div>
+                      >
+                    </div>
+                    <label for="city">المدينة</label>
                 </span>
               </div>
               <div class="field col-12 md:col-6 lg:col-4">
-                <span class="">
-                  <label for="address">العنوان</label>
+                <span class="p-float-label">
                   <InputText
-                    id="address"
-                    name="address"
-                    type="text"
+                  id="address"
+                  name="address"
+                  type="text"
                     v-model="customer.address"
                   />
                   <div style="height: 2px">
@@ -219,19 +231,21 @@ const resetForm = () => {
                       v-for="error in v$.address.$errors"
                       :key="error.$uid"
                       style="color: red; font-weight: bold; font-size: small"
-                    >
+                      >
                       {{ error.$message }}</span
                     >
                   </div>
+                  <label for="address">العنوان</label>
                 </span>
               </div>
               <div class="field col-12 md:col-6 lg:col-4">
-                <span class="">
-                  <label for="primaryPhone">رقم هاتف </label>
+                <span class="p-float-label">
                   <InputMask
-                    id="primaryPhone"
+                  id="primaryPhone"
                     v-model="customer.primaryPhone"
                     mask="+218999999999"
+                    style="direction: ltr; text-align: end"
+
                   />
                   <div style="height: 2px">
                     <span
@@ -242,21 +256,24 @@ const resetForm = () => {
                         direction: ltr;
                         font-weight: bold;
                         font-size: small;
-                      "
+                        "
                     >
-                      {{ error.$message }}</span
+                    {{ error.$message }}</span
                     >
                   </div>
+                  <label for="primaryPhone">رقم هاتف </label>
                 </span>
               </div>
               <div class="field col-12 md:col-6 lg:col-4">
-                <span class="">
-                  <label for="secondaryPhone">رقم هاتف 2</label>
+                <span class="p-float-label">
                   <InputMask
-                    id="secondaryPhone"
-                    v-model="customer.secondaryPhone"
+                  id="secondaryPhone"
+                  v-model="customer.secondaryPhone"
                     mask="+218999999999"
+                    style="direction: ltr; text-align: end"
+
                   />
+                  <label for="secondaryPhone">رقم هاتف 2</label>
                 </span>
               </div>
             </div>
