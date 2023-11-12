@@ -6,7 +6,7 @@ import { useHttpClient } from "@/network/httpClient";
 const httpClient = useHttpClient();
 
 export const visitApi = {
-  get: async function (CustomerId?: string, SubscriptionId?: string) {
+  get: async function (pageNumber: number, pageSize: number,CustomerId?: string, SubscriptionId?: string) {
     const response = await httpClient.get(`/Visits`, {
       params: {
         CustomerId: CustomerId,
@@ -52,6 +52,11 @@ export const visitApi = {
     const response = await httpClient.put(`/Visits/${id}/stop`, {
       endTime,
     });
+    return response;
+  },
+
+  sign: async function (id: string, visit:any){
+    const response = await httpClient.put(`/Visits/${id}/sign`, visit)
     return response;
   },
 };

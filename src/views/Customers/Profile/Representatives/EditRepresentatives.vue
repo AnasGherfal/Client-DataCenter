@@ -10,6 +10,7 @@ import { representativesApi } from "@/api/representatives";
 import useVuelidate from "@vuelidate/core";
 import { helpers, required, email, minLength } from "@vuelidate/validators";
 import { isLibyanPhoneNumber, validateText } from "@/tools/validations";
+import moment from "moment";
 const props = defineProps<{
   id: string;
   representatives: any;
@@ -31,7 +32,7 @@ onMounted(() => {
   getRepresentativesById();
 });
 const representatives = reactive({
-  id:"",
+  id: "",
   firstName: "",
   lastName: "",
   identityNo: "",
@@ -39,8 +40,8 @@ const representatives = reactive({
   phoneNo: "",
   identityType: "",
   type: null,
-  from: "",
-  to: "",
+  activeFrom: "",
+  activeTo: "",
   files: [
     {
       fileType: 0,
@@ -51,13 +52,12 @@ const representatives = reactive({
       id: "",
     },
   ],
-  
 });
 
 async function getRepresentativesById() {
   representativesApi.getById(props.id).then((response) => {
     representativesById.value = response.data.content;
-    representatives.id = representativesById.value.id
+    representatives.id = representativesById.value.id;
     representatives.firstName = representativesById.value?.firstName;
     representatives.lastName = representativesById.value.lastName;
     representatives.email = representativesById.value.email;
@@ -65,13 +65,15 @@ async function getRepresentativesById() {
     representatives.identityType = representativesById.value.identityType;
     representatives.phoneNo = representativesById.value.phoneNo;
     representatives.type = representativesById.value.type;
-    representatives.from = representativesById.value.from;
-    representatives.to = representativesById.value.to;
+    representatives.activeFrom = moment(
+      representativesById.value.activeFrom
+    ).format("YYYY-MM-DD");
+    representatives.activeTo = representativesById.value.activeTo;
     representatives.files[0].fileType =
       representativesById.value.files[0].fileType;
-      representatives.files[0].id = representativesById.value.files[0].id;
+    representatives.files[0].id = representativesById.value.files[0].id;
 
-      representatives.files[1].id = representativesById.value.files[1].id;
+    representatives.files[1].id = representativesById.value.files[1].id;
 
     representatives.files[1].fileType =
       representativesById.value.files[1].fileType;
@@ -80,7 +82,7 @@ async function getRepresentativesById() {
 
 const downloadFile = async (id: any, fileId: string) => {
   try {
-    console.log(id, fileId)
+    console.log(id, fileId);
     const response = await representativesApi.getFile(id, fileId);
 
     if (response) {
@@ -166,11 +168,11 @@ const onSubmitForm = async () => {
   // formData.append("lastName", representatives.lastName);
 
   const requestBody = {
-  email: representatives.email,
-  phoneNo: representatives.phoneNo,
-  identityNo: representatives.identityNo,
-  identityType: (representatives.identityType)
-};
+    email: representatives.email,
+    phoneNo: representatives.phoneNo,
+    identityNo: representatives.identityNo,
+    identityType: representatives.identityType,
+  };
   // Append the first file as FormFile
   // if (representatives.files[0].file instanceof File) {
   //   formData.append(
@@ -228,7 +230,15 @@ const openModal = () => {
   representatives.identityNo = representativesById.value.identityNo;
   representatives.identityType = representativesById.value.identityType;
   representatives.phoneNo = representativesById.value.phoneNo;
-  representatives.files[0].fileType = representativesById.value.files[0].fileType;
+  representatives.type = representativesById.value.type;
+  representatives.activeFrom = moment(
+    representativesById.value.activeFrom
+  ).format("YYYY-MM-DD");
+  representatives.activeTo = moment(representativesById.value.activeTo).format(
+    "YYYY-MM-DD"
+  );
+  representatives.files[0].fileType =
+    representativesById.value.files[0].fileType;
   representatives.files[1].fileType =
     representativesById.value.files[1].fileType;
 };
@@ -242,11 +252,10 @@ const identityTypeOptions = [
   { value: 2, text: "جواز سفر" },
 ];
 
-
 const types = ref([
-  { label: "مره", value: "0" },
-  { label: "من-الى", value: "1" },
-  { label: "طوال فترة العقد", value: "2" },
+  { label: "مره", value: 0 },
+  { label: "من-الى", value: 1 },
+  { label: "طوال فترة العقد", value: 2 },
 ]);
 
 // const triggerFileInput = (index: any) => {
@@ -288,203 +297,215 @@ const displayedSecondFileName = computed(() => {
 </script>
 
 <template>
-    <Button
-      @click="openModal"
-      icon=" fa-solid fa-pen"
-      rounded
-      text
-      v-tooltip="{ value: 'تعديل ', fitContent: true }"
-    />
+  <Button
+    @click="openModal"
+    icon=" fa-solid fa-pen"
+    rounded
+    text
+    v-tooltip="{ value: 'تعديل ', fitContent: true }"
+  />
 
-    <Dialog
-      header="تعديل المخول"
-      contentStyle="max-height: 73vh; max-width: 70vw; min-width:50vw; padding: 20px;"
-      v-model:visible="displayModal"
-      :modal="true"
-    >
-      <template #default>
-        <form @submit.prevent="onSubmitForm">
-          <div class="grid p-fluid">
-            <div class="field col-12 md:col-6 lg:col-4">
-              <span class="p-float-label">
-                <InputText
-                  id="name"
-                  type="text"
-                  v-model="representatives.firstName"
-                  :disabled="true"
-                />
-                <label for="name">الاسم </label>
-                <div style="height: 2px">
-                  <span
-                    v-for="error in v$.firstName.$errors"
-                    :key="error.$uid"
-                    style="color: red; font-weight: bold; font-size: small"
-                  >
-                    {{ error.$message }}
-                  </span>
-                </div>
-              </span>
-            </div>
-            <div class="field col-12 md:col-6 lg:col-4">
-              <span class="p-float-label">
-                <InputText
-                  id="name"
-                  type="text"
-                  v-model="representatives.lastName"
-                  :disabled="true"
-                />
-                <label for="name">اللقب </label>
-                <div style="height: 2px">
-                  <span
-                    v-for="error in v$.lastName.$errors"
-                    :key="error.$uid"
-                    style="color: red; font-weight: bold; font-size: small"
-                  >
-                    {{ error.$message }}
-                  </span>
-                </div>
-              </span>
-            </div>
-            <div class="field col-12 md:col-6 lg:col-4">
-              <span class="p-float-label">
-                <InputText
-                  id="email"
-                  type="text"
-                  v-model="representatives.email"
-                />
-                <label for="email">البريد الإلكتروني</label>
-                <div style="height: 2px">
-                  <span
-                    v-for="error in v$.email.$errors"
-                    :key="error.$uid"
-                    style="color: red; font-weight: bold; font-size: small"
-                  >
-                    {{ error.$message }}
-                  </span>
-                </div>
-              </span>
-            </div>
-            <div class="field col-12 md:col-6 lg:col-4">
-              <span class="p-float-label">
-                <InputMask
-                  v-model="representatives.phoneNo"
-                  mask="+218999999999"
-                  style="direction: ltr"
-                />
-                <label for="inputtext">رقم هاتف </label>
-                <div style="height: 2px">
-                  <span
-                    v-for="error in v$.phoneNo.$errors"
-                    :key="error.$uid"
-                    style="color: red; font-weight: bold; font-size: small"
-                  >
-                    {{ error.$message }}
-                  </span>
-                </div>
-              </span>
-            </div>
-            <div class="field col-12 md:col-6 lg:col-4">
-              <span class="p-float-label">
-                <Dropdown
-                  v-model="representatives.identityType"
-                  :options="identityTypeOptions"
-                  optionValue="value"
-                  optionLabel="text"
-                  placeholder=" نوع الاثبات"
-                />
-                <label for="identityType">نوع الاثبات </label>
-              </span>
-            </div>
-            <div class="field col-12 md:col-6 lg:col-4">
-              <span class="p-float-label">
-                <InputText
-                  id="inputtext"
-                  v-model="representatives.identityNo"
-                />
-                <label for="inputtext">رقم الاثبات </label>
-              </span>
-            </div>
-            <!-- First File Input and DocType MultiSelect -->
+  <Dialog
+    header="تعديل المخول"
+    contentStyle="max-height: 73vh; max-width: 70vw; min-width:50vw; padding: 20px;"
+    v-model:visible="displayModal"
+    :modal="true"
+  >
+    <template #default>
+      <form @submit.prevent="onSubmitForm">
+        <div class="grid p-fluid">
+          <div class="field col-12 md:col-6 lg:col-4">
+            <span class="p-float-label">
+              <InputText
+                id="name"
+                type="text"
+                v-model="representatives.firstName"
+                :disabled="true"
+              />
+              <label for="name">الاسم </label>
+              <div style="height: 2px">
+                <span
+                  v-for="error in v$.firstName.$errors"
+                  :key="error.$uid"
+                  style="color: red; font-weight: bold; font-size: small"
+                >
+                  {{ error.$message }}
+                </span>
+              </div>
+            </span>
+          </div>
+          <div class="field col-12 md:col-6 lg:col-4">
+            <span class="p-float-label">
+              <InputText
+                id="name"
+                type="text"
+                v-model="representatives.lastName"
+                :disabled="true"
+              />
+              <label for="name">اللقب </label>
+              <div style="height: 2px">
+                <span
+                  v-for="error in v$.lastName.$errors"
+                  :key="error.$uid"
+                  style="color: red; font-weight: bold; font-size: small"
+                >
+                  {{ error.$message }}
+                </span>
+              </div>
+            </span>
+          </div>
+          <div class="field col-12 md:col-6 lg:col-4">
+            <span class="p-float-label">
+              <InputText
+                id="email"
+                type="text"
+                v-model="representatives.email"
+              />
+              <label for="email">البريد الإلكتروني</label>
+              <div style="height: 2px">
+                <span
+                  v-for="error in v$.email.$errors"
+                  :key="error.$uid"
+                  style="color: red; font-weight: bold; font-size: small"
+                >
+                  {{ error.$message }}
+                </span>
+              </div>
+            </span>
+          </div>
+          <div class="field col-12 md:col-6 lg:col-4">
+            <span class="p-float-label">
+              <InputMask
+                v-model="representatives.phoneNo"
+                mask="+218999999999"
+                style="direction: ltr"
+              />
+              <label for="inputtext">رقم هاتف </label>
+              <div style="height: 2px">
+                <span
+                  v-for="error in v$.phoneNo.$errors"
+                  :key="error.$uid"
+                  style="color: red; font-weight: bold; font-size: small"
+                >
+                  {{ error.$message }}
+                </span>
+              </div>
+            </span>
+          </div>
+          <div class="field col-12 md:col-6 lg:col-4">
+            <span class="p-float-label">
+              <Dropdown
+                v-model="representatives.identityType"
+                :options="identityTypeOptions"
+                optionValue="value"
+                optionLabel="text"
+                placeholder=" نوع الاثبات"
+              />
+              <label for="identityType">نوع الاثبات </label>
+            </span>
+          </div>
+          <div class="field col-12 md:col-6 lg:col-4">
+            <span class="p-float-label">
+              <InputText id="inputtext" v-model="representatives.identityNo" />
+              <label for="inputtext">رقم الاثبات </label>
+            </span>
+          </div>
+          <!-- First File Input and DocType MultiSelect -->
 
-            <div class="field col-12 md:col-4 lg:col-4">
-        <span class="p-float-label">
-          <Dropdown
-            v-model="representatives.type"
-            :options="types"
-            optionLabel="label"
-            placeholder="Select Period Option"
-          />
-          <label for="periodOption">مدة الصلاحية</label>
-        </span>
-      </div>
-      <!-- Conditionally render the date range input when "From To" is selected -->
+          <div class="field col-12 md:col-6 lg:col-4">
+            <span class="p-float-label"
+              >{{}}
+              <Dropdown
+                v-model="representatives.type"
+                :options="types"
+                optionValue="value"
+                optionLabel="label"
+                placeholder="Select Period Option"
+                :disabled="true"
+              />
+              <label for="periodOption">مدة الصلاحية</label>
+            </span>
+          </div>
+          <!-- Conditionally render the date range input when "From To" is selected -->
+          <div
+            v-if="representatives.type == '1'"
+            class="field col-12 md:col-6 lg:col-4"
+          >
+            <span class="p-float-label">
+              <Calendar
+                id="fromDate"
+                type="date"
+                v-model="representatives.activeFrom"
+                :disabled="true"
+              />
+              <label for="fromDate">من </label>
+            </span>
+          </div>
+          <div
+            v-if="representatives.type == '1'"
+            class="field col-12 md:col-6 lg:col-4"
+          >
+            <span class="p-float-label">
+              <Calendar
+                id="fromDate"
+                type="date"
+                v-model="representatives.activeTo"
+                :disabled="true"
+              />
+              <label for="fromDate"> الى</label>
+            </span>
+          </div>
 
-        <div  v-if="representatives.type?.value == '1'"
-         class="field col-12 md:col-4 lg:col-4">
-          <span class="p-float-label">
-            <Calendar id="fromDate" type="date" v-model="representatives.from" />
-            <label for="fromDate">من </label>
-          </span>
-        </div>
-        <div
-        v-if="representatives.type?.value == '1'"
-         class="field col-12 md:col-4 lg:col-4">
-        <span class="p-float-label">
-          <Calendar id="fromDate" type="date" v-model="representatives.to" />
-          <label for="fromDate"> الى</label>
-        </span>
-      </div>
+          <div class="field col-4 md:col-4 lg:col-4">
+            <span class="p-float-label">
+              <InputText
+                v-if="!hide1"
+                class="p-inputtext p-component"
+                v-model="representatives.files[0].fileType"
+                :value="displayedFirstFileName"
+                :disabled="true"
+              />
 
-            <div class="field col-4 md:col-4 lg:col-4">
-              <span class="p-float-label">
-                <InputText
-                  v-if="!hide1"
-                  class="p-inputtext p-component"
-                  v-model="representatives.files[0].fileType"
-                  :value="displayedFirstFileName"
+              <label for="secondaryPhone">تعريف شخصي</label>
+            </span>
+          </div>
 
-                  :disabled="true"
-                />
-
-
-                <label for="secondaryPhone">تعريف شخصي</label>
-              </span>
-            </div>
-
-            <div class="field col-5 md:col-5 lg:col-5">
-              <div class="grid p-fluid">
-                <!-- <Button
+          <div class="field col-5 md:col-5 lg:col-5">
+            <div class="grid p-fluid">
+              <!-- <Button
                   icon="fa-solid fa-upload"
                   class="p-button-text p-button-info"
                   @click="triggerFileInput(0)"
                 >
                   رفع ملف
                 </Button> -->
-                <Button
-                    @click="downloadFile(representatives.id, representatives.files[0].id)"
-                    icon="fa-solid fa-download"
-                    class="p-button-text p-button-info"
-                  >
-                    تحميل
-                  </Button>
-              </div>
+              <Button
+                @click="
+                  downloadFile(representatives.id, representatives.files[0].id)
+                "
+                icon="fa-solid fa-download"
+                class="p-button-text p-button-info"
+              >
+                تحميل
+              </Button>
             </div>
-            <div class="field col-4 md:col-4 lg:col-4">
-              <span class="p-float-label">
-                <InputText
-                  class="p-inputtext p-component"
-                  v-model="representatives.files[1].fileType"
-                  :value="displayedSecondFileName"
-                  :disabled="true"
-                />
+          </div>
+          <div class="field col-4 md:col-4 lg:col-4">
+            <span class="p-float-label">
+              <InputText
+                class="p-inputtext p-component"
+                v-model="representatives.files[1].fileType"
+                :value="displayedSecondFileName"
+                :disabled="true"
+              />
 
-                <label for="secondaryPhone">تخويل من الشركة</label>
-              </span>
-            </div>
+              <label for="secondaryPhone">تخويل من الشركة</label>
+            </span>
+          </div>
 
-            <div class="field col-4 md:col-3 lg:col-4">
-              <div class="grid p-fluid">
-                <!-- <Button
+          <div class="field col-4 md:col-3 lg:col-4">
+            <div class="grid p-fluid">
+              <!-- <Button
                 icon="fa-solid fa-upload"
                 class="p-button-text p-button-info"
                 @click="triggerFileInput(1)"
@@ -493,28 +514,33 @@ const displayedSecondFileName = computed(() => {
               </Button> -->
 
               <Button
-                    @click="downloadFile(representatives.id, representatives.files[1].id)"
-                    icon="fa-solid fa-download"
-                    class="p-button-text p-button-info"
-                  >
-                    تحميل
-                  </Button>
-              </div>
+                @click="
+                  downloadFile(representatives.id, representatives.files[1].id)
+                "
+                icon="fa-solid fa-download"
+                class="p-button-text p-button-info"
+              >
+                تحميل
+              </Button>
             </div>
           </div>
+        </div>
 
-          <Button @click="onSubmitForm" icon="pi pi-check" :loading="loading" label="تعديل"
-          ></Button>
-        </form>
+        <Button
+          @click="onSubmitForm"
+          icon="pi pi-check"
+          :loading="loading"
+          label="تعديل"
+        ></Button>
+      </form>
 
-    
-        <!-- <RepresentativeForm
+      <!-- <RepresentativeForm
           @form-submit="onFormSubmit"
           :representatives="representatives"
           :submit-button-text="'Edit'"
           value="تعديل"
         >
         </RepresentativeForm> -->
-      </template>
-    </Dialog>
+    </template>
+  </Dialog>
 </template>

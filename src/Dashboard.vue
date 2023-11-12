@@ -9,13 +9,12 @@ const authorized = useAuthStore();
 </script>
 
 <template>
-  <!-- <LoginPage v-if="!authorized.userData" /> -->
 
   <main>
     <div v-if="authorized.userData">
       <TopBar />
 
-      <div style="width: 100%; margin-top: 75px" class="absolute">
+      <div style="width: 100%; margin-top: 45px" class="absolute">
         <div
           style="width: 28%; height: 100%; margin-right: 1%; position: absolute"
         >
@@ -31,7 +30,7 @@ const authorized = useAuthStore();
           width: 78%;
           margin-right: 22%;
           padding: 25px;
-          padding-top: 100px;
+          padding-top: 70px;
         "
       >
         <!-- main -->

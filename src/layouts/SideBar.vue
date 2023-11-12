@@ -1,7 +1,10 @@
 <script lang="ts" setup>
 import { useAuthStore } from "@/stores/auth";
-import { ref } from "vue";
-
+import { computed, ref } from "vue";
+import Menu from "primevue/menu";
+import { useRouter } from "vue-router";
+const router = useRouter();
+const authStore  = useAuthStore()
 const items = ref([
   {
     label: "لوحة المعلومات",
@@ -9,8 +12,9 @@ const items = ref([
       {
         label: "الصفحة الرئيسية",
         icon: "fa-solid fa-house",
-        to: "/",
-      },
+        command: () => {
+          router.push("/");
+        },      },
     ],
   },
 
@@ -20,29 +24,32 @@ const items = ref([
       {
         label: "سجل العملاء",
         icon: "fa-solid fa-users",
-        to: "/customersRecord",
-        key:"2",
-        show: false
+        command: () => {
+          router.push("/customersRecord");
+        },
       },
 
       {
         label: "سجل الزيارات",
         icon: "fa-solid fa-book",
-        to: "/VisitsRecords",
+             command: () => {
+          router.push("/VisitsRecords");
+        },
       },
 
       {
         label: "سجل الاشتراكات",
         icon: "fa-solid fa-calculator",
-        to: "/subscriptionsRecord",
-      },
+        command: () => {
+          router.push("/subscriptionsRecord");
+        },      },
       {
         label: " مستخلصات مالية",
         icon: "fa-solid fa-receipt",
-        to: "/invoices",
-      },
+        command: () => {
+          router.push("/invoices");
+        },      },
     ],
-    
   },
   {
     label: "ادارة المشرفين",
@@ -50,52 +57,62 @@ const items = ref([
       {
         label: "سجل المشرفين",
         icon: "fa-solid fa-users-gear",
-        to: "/AdminsRecord",
-      },
+        command: () => {
+          router.push("/AdminsRecord");
+        },      },
       {
         label: "سجل الحركات",
         icon: "fa-solid fa-clock-rotate-left",
-        to: "/AuditsRecord",
-      },
+        command: () => {
+          router.push("/AuditsRecord");
+        },      },
     ],
   },
 
-      {
-        label: "اعدادات النظام",
-        icon: "fa-solid fa-gear",
-        to: "/SettingsView",
-      },
-
+  {
+    label: "اعدادات النظام",
+    icon: "fa-solid fa-gear",
+    to: "/SettingsView",
+  },
 ]);
 
-const hasPermission = (permissions: number[], permissionToCheck: number) => {
-  // Iterate through each individual permission bit in permissionToCheck
-  for (let i = 0; i < permissions.length; i++) {
-    const permissionBit = permissions[i];
-    // Check if the user has this specific permission bit
-    if ((permissionToCheck & permissionBit) === permissionBit) {
-      return true; // User has this permission bit
+const permissions = ref([
+  { name: "جميع الصلاحيات", value: 1 },
+  { name: "ادارة العملاء", value: 2 },
+  { name: "مسح عميل", value: 4 },
+  { name: "ادارة الخدمات", value: 8 },
+  { name: "مسح خدمه", value: 16 },
+  { name: "ادارة الاشتركات", value: 32 },
+  { name: "مسخ اشتراك", value: 64 },
+  { name: "ادارة المرافقين", value: 128 },
+  { name: "مسح مرافق", value: 256 },
+]);
+
+
+// Computed property to filter menu items based on user permissions
+const filteredItems = computed(() => {
+  return items.value.map((section) => {
+    if (section.items) {
+      section.items = section.items.filter((item) => {
+        // Check if the user has the required permission to see the menu item
+        return !('permission' in item) || hasPermission(item.permission);
+      });
     }
-  }
-  return false; // User doesn't have any of the specified permission bits
-};
+    return section;
+  });
+});
 
-const store = useAuthStore()
-console.log(store.userData)
-// hasPermission(store)
-const menu = ref();
 
-const toggle = (event: any) => {
-  menu.value.toggle(event);
-};
+// Function to check if the user has the required permission
+function hasPermission(permissionValue:any) {
+  return authStore.prem.includes(permissionValue);
+}
 </script>
 
 <template>
-  
   <Menu
-  
     ref="menu"
-    :model="items"
+    :model="filteredItems"
     :popup="false"
     class="sidebar overflow-auto fixed mt-4 fadeinright animation-duration-500"
     style="border-radius: 15px; width: 20%; height: calc(100vh - 7.6rem)"
@@ -110,7 +127,6 @@ const toggle = (event: any) => {
       icon="fa-solid fa-bars"
       text
       aria-label="Filter"
-      @click="toggle"
       aria-haspopup="true"
       aria-controls="overlay_menu"
       v-tooltip="{ value: 'الشريط الجانبي', fitContent: true }"

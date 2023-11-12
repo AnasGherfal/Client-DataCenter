@@ -9,21 +9,24 @@ import { visitApi } from "@/api/visits";
 import { formatTotalMin } from "@/tools/formatTime";
 
 import { formatTime } from "@/tools/formatTime";
-import "vue-select/dist/vue-select.css";
 
 import { VisitModel } from "../../Modules/VisitModule/VisitByIdModel";
 import moment from "moment";
+import printJS from "print-js";
 
 const store = useVistisStore();
 const props = defineProps<{ visit: VisitModel }>();
 const editable = ref(true);
-const loading = ref(true);
+const loading = ref(false);
+let signDialog = ref(false);
 const visitReasons = ref<visitReason[]>([]);
 
 type visitReason = {
   value: number;
   text: string;
 };
+
+
 // Array of identity type options
 
 onMounted(async () => {});
@@ -42,14 +45,40 @@ const formattedEndTime = computed({
     props.visit.endTime = newValue;
   },
 });
+
+const printPage = () => {
+  const componentElement = document.getElementById("printKoko");
+
+  if (componentElement) {
+    const componentHtml = componentElement.outerHTML;
+    printJS({ printable: componentHtml, type: "html" });
+  } else {
+    console.error("Component element not found!");
+  }
+};
+
+function open() {
+  signDialog.value = true;
+}
 </script>
 
 <template>
-  <div>
+  <div id="printJS-form">
     <Card>
       <template #title>
         تفاصيل الزيارة
-        <BackButton style="float: left" />
+        <Button
+          id="printButton"
+          icon="fa-solid fa-print"
+          text
+          rounded
+          type="button"
+          v-tooltip="{ value: 'طباعة', fitContent: true }"
+          onclick="printJS({ printable: 'printJS-form', type: 'html', header: 'إدارة مركز البيانات',
+    documentTitle:'مركز البيانات',headerStyle: 'font-weight:500', ignoreElements:['backButton', 'printButton'], maxWidth:'1000', targetStyles: ['*'],
+   })"
+        ></Button>
+        <BackButton id="backButton" style="float: left" />
       </template>
       <template #content>
         <div v-if="store.loading">
@@ -109,14 +138,18 @@ const formattedEndTime = computed({
           </div>
         </div>
         <div v-else>
+          <Button @click="open" label="إنهاء الزيارة"></Button>
           <div class="grid p-fluid my-5">
             <div class="field col-12 md:col-6 lg:col-4">
               <span class="">
-                <label for="startTime">تاريخ بداية الزيارة </label>
+                <label for="startTime"> تاريخ بداية الزيارة المتوقع</label>
                 <InputText
                   inputId="startTime"
-                  :value=" visit.startTime ? formatTime(visit.startTime): 'الزيارة لم تبدأ'"
-    
+                  :value="
+                    visit.expectedStartTime
+                      ? formatTime(visit.expectedStartTime)
+                      : 'الزيارة لم تبدأ'
+                  "
                   :disabled="editable"
                 />
               </span>
@@ -124,12 +157,15 @@ const formattedEndTime = computed({
 
             <div class="field col-12 md:col-6 lg:col-4">
               <span class="">
-                <label for="stopDate">تاريخ انتهاء الزيارة </label>
+                <label for="stopDate">تاريخ انتهاء الزيارة المتوقع</label>
                 <InputText
                   inputId="stopDate"
-                  :value="visit.endTime ? formatTime(visit.endTime): 'الزيارة غير منتهية'"
+                  :value="
+                    visit.expectedEndTime
+                      ? formatTime(visit.expectedEndTime)
+                      : 'الزيارة غير منتهية'
+                  "
                   :disabled="editable"
-
                 />
               </span>
             </div>
@@ -162,7 +198,9 @@ const formattedEndTime = computed({
                 <InputText
                   id="companionName"
                   :value="
-                    visit.totalTime ? formatTotalMin(visit.totalTime) : 'الزيارة غير منتهة'
+                    visit.totalTime
+                      ? formatTotalMin(visit.totalTime)
+                      : 'الزيارة غير منتهة'
                   "
                   :readonly="true"
                   :disabled="true"
@@ -272,9 +310,33 @@ const formattedEndTime = computed({
         </div>
       </template>
     </Card>
+
+    <Dialog
+      v-model:visible="signDialog"
+      :style="{ width: '450px' }"
+      header="تأكيد"
+      :modal="true"
+    >
+      <div class="confirmation-content">
+        <i
+          class="pi pi-exclamation-triangle mr-3"
+          style="font-size: 2rem; color: red"
+        />
+        <span>ادخل تاريخ البداية والنهاية لإنهاء الزيارة <b></b> ؟</span>
+      </div>
+      <template #footer>
+        <Button label="نعم" icon="pi pi-check" text :loading="loading" />
+        <Button
+          label="لا"
+          icon="pi pi-times"
+          text
+          @click="signDialog = false"
+        />
+      </template>
+    </Dialog>
   </div>
 </template>
-<style>
+<style lang="scss" scoped>
 .representative-label {
   font-weight: bold;
 }

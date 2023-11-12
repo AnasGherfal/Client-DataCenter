@@ -12,6 +12,8 @@ import Toast from "primevue/toast";
 import DeleteButton from "@/components/DeleteButton.vue";
 import LockButton from "@/components/LockButton.vue";
 import EditRepresentatives from "./EditRepresentatives.vue";
+import requestDialog from "@/components/requestDialog.vue";
+
 import moment from "moment";
 const route = useRoute();
 const prop = defineProps<{
@@ -33,6 +35,7 @@ const pageNumber = ref(1);
 const pageSize = ref(10);
 const currentPage = ref(0);
 const representativesById = ref();
+const reqDialog = ref();
 
 const emit = defineEmits(["getRepresentatives"]);
 const representatives = ref<Representatives>({
@@ -200,7 +203,6 @@ const goToPreviousPage = () => {
       @click="openModal"
       class="p-button-primary mb-4"
       style="display: flex"
-      :disabled="prop.customerStatus == 2 || prop.representatives.length >= 2"
     >
       اضافة مُخول
     </Button>
@@ -221,7 +223,7 @@ const goToPreviousPage = () => {
       </template>
     </Dialog>
   </div>
-  <div
+  <!-- <div
     v-if="prop.representatives.length >= 2"
     class="warning-message"
     style="margin-bottom: 1rem; margin-top: -1rem"
@@ -230,7 +232,7 @@ const goToPreviousPage = () => {
     <div class="warning-message-text">
       هذا العميل لديه الحد الأقصى من عدد المخوليين
     </div>
-  </div>
+  </div> -->
 
   <DataTable
     :value="prop.representatives"
@@ -341,6 +343,8 @@ const goToPreviousPage = () => {
           :status="slotProps.data.status"
           @getdata="emit('getRepresentatives')"
         />
+
+        <requestDialog v-if="slotProps.data.status == 3"/>
       </template>
     </Column>
   </DataTable>

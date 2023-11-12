@@ -336,6 +336,7 @@ const deleteSubs = (id: string) => {
                   rounded
                   v-tooltip="{ value: 'التفاصيل', fitContent: true }"
                 />
+   
               </RouterLink>
             </template>
           </Column>
