@@ -174,9 +174,9 @@ router.beforeEach(async (to, from, next) => {
     document.getElementById("InitScreenDOM")?.remove();
 
     if (res) {
-      // the user is logged in and trying to access the login page then redirect to dashboard
-      if (to.meta.guest) {
-        return next("/dashboard");
+      // the user is logged in and trying to access the login page then redirect to the home page
+      if (to.name == 'loginPage') {
+        return next("/");
       }
 
       // continue to the route
@@ -191,6 +191,11 @@ router.beforeEach(async (to, from, next) => {
     return next("/Login");
   }
 
+  // If the user is logged in and trying to access the login page, redirect to the home page
+  if (to.name == 'loginPage') {
+    return next("/");
+  }
+
   // otherwise continue to the route
   document.getElementById("InitScreenDOM")?.remove();
   next();
@@ -200,6 +205,7 @@ router.beforeEach(async (to, from, next) => {
     window.scrollTo(0, 0);
   }, 100);
 });
+
 router.beforeResolve((to, from, next) => {
   // If this isn't an initial page load.
   NProgress.start();

@@ -21,21 +21,20 @@ const customerSelected = ref(false); // Flag to track whether a customer is sele
 const customers = ref([]);
 
 const invoices = reactive({
-  description: "",
-  startDate: "",
-  endDate: "",
-  subscriptionId: null as any,
+  Notes: "",
+  IncludeVisitsFrom: "",
+  IncludeVisitsTo: "",
+  CustomerId: null as any,
 });
 
 const rules = computed(() => {
   return {
-    subscriptionId: { required: helpers.withMessage(" الحقل مطلوب", required) },
-    startDate: { required: helpers.withMessage("  الحقل مطلوب", required) },
-    endDate: {
+    IncludeVisitsFrom: { required: helpers.withMessage("  الحقل مطلوب", required) },
+    IncludeVisitsTo: {
       required: helpers.withMessage(" الحقل مطلوب", required),
       minValue: helpers.withMessage(
         "تاريخ انتهاء الزياره يجب ان يكون بعد تاريخ البدايه",
-        minValue(invoices.startDate)
+        minValue(invoices.IncludeVisitsFrom)
       ),
     },
   };
@@ -47,7 +46,7 @@ const toast = useToast();
 const startDate = ref(new Date());
 const endDate = ref(new Date());
 
-const date = new Date(moment(invoices.startDate).format("hh:mm a"));
+const date = new Date(moment(invoices.IncludeVisitsFrom).format("hh:mm a"));
 const minDate = ref(date);
 
 const updateEndDate = () => {
@@ -77,17 +76,18 @@ const submitForm = async () => {
     formData.append("CustomerId", customerselect.value.id);
     formData.append(
       "IncludeVisitsFrom",
-      moment(invoices.startDate).format("YYYY-MM-DD HH:mm:ss")
+      moment(invoices.IncludeVisitsFrom).format("YYYY-MM-DD HH:mm:ss")
     );
     formData.append(
       "IncludeVisitsTo",
-      moment(invoices.endDate).format("YYYY-MM-DD HH:mm:ss")
+      moment(invoices.IncludeVisitsTo).format("YYYY-MM-DD HH:mm:ss")
     );
-    formData.append("Notes", invoices.description);
-    formData.append(
-      "SubscriptionId",
-      invoices.subscriptionId ? invoices.subscriptionId[0].id : ""
-    );
+    formData.append("Notes", invoices.Notes);
+
+    for (const [key, value] of formData.entries()) {
+  console.log(`${key}: ${value}`);
+}
+ 
 
     invoiceApi
       .create(formData)
@@ -115,10 +115,10 @@ const submitForm = async () => {
 
 const resetForm = () => {
   customerselect.value = "";
-  invoices.description = "";
-  invoices.startDate = "";
-  invoices.endDate = "";
-  invoices.subscriptionId = null;
+  invoices.Notes = "";
+  invoices.IncludeVisitsFrom = "";
+  invoices.IncludeVisitsTo = "";
+  invoices.CustomerId = null;
 };
 
 async function getCustomers() {
@@ -198,17 +198,17 @@ const search = (event: any) => {
               <span class="p-float-label">
                 <Calendar
                   inputId="startDate"
-                  v-model="invoices.startDate"
+                  v-model="invoices.IncludeVisitsFrom"
                   dateFormat="yy/mm/dd"
                   selectionMode="single"
                   :showButtonBar="true"
                   :manualInput="false"
                   @change="updateEndDate"
                 />
-                <label for="startDate">تاريخ بداية الاشتراك</label>
+                <label for="startDate">تاريخ بداية </label>
                 <div style="height: 2px">
                   <span
-                    v-for="error in v$.startDate.$errors"
+                    v-for="error in v$.IncludeVisitsFrom.$errors"
                     :key="error.$uid"
                     style="color: red; font-weight: bold; font-size: small"
                   >
@@ -222,17 +222,17 @@ const search = (event: any) => {
               <span class="p-float-label">
                 <Calendar
                   inputId="endDate"
-                  v-model="invoices.endDate"
+                  v-model="invoices.IncludeVisitsTo"
                   dateFormat="yy/mm/dd"
                   selectionMode="single"
                   :minDate="startDate"
                   :showButtonBar="true"
                   :manualInput="false"
                 />
-                <label for="endtDate">تاريخ انتهاء الاشتراك</label>
+                <label for="endtDate">تاريخ انتهاء </label>
                 <div style="height: 2px">
                   <span
-                    v-for="error in v$.endDate.$errors"
+                    v-for="error in v$.IncludeVisitsTo.$errors"
                     :key="error.$uid"
                     style="color: red; font-weight: bold; font-size: small"
                   >
@@ -241,38 +241,17 @@ const search = (event: any) => {
                 </div>
               </span>
             </div>
-            <div class="field col-12 md:col-6 lg:col-4">
-              <span class="p-float-label">
-                <MultiSelect
-                  id="subscriptionType"
-                  v-model="invoices.subscriptionId"
-                  :options="customerSubscriptions"
-                  optionLabel="serviceName"
-                  placeholder="اختر الاشتراك"
-                  emptyMessage="هاذا العميل ليس لديه اشتراكات"
-                  :selectionLimit="1"
-                />
-                <label for="subscriptionType">اشتراكات</label>
-                <div style="height: 2px">
-                  <span
-                    v-for="error in v$.subscriptionId.$errors"
-                    :key="error.$uid"
-                    style="color: red; font-weight: bold; font-size: small"
-                  >
-                    {{ error.$message }}</span
-                  >
-                </div>
-              </span>
-            </div>
+      
 
             <div class="field col-12 md:col-6 lg:col-4">
               <span class="p-float-label">
-                <Textarea v-model="invoices.description" rows="5" cols="77" />
+                <Textarea v-model="invoices.Notes" rows="5" cols="77" />
                 <label for="notes"> التفاصيل</label>
               </span>
             </div>
           </div>
           <Button
+          @click="submitForm"
             class="p-button-primry"
             icon="fa-solid fa-plus"
             label="إضافة"

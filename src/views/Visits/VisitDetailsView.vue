@@ -53,7 +53,6 @@ onMounted(async () => {
     </div>
   </div>
   <div v-if="!visit">
-    <h1>لا يوجد زيارة بهذا الرقم</h1>
   </div>
   <VisitDetails v-else :visit="visit"></VisitDetails>
 </template>

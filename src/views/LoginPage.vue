@@ -27,12 +27,18 @@ const submitForm = async () => {
         localStorage.setItem("token", token);
 
         router.push({ name: "home" });
+        toast.add({
+          severity: "error",
+          summary: "رسالة نجاح",
+          detail: response.data.msg,
+          life: 3000,
+        });
       })
       .catch((error) => {
         toast.add({
           severity: "error",
           summary: "رسالة خطأ",
-          detail: "Validation failed",
+          detail: error.response.data.msg,
           life: 3000,
         });
       })

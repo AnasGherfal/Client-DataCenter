@@ -22,7 +22,6 @@ const state = reactive({
 const errorMessage = ref()
 const selectedPermissions = ref([]);
 const permissions = ref([
-  { name: "من غير صلاحيه", value: 0 },
   { name: "جميع الصلاحيات", value: 1 },
   { name: "ادارة العملاء", value: 2 },
   { name: "مسح عميل", value: 4 },
@@ -147,6 +146,8 @@ const resetForm = () => {
                     >{{ error.$message }}</error
                   >
                 </div>
+                <label for="emil"> اسم الموظف</label>
+
               </span>
             </div>
 

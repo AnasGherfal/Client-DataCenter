@@ -8,11 +8,7 @@ export const authApi = {
     const response = await httpClient.post(`/Login`, credentials);
     return response;
   },
-  resetPassword: async function (credentials: {
-    oldPassword: string;
-    newPassword: string;
-    confirmPassword: string;
-  }) {
+  resetPassword: async function (credentials: any) {
     const response = await httpClient.post(
       `/Auth/Change-Password`,
       credentials

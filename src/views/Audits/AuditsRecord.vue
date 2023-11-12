@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { admin } from "../../api/admin";
 import AddButton from "../../components/AddButton.vue";
-import { onMounted, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 import { audit } from "@/api/audit";
 import moment from "moment";
+import { FilterMatchMode } from "primevue/api";
 
 const data = ref();
 
@@ -14,6 +15,13 @@ const pageNumber = ref(1);
 const pageSize = ref(10);
 const currentPage = ref(0);
 
+interface Filters {
+  [key: string]: { value: string; matchMode: string };
+}
+const filters: Filters = reactive({
+  global: { value: "", matchMode: FilterMatchMode.CONTAINS },
+  status: { value: "", matchMode: FilterMatchMode.EQUALS },
+});
 function convertToDate(dateString: string): string {
   const date = moment(dateString).format("YYYY/MM/DD | hh:mm A"); // Convert to string format
   return date;
@@ -38,11 +46,12 @@ function getAudits() {
 }
 
 const goToNextPage = () => {
-  if (currentPage < totalPages) {
+
+  if (currentPage.value < totalPages.value) {
     currentPage.value += 1;
     pageNumber.value += 1; // Increment the pageNumber value
     loading.value = true;
-    // getAdmins();
+    getAudits();
   }
 };
 
@@ -52,7 +61,7 @@ const goToPreviousPage = () => {
     pageNumber.value -= 1; // Decrement the pageNumber value
     loading.value = true;
 
-    // getAdmins();
+    getAudits();
   }
 };
 </script>
@@ -82,33 +91,39 @@ const goToPreviousPage = () => {
           <Skeleton width="100%" height="2rem"></Skeleton>
         </div>
       </div>
-      <DataTable v-else
-                 ref="dt"
-                 :value="data"
-                 dataKey="id"
-                 :paginator="true"
-                 :rows="5"
-                 paginatorTemplate=""
-                 :rowsPerPageOptions="[5, 10, 25]"
-                 currentPageReportTemplate="عرض {first} الى {last} من {totalRecords} عميل"
-                 responsiveLayout="scroll"
-                 :pageLinkSize="totalPages"
-                 :currentPage="currentPage - 1">
+      <DataTable     
+              v-else
+            ref="dt"
+            :value="data"
+            dataKey="id"
+            :paginator="true"
+            :rows="10"
+         
+            :rowsPerPageOptions="[5, 10, 25]"
+            currentPageReportTemplate="  عرض {first} الى {last} من {totalRecords} عميل"
+            :pageLinkSize="totalPages"
+            :currentPage="currentPage - 1"
+            paginatorTemplate="  "
+          >
           <template #paginatorstart>
-              <Button icon="pi pi-angle-right"
-                      class="p-button-rounded p-button-primary p-paginator-element"
-                      :disabled="currentPage === 1"
-                      @click="goToPreviousPage" />
+              <Button
+                icon="pi pi-angle-right"
+                class="p-button-rounded p-button-primary p-paginator-element"
+                :disabled="currentPage === 1"
+                @click="goToPreviousPage"
+              />
               <span class="p-paginator-pages">
-                  الصفحة {{ currentPage }} من {{ totalPages }}
+                الصفحة {{ currentPage }} من {{ totalPages }}
               </span>
-          </template>
-          <template #paginatorend>
-              <Button icon="pi pi-angle-left"
-                      class="p-button-rounded p-button-primary p-paginator-element"
-                      :disabled="currentPage === totalPages"
-                      @click="goToNextPage" />
-          </template>
+            </template>
+            <template #paginatorend>
+              <Button
+                icon="pi pi-angle-left"
+                class="p-button-rounded p-button-primary p-paginator-element"
+                :disabled="currentPage === totalPages"
+                @click="goToNextPage"
+              />
+            </template>
           <template #empty>
               <div class="no-data-message"
                    style="

@@ -127,11 +127,13 @@ const submitForm = async () => {
 </script>
 
 <template>
-  <div>
+      <RouterView></RouterView>
+
+      <div v-if="$route.path === '/invoices'">
     <Card>
       <template #title>
         سجل الفواتير
-        <AddButton name-button="إنشاء فاتورة" rout-name="/addInvoice" />
+        <AddButton name-button="إنشاء فاتورة" rout-name="/invoices/addInvoice" />
       </template>
       <template #content>
         <!-- <div

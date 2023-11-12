@@ -3,12 +3,11 @@ import { useHttpClient } from "@/network/httpClient";
 const httpClient = useHttpClient();
 
 export const audit = {
-  get: async function (pageNumber: number, pageSize: number, recordId: number) {
+  get: async function (pageNumber: number, pageSize: number) {
     const response = await httpClient.get(`/Audits`, {
       params: {
         PageNumber: pageNumber,
         PageSize: pageSize,
-        RecordId: recordId,
       },
     });
     return response;
