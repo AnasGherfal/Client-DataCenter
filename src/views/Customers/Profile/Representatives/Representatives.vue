@@ -12,7 +12,10 @@ import Toast from "primevue/toast";
 import DeleteButton from "@/components/DeleteButton.vue";
 import LockButton from "@/components/LockButton.vue";
 import EditRepresentatives from "./EditRepresentatives.vue";
+import requestDialog from "@/components/requestDialog.vue";
 import moment from "moment";
+import { useSharedStore } from "@/stores/shared";
+
 const route = useRoute();
 const prop = defineProps<{
   customerStatus: number;
@@ -33,8 +36,14 @@ const pageNumber = ref(1);
 const pageSize = ref(10);
 const currentPage = ref(0);
 const representativesById = ref();
+const reqDialog = ref();
+const store = useSharedStore();
 
 const emit = defineEmits(["getRepresentatives"]);
+interface RepresentativeType {
+  label: string;
+  value: string;
+}
 const representatives = ref<Representatives>({
   id: "",
   firstName: "",
@@ -46,10 +55,11 @@ const representatives = ref<Representatives>({
   customerId: toNumber(userId.value),
   RepresentationDocument: null,
   IdentityDocuments: null,
-  type: null,
+  type: { value: '0', label: '' },
   from: "",
   to: "",
 });
+
 
 const toast = useToast();
 
@@ -62,14 +72,18 @@ const onFormSubmit = async (representative: Representatives) => {
   formData.append("identityNo", representative.identityNo);
   formData.append("email", representative.email);
   formData.append("phoneNo", representative.phoneNo);
-  const typeAsInteger = parseInt(representative.type.value, 10);
+  const typeAsInteger = (representative.type && typeof representative.type === 'object') 
+  ? parseInt(representative.type.value, 10) 
+  : NaN;
 
-  if (!isNaN(typeAsInteger)) {
-    // Only append if the conversion was successful
-    formData.append("type", typeAsInteger.toString());
-  }
+if (!isNaN(typeAsInteger)) {
+  formData.append("type", typeAsInteger.toString());
+}
+
+if (representative.type && typeof representative.type === 'object' && representative.type.value === '1') {
   formData.append("from", moment(representative.from).format("YYYY/MM/DD"));
   formData.append("to", moment(representative.to).format("YYYY/MM/DD"));
+}
 
   formData.append(
     "identityType",
@@ -84,7 +98,6 @@ const onFormSubmit = async (representative: Representatives) => {
   representativesApi
     .create(formData)
     .then((response) => {
-      console.log(response);
       emit("getRepresentatives");
       toast.add({
         severity: "success",
@@ -149,30 +162,8 @@ const displayModal = ref(false);
 const openModal = () => {
   displayModal.value = true;
 };
-const statuses = ref([
-  { value: 1, label: "نشط" },
-  { value: 2, label: "مقيد" },
-]);
 
-const getSeverity = (status: any) => {
-  switch (trans(status)) {
-    case "نشط":
-      return "success";
 
-    case "مقيد":
-      return "danger";
-  }
-};
-
-const trans = (value: string) => {
-  if (value == "1") return "نشط";
-  else if (value == "2") return "مقيد";
-};
-
-const getSelectedStatusLabel = (value: any) => {
-  const status = statuses.value.find((s) => s.value === value);
-  return status ? status.label : "";
-};
 
 const goToNextPage = () => {
   if (currentPage < totalPages) {
@@ -200,7 +191,6 @@ const goToPreviousPage = () => {
       @click="openModal"
       class="p-button-primary mb-4"
       style="display: flex"
-      :disabled="prop.customerStatus == 2 || prop.representatives.length >= 2"
     >
       اضافة مُخول
     </Button>
@@ -221,7 +211,7 @@ const goToPreviousPage = () => {
       </template>
     </Dialog>
   </div>
-  <div
+  <!-- <div
     v-if="prop.representatives.length >= 2"
     class="warning-message"
     style="margin-bottom: 1rem; margin-top: -1rem"
@@ -230,7 +220,7 @@ const goToPreviousPage = () => {
     <div class="warning-message-text">
       هذا العميل لديه الحد الأقصى من عدد المخوليين
     </div>
-  </div>
+  </div> -->
 
   <DataTable
     :value="prop.representatives"
@@ -240,25 +230,30 @@ const goToPreviousPage = () => {
     :rowsPerPageOptions="[5, 10, 25]"
     paginatorTemplate="  "
   >
-    <!-- <template #paginatorstart>
-              <Button
-                icon="pi pi-angle-right"
-                class="p-button-rounded p-button-primary p-paginator-element"
-                :disabled="currentPage === 1"
-                @click="goToPreviousPage"
-              />
-              <span class="p-paginator-pages">
-                الصفحة {{ currentPage }} من {{ totalPages }}
-              </span>
-            </template>
-            <template #paginatorend>
-              <Button
-                icon="pi pi-angle-left"
-                class="p-button-rounded p-button-primary p-paginator-element"
-                :disabled="currentPage === totalPages"
-                @click="goToNextPage"
-              />
-            </template> -->
+  <template #paginatorstart >
+          
+          <span class="p-paginator-pages" style=" display: flex; justify-content: center; align-items: center; margin-top: 1rem;">
+            <Button
+
+            style="margin-left: 1rem; height: 2rem; width: 2rem;"
+              icon="pi pi-angle-right"
+              class="p-button-rounded p-button-primary p-paginator-element"
+              :disabled="currentPage === 1"
+              @click="goToPreviousPage"
+            />
+              الصفحة {{ currentPage }} من {{ totalPages }}
+
+            <Button
+            style="margin-right: 1rem; height: 2rem; width: 2rem;"
+
+              icon="pi pi-angle-left"
+              class="p-button-rounded p-button-primary p-paginator-element"
+              :disabled="currentPage ===totalPages"
+              @click="goToNextPage"
+            />
+            </span>
+
+        </template>
 
     <template #empty>
       <div
@@ -311,8 +306,8 @@ const goToPreviousPage = () => {
     >
       <template #body="{ data }">
         <Tag
-          :value="getSelectedStatusLabel(data.status)"
-          :severity="getSeverity(data.status)"
+          :value="store.getSelectedStatusLabel(data.status)"
+          :severity="store.getSeverity(data.status)"
         />
       </template>
     </Column>
@@ -341,6 +336,13 @@ const goToPreviousPage = () => {
           :status="slotProps.data.status"
           @getdata="emit('getRepresentatives')"
         />
+
+        <requestDialog
+        :id="slotProps.data.id"
+        :status="slotProps.data.status"
+        @getdata="emit('getRepresentatives')"
+
+         v-if="slotProps.data.status == 3"/>
       </template>
     </Column>
   </DataTable>

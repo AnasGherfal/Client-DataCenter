@@ -22,16 +22,17 @@ const state = reactive({
 const errorMessage = ref()
 const selectedPermissions = ref([]);
 const permissions = ref([
-  { name: "من غير صلاحيه", value: 0 },
-  { name: "جميع الصلاحيات", value: 1 },
-  { name: "ادارة العملاء", value: 2 },
-  { name: "مسح عميل", value: 4 },
-  { name: "ادارة الخدمات", value: 8 },
-  { name: "مسح خدمه", value: 16 },
-  { name: "ادارة الاشتركات", value: 32 },
-  { name: "مسخ اشتراك", value: 64 },
-  { name: "ادارة المرافقين", value: 128 },
-  { name: "مسح مرافق", value: 256 },
+  { name: "Customer Management", id: 1 },
+  { name: "Visits Management", id: 2 },
+  { name: "Service Management", id: 4 },
+  { name: "Invoice Management", id: 8 },
+  { name: "Subscription Management", id: 16 },
+  { name: "Companion Management", id: 32 },
+  { name: "Representative Management", id: 64 },
+  { name: "Time Shift Management", id: 128 },
+  { name: "Analytics Management", id: 256 },
+  { name: "Super Admin", id: 511 },
+
 ]);
 
 const rules = computed(() => {
@@ -147,6 +148,8 @@ const resetForm = () => {
                     >{{ error.$message }}</error
                   >
                 </div>
+                <label for="emil"> اسم الموظف</label>
+
               </span>
             </div>
 
@@ -195,7 +198,7 @@ const resetForm = () => {
                   <MultiSelect
                     v-model="selectedPermissions"
                     display="chip"
-                    optionValue="value"
+                    optionValue="id"
                     :options="permissions"
                     optionLabel="name"
                     :maxSelectedLabels="3"

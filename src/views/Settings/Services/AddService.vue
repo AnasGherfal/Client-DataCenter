@@ -54,7 +54,6 @@ const resetForm = () => {
 // submit form
 
 const onFormSubmit = (state: Service) => {
-    console.log(state)
   serviceApi
     .create(state)
     .then((response) => {

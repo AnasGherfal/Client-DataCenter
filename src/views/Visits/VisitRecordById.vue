@@ -46,16 +46,16 @@ const getSelectedStatusLabel = (value: any) => {
   const status = statuses.value.find((s) => s.value === value);
   return status ? status.label : "";
 };
-onMounted(async () => {
-  try {
-    const response = await visitApi.get();
-    store.visits = response.data.content;
-  } catch (error) {
-    console.log(error);
-  } finally {
-    store.loading = false;
-  }
-});
+// onMounted(async () => {
+//   try {
+//     const response = await visitApi.get();
+//     store.visits = response.data.content;
+//   } catch (error) {
+//     console.log(error);
+//   } finally {
+//     store.loading = false;
+//   }
+// });
 
 // Watch for changes in filters and trigger server-side search
 watch(filters, (newFilters) => {

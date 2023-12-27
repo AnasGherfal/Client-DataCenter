@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-export const useStatusStore = defineStore("Status", () => {
+export const useSharedStore = defineStore("Shared", () => {
   const statuses = ref([
     { value: 1, label: "نشط" },
     { value: 2, label: "مقيد" },
@@ -39,8 +39,21 @@ export const useStatusStore = defineStore("Status", () => {
     return status ? status.label : "";
   };
 
+  const hasPermission = (permissions: number[], permissionToCheck: number) => {
+    // Iterate through each individual permission bit in permissionToCheck
+    for (let i = 0; i < permissions.length; i++) {
+      const permissionBit = permissions[i];
+      // Check if the user has this specific permission bit
+      if ((permissionToCheck & permissionBit) === permissionBit) {
+        return true; // User has this permission bit
+      }
+    }
+    return false; // User doesn't have any of the specified permission bits
+  };
+
   return {
     getSeverity,
     getSelectedStatusLabel,
+    hasPermission,
   };
 });

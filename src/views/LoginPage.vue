@@ -27,12 +27,18 @@ const submitForm = async () => {
         localStorage.setItem("token", token);
 
         router.push({ name: "home" });
+        toast.add({
+          severity: "success",
+          summary: "رسالة نجاح",
+          detail: response.data.msg,
+          life: 3000,
+        });
       })
       .catch((error) => {
         toast.add({
           severity: "error",
           summary: "رسالة خطأ",
-          detail: "Validation failed",
+          detail: error.response.data.msg,
           life: 3000,
         });
       })
@@ -112,7 +118,6 @@ const v$ = useVuelidate(rules, credentials);
       class="p-button-primry mt-3"
       style="width: 100%"
       label="تسجيل دخول"
-      type="submit"
       :loading="loading"
     />
   </form>

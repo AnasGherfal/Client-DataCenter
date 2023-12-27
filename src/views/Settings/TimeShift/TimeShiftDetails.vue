@@ -4,7 +4,6 @@ import { useToast } from "primevue/usetoast";
 import { useVistisStore } from "@/stores/visits";
 import BackButton from "@/components/BackButton.vue";
 
-import "vue-select/dist/vue-select.css";
 
 import { timeShiftsApi } from "@/api/timeShifts";
 import { formatTimeSpan } from "@/tools/formatTime";
@@ -40,7 +39,6 @@ const onFormSubmit = async () => {
   if (originalTimeShift.endTime !== timeShift.endTime) {
     requestBody.endTime = formatTimeSpan(timeShift.endTime);
   }
-  console.log(timeShift);
   timeShiftsApi
     .edit(timeShift.id, requestBody)
     .then((response) => {
@@ -52,11 +50,11 @@ const onFormSubmit = async () => {
       });
       editable.value = true;
     })
-    .catch(() => {
+    .catch((error) => {
       toast.add({
         severity: "error",
         summary: "خطأ",
-        detail: "",
+        detail: error.response.data.msg,
         life: 3000,
       });
     });

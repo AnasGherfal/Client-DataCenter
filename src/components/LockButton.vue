@@ -8,7 +8,7 @@ import { customersApi } from "@/api/customers";
 import { useHttpClient } from "@/network/httpClient";
 
 const prop = defineProps<{
-  id: number;
+  id: string;
   name: string;
   status: number;
   typeLock: string;
@@ -16,13 +16,11 @@ const prop = defineProps<{
 
 const httpClient = useHttpClient();
 
-const store = useCustomersStore();
 
 const loading = ref(false);
 
 const dialog = ref(false);
 
-const emit = defineEmits(["getdata"]);
 
 const toast = useToast();
 
@@ -49,7 +47,6 @@ function lockButton() {
         life: 3000,
       });
       status.value = 2;
-      emit("getdata");
       dialog.value = false;
       loading.value = false;
     });
@@ -68,13 +65,12 @@ function unlockButton() {
         life: 3000,
       });
       status.value = 1;
-      emit("getdata");
     })
     .catch((e) => {
       toast.add({
         severity: "error",
         summary: "رسالة خطأ",
-        detail: e.data,
+        detail: e.data.msg,
         life: 3000,
       });
     })

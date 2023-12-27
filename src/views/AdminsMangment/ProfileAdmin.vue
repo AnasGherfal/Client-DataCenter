@@ -36,6 +36,20 @@ const adminData: ResponseAdminModel = reactive({
   createdOn: "",
 });
 
+const permissions = ref([
+  { name: "Customer Management", id: 1 },
+  { name: "Visits Management", id: 2 },
+  { name: "Service Management", id: 4 },
+  { name: "Invoice Management", id: 8 },
+  { name: "Subscription Management", id: 16 },
+  { name: "Companion Management", id: 32 },
+  { name: "Representative Management", id: 64 },
+  { name: "Time Shift Management", id: 128 },
+  { name: "Analytics Management", id: 256 },
+  { name: "Super Admin", id: 511 },
+
+]);
+
 function getAdminById() {
   admin
     .getById(userId.value)
@@ -80,7 +94,7 @@ const hasPermission = (permissions: number[], permissionToCheck: number) => {
 watch(isEditModeEnabled, () => {
   if (isEditModeEnabled.value) {
     selectedPermissions.value = [];
-    permissionsList.value.forEach((perm) => {
+    permissions.value.forEach((perm) => {
       if ((adminData.permissions & perm.id) === perm.id) {
         selectedPermissions.value.push(perm);
       }
@@ -220,8 +234,7 @@ const onEditPermissions = () => {
       <MultiSelect
         v-model="selectedPermissions"
         display="chip"
-        optionValue="id"
-        :options="permissionsList"
+        :options="permissions"
         optionLabel="name"
         placeholder="اختر الصلاحيات"
       />

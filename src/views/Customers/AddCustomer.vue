@@ -11,6 +11,7 @@ import InputText from "primevue/inputtext";
 import type { Customer } from "../../Modules/CustomerModule/CustomersModule";
 import { isLibyanPhoneNumber, validateText } from "@/tools/validations";
 import { useCustomersStore } from "@/stores/customers";
+import { onBeforeRouteLeave } from "vue-router";
 
 const store = useCustomersStore();
 
@@ -28,6 +29,11 @@ const customer = reactive({
   address: "",
   CompanyDocuments: null as File | null,
   IdentityDocuments: null as File | null,
+});
+
+onBeforeRouteLeave((to, from, next) => {
+  // Trigger navigation back before leaving the route
+  next();
 });
 
 const rules = computed(() => {
@@ -102,6 +108,7 @@ const onFormSubmit = async () => {
       });
 
       setTimeout(() => {
+        
         router.go(-1);
       }, 1);
     })

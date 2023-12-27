@@ -1,11 +1,20 @@
 <script setup lang="ts">
+import router from "@/router";
 import Button from "primevue/button";
 import { ref } from "vue";
-
+import {useSharedStore} from "@/stores/shared"
+import { useAuthStore } from "@/stores/auth";
 const menu = ref();
+const sharedStore = useSharedStore();
+const authStore = useAuthStore();
+
 const items = ref([
   { separator: true },
-  { label: "حساب تعريفي", icon: "fa-solid fa-user", to: "/adminProfile" },
+  { label: "حساب تعريفي", icon: "fa-solid fa-user",
+       command: () => {
+          router.push("/adminProfile");
+        },       },
+
   { separator: true },
 ]);
 
@@ -37,6 +46,7 @@ const toggleThemeMode = () => {
 
     <RouterLink to="/SettingsView" style="text-decoration: none">
       <Button
+      v-if="sharedStore.hasPermission([4],authStore.prem)"
         style="height: 40px; width: 40px; --fa-animation-iteration-count: 1"
         icon="fa-solid fa-gear fa-spin fa-spin-hover"
         class="m-1 p-button-text transition-colors transition-duration-500"

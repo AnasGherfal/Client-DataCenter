@@ -110,7 +110,6 @@ const submitForm = async () => {
     }
   } catch (error: any) {
     console.log(error);
-    console.log("error in form-submit");
 
     toast.add({
       severity: "error",

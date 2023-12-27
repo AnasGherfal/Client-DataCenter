@@ -15,7 +15,6 @@ export const useAdminStore = defineStore("useAdminStore", () => {
     admin
       .get(pageNumber.value, pageSize.value)
       .then(function (response) {
-        console.log(response);
         userData.value = response.data.content;
         totalPages.value = response.data.totalPages;
         currentPage.value = response.data.currentPage;

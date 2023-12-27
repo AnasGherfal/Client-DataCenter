@@ -6,6 +6,10 @@ import { computed, ref, getCurrentInstance } from "vue";
 import { isLibyanPhoneNumber, validateText } from "@/tools/validations";
 import { useToast } from "primevue/usetoast";
 
+interface RepresentativeType {
+  label: string;
+  value: string;
+}
 const props = defineProps({
   representatives: {
     type: Object as () => Representatives,
@@ -23,6 +27,7 @@ const firstFileError = ref<string | null>(null);
 const secondFileError = ref<string | null>(null);
 
 const representatives = ref(props.representatives);
+
 
 async function onFileUpload(event: any, index: number) {
   const file = event.target.files[0];
@@ -150,6 +155,8 @@ const types = ref([
   { label: "من-الى", value: "1" },
   { label: "طوال فترة العقد", value: "2" },
 ]);
+
+
 </script>
 <template>
   <form @submit.prevent="onSubmitForm">
@@ -274,23 +281,26 @@ const types = ref([
           <label for="periodOption">مدة الصلاحية</label>
         </span>
       </div>
-      <!-- Conditionally render the date range input when "From To" is selected -->
 
-        <div  v-if="representatives.type?.value == '1'"
-         class="field col-12 md:col-4 lg:col-4">
+      <!-- Conditionally render the date range input when "From To" is selected -->
+      <span style="display: flex;" v-for=" type in representatives.type" >
+      <div 
+       v-if="type === '1'" class="field col-12 md:col-4 lg:col-4">
+  
           <span class="p-float-label">
             <Calendar id="fromDate" type="date" v-model="representatives.from" />
             <label for="fromDate">من </label>
           </span>
         </div>
-        <div
-        v-if="representatives.type?.value == '1'"
+        <div v-if="type =='1'"
          class="field col-12 md:col-4 lg:col-4">
+
         <span class="p-float-label">
           <Calendar id="fromDate" type="date" v-model="representatives.to" />
           <label for="fromDate"> الى</label>
         </span>
       </div>
+    </span>
       <!-- First File Input and DocType MultiSelect -->
       <div class="field col-12 md:col-4 lg:col-4">
         <!-- <span class="file-input-label-text ">تعريف شخصي</span> -->
@@ -351,7 +361,7 @@ const types = ref([
           />
         </label>
         <div
-          v-if="firstFileError"
+          v-if="secondFileError"
           style="color: red; font-weight: bold; font-size: small"
         >
           {{ secondFileError }}

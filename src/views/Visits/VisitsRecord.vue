@@ -7,7 +7,7 @@ import { visitApi } from "@/api/visits";
 import { formatTotalMin } from "@/tools/formatTime";
 import moment from "moment";
 import { useToast } from "primevue/usetoast";
-import DeleteAdmin from "../../components/DeleteButton.vue";
+import Delete from "../../components/DeleteButton.vue";
 import { customersApi } from "@/api/customers";
 import { subscriptionApi } from "@/api/subscriptions";
 import VisitStartPause from "./VisitStartPause.vue";
@@ -43,8 +43,10 @@ watch(subscriptionSelect, async (newValue) => {
 
 async function getVisits(customerId: string, subscriptionId: string) {
   try {
-    const response = await visitApi.get(customerId, subscriptionId);
+    const response = await visitApi.get(pageNumber.value, pageSize.value, customerId, subscriptionId);
     visits.value = response.data.content;
+    totalPages.value = response.data.totalPages;
+      currentPage.value = response.data.currentPage;
   } catch (error) {
     console.log(error);
   } finally {
@@ -68,26 +70,26 @@ const search = (event: any) => {
 
 // Watch for changes in filters and trigger server-side search
 watch(filters, (newFilters) => {
-  store.currentPage = 1; // Reset currentPage to the first page
-  store.pageNumber = 1; // Reset pageNumber to 1
-  store.getVisits();
+  currentPage.value = 1; // Reset currentPage to the first page
+  pageNumber.value= 1; // Reset pageNumber to 1
+  getVisits(customerId, subscriptionId);
 });
 const goToNextPage = () => {
-  if (store.currentPage < store.totalPages) {
-    store.currentPage += 1;
-    store.pageNumber += 1; // Increment the pageNumber value
-    store.loading = true;
-    store.getVisits();
+  if (currentPage.value < totalPages.value) {
+    currentPage.value += 1;
+    pageNumber.value += 1; // Increment the pageNumber value
+    loading.value = true;
+    getVisits(customerId, subscriptionId);
   }
 };
 
 const goToPreviousPage = () => {
-  if (store.currentPage > 1) {
-    store.currentPage -= 1;
-    store.pageNumber -= 1; // Decrement the pageNumber value
-    store.loading = true;
+  if (currentPage.value > 1) {
+    currentPage.value -= 1;
+    pageNumber.value -= 1; // Decrement the pageNumber value
+  loading.value = true;
 
-    store.getVisits();
+    getVisits(customerId, subscriptionId);
   }
 };
 
@@ -100,7 +102,7 @@ async function deleteVisit(id: string) {
       detail: `${response.data.msg}`,
       life: 3000,
     });
-    store.getVisits();
+    getVisits(customerId, subscriptionId);
   } catch (error: any) {
     toast.add({
       severity: "error",
@@ -195,7 +197,7 @@ const getSeverity = (status: any) => {
       </template>
       <template #content>
         <div
-          v-if="store.loading"
+          v-if="loading"
           class="border-round border-1 surface-border p-4 surface-card"
         >
           <div class="grid p-fluid">
@@ -213,36 +215,41 @@ const getSeverity = (status: any) => {
         </div>
         <DataTable
           v-else
-          :value="store.visits"
+          :value="visits"
           dataKey="id"
           ref="dt"
           :globalFilterFields="['customerName', 'visitReason']"
           :paginator="true"
           :rows="10"
           v-model:filters="filters"
-          :pageLinkSize="store.totalPages"
-          :currentPage="store.currentPage - 1"
+          :pageLinkSize="totalPages"
+          :currentPage="currentPage - 1"
           paginatorTemplate="  "
         >
-          <template #paginatorstart>
+        <template #paginatorstart >
+          
+          <span class="p-paginator-pages" style=" display: flex; justify-content: center; align-items: center; margin-top: 1rem;">
             <Button
+
+            style="margin-left: 1rem; height: 2rem; width: 2rem;"
               icon="pi pi-angle-right"
               class="p-button-rounded p-button-primary p-paginator-element"
-              :disabled="store.currentPage === 1"
+              :disabled="currentPage === 1"
               @click="goToPreviousPage"
             />
-            <span class="p-paginator-pages">
-              الصفحة {{ store.currentPage }} من {{ store.totalPages }}
-            </span>
-          </template>
-          <template #paginatorend>
+              الصفحة {{ currentPage }} من {{ totalPages }}
+
             <Button
+            style="margin-right: 1rem; height: 2rem; width: 2rem;"
+
               icon="pi pi-angle-left"
               class="p-button-rounded p-button-primary p-paginator-element"
-              :disabled="store.currentPage === store.totalPages"
+              :disabled="currentPage === totalPages"
               @click="goToNextPage"
             />
-          </template>
+            </span>
+
+        </template>
           <template #header>
             <div class="grid p-fluid mt-1">
               <div class="field col-12 md:col-6 lg:col-4">
@@ -357,7 +364,6 @@ const getSeverity = (status: any) => {
                 :severity="getSeverity(data.visitStatus)"
               />
             </template>
-            <template #filter="{ filterModel, filterCallback }"> </template>
           </Column>
           <Column
             field="expectedStartTime"
@@ -384,13 +390,13 @@ const getSeverity = (status: any) => {
 
           <Column style="min-width: 11rem; text-align-last:start;">
             <template #body="slotProps">
-              <DeleteAdmin
+              <Delete
                 :name="slotProps.data.customerName"
                 :id="slotProps.data.id"
                 @submit="() => deleteVisit(slotProps.data.id)"
                 type="User"
               >
-              </DeleteAdmin>
+              </Delete>
               <RouterLink
                 :to="'/visitsRecords/visitDetails/' + slotProps.data.id"
                 style="text-decoration: none"
@@ -403,14 +409,7 @@ const getSeverity = (status: any) => {
                   v-tooltip="{ value: 'التفاصيل', fitContent: true }"
                 />
               </RouterLink>
-              <span v-if="slotProps.data.visitStatus != 'Completed'">
-                <VisitStartPause
-                  :id="slotProps.data.id"
-                  :startTime="slotProps.data.startTime"
-                  :visitStatus="slotProps.data.visitStatus"
-                  @visits="getVisits(customerId, subscriptionId)"
-                />
-              </span>
+
             </template>
           </Column>
           <Toast position="bottom-left" />

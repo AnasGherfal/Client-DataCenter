@@ -7,7 +7,6 @@ import { useToast } from "primevue/usetoast";
 import { computed, reactive, ref, onMounted } from "vue";
 import type { ResponseAdminModel } from "../../Modules/AdminModule/AdminModuleResponse";
 import BackButton from "../../components/BackButton.vue";
-import ChangePasswordUser from "../../components/User/ChangePasswordUser.vue";
 
 // const store = useSubscriptionsStore();
 const props = defineProps<{

@@ -82,7 +82,6 @@ const submitFormCom = async () => {
   if (!props.disableValidation) {
     // Only validate if disableValidation is false
     result = await v$.value.$validate();
-    console.log(props.disableValidation, result);
   }
 
   if (result) {

@@ -53,12 +53,8 @@ const visit = reactive({
   companions: [],
 });
 
-interface visitReason {
-  id: number; // Change the type to string to accept GUIDs as strings
-  name: string;
-}
 
-const visitReasons = ref<visitReason[]>([]);
+
 
 const startDate = ref(new Date());
 const endDate = ref(new Date());
@@ -119,7 +115,6 @@ watch(customerselect, async (newValue) => {
   if (newValue && customerId !== undefined) {
     try {
       loading.value = true;
-      console.log(customerId);
       await getRepresentatives(customerId);
       await getSubscriptions(customerId);
       loading.value = false;
@@ -133,7 +128,6 @@ const getRepresentatives = (id: string) => {
   representativesApi
     .get(id)
     .then(function (response) {
-      console.log(response);
       customerRepresentatives.value = response.data.content;
     })
     .catch(function (error) {
@@ -180,7 +174,6 @@ const submitForm = async () => {
           life: 3000,
         });
 
-        console.log(response);
         store.getVisits();
         router.go(-1);
       })

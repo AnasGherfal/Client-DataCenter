@@ -4,13 +4,14 @@ import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "./router";
 import PrimeVue from "primevue/config";
-
+//jjjk
 
 //style
 import "./assets/style/style.scss";
 import "./assets/themes/lightTheme.css";
 // import  './assets/themes/darkTheme.css'
 import "./assets/style/iconsStyle.scss";
+
 
 
 import "primevue/resources/primevue.min.css";
@@ -49,7 +50,6 @@ import ProgressBar from "primevue/progressbar";
 import Textarea from "primevue/textarea";
 import RadioButton from "primevue/radiobutton";
 import Vue3Autocounter from "vue3-autocounter";
-import VueSelect from "vue-select";
 
 const app = createApp(App);
 
@@ -95,6 +95,5 @@ app.component("Column", Column);
 //Animated Number Counter
 app
   .component("vue3autocounter", Vue3Autocounter)
-  .component("v-select", VueSelect);
 
 app.mount("#app");

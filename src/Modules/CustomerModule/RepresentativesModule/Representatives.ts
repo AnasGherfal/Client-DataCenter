@@ -1,3 +1,8 @@
+
+interface RepresentativeType {
+  label: string;
+  value: string;
+}
 export interface Representatives {
   id:string
   firstName: string;
@@ -9,7 +14,7 @@ export interface Representatives {
   customerId: number | null;
   RepresentationDocument: File | null;
   IdentityDocuments: File | null;
-  type: number | null,
+  type: RepresentativeType | number | null,
   from: string,
   to: string
 }

@@ -26,9 +26,10 @@ const currentPage = ref(0);
 const name = ref<string>("");
 const customers = ref();
 
-const state:Subscription = reactive({
+
+const state: Subscription = reactive({
   serviceId: null,
-  customerId: null as any,
+  customerId: null,
   startDate: "",
   endDate: "",
   contractNumber:"",
@@ -88,6 +89,7 @@ const rules = computed(() => {
   };
 });
 
+
 const toast = useToast();
 
 const v$ = useVuelidate(rules, state);
@@ -112,12 +114,16 @@ const submitForm = async () => {
   loading.value = true;
   if (state.file === null) {
     // File is null, do not proceed with the submission
-    console.log("File is null");
     return;
   }
 
   formData.append("serviceId", String(state.serviceId));
-  formData.append("customerId", String(state.customerId.id ?? 0));
+  if (state.customerId !== null && state.customerId !== undefined) {
+    formData.append("customerId", String(state.customerId.id));
+  } else {
+    // Handle the case when state.customerId is null or undefined
+    formData.append("customerId", "0"); // Appending a default value, e.g., "0"
+  }
   formData.append("startDate", moment(state.startDate).format("YYYY/MM/DD"));
   formData.append("endDate", moment(state.endDate).format("YYYY/MM/DD"));
   formData.append("file", state.file);
@@ -133,9 +139,7 @@ const submitForm = async () => {
         detail: Response.data.msg,
         life: 3000,
       });
-      console.log(Response);
       loading.value = false;
-      store.getSubs();
       router.go(-1);
     })
     .catch(function (error) {
@@ -178,7 +182,7 @@ const search = (event: any) => {
 };
 </script>
 
-<template>
+<template>{{ state.customerId }}
   <div>
     <Card>
       <template #title>

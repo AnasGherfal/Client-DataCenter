@@ -1,7 +1,11 @@
 <script lang="ts" setup>
 import { useAuthStore } from "@/stores/auth";
-import { ref } from "vue";
-
+import { computed, onMounted, ref } from "vue";
+import Menu from "primevue/menu";
+import { useRouter } from "vue-router";
+import { admin } from "@/api/admin";
+const router = useRouter();
+const authStore  = useAuthStore()
 const items = ref([
   {
     label: "لوحة المعلومات",
@@ -9,8 +13,12 @@ const items = ref([
       {
         label: "الصفحة الرئيسية",
         icon: "fa-solid fa-house",
-        to: "/",
-      },
+        permission:0,
+        command: () => {
+          router.push("/");
+        },  
+         
+         },
     ],
   },
 
@@ -20,29 +28,41 @@ const items = ref([
       {
         label: "سجل العملاء",
         icon: "fa-solid fa-users",
-        to: "/customersRecord",
-        key:"2",
-        show: false
+        permission:1,
+        command: () => {
+          router.push("/customersRecord");
+        },
+
+
       },
 
       {
         label: "سجل الزيارات",
         icon: "fa-solid fa-book",
-        to: "/VisitsRecords",
+        permission:2,
+
+             command: () => {
+          router.push("/VisitsRecords");
+        },
+
       },
 
       {
         label: "سجل الاشتراكات",
         icon: "fa-solid fa-calculator",
-        to: "/subscriptionsRecord",
-      },
+        permission: 16,
+        command: () => {
+          router.push("/subscriptionsRecord");
+        },      },
       {
         label: " مستخلصات مالية",
         icon: "fa-solid fa-receipt",
-        to: "/invoices",
-      },
+        permission:8,
+
+        command: () => {
+          router.push("/invoices");
+        },      },
     ],
-    
   },
   {
     label: "ادارة المشرفين",
@@ -50,56 +70,96 @@ const items = ref([
       {
         label: "سجل المشرفين",
         icon: "fa-solid fa-users-gear",
-        to: "/AdminsRecord",
-      },
+        command: () => {
+          router.push("/AdminsRecord");
+        },      },
       {
         label: "سجل الحركات",
         icon: "fa-solid fa-clock-rotate-left",
-        to: "/AuditsRecord",
-      },
+        permission: 511,
+        command: () => {
+          router.push("/AuditsRecord");
+        },      },
     ],
   },
+]);
 
-      {
-        label: "اعدادات النظام",
-        icon: "fa-solid fa-gear",
-        to: "/SettingsView",
-      },
+//99ZUBV5K
+
+const permissions = ref([
+  { name: "Customer Management", id: 1 },
+  { name: "Visits Management", id: 2 },
+  { name: "Service Management", id: 4 },
+  { name: "Invoice Management", id: 8 },
+  { name: "Subscription Management", id: 16 },
+  { name: "Companion Management", id: 32 },
+  { name: "Representative Management", id: 64 },
+  { name: "Time Shift Management", id: 128 },
+  { name: "Analytics Management", id: 256 },
+  { name: "Super Admin", id: 511 },
 
 ]);
 
+
+const permissionsList = ref<UserPermission[]>([]);
+  onMounted(async () => {
+  getPermissions();
+});
+function getPermissions() {
+  admin.permissions().then(function (response) {
+    permissionsList.value = response.data.content;
+  });
+}
+
+interface UserPermission {
+  id: number;
+  name: string;
+}
+
+const fit:any=ref([]);
 const hasPermission = (permissions: number[], permissionToCheck: number) => {
   // Iterate through each individual permission bit in permissionToCheck
   for (let i = 0; i < permissions.length; i++) {
     const permissionBit = permissions[i];
     // Check if the user has this specific permission bit
     if ((permissionToCheck & permissionBit) === permissionBit) {
-      return true; // User has this permission bit
+      // for(const pp of items.value){
+      // const foundItem= pp.items.find(item => item.permission === permissionBit);
+      //   fit.value.push(foundItem);
+      
+      // items.value.forEach(item => item.items.forEach(item => item.permission) )
+      
+    return true; // User has this permission bit
     }
   }
   return false; // User doesn't have any of the specified permission bits
 };
 
-const store = useAuthStore()
-console.log(store.userData)
-// hasPermission(store)
-const menu = ref();
 
-const toggle = (event: any) => {
-  menu.value.toggle(event);
-};
+
 </script>
 
 <template>
-  
   <Menu
-  
     ref="menu"
     :model="items"
     :popup="false"
     class="sidebar overflow-auto fixed mt-4 fadeinright animation-duration-500"
     style="border-radius: 15px; width: 20%; height: calc(100vh - 7.6rem)"
   >
+
+                  <!-- <template #submenuheader="{ item }">
+                <span class="text-primary font-bold">{{ item.label }}</span>
+            </template> -->
+                 <template  #item="{ item, props }" >
+
+                    
+                  <a v-if="hasPermission([item.permission], authStore.prem )" v-ripple class="flex align-items-center" v-bind="props.action">
+                    
+                    <span style="margin-left: 1rem;"  :class="item.icon" />
+                    <span  class="">{{ item.label }}</span>
+                </a>
+            </template>
   </Menu>
 
   <div>
@@ -110,7 +170,6 @@ const toggle = (event: any) => {
       icon="fa-solid fa-bars"
       text
       aria-label="Filter"
-      @click="toggle"
       aria-haspopup="true"
       aria-controls="overlay_menu"
       v-tooltip="{ value: 'الشريط الجانبي', fitContent: true }"

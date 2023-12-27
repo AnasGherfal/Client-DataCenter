@@ -73,35 +73,22 @@ function getdata() {
       subs.file = content.files;
       subs.createdOn = content.createdOn;
       subs.totalPrice = content.totalPrice;
-      subs.daysRemaining = moment(content.endDate).diff(moment(), "days");
-    })
+      const daysRemaining = moment(content.endDate).diff(moment(), "days");
+      subs.daysRemaining = Math.max(0, daysRemaining); // Set to 0 if daysRemaining is negative
+        })
     .then(function () {
       serviceApi.get().then(function (response) {
         service.value = response.data.content.find(
           (servic: any) => servic.name === subs.serviceName
         );
       });
-      getVisitis();
     })
     .finally(() => {
       loading.value = false;
     });
 }
 
-function getVisitis() {
-  loading.value = true;
-  visitApi
-    .get(userId.value, subs.id)
-    .then(function (response) {
-      subs.visits = response.data.content;
-    })
-    .catch(function (error) {
-      console.log(error);
-    })
-    .finally(() => {
-      loading.value = false;
-    });
-}
+
 
 async function onRenewFileUpload(event: any) {
   const file = event.target.files[0];
@@ -127,7 +114,6 @@ const renewalSubscription = () => {
       });
       customersDialog.value = false;
       router.go(-1);
-      store.getSubs();
     })
     .catch(function (error) {
       toast.add({
@@ -200,7 +186,7 @@ const downloadFile = async (subId: string, fileId: string) => {
         <div class="warning-message">
           <div class="warning-message-icon"></div>
           <div class="warning-message-text">
-            هذه الخدمة مقفلة لا يمكن تجديدها او اضافة شيء عليها
+            هذا الاشتراك مقفل لا يمكن التجديد 
           </div>
         </div>
       </div>
@@ -247,21 +233,7 @@ const downloadFile = async (subId: string, fileId: string) => {
                 />
               </div>
             </div>
-            <div v-else-if="subs.daysRemaining <= 0 && subs.status !== 2">
-              <h3 class="text-red-600">هذا الاشتراك انتهى</h3>
 
-              <h5 class="text-red-600" style="margin-bottom: 5px">
-                اضغط على الأيقونة للتجديد
-              </h5>
-              <Button
-                icon="fa-solid fa-repeat"
-                severity="danger"
-                text
-                rounded
-                aria-label="Cancel"
-                @click="customersDialog = true"
-              />
-            </div>
             <div v-else-if="subs.daysRemaining <= 0 && subs.status !== 2">
               <h3 class="text-red-600">هذا الاشتراك انتهى</h3>
 

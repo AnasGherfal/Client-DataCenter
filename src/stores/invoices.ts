@@ -59,11 +59,9 @@ export const useInvoicesStore = defineStore("visit", () => {
         pageNumber.value,
         pageSize.value,
         name.value,
-        startDate.value,
-        endDate.value
+
       )
       .then(function (response) {
-        console.log(response);
         invoices.value = response.data.content;
         visits.value = response.data.content;
         totalPages.value = response.data.totalPages;

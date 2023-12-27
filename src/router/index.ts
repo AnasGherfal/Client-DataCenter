@@ -69,6 +69,7 @@ const router = createRouter({
           path: "addCustomer",
           props: true,
           component: () => import("../views/Customers/AddCustomer.vue"),
+          
         },
         {
           path: "CustomerProfile/:id",
@@ -168,20 +169,27 @@ router.beforeEach(async (to, from, next) => {
     document.getElementById("InitScreenDOM")?.remove();
     return next();
   }
+  const res = await authorized.getProfile();
+
 
   if (!authorized.userData) {
     const res = await authorized.getProfile();
     document.getElementById("InitScreenDOM")?.remove();
 
     if (res) {
-      // the user is logged in and trying to access the login page then redirect to dashboard
-      if (to.meta.guest) {
-        return next("/dashboard");
+      // the user is logged in and trying to access the login page then redirect to the home page
+      if (to.name == 'loginPage') {
+        return next("/");
       }
 
       // continue to the route
       return next();
     }
+
+        // Continue to the requested route
+        document.getElementById("InitScreenDOM")?.remove();
+        return next();
+      
 
     // if the user is not logged in and the route is not guest only then redirect to login
     if (to.meta.guest) {
@@ -189,7 +197,15 @@ router.beforeEach(async (to, from, next) => {
     }
 
     return next("/Login");
+    
   }
+
+  // If the user is logged in and trying to access the login page, redirect to the home page
+  if ( authorized.userData && to.name == 'loginPage') {
+    return next("/");
+  }
+
+  
 
   // otherwise continue to the route
   document.getElementById("InitScreenDOM")?.remove();
@@ -200,6 +216,7 @@ router.beforeEach(async (to, from, next) => {
     window.scrollTo(0, 0);
   }, 100);
 });
+
 router.beforeResolve((to, from, next) => {
   // If this isn't an initial page load.
   NProgress.start();
@@ -211,6 +228,12 @@ router.beforeResolve((to, from, next) => {
 });
 
 router.afterEach(() => {
+  window.addEventListener('popstate', () => {
+    // Your logic to handle the back button press
+
+    // For example, you might want to redirect the user to a specific route:
+    router.push('/'); // Replace '/specific-route' with your desired route
+  });
   loading.value = false;
   // Complete the animation of the route progress bar.
   NProgress.done();

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { authApi } from "@/api/auth";
 import BackButton from "@/components/BackButton.vue";
-import ChangePasswordUser from "@/components/User/ChangePasswordUser.vue";
+import ChangePasswordUser from "./ChangePasswordUser.vue";
 import { onMounted, reactive } from "vue";
 
 const state = reactive({
@@ -78,8 +78,9 @@ onMounted(() => {
             </span>
           </div>
 
-          <ChangePasswordUser />
         </div>
+        <ChangePasswordUser />
+
       </template>
     </card>
   </div>

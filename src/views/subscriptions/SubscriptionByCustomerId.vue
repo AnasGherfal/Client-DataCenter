@@ -12,7 +12,6 @@ const props = defineProps<{
   subsId: any;
 }>();
 const route = useRoute();
-console.log(props.subsId);
 
 
 const filters = ref({

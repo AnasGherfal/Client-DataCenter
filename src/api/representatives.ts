@@ -57,4 +57,13 @@ export const representativesApi = {
     const response = await httpClient.put(`/Representatives/${id}/unlock`);
     return response;
   },
+
+  approve: async function (id: string) {
+    const response = await httpClient.put(`/Representatives/${id}/Approve`);
+    return response;
+  },
+  reject: async function (id: string) {
+    const response = await httpClient.put(`/Representatives/${id}/Reject`);
+    return response;
+  },
 };

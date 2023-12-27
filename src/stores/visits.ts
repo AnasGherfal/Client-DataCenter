@@ -16,7 +16,6 @@ export const useVistisStore = defineStore("visit", () => {
 
   onMounted(async () => {
     await getVisits(); // Add await here
-    await getRepresentativeData(); // Add await here
     await getTypes();
   });
 
@@ -36,15 +35,7 @@ export const useVistisStore = defineStore("visit", () => {
       });
   }
 
-  async function getRepresentativeData() {
-    try {
-      const response = await representativesApi.get();
-      representatives.value = response.data.content;
 
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   async function getTypes() {
     await visitApi
@@ -61,7 +52,6 @@ export const useVistisStore = defineStore("visit", () => {
   return {
     visits,
     getVisits,
-    getRepresentativeData,
     representatives,
     loading,
     totalPages,

@@ -10,7 +10,7 @@ import Divider from "primevue/divider";
       -webkit-backdrop-filter: blur(5px);
       backdrop-filter: blur(5px);
       width: 100%;
-      height: 75px;
+      height: 50px;
       padding: 20px;
     "
   >

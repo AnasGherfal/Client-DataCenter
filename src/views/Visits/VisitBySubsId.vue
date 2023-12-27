@@ -18,7 +18,6 @@ const props = defineProps<{
   visits: [];
 }>();
 
-console.log(props.visits)
 
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },

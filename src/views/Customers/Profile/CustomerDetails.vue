@@ -76,7 +76,6 @@ const handleFileChange = (event: any, index: any) => {
 };
 
 const updateFile = async (index: any) => {
-  console.log(customer.files[index].fileType);
   if (customer.files[index].file) {
     const FormFile = new FormData();
     FormFile.append(
@@ -99,7 +98,6 @@ const updateFile = async (index: any) => {
         fileId,
         FormFile
       );
-      console.log(response);
     } catch (error) {
       console.log(error);
       // Handle the error
@@ -167,7 +165,6 @@ const onFormSubmit = async () => {
     formDataObject[key] = value.toString();
   });
 
-  console.log("formData:", formDataObject);
   if (result) {
     customersApi
       .edit(props.customer.id, formData)

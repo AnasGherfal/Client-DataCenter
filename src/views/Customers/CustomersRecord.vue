@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref, watch } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { FilterMatchMode } from "primevue/api";
 import { useCustomersStore } from "@/stores/customers";
 import { useToast } from "primevue/usetoast";
@@ -8,13 +8,13 @@ import LockButton from "@/components/LockButton.vue";
 import { customersApi } from "@/api/customers";
 import DeleteCustomer from "../../components/DeleteButton.vue";
 import { Customer } from "@/Modules/CustomerModule/CustomersModule";
-
+import { onBeforeRouteUpdate } from "vue-router";
 const toast = useToast();
 const customers = ref();
 const loading = ref(true);
 const totalPages = ref(1);
 const pageNumber = ref(1);
-const pageSize = ref(10);
+const pageSize = ref(5);
 const currentPage = ref(0);
 const name = ref<string>("");
 const store = useCustomersStore();
@@ -34,6 +34,8 @@ const columns = ref([
   { field: "address", header: "العنوان" },
 ]);
 const selectedColumns = ref(columns.value);
+// Add this section for beforeRouteEnter
+
 
 const onToggle = (val: any) => {
   selectedColumns.value = columns.value.filter((col) => val.includes(col));
@@ -64,16 +66,19 @@ const getSelectedStatusLabel = (value: any) => {
   return status ? status.label : "";
 };
 
+onBeforeRouteUpdate((to, from, next) => {
+  getCustomers();
+  next();
+});
+
 onMounted(async () => {
   getCustomers();
 });
 async function searchByName(searchName: string) {
-  console.log("hi")
   name.value = searchName;
   await getCustomers(); // Await the getCustomers function to wait for the API call to complete
 }
 async function getCustomers() {
-  console.log('getCustomers method called from child');
 
   if (name.value === undefined || name.value === null) {
     name.value = "";
@@ -150,7 +155,7 @@ const deleteCustomer = (id: string) => {
 };
 
 const goToNextPage = () => {
-  if (currentPage < totalPages) {
+  if (currentPage.value < totalPages.value) {
     currentPage.value += 1;
     pageNumber.value += 1; // Increment the pageNumber value
     loading.value = true;
@@ -219,25 +224,30 @@ const onSearch = (event: KeyboardEvent) => {
             :currentPage="currentPage - 1"
             paginatorTemplate="  "
           >
-            <template #paginatorstart>
-              <Button
-                icon="pi pi-angle-right"
-                class="p-button-rounded p-button-primary p-paginator-element"
-                :disabled="currentPage === 1"
-                @click="goToPreviousPage"
-              />
-              <span class="p-paginator-pages">
-                الصفحة {{ currentPage }} من {{ totalPages }}
-              </span>
-            </template>
-            <template #paginatorend>
-              <Button
-                icon="pi pi-angle-left"
-                class="p-button-rounded p-button-primary p-paginator-element"
-                :disabled="currentPage === totalPages"
-                @click="goToNextPage"
-              />
-            </template>
+          <template #paginatorstart >
+          
+          <span class="p-paginator-pages" style=" display: flex; justify-content: center; align-items: center; margin-top: 1rem;">
+            <Button
+
+            style="margin-left: 1rem; height: 2rem; width: 2rem;"
+              icon="pi pi-angle-right"
+              class="p-button-rounded p-button-primary p-paginator-element"
+              :disabled="currentPage === 1"
+              @click="goToPreviousPage"
+            />
+              الصفحة {{ currentPage }} من {{ totalPages }}
+
+            <Button
+            style="margin-right: 1rem; height: 2rem; width: 2rem;"
+
+              icon="pi pi-angle-left"
+              class="p-button-rounded p-button-primary p-paginator-element"
+              :disabled="currentPage === totalPages"
+              @click="goToNextPage"
+            />
+            </span>
+
+        </template>
 
             <template #header>
               <div class="grid p-fluid mt-1">
