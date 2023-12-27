@@ -70,6 +70,8 @@ const items = ref([
       {
         label: "سجل المشرفين",
         icon: "fa-solid fa-users-gear",
+        permission: 511,
+
         command: () => {
           router.push("/AdminsRecord");
         },      },
